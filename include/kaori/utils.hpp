@@ -17,6 +17,9 @@ constexpr std::bitset<N> G_(4);
 template<size_t N>
 constexpr std::bitset<N> T_(8);
 
+template<size_t N>
+constexpr std::bitset<N> other_(15);
+
 inline char reverse_complement(char b) {
     char output;
     switch (b) {

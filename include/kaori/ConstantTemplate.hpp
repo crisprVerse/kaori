@@ -3,10 +3,11 @@
 
 #include <bitset>
 #include <deque>
+#include "utils.hpp"
 
 namespace kaori {
 
-template<class N>
+template<size_t N>
 class ConstantTemplate { 
 public:
     ConstantTemplate(const char* s, size_t n, bool f, bool r) : length(n), forward(f), reverse(r) {
@@ -15,48 +16,47 @@ public:
         }
 
         for (size_t i = 0; i < n; ++i) {
-            char b = seq[i];
-            if (b != "-") {
+            char b = s[i];
+            if (b != '-') {
                 add_base(forward_ref, b);
-                forward_mask[i] = 1;
+                add_mask(forward_mask, i);
             } else {
                 shift(forward_ref);
-                if (forward_variables.empty()) {
-                    forward_variables.emplace_back(i, i + 1);
-                } else {
-                    forward_variables.back().second = i + 1;
-                }
+                shift(forward_mask);
+                add_variable_base(forward_variables, i);
             }
         }
 
         for (size_t i = 0; i < n; ++i) {
-            char b = seq[n - i - 1];
-            if (b != "-") {
+            char b = s[n - i - 1];
+            if (b != '-') {
                 add_base(reverse_ref, reverse_complement(b));
-                reverse_mask[i] = 1;
+                add_mask(reverse_mask, i);
             } else {
                 shift(reverse_ref);
-                if (reverse_variables.empty()) {
-                    reverse_variables.emplace_back(i, i + 1);
-                } else {
-                    reverse_variables.back().second = i + 1;
-                }
+                shift(reverse_mask);
+                add_variable_base(reverse_variables, i);
             }
         }
     }
 
 public:
     struct MatchDetails {
-        std::bitset<N> state;
-        const char * seq;
-        size_t len;
-
         size_t position = 0;
         int forward_mismatches = -1;
         int reverse_mismatches = -1;
         bool finished = false;
 
-        std::deque<size_t> bad_words;
+        /**
+         * @cond
+         */
+        std::bitset<N> state, ambiguous;
+        const char * seq;
+        size_t len;
+        std::deque<size_t> bad;
+        /**
+         * @endcond
+         */
     };
 
     MatchDetails initialize(const char* seq, size_t len) const {
@@ -68,18 +68,25 @@ public:
             size_t limit = std::min(length, len);
             for (size_t i = 0; i < limit; ++i) {
                 char base = seq[i];
+
                 if (is_good(base)) {
                     add_base(out.state, base);
+                    if (!out.bad.empty()) {
+                        shift(out.ambiguous);
+                    }
                 } else {
                     shift(out.state);
+                    out.state |= other_<N>;
+                    shift(out.ambiguous);
+                    out.ambiguous |= other_<N>;
                     out.bad.push_back(i);
                 }
             }
 
-            if (out.bad.empty()) {
-                full_match(out);
-            }
-        } else {
+            full_match(out);
+        }
+        
+        if (length >= len) {
             out.finished = true;
         }
 
@@ -87,29 +94,40 @@ public:
     }
 
     void next(MatchDetails& match) const {
-        size_t right = match.position + length;
-        while (right < match.len) {
-            if (match.bad.empty() && match.bad.front() == match.position) {
-                match.bad.pop_front();
-            }
-
-            char base = seq[right];
-            if (is_good(base)) {
-                add_base(match.state, base); // no need to trim off the end, the mask will handle that.
-            } else {
-                shift(match.state);
-                match.bad.push_back(right);
-            }
-
-            ++match.position;
-            ++right;
+        if (!match.bad.empty() && match.bad.front() == match.position) {
+            match.bad.pop_front();
             if (match.bad.empty()) {
-                full_match(match);
-                return;
+                // This should effectively clear the ambiguous bitset, allowing
+                // us to skip its shifting if there are no more ambiguous
+                // bases. We do it here because we won't get an opportunity to
+                // do it later; as 'bad' is empty, the shift below is skipped.
+                shift(match.ambiguous); 
             }
         }
 
-        match.finished = true;
+        size_t right = match.position + length;
+        char base = match.seq[right];
+        if (is_good(base)) {
+            add_base(match.state, base); // no need to trim off the end, the mask will handle that.
+            if (!match.bad.empty()) {
+                shift(match.ambiguous);
+            }
+        } else {
+            shift(match.state);
+            match.state |= other_<N>;
+            shift(match.ambiguous);
+            match.ambiguous |= other_<N>;
+            match.bad.push_back(right);
+        }
+
+        ++match.position;
+        full_match(match);
+
+        ++right;
+        if (right == match.len) {
+            match.finished = true;
+        }
+
         return;
     }
 
@@ -120,19 +138,66 @@ private:
     int mismatches;
     bool forward, reverse;
 
-    std::vector<std::pair<int, int> > forward_variables, reverse_variables;
-
-    static int quick_match(const std::bitset<N>& current, const std::bitset<N>& ref, const std::bitset<N>& mask) {
-        return ((current & mask) ^ ref).count();
+    static void add_mask(std::bitset<N>& current, size_t pos) {
+        shift(current);
+        current |= other_<N>;
+        for (int i = 0; i < 4; ++i) {
+            current[i] = 1;
+        }
     }
 
-    void full_match(MatchDetails& match) {
+    static int strand_match(const MatchDetails& match, const std::bitset<N>& ref, const std::bitset<N>& mask) {
+        // pop count here is equal to the number of non-ambiguous mismatches *
+        // 2 + number of ambiguous mismatches * 3. This is because
+        // non-ambiguous bases are encoded by 1 set bit per 4 bases (so 2 are
+        // left after a XOR'd mismatch), while ambiguous mismatches are encoded
+        // by all set bits per 4 bases (which means that 3 are left after XOR).
+        int pcount = ((match.state & mask) ^ ref).count(); 
+
+        // Counting the number of ambiguous bases after masking. Each ambiguous
+        // base is represented by 4 set bits, so we divide by 4 to get the number
+        // of bases; then we multiply by three to remove their contribution. The
+        // difference is then divided by two to get the number of non-ambig mm's.
+        if (!match.bad.empty()) {
+            int acount = (match.ambiguous & mask).count();
+            acount /= 4;
+            return acount + (pcount - acount * 3) / 2;
+        } else {
+            return pcount / 2;
+        }
+    }
+
+    void full_match(MatchDetails& match) const {
         if (forward) {
-            match.forward_mismatches = quick_match(match.state, forward_ref, forward_mask);
+            match.forward_mismatches = strand_match(match, forward_ref, forward_mask);
         }
         if (reverse) {
-            match.reverse_mismatches = quick_match(match.state, reverse_ref, reverse_mask);
+            match.reverse_mismatches = strand_match(match, reverse_ref, reverse_mask);
         }
+    }
+
+public:
+    std::vector<std::pair<int, int> > forward_variables, reverse_variables;
+
+    const std::vector<std::pair<int, int> >& forward_variable_regions() const {
+        return forward_variables;
+    } 
+
+    const std::vector<std::pair<int, int> >& reverse_variable_regions() const {
+        return reverse_variables;
+    } 
+
+private:
+    static void add_variable_base(std::vector<std::pair<int, int> >& variables, int i) {
+        if (!variables.empty()) {
+            auto& last = variables.back().second;
+            if (last == i) {
+                ++last;
+                return;
+            }
+        }
+        variables.emplace_back(i, i + 1);
+        return;
     }
 };
 

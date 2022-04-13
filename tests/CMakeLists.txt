@@ -13,6 +13,7 @@ enable_testing()
 add_executable(
     libtest 
     src/FastqReader.cpp
+    src/ConstantTemplate.cpp
 )
 
 target_link_libraries(
