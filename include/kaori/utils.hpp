@@ -6,16 +6,16 @@
 namespace {
 
 template<size_t N>
-constexpr std::bitset<N> A_(0);
+constexpr std::bitset<N> A_(1);
 
 template<size_t N>
-constexpr std::bitset<N> C_(1);
+constexpr std::bitset<N> C_(2);
 
 template<size_t N>
-constexpr std::bitset<N> G_(2);
+constexpr std::bitset<N> G_(4);
 
 template<size_t N>
-constexpr std::bitset<N> T_(3);
+constexpr std::bitset<N> T_(8);
 
 inline char reverse_complement(char b) {
     char output;
@@ -40,8 +40,32 @@ inline char reverse_complement(char b) {
 }
 
 template<size_t N>
+void shift(std::bitset<N>& x) {
+    x <<= 4;
+}
+
+inline bool is_good(char b) {
+    bool okay = false;
+    switch (b) {
+        case 'A': case 'a':
+            okay = true;
+            break;
+        case 'C': case 'c':
+            okay = true;
+            break;
+        case 'G': case 'g':
+            okay = true;
+            break;
+        case 'T': case 't':
+            okay = true;
+            break;
+    }
+    return okay;
+}
+
+template<size_t N>
 void add_base(std::bitset<N>& x, char b) {
-    x <<= 2;
+    shift(x);
     switch (b) {
         case 'A': case 'a':
             x |= A_<N>;
