@@ -9,40 +9,39 @@ namespace kaori {
 
 class MismatchTrie {
 public:
-    MismatchTrie() {}
+    MismatchTrie(size_t n = 0) : length(n), pointers(4, -1), counter(0) {}
 
-    MismatchTrie(const std::vector<const char*>& possible, size_t n, bool reverse = false) : pointers(4, -1), length(n) {
-        for (size_t p = 0; p < possible.size(); ++p) {
-            const char* seq = possible[p];
-            int position = 0;
-
-            for (size_t i = 0; i < n; ++i) {
-                char base = (reverse ? reverse_complement(seq[n - i - 1]) : seq[i]);
-                auto& current = pointers[position + base_shift(base)];
-
-                if (i + 1 == n) {
-                    // Last position is the index of the sequence.
-                    if (current >= 0) {
-                        throw std::runtime_error("duplicate sequences detected when constructing the trie");
-                    }
-                    current = p;
-                } else {
-                    if (current < 0) {
-                        current = pointers.size();
-                        position = current;
-                        pointers.resize(position + 4, -1);
-                    } else {
-                        position = current;
-                    }
-                }
-
-//                std::cout << "Current state" << std::endl;
-//                for (size_t i = 0; i < pointers.size(); i += 4) {
-//                    std::cout << pointers[i] << "\t" << pointers[i+1] << "\t" << pointers[i+2] << "\t" << pointers[i+3] << std::endl;
-//                }
-            }
-
+    MismatchTrie(const std::vector<const char*>& seq, size_t n) : MismatchTrie(n) {
+        for (auto s : seq) {
+            add(s);
         }
+    }
+
+public:
+    void add(const char* seq) {
+        int position = 0;
+
+        for (size_t i = 0; i < length; ++i) {
+            auto& current = pointers[position + base_shift(seq[i])];
+
+            if (i + 1 == length) {
+                // Last position is the index of the sequence.
+                if (current >= 0) {
+                    throw std::runtime_error("duplicate sequences detected when constructing the trie");
+                }
+                current = counter;
+            } else {
+                if (current < 0) {
+                    current = pointers.size();
+                    position = current;
+                    pointers.resize(position + 4, -1);
+                } else {
+                    position = current;
+                }
+            }
+        }
+
+        ++counter;
     }
 
 public:
@@ -123,6 +122,7 @@ public:
 private:
     size_t length;
     std::vector<int> pointers;
+    int counter;
 
     static int base_shift(char base) {
         int shift = 0;

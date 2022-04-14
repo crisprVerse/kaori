@@ -36,40 +36,6 @@ TEST(MismatchTrie, Basic) {
     }
 }
 
-TEST(MismatchTrie, ReverseComplement) {
-    std::vector<std::string> things { "ACGT", "TTTT", "TTGT", "AACT" };
-
-    std::vector<const char*> ptrs;
-    for (const auto& t : things) {
-        ptrs.push_back(t.c_str());
-    }
-
-    kaori::MismatchTrie stuff(ptrs, 4, true);
-    {
-        auto res = stuff.search("ACGT", 0);
-        EXPECT_EQ(res.first, 0);
-        EXPECT_EQ(res.second, 0);
-    }
-
-    {
-        auto res = stuff.search("AAAT", 1);
-        EXPECT_EQ(res.first, 1);
-        EXPECT_EQ(res.second, 1);
-    }
-
-    {
-        auto res = stuff.search("CCAG", 2);
-        EXPECT_EQ(res.first, 2);
-        EXPECT_EQ(res.second, 2);
-    }
-
-    {
-        auto res = stuff.search("AGTT", 0);
-        EXPECT_EQ(res.first, 3);
-        EXPECT_EQ(res.second, 0);
-    }
-}
-
 TEST(MismatchTrie, MoreMismatches) {
     std::vector<std::string> things { "ACGTACGTACGT", "TTTGGGCCCAAA" };
 
