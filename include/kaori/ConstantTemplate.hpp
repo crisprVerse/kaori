@@ -10,32 +10,46 @@ namespace kaori {
 template<size_t N>
 class ConstantTemplate { 
 public:
+    ConstantTemplate() {}
+
     ConstantTemplate(const char* s, size_t n, bool f, bool r) : length(n), forward(f), reverse(r) {
         if (n * 4 > N) {
             throw std::runtime_error("maximum constant size should be " + std::to_string(N/4) + " nt");
         }
 
-        for (size_t i = 0; i < n; ++i) {
-            char b = s[i];
-            if (b != '-') {
-                add_base(forward_ref, b);
-                add_mask(forward_mask, i);
-            } else {
-                shift(forward_ref);
-                shift(forward_mask);
-                add_variable_base(forward_variables, i);
+        if (forward) {
+            for (size_t i = 0; i < n; ++i) {
+                char b = s[i];
+                if (b != '-') {
+                    add_base(forward_ref, b);
+                    add_mask(forward_mask, i);
+                } else {
+                    shift(forward_ref);
+                    shift(forward_mask);
+                    add_variable_base(forward_variables, i);
+                }
+            }
+        } else {
+            // Forward variable regions are always defined.
+            for (size_t i = 0; i < n; ++i) {
+                char b = s[i];
+                if (b == '-') {
+                    add_variable_base(forward_variables, i);
+                }
             }
         }
 
-        for (size_t i = 0; i < n; ++i) {
-            char b = s[n - i - 1];
-            if (b != '-') {
-                add_base(reverse_ref, reverse_complement(b));
-                add_mask(reverse_mask, i);
-            } else {
-                shift(reverse_ref);
-                shift(reverse_mask);
-                add_variable_base(reverse_variables, i);
+        if (reverse) {
+            for (size_t i = 0; i < n; ++i) {
+                char b = s[n - i - 1];
+                if (b != '-') {
+                    add_base(reverse_ref, reverse_complement(b));
+                    add_mask(reverse_mask, i);
+                } else {
+                    shift(reverse_ref);
+                    shift(reverse_mask);
+                    add_variable_base(reverse_variables, i);
+                }
             }
         }
     }
@@ -179,12 +193,8 @@ private:
 public:
     std::vector<std::pair<int, int> > forward_variables, reverse_variables;
 
-    const std::vector<std::pair<int, int> >& forward_variable_regions() const {
-        return forward_variables;
-    } 
-
-    const std::vector<std::pair<int, int> >& reverse_variable_regions() const {
-        return reverse_variables;
+    const std::vector<std::pair<int, int> >& variable_regions(bool reverse = false) const {
+        return (reverse ? reverse_variables : forward_variables);
     } 
 
 private:

@@ -6,15 +6,15 @@ TEST(ConstantTemplate, Basic) {
     std::string thing = "ACGT----TTTT"; 
     kaori::ConstantTemplate<64> stuff(thing.c_str(), thing.size(), true, false);
 
-    auto fvar = stuff.forward_variable_regions();
+    auto fvar = stuff.variable_regions();
     ASSERT_EQ(fvar.size(), 1);
-    ASSERT_EQ(fvar.front().first, 4);
-    ASSERT_EQ(fvar.front().second, 8);
+    EXPECT_EQ(fvar.front().first, 4);
+    EXPECT_EQ(fvar.front().second, 8);
 
-    auto rvar = stuff.reverse_variable_regions();
+    auto rvar = stuff.variable_regions(false);
     ASSERT_EQ(rvar.size(), 1);
-    ASSERT_EQ(rvar.front().first, 4);
-    ASSERT_EQ(rvar.front().second, 8);
+    EXPECT_EQ(rvar.front().first, 4);
+    EXPECT_EQ(rvar.front().second, 8);
 
     {
         std::string seq = "ACGTAAAATTTT";
@@ -59,6 +59,11 @@ TEST(ConstantTemplate, ReverseComplement) {
         EXPECT_EQ(out.forward_mismatches, -1);
         EXPECT_EQ(out.reverse_mismatches, 0);
         EXPECT_TRUE(out.finished);
+
+        const auto& fvar = stuff.variable_regions();
+        ASSERT_EQ(fvar.size(), 1); // still reported correctly.
+        EXPECT_EQ(fvar.front().first, 4);
+        EXPECT_EQ(fvar.front().second, 8);
     }
 
     {
@@ -73,21 +78,21 @@ TEST(ConstantTemplate, ReverseComplement) {
 
 TEST(ConstantTemplate, Multiple) {
     std::string thing = "ACGT----TT-----GG"; 
-    kaori::ConstantTemplate<128> stuff(thing.c_str(), thing.size(), true, false);
+    kaori::ConstantTemplate<128> stuff(thing.c_str(), thing.size(), true, true);
 
-    auto fvar = stuff.forward_variable_regions();
+    auto fvar = stuff.variable_regions();
     ASSERT_EQ(fvar.size(), 2);
-    ASSERT_EQ(fvar.front().first, 4);
-    ASSERT_EQ(fvar.front().second, 8);
-    ASSERT_EQ(fvar.back().first, 10);
-    ASSERT_EQ(fvar.back().second, 15);
+    EXPECT_EQ(fvar.front().first, 4);
+    EXPECT_EQ(fvar.front().second, 8);
+    EXPECT_EQ(fvar.back().first, 10);
+    EXPECT_EQ(fvar.back().second, 15);
 
-    auto rvar = stuff.reverse_variable_regions();
+    auto rvar = stuff.variable_regions(true);
     ASSERT_EQ(rvar.size(), 2);
-    ASSERT_EQ(rvar.front().first, 2);
-    ASSERT_EQ(rvar.front().second, 7);
-    ASSERT_EQ(rvar.back().first, 9);
-    ASSERT_EQ(rvar.back().second, 13);
+    EXPECT_EQ(rvar.front().first, 2);
+    EXPECT_EQ(rvar.front().second, 7);
+    EXPECT_EQ(rvar.back().first, 9);
+    EXPECT_EQ(rvar.back().second, 13);
 
     {
         std::string seq = "aaaaaACGTAAAATTTTGGGGGggggg";
@@ -117,15 +122,13 @@ TEST(ConstantTemplate, Mismatches) {
     std::string thing = "ACGT----TTTT"; 
     kaori::ConstantTemplate<64> stuff(thing.c_str(), thing.size(), true, false);
 
-    auto fvar = stuff.forward_variable_regions();
+    auto fvar = stuff.variable_regions();
     ASSERT_EQ(fvar.size(), 1);
-    ASSERT_EQ(fvar.front().first, 4);
-    ASSERT_EQ(fvar.front().second, 8);
+    EXPECT_EQ(fvar.front().first, 4);
+    EXPECT_EQ(fvar.front().second, 8);
 
-    auto rvar = stuff.reverse_variable_regions();
-    ASSERT_EQ(rvar.size(), 1);
-    ASSERT_EQ(rvar.front().first, 4);
-    ASSERT_EQ(rvar.front().second, 8);
+    auto rvar = stuff.variable_regions(true);
+    EXPECT_EQ(rvar.size(), 0); // as we set reverse=false.
 
     {
         std::string seq = "aACGTAAAAGTTTg";
