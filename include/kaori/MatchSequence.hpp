@@ -16,12 +16,16 @@ public:
         constant(s, n, f, r), 
         forward_categories(std::move(cat))
     {
-        const auto& fvar = constant.forward_variable_regions();
+        const auto& fvar = constant.variable_regions();
         size_t nvariable = fvar.size();
-        forward_variable.resize(nvariable);
-        forward_trie.resize(nvariable);
-        reverse_variable.resize(nvariable);
-        reverse_trie.resize(nvariable);
+        if (forward) {
+            forward_variable.resize(nvariable);
+            forward_trie.resize(nvariable);
+        }
+        if (reverse) {
+            reverse_variable.resize(nvariable);
+            reverse_trie.resize(nvariable);
+        }
 
         // Check that all entries are within range. Note that the
         // reverse search needs to flip the categories.
