@@ -42,11 +42,11 @@ public:
     }
 
 public:
-    std::pair<int, int> search_single(const char* seq, int max_mismatch) {
-        return search_single(seq, 0, 0, 0, max_mismatch);
+    std::pair<int, int> search(const char* seq, int max_mismatch) {
+        return search(seq, 0, 0, 0, max_mismatch);
     }
 
-    std::pair<int, int> search_single(const char* seq, size_t pos, int node, int mismatches, int& max_mismatch) {
+    std::pair<int, int> search(const char* seq, size_t pos, int node, int mismatches, int& max_mismatch) {
         int shift = base_shift(seq[pos]);
         int current = pointers[node + shift];
 
@@ -87,7 +87,7 @@ public:
 
             std::pair<int, int> best(-1, max_mismatch + 1);
             if (current >= 0) {
-                best = search_single(seq, pos, current, mismatches, max_mismatch);
+                best = search(seq, pos, current, mismatches, max_mismatch);
             }
 
             ++mismatches;
@@ -103,67 +103,16 @@ public:
                         continue;
                     }
 
-                    auto chosen = search_single(seq, pos, alt, mismatches, max_mismatch);
+                    auto chosen = search(seq, pos, alt, mismatches, max_mismatch);
                     if (chosen.second < best.second) {
                         best = chosen;
                     } else if (chosen.second == best.second) {
-                        best.second = -1;
+                        best.first = -1;
                     }
                 }
             }
 
             return best;
-        }
-    }
-
-public:
-    std::vector<std::pair<int, int> > search_multiple(const char* seq, int max_mismatch) {
-        std::vector<std::pair<int, int> > output;
-        search_multiple(seq, 0, 0, 0, max_mismatch, output);
-        return output;
-    }
-
-    void search_multiple(const char* seq, size_t pos, int node, int mismatches, int max_mismatch, std::vector<std::pair<int, int> >& vec) {
-        int shift = base_shift(seq[pos]);
-        int current = pointers[node + shift];
-
-        if (pos + 1 == length) {
-            if (current >= 0) {
-                vec.emplace_back(current, mismatches);
-            }
-
-            ++mismatches;
-            if (mismatches <= max_mismatch) {
-                for (int s = 0; s < 4; ++s) {
-                    if (shift == s) { 
-                        continue;
-                    }
-                    int alt = pointers[node + s];
-                    if (alt > 0) {
-                        vec.emplace_back(alt, mismatches);
-                    }
-                }
-            }
-            return;
-
-        } else {
-            ++pos;
-
-            if (current >= 0) {
-                search_multiple(seq, pos, current, mismatches, max_mismatch, vec);
-            }
-
-            ++mismatches;
-            if (mismatches <= max_mismatch) {
-                for (int s = 0; s < 4; ++s) {
-                    if (shift == s) { 
-                        continue;
-                    } 
-                    search_multiple(seq, pos, pointers[node + s], mismatches, max_mismatch, vec);
-                }
-            }
-
-            return;
         }
     }
 
