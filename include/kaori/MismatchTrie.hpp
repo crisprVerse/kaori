@@ -45,11 +45,11 @@ public:
     }
 
 public:
-    std::pair<int, int> search(const char* seq, int max_mismatch) {
+    std::pair<int, int> search(const char* seq, int max_mismatch) const {
         return search(seq, 0, 0, 0, max_mismatch);
     }
 
-    std::pair<int, int> search(const char* seq, size_t pos, int node, int mismatches, int& max_mismatch) {
+    std::pair<int, int> search(const char* seq, size_t pos, int node, int mismatches, int& max_mismatch) const {
         int shift = base_shift(seq[pos]);
         int current = pointers[node + shift];
 

@@ -5,6 +5,10 @@
 #include "MismatchTrie.hpp"
 #include "utils.hpp"
 
+#include <string>
+#include <unordered_map>
+#include <vector>
+
 namespace kaori {
 
 template<size_t N>
@@ -33,10 +37,12 @@ public:
         if (forward) {
             forward_variable.resize(num_options);
             forward_trie.resize(num_options);
+            forward_cache.resize(num_options);
         }
         if (reverse) {
             reverse_variable.resize(num_options);
             reverse_trie.resize(num_options);
+            reverse_cache.resize(num_options);
         }
 
         for (size_t o = 0; o < num_options; ++o) {
@@ -44,54 +50,62 @@ public:
             auto len = var_lengths[o];
 
             if (forward) {
-                auto& fseq = forward_variable[v];
-                auto& ftrie = forward_trie[v];
+                auto& fseq = forward_variable[o];
+                auto& ftrie = forward_trie[o];
                 ftrie = MismatchTrie(len);
 
                 for (size_t i = 0; i < curopts.size(); ++i) {
-                    auto ptr = curopt[i];
+                    auto ptr = curopts[i];
                     std::string current(ptr, ptr + len);
-                    if (forward_variable.find(current) != forward_variable.end()) {
+                    if (fseq.find(current) != fseq.end()) {
                         throw std::runtime_error("already present");
                     }
-                    forward_variable[current] = i;
-                    ftrie.add(current.c_str(), len);
+                    fseq[current] = i;
+                    ftrie.add(current.c_str());
                 }
             }
 
             if (reverse) {
-                auto& rseq = reverse_variable[v];
-                auto& rtrie = reverse_trie[v];
+                auto& rseq = reverse_variable[o];
+                auto& rtrie = reverse_trie[o];
                 rtrie = MismatchTrie(len);
 
-                for (size_t i = 0; i < curopt.size(); ++i) {
-                    auto ptr = curopt[i];
+                for (size_t i = 0; i < curopts.size(); ++i) {
+                    auto ptr = curopts[i];
                     std::string current;
                     for (int j = 0; j < len; ++j) {
                         current += reverse_complement(ptr[len - j - 1]);
                     }
-                    if (reverse_variable.find(current) != reverse_variable.end()) {
+                    if (rseq.find(current) != rseq.end()) {
                         throw std::runtime_error("already present");
                     } 
-                    reverse_variable[current] = i;
-                    rtrie.add(current.c_str(), len);
+                    rseq[current] = i;
+                    rtrie.add(current.c_str());
                 }
             }
         }
     }
 
+    MatchSequence(const char* s, size_t n, bool f, bool r, const std::vector<const char*>& opt) : 
+        MatchSequence(s, n, f, r, std::vector<int>(1), std::vector<std::vector<const char*> >{ opt }) {}
+
 public:
     struct SearchState {
-        std::vector<std::pair<int, int> > results;
+        size_t position = 0;
+        int mismatches = 0;
+        bool reverse = false;
+        std::vector<std::pair<int, int> > identity;
 
         /**
          * @cond
          */
-        SearchState(size_t nopt) : results(nopt), seqbuffer(nopt), resbuffer(nopt) {}
+        SearchState(size_t nopt) : identity(nopt), seqbuffer(nopt), resbuffer(nopt), forward_cache(nopt), reverse_cache(nopt) {}
 
         std::vector<std::string> seqbuffer;
 
         std::vector<std::pair<int, int> > resbuffer; // for use with search_all.
+
+        std::vector<std::unordered_map<std::string, std::pair<int, int> > > forward_cache, reverse_cache;
         /**
          * @endcond
          */
@@ -99,6 +113,21 @@ public:
 
     SearchState initialize() {
         return SearchState(num_options);
+    }
+
+    void reduce(SearchState& state) {
+        if (forward) {
+            for (size_t v = 0; v < forward_cache.size(); ++v) {
+                forward_cache[v].merge(state.forward_cache[v]);
+                state.forward_cache[v].clear();
+            }
+        }
+        if (reverse) {
+            for (size_t v = 0; v < reverse_cache.size(); ++v) {
+                reverse_cache[v].merge(state.reverse_cache[v]);
+                state.reverse_cache[v].clear();
+            }
+        }
     }
 
 private:
@@ -109,10 +138,12 @@ private:
         const std::vector<int>& categories,
         const std::vector<std::unordered_map<std::string, int> >& variable,
         const std::vector<MismatchTrie>& trie,
+        const std::vector<std::unordered_map<std::string, std::pair<int, int> > >& cache,
         int obs_mismatches,
         int max_mismatches,
         std::vector<std::pair<int, int> >& results,
-        std::vector<std::string>& seqbuffer
+        std::vector<std::string>& seqbuffer,
+        std::vector<std::unordered_map<std::string, std::pair<int, int> > >& local_cache
     ) const {
         if (obs_mismatches < 0 || obs_mismatches > max_mismatches) {
             return -1;
@@ -135,17 +166,38 @@ private:
             }
         }
 
-        for (size_t v = 0; v < varseq.size(); ++v) {
+        for (size_t v = 0; v < seqbuffer.size(); ++v) {
+            const auto& curseq = seqbuffer[v];
+            const auto& curvar = variable[v];
+
             // Searching for an exact match.
-            auto it = variable.find(varseq[v]);
-            if (it != variable.end()) {
+            auto it = curvar.find(curseq);
+            if (it != curvar.end()) {
                 results[v].first = it->second;
                 results[v].second = 0;
             } else if (obs_mismatches == max_mismatches) {
                 // No hope to stay under the max in this case.
                 return -1;
             } else {
-                auto missed = trie.search(varseq[v].c_str(), max_mismatches - obs_mismatches);
+                std::pair<int, int> missed;
+
+                // Seeing if it's any of the caches; otherwise searching the trie.
+                const auto& curcache = cache[v];
+                auto cit = curcache.find(curseq);
+                if (cit == curcache.end()) {
+                    auto& curlocal = local_cache[v];
+                    auto lit = curlocal.find(curseq);
+                    if (lit != curlocal.end()) {
+                        missed = lit->second;
+                    } else {
+                        const auto& curtrie = trie[v];
+                        missed = curtrie.search(curseq.c_str(), max_mismatches - obs_mismatches);
+                        curlocal[curseq] = missed;
+                    }
+                } else {
+                    missed = cit->second;
+                }
+
                 if (missed.first < 0) {
                     return -1;
                 }
@@ -159,10 +211,11 @@ private:
 
     int forward_match(
         const char* seq,
-        const ConstantTemplate<N>::MatchDetails& details
+        const typename ConstantTemplate<N>::MatchDetails& details,
         int max_mismatches,
         std::vector<std::pair<int, int> >& results,
-        std::vector<std::string>& seqbuffer
+        std::vector<std::string>& seqbuffer,
+        std::vector<std::unordered_map<std::string, std::pair<int, int> > >& cache
     ) const {
         return strand_match(
             seq,
@@ -171,19 +224,22 @@ private:
             forward_categories,
             forward_variable,
             forward_trie,
+            forward_cache,
             details.forward_mismatches,
             max_mismatches,
             results,
-            seqbuffer
+            seqbuffer,
+            cache
         );
     }
 
     int reverse_match(
         const char* seq,
-        const ConstantTemplate<N>::MatchDetails& details
+        const typename ConstantTemplate<N>::MatchDetails& details,
         int max_mismatches,
         std::vector<std::pair<int, int> >& results,
-        std::vector<std::string>& seqbuffer
+        std::vector<std::string>& seqbuffer,
+        std::vector<std::unordered_map<std::string, std::pair<int, int> > >& cache
     ) const {
         return strand_match(
             seq,
@@ -192,68 +248,80 @@ private:
             reverse_categories,
             reverse_variable,
             reverse_trie,
+            reverse_cache,
             details.reverse_mismatches,
             max_mismatches,
             results,
-            seqbuffer
+            seqbuffer,
+            cache
         );
     }
 
 public:
-    bool search_first(const char* seq, size_t len, int max_mismatches, SearchState& state) {
+    bool search_first(const char* seq, size_t len, int max_mismatches, SearchState& state) const {
         auto deets = constant.initialize(seq, len);
+        bool found = false;
+
+        auto update = [&](bool rev, int mismatches) -> void {
+            found = true;
+            state.position = deets.position;
+            state.reverse = rev;
+            state.mismatches = mismatches;
+        };
 
         while (!deets.finished) {
             if (forward) {
-                auto out = forward_match(seq, deets, max_mismatches, state.results, state.seqbuffer);
+                auto out = forward_match(seq, deets, max_mismatches, state.identity, state.seqbuffer, state.forward_cache);
                 if (out >= 0) {
-                    return true;
+                    update(false, out);
+                    break;
                 }
             }
 
             if (reverse) {
-                auto out = reverse_match(seq, deets, max_mismatches, state.results, state.seqbuffer);
+                auto out = reverse_match(seq, deets, max_mismatches, state.identity, state.seqbuffer, state.reverse_cache);
                 if (out >= 0) {
-                    return true;
+                    update(true, out);
+                    break;
                 }
             }
 
             constant.next(deets);
         }
 
-        return false;
+        return found;
     }
 
-    bool search_best(const char* seq, size_t len, int max_mismatches, bool fail_ambiguous, SearchState& state) {
+    bool search_best(const char* seq, size_t len, int max_mismatches, SearchState& state) const {
         auto deets = constant.initialize(seq, len);
-        int best = max_mismatches + 1;
+        int& best = state.mismatches;
+        best = max_mismatches + 1;
         bool found = false;
+
+        auto update = [&](bool rev, int mismatches) -> void {
+            if (mismatches >= 0) {
+                if (mismatches == best) {
+                    found = false;
+                } else {
+                    best = mismatches;
+                    max_mismatches = best; // reducing it to truncate the search space for subsequent rounds.
+                    state.identity.swap(state.resbuffer);
+                    state.position = deets.position;
+                    state.reverse = rev;
+                    found = true;
+                }
+            }
+        };
 
         while (!deets.finished) {
             if (forward) {
-                auto out = forward_match(seq, deets, max_mismatches, state.resbuffer, state.seqbuffer);
-                if (out >= 0) {
-                    if (out == best && fail_ambiguous) {
-                        found = false;
-                    } else if (out < best) {
-                        best = out;
-                        state.results.swap(state.resbuffer);
-                        found = true;
-                    } 
-                }
+                auto out = forward_match(seq, deets, max_mismatches, state.resbuffer, state.seqbuffer, state.forward_cache);
+                update(false, out);
             }
 
             if (reverse) {
-                auto out = reverse_match(seq, deets, max_mismatches, state.resbuffer, state.seqbuffer);
-                if (out >= 0) {
-                    if (out == best && fail_ambiguous) {
-                        found = false;
-                    } else if (out < best) {
-                        best = out;
-                        state.results.swap(state.resbuffer);
-                        found = true;
-                    }
-                }
+                auto out = reverse_match(seq, deets, max_mismatches, state.resbuffer, state.seqbuffer, state.reverse_cache);
+                update(true, out);
             }
 
             constant.next(deets);
@@ -270,6 +338,7 @@ private:
     std::vector<int> forward_categories, reverse_categories;
     std::vector<std::unordered_map<std::string, int> > forward_variable, reverse_variable;
     std::vector<MismatchTrie> forward_trie, reverse_trie;
+    std::vector<std::unordered_map<std::string, std::pair<int, int> > > forward_cache, reverse_cache;
 };
 
 }
