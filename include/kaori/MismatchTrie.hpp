@@ -8,7 +8,7 @@ namespace kaori {
 
 class MismatchTrie {
 public:
-    MismatchTrie(std::vector<const char*> possible, size_t n) : length(n) {
+    MismatchTrie(const std::vector<const char*>& possible, size_t n) : pointers(4, -1), length(n) {
         for (size_t p = 0; p < possible.size(); ++p) {
             const char* seq = possible[p];
             int position = 0;
@@ -27,15 +27,23 @@ public:
                         current = pointers.size();
                         position = current;
                         pointers.resize(position + 4, -1);
+                    } else {
+                        position = current;
                     }
                 }
+
+//                std::cout << "Current state" << std::endl;
+//                for (size_t i = 0; i < pointers.size(); i += 4) {
+//                    std::cout << pointers[i] << "\t" << pointers[i+1] << "\t" << pointers[i+2] << "\t" << pointers[i+3] << std::endl;
+//                }
             }
+
         }
     }
 
 public:
     std::pair<int, int> search_single(const char* seq, int max_mismatch) {
-        return search_single(seq, pos, 0, 0, max_mismatch);
+        return search_single(seq, 0, 0, 0, max_mismatch);
     }
 
     std::pair<int, int> search_single(const char* seq, size_t pos, int node, int mismatches, int& max_mismatch) {
@@ -60,12 +68,13 @@ public:
                         continue;
                     }
 
-                    alt = pointers[node + s];
-                    if (alt > 0) {
+                    int candidate = pointers[node + s];
+                    if (candidate > 0) {
                         if (found) { // ambiguous, so we quit early.
                             alt = -1;
                             break;
                         }
+                        alt = candidate;
                         max_mismatch = mismatches;
                         found = true;
                     }
@@ -110,16 +119,14 @@ public:
 public:
     std::vector<std::pair<int, int> > search_multiple(const char* seq, int max_mismatch) {
         std::vector<std::pair<int, int> > output;
-        return search_multiple(seq, pos, 0, 0, max_mismatch, output);
+        search_multiple(seq, 0, 0, 0, max_mismatch, output);
+        return output;
     }
 
     void search_multiple(const char* seq, size_t pos, int node, int mismatches, int max_mismatch, std::vector<std::pair<int, int> >& vec) {
         int shift = base_shift(seq[pos]);
         int current = pointers[node + shift];
 
-        // At the end: we prepare to return the actual values. We also refine
-        // the max number of mismatches so that we don't search for things with
-        // more mismatches than the best hit that was already encountered.
         if (pos + 1 == length) {
             if (current >= 0) {
                 vec.emplace_back(current, mismatches);
@@ -131,7 +138,7 @@ public:
                     if (shift == s) { 
                         continue;
                     }
-                    alt = pointers[node + s];
+                    int alt = pointers[node + s];
                     if (alt > 0) {
                         vec.emplace_back(alt, mismatches);
                     }
@@ -164,9 +171,9 @@ private:
     size_t length;
     std::vector<int> pointers;
 
-    static int base_shift(base) {
+    static int base_shift(char base) {
         int shift = 0;
-        switch (seq[i]) {
+        switch (base) {
             case 'A': case 'a':
                 break;
             case 'C': case 'c':

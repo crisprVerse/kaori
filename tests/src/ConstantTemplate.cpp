@@ -1,8 +1,6 @@
 #include <gtest/gtest.h>
 #include "kaori/ConstantTemplate.hpp"
-#include "byteme/RawBufferReader.hpp"
-#include "byteme/RawFileReader.hpp"
-#include <fstream>
+#include <string>
 
 TEST(ConstantTemplate, Basic) {
     std::string thing = "ACGT----TTTT"; 

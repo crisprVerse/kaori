@@ -14,6 +14,7 @@ add_executable(
     libtest 
     src/FastqReader.cpp
     src/ConstantTemplate.cpp
+    src/MismatchTrie.cpp
 )
 
 target_link_libraries(
