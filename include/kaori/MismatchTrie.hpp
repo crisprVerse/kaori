@@ -3,18 +3,22 @@
 
 #include <vector>
 #include <stdexcept>
+#include "utils.hpp"
 
 namespace kaori {
 
 class MismatchTrie {
 public:
-    MismatchTrie(const std::vector<const char*>& possible, size_t n) : pointers(4, -1), length(n) {
+    MismatchTrie() {}
+
+    MismatchTrie(const std::vector<const char*>& possible, size_t n, bool reverse = false) : pointers(4, -1), length(n) {
         for (size_t p = 0; p < possible.size(); ++p) {
             const char* seq = possible[p];
             int position = 0;
 
             for (size_t i = 0; i < n; ++i) {
-                auto& current = pointers[position + base_shift(seq[i])];
+                char base = (reverse ? reverse_complement(seq[n - i - 1]) : seq[i]);
+                auto& current = pointers[position + base_shift(base)];
 
                 if (i + 1 == n) {
                     // Last position is the index of the sequence.
