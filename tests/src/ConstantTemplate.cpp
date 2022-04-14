@@ -40,6 +40,17 @@ TEST(ConstantTemplate, Basic) {
     }
 }
 
+TEST(ConstantTemplate, TooShort) {
+    std::string thing = "ACGT----TTTT"; 
+    kaori::ConstantTemplate<64> stuff(thing.c_str(), thing.size(), true, false);
+
+    std::string seq = "ACGT";
+    auto out = stuff.initialize(seq.c_str(), seq.size());
+    EXPECT_EQ(out.forward_mismatches, -1);
+    EXPECT_EQ(out.reverse_mismatches, -1);
+    EXPECT_TRUE(out.finished);
+}
+
 TEST(ConstantTemplate, ReverseComplement) {
     std::string thing = "ACGT----TTTT"; 
 
