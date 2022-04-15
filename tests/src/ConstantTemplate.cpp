@@ -19,6 +19,7 @@ TEST(ConstantTemplate, Basic) {
     {
         std::string seq = "ACGTAAAATTTT";
         auto out = stuff.initialize(seq.c_str(), seq.size());
+        stuff.next(out);
         EXPECT_EQ(out.forward_mismatches, 0);
         EXPECT_EQ(out.reverse_mismatches, -1);
         EXPECT_TRUE(out.finished);
@@ -27,6 +28,7 @@ TEST(ConstantTemplate, Basic) {
     {
         std::string seq = "GACGTAAAATTTTA";
         auto out = stuff.initialize(seq.c_str(), seq.size());
+        stuff.next(out);
         EXPECT_TRUE(out.forward_mismatches > 2);
         EXPECT_FALSE(out.finished);
 
@@ -46,6 +48,7 @@ TEST(ConstantTemplate, TooShort) {
 
     std::string seq = "ACGT";
     auto out = stuff.initialize(seq.c_str(), seq.size());
+
     EXPECT_EQ(out.forward_mismatches, -1);
     EXPECT_EQ(out.reverse_mismatches, -1);
     EXPECT_TRUE(out.finished);
@@ -58,6 +61,8 @@ TEST(ConstantTemplate, ReverseComplement) {
         kaori::ConstantTemplate<64> stuff(thing.c_str(), thing.size(), true, true);
         std::string seq = "AAAATTTTACGT";
         auto out = stuff.initialize(seq.c_str(), seq.size());
+
+        stuff.next(out);
         EXPECT_TRUE(out.forward_mismatches > 0);
         EXPECT_EQ(out.reverse_mismatches, 0);
         EXPECT_TRUE(out.finished);
@@ -67,6 +72,8 @@ TEST(ConstantTemplate, ReverseComplement) {
         kaori::ConstantTemplate<64> stuff(thing.c_str(), thing.size(), false, true);
         std::string seq = "AAAATTTTACGT";
         auto out = stuff.initialize(seq.c_str(), seq.size());
+
+        stuff.next(out);
         EXPECT_EQ(out.forward_mismatches, -1);
         EXPECT_EQ(out.reverse_mismatches, 0);
         EXPECT_TRUE(out.finished);
@@ -81,6 +88,8 @@ TEST(ConstantTemplate, ReverseComplement) {
         kaori::ConstantTemplate<64> stuff(thing.c_str(), thing.size(), true, false);
         std::string seq = "AAAATTTTACGT";
         auto out = stuff.initialize(seq.c_str(), seq.size());
+
+        stuff.next(out);
         EXPECT_TRUE(out.forward_mismatches > 0);
         EXPECT_EQ(out.reverse_mismatches, -1);
         EXPECT_TRUE(out.finished);
@@ -110,21 +119,19 @@ TEST(ConstantTemplate, Multiple) {
         auto out = stuff.initialize(seq.c_str(), seq.size());
         
         for (int i = 0; i < 5; ++i) {
+            stuff.next(out);
             EXPECT_TRUE(out.forward_mismatches > 1);
             EXPECT_FALSE(out.finished);
-            stuff.next(out);
         }
 
+        stuff.next(out);
         EXPECT_EQ(out.forward_mismatches, 0);
         EXPECT_FALSE(out.finished);
-        stuff.next(out);
 
         for (int i = 0; i < 5; ++i) {
+            stuff.next(out);
             EXPECT_TRUE(out.forward_mismatches > 1);
             EXPECT_EQ(out.finished, i == 4);
-            if (i < 4) {
-                stuff.next(out);
-            }
         }
     }
 }
@@ -144,6 +151,8 @@ TEST(ConstantTemplate, Mismatches) {
     {
         std::string seq = "aACGTAAAAGTTTg";
         auto out = stuff.initialize(seq.c_str(), seq.size());
+
+        stuff.next(out);
         stuff.next(out);
         EXPECT_EQ(out.forward_mismatches, 1);
         EXPECT_FALSE(out.finished);
@@ -152,6 +161,8 @@ TEST(ConstantTemplate, Mismatches) {
     {
         std::string seq = "aACGTAAAAGGTTg";
         auto out = stuff.initialize(seq.c_str(), seq.size());
+
+        stuff.next(out);
         stuff.next(out);
         EXPECT_EQ(out.forward_mismatches, 2);
         EXPECT_FALSE(out.finished);
@@ -160,6 +171,8 @@ TEST(ConstantTemplate, Mismatches) {
     {
         std::string seq = "aCCGTAAAAGGTTg";
         auto out = stuff.initialize(seq.c_str(), seq.size());
+
+        stuff.next(out);
         stuff.next(out);
         EXPECT_EQ(out.forward_mismatches, 3);
         EXPECT_FALSE(out.finished);
@@ -175,6 +188,7 @@ TEST(ConstantTemplate, BadBases) {
         auto out = stuff.initialize(seq.c_str(), seq.size());
 
         stuff.next(out);
+        stuff.next(out);
         EXPECT_EQ(out.forward_mismatches, 0);
         EXPECT_FALSE(out.finished);
     }
@@ -185,11 +199,12 @@ TEST(ConstantTemplate, BadBases) {
         auto out = stuff.initialize(seq.c_str(), seq.size());
 
         for (int i = 0; i < 10; ++i) {
+            stuff.next(out);
             EXPECT_TRUE(out.forward_mismatches > 0);
             EXPECT_FALSE(out.finished);
-            stuff.next(out);
         }
 
+        stuff.next(out);
         EXPECT_EQ(out.forward_mismatches, 1);
         EXPECT_FALSE(out.finished);
         EXPECT_EQ(out.ambiguous.count(), 4);
@@ -202,11 +217,12 @@ TEST(ConstantTemplate, BadBases) {
         auto out = stuff.initialize(seq.c_str(), seq.size());
 
         for (int i = 0; i < 4; ++i) {
+            stuff.next(out);
             EXPECT_TRUE(out.forward_mismatches > 0);
             EXPECT_FALSE(out.finished);
-            stuff.next(out);
         }
 
+        stuff.next(out);
         EXPECT_EQ(out.forward_mismatches, 0);
         EXPECT_FALSE(out.finished);
         EXPECT_TRUE(out.bad.empty());

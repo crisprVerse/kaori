@@ -56,7 +56,7 @@ public:
 
 public:
     struct MatchDetails {
-        size_t position = 0;
+        size_t position = static_cast<size_t>(-1); // overflow should be sane.
         int forward_mismatches = -1;
         int reverse_mismatches = -1;
         bool finished = false;
@@ -79,8 +79,7 @@ public:
         out.len = len;
 
         if (length <= len) {
-            size_t limit = std::min(length, len);
-            for (size_t i = 0; i < limit; ++i) {
+            for (size_t i = 0; i < length - 1; ++i) {
                 char base = seq[i];
 
                 if (is_good(base)) {
@@ -96,11 +95,7 @@ public:
                     out.bad.push_back(i);
                 }
             }
-
-            full_match(out);
-        }
-        
-        if (length >= len) {
+        } else {
             out.finished = true;
         }
 
@@ -136,9 +131,7 @@ public:
 
         ++match.position;
         full_match(match);
-
-        ++right;
-        if (right == match.len) {
+        if (right + 1 == match.len) {
             match.finished = true;
         }
 

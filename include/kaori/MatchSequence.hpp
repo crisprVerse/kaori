@@ -269,7 +269,9 @@ public:
             state.mismatches = mismatches;
         };
 
-        while (1) {
+        while (!deets.finished) {
+            constant.next(deets);
+
             if (forward) {
                 auto out = forward_match(seq, deets, max_mismatches, state.identity, state.seqbuffer, state.forward_cache);
                 if (out >= 0) {
@@ -285,11 +287,6 @@ public:
                     break;
                 }
             }
-            
-            if (deets.finished) {
-                break;
-            }
-            constant.next(deets);
         }
 
         return found;
@@ -316,7 +313,9 @@ public:
             }
         };
 
-        while (1) {
+        while (!deets.finished) {
+            constant.next(deets);
+
             if (forward) {
                 auto out = forward_match(seq, deets, max_mismatches, state.resbuffer, state.seqbuffer, state.forward_cache);
                 update(false, out);
@@ -326,11 +325,6 @@ public:
                 auto out = reverse_match(seq, deets, max_mismatches, state.resbuffer, state.seqbuffer, state.reverse_cache);
                 update(true, out);
             }
-
-            if (deets.finished) {
-                break;
-            }
-            constant.next(deets);
         }
 
         return found;
