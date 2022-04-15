@@ -37,6 +37,13 @@ TEST(MatchSequence, BasicFirst) {
         EXPECT_TRUE(stuff.search_first(seq.c_str(), seq.size(), 0, state));
         EXPECT_EQ(state.position, 10);
     }
+}
+
+TEST(MatchSequence, MismatchFirst) {
+    std::string constant = "ACGT----TGCA";
+    std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
+    auto ptrs = to_pointers(variables);
+    kaori::MatchSequence<64> stuff(constant.c_str(), constant.size(), true, false, ptrs);
 
     // 1 mismatch in constant region.
     {
@@ -52,7 +59,7 @@ TEST(MatchSequence, BasicFirst) {
         EXPECT_EQ(state.identity[0].second, 0);
     }
 
-    // 1 mismatch in variable region.
+    // Mismatches in variable region.
     {
         std::string seq = "cagcatcgatcgtgaACGTATAATGCAcacggaggaga";
         auto state = stuff.initialize();
@@ -63,6 +70,33 @@ TEST(MatchSequence, BasicFirst) {
         EXPECT_FALSE(state.reverse);
         ASSERT_EQ(state.identity.size(), 1);
         EXPECT_EQ(state.identity[0].first, 0);
+        EXPECT_EQ(state.identity[0].second, 1);
+    }
+
+    {
+        std::string seq = "cagcatcgatcgtgaACGTTTACTGCAcacggaggaga";
+        auto state = stuff.initialize();
+        EXPECT_TRUE(stuff.search_first(seq.c_str(), seq.size(), 2, state));
+
+        EXPECT_EQ(state.position, 15);
+        EXPECT_EQ(state.mismatches, 2);
+        EXPECT_FALSE(state.reverse);
+        ASSERT_EQ(state.identity.size(), 1);
+        EXPECT_EQ(state.identity[0].first, 3);
+        EXPECT_EQ(state.identity[0].second, 2);
+    }
+
+    // Mismatches in both.
+    {
+        std::string seq = "cagcatcgatcgtgaACCTTTATTGCAcacggaggaga";
+        auto state = stuff.initialize();
+        EXPECT_TRUE(stuff.search_first(seq.c_str(), seq.size(), 2, state));
+
+        EXPECT_EQ(state.position, 15);
+        EXPECT_EQ(state.mismatches, 2);
+        EXPECT_FALSE(state.reverse);
+        ASSERT_EQ(state.identity.size(), 1);
+        EXPECT_EQ(state.identity[0].first, 3);
         EXPECT_EQ(state.identity[0].second, 1);
     }
 
@@ -80,7 +114,7 @@ TEST(MatchSequence, BasicFirst) {
         EXPECT_FALSE(stuff.search_first(seq.c_str(), seq.size(), 2, state));
     }
 
-    // Only returns the first instance.
+    // Only returns the first instance, even though the second is better.
     {
         std::string seq = "cagACGTCCCCTGCAcacACGTAAAATGCA";
         auto state = stuff.initialize();
@@ -241,3 +275,187 @@ TEST(MatchSequence, BasicBest) {
     }
 }
 
+TEST(MatchSequence, MultiFirst) {
+    std::string constant = "AAAA----CGGC------TTTT";
+    std::vector<std::string> variables1 { "AAAA", "CCCC", "GGGG", "TTTT" };
+    std::vector<std::string> variables2 { "ACACAC", "TGTGTG", "AGAGAG", "CTCTCT" };
+    kaori::MatchSequence<128> stuff(constant.c_str(), constant.size(), true, false, std::vector<int>{0, 1}, 
+        std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) });
+
+    // Perfect match.
+    {
+        std::string seq = "cagAAAAAAAACGGCTGTGTGTTTTacac";
+        auto state = stuff.initialize();
+        EXPECT_TRUE(stuff.search_first(seq.c_str(), seq.size(), 0, state));
+
+        EXPECT_EQ(state.position, 3);
+        EXPECT_EQ(state.mismatches, 0);
+        EXPECT_FALSE(state.reverse);
+        ASSERT_EQ(state.identity.size(), 2);
+        EXPECT_EQ(state.identity[0].first, 0);
+        EXPECT_EQ(state.identity[0].second, 0);
+        EXPECT_EQ(state.identity[1].first, 1);
+        EXPECT_EQ(state.identity[1].second, 0);
+    }
+
+    // One mismatch.
+    {
+        std::string seq = "cagAAAAATAACGGCTGTGTGTTTTacac";
+        {
+            auto state1 = stuff.initialize();
+            EXPECT_FALSE(stuff.search_first(seq.c_str(), seq.size(), 0, state1));
+        }
+
+        auto state = stuff.initialize();
+        EXPECT_TRUE(stuff.search_first(seq.c_str(), seq.size(), 1, state));
+        EXPECT_EQ(state.position, 3);
+        EXPECT_EQ(state.mismatches, 1);
+        EXPECT_FALSE(state.reverse);
+        ASSERT_EQ(state.identity.size(), 2);
+        EXPECT_EQ(state.identity[0].first, 0);
+        EXPECT_EQ(state.identity[0].second, 1);
+        EXPECT_EQ(state.identity[1].first, 1);
+        EXPECT_EQ(state.identity[1].second, 0);
+    }
+
+    // Mismatches spread across two variable regions.
+    {
+        std::string seq = "cagAAAAATAACGGCTGTCTGTTTTacac";
+
+        auto state = stuff.initialize();
+        EXPECT_TRUE(stuff.search_first(seq.c_str(), seq.size(), 2, state));
+        EXPECT_EQ(state.position, 3);
+        EXPECT_EQ(state.mismatches, 2);
+        EXPECT_FALSE(state.reverse);
+        ASSERT_EQ(state.identity.size(), 2);
+        EXPECT_EQ(state.identity[0].first, 0);
+        EXPECT_EQ(state.identity[0].second, 1);
+        EXPECT_EQ(state.identity[1].first, 1);
+        EXPECT_EQ(state.identity[1].second, 1);
+    }
+
+    {
+        std::string seq = "cagAAAATCAACGGCTGTGTGTTTTacac";
+
+        auto state = stuff.initialize();
+        EXPECT_TRUE(stuff.search_first(seq.c_str(), seq.size(), 2, state));
+        EXPECT_EQ(state.position, 3);
+        EXPECT_EQ(state.mismatches, 2);
+        EXPECT_FALSE(state.reverse);
+        ASSERT_EQ(state.identity.size(), 2);
+        EXPECT_EQ(state.identity[0].first, 0);
+        EXPECT_EQ(state.identity[0].second, 2);
+        EXPECT_EQ(state.identity[1].first, 1);
+        EXPECT_EQ(state.identity[1].second, 0);
+    }
+
+    {
+        std::string seq = "cagAAAATTAACGGCTGTCTGTTTTacac";
+        auto state = stuff.initialize();
+        EXPECT_FALSE(stuff.search_first(seq.c_str(), seq.size(), 2, state));
+    }
+
+    // Mismatches in constant and variable regions.
+    {
+        std::string seq = "cagAATAATAACGGCTGTCTGTTTTacac";
+        {
+            auto state = stuff.initialize();
+            EXPECT_FALSE(stuff.search_first(seq.c_str(), seq.size(), 1, state));
+        }
+        {
+            auto state = stuff.initialize();
+            EXPECT_FALSE(stuff.search_first(seq.c_str(), seq.size(), 2, state));
+        }
+
+        auto state = stuff.initialize();
+        EXPECT_TRUE(stuff.search_first(seq.c_str(), seq.size(), 3, state));
+        EXPECT_EQ(state.position, 3);
+        EXPECT_EQ(state.mismatches, 3);
+        EXPECT_FALSE(state.reverse);
+        ASSERT_EQ(state.identity.size(), 2);
+        EXPECT_EQ(state.identity[0].first, 0);
+        EXPECT_EQ(state.identity[0].second, 1);
+        EXPECT_EQ(state.identity[1].first, 1);
+        EXPECT_EQ(state.identity[1].second, 1);
+    }
+
+    // Rejects on ambiguities for any variable region.
+    {
+        std::string seq = "cagAAAATTAACGGCTGTGTGTTTTacac";
+        auto state = stuff.initialize();
+        EXPECT_FALSE(stuff.search_first(seq.c_str(), seq.size(), 2, state));
+    }
+}
+
+TEST(MatchSequence, FragmentedFirst) {
+    std::string constant = "AAAA----CGGC------TTTT";
+    std::vector<std::string> variables { "AAAATTTTTT", "CCCCGGGGGG", "GGGGAAAAAA", "TTTTAAAAAA" };
+    kaori::MatchSequence<128> stuff(constant.c_str(), constant.size(), true, false, to_pointers(variables));
+
+    // Perfect match.
+    {
+        std::string seq = "cagAAAAAAAACGGCTTTTTTTTTTacac";
+        auto state = stuff.initialize();
+        EXPECT_TRUE(stuff.search_first(seq.c_str(), seq.size(), 0, state));
+
+        EXPECT_EQ(state.position, 3);
+        EXPECT_EQ(state.mismatches, 0);
+        EXPECT_FALSE(state.reverse);
+        ASSERT_EQ(state.identity.size(), 1);
+        EXPECT_EQ(state.identity[0].first, 0);
+        EXPECT_EQ(state.identity[0].second, 0);
+    }
+}
+
+TEST(MatchSequence, Caching) {
+    std::string constant = "ACGT----TGCA";
+    std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
+    auto ptrs = to_pointers(variables);
+    kaori::MatchSequence<64> stuff(constant.c_str(), constant.size(), true, false, ptrs);
+
+    auto state = stuff.initialize();
+
+    // No cache when there is no mismatch.
+    {
+        std::string seq = "cagcatcgatcgtgaACGTAAAATGCAcacggaggaga";
+        EXPECT_TRUE(stuff.search_first(seq.c_str(), seq.size(), 1, state));
+
+        const auto& cache = state.forward_cache[0];
+        auto it = cache.find("AAAA");
+        EXPECT_TRUE(it == cache.end());
+    }
+
+    // Stored in cache for >1 mismatches.
+    {
+        std::string seq = "cagcatcgatcgtgaACGTAATATGCAcacggaggaga";
+        EXPECT_TRUE(stuff.search_first(seq.c_str(), seq.size(), 1, state));
+
+        const auto& cache = state.forward_cache[0];
+        auto it = cache.find("AATA");
+        EXPECT_TRUE(it != cache.end());
+        EXPECT_EQ((it->second).first, 0);
+        EXPECT_EQ((it->second).second, 1);
+    }
+
+    {
+        std::string seq = "cagcatcgatcgtgaACGTACTATGCAcacggaggaga";
+        EXPECT_FALSE(stuff.search_first(seq.c_str(), seq.size(), 1, state));
+
+        const auto& cache = state.forward_cache[0];
+        auto it = cache.find("ACTA");
+        EXPECT_TRUE(it != cache.end());
+        EXPECT_EQ((it->second).first, -1);
+    }
+    
+    // Checking that the reduction works correctly.
+    state.forward_cache[0]["AATA"].first = 2;
+    stuff.reduce(state);
+    EXPECT_TRUE(state.forward_cache[0].empty());
+
+    {
+        std::string seq = "cagcatcgatcgtgaACGTAATATGCAcacggaggaga";
+        EXPECT_TRUE(stuff.search_first(seq.c_str(), seq.size(), 1, state));
+        ASSERT_EQ(state.identity.size(), 1);
+        EXPECT_EQ(state.identity[0].first, 2); // re-uses the cache value!
+    }
+}
