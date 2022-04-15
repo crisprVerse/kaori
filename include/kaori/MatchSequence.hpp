@@ -269,7 +269,7 @@ public:
             state.mismatches = mismatches;
         };
 
-        while (!deets.finished) {
+        while (1) {
             if (forward) {
                 auto out = forward_match(seq, deets, max_mismatches, state.identity, state.seqbuffer, state.forward_cache);
                 if (out >= 0) {
@@ -285,7 +285,10 @@ public:
                     break;
                 }
             }
-
+            
+            if (deets.finished) {
+                break;
+            }
             constant.next(deets);
         }
 
@@ -302,7 +305,7 @@ public:
             if (mismatches >= 0) {
                 if (mismatches == best) {
                     found = false;
-                } else {
+                } else if (mismatches < best) {
                     best = mismatches;
                     max_mismatches = best; // reducing it to truncate the search space for subsequent rounds.
                     state.identity.swap(state.resbuffer);
@@ -313,7 +316,7 @@ public:
             }
         };
 
-        while (!deets.finished) {
+        while (1) {
             if (forward) {
                 auto out = forward_match(seq, deets, max_mismatches, state.resbuffer, state.seqbuffer, state.forward_cache);
                 update(false, out);
@@ -324,6 +327,9 @@ public:
                 update(true, out);
             }
 
+            if (deets.finished) {
+                break;
+            }
             constant.next(deets);
         }
 
