@@ -46,13 +46,13 @@ private:
     std::vector<char> name_buffer;
     std::vector<size_t> name_offset;
 
-    static void add_read_details(const std::vector<char>& src, std::vector<char>& dst, std::vector<size_t> offset) {
+    static void add_read_details(const std::vector<char>& src, std::vector<char>& dst, std::vector<size_t>& offset) {
         dst.insert(dst.end(), src.begin(), src.end());
         auto last = offset.back();
         offset.push_back(last + src.size());
     }
 
-    static std::pair<const char*, const char*> get_details(size_t i, const std::vector<char>& dest, const std::vector<size_t> offset) {
+    static std::pair<const char*, const char*> get_details(size_t i, const std::vector<char>& dest, const std::vector<size_t>& offset) {
         const char * base = dest.data();
         return std::make_pair(base + offset[i], base + offset[i + 1]);
     }
@@ -108,9 +108,12 @@ void process_single_end_data(byteme::Reader* input, Task& task, int num_threads 
             if (finished) {
                 // We won't get a future iteration to join the previous threads
                 // that we kicked off, so we do it now.
-                for (int u = 0; u <= t; ++u) {
-                    jobs[u].join();
-                    task.reduce(states[u]);
+                for (int u = 0; u < num_threads; ++u) {
+                    auto pos = (u + t + 1) % num_threads;
+                    if (jobs[pos].joinable()) {
+                        jobs[pos].join();
+                        task.reduce(states[pos]);
+                    }
                 }
                 break;
             }
@@ -172,6 +175,13 @@ void process_paired_end_data(byteme::Reader* input1, byteme::Reader* input2, Tas
             }
 
             if (finished1 != finished2) {
+                // Wait for all remaining threads to join before throwing,
+                // otherwise we get weird errors.
+                for (int u = 0; u < num_threads; ++u) {
+                    if (jobs[u].joinable()) {
+                        jobs[u].join();
+                    }
+                }
                 throw std::runtime_error("different number of reads in paired data");
             } else if (finished1) {
                 finished = true;
@@ -181,7 +191,7 @@ void process_paired_end_data(byteme::Reader* input1, byteme::Reader* input2, Tas
             jobs[t] = std::thread([&](int i) -> void {
                 auto& state = states[i];
                 const auto& curreads1 = reads1[i];
-                const auto& curreads2 = reads1[i];
+                const auto& curreads2 = reads2[i];
                 size_t nreads = curreads1.size();
 
                 if constexpr(!Task::use_names) {
@@ -203,9 +213,12 @@ void process_paired_end_data(byteme::Reader* input1, byteme::Reader* input2, Tas
             if (finished) {
                 // We won't get a future iteration to join the previous threads
                 // that we kicked off, so we do it now.
-                for (int u = 0; u <= t; ++u) {
-                    jobs[u].join();
-                    task.reduce(states[u]);
+                for (int u = 0; u < num_threads; ++u) {
+                    auto pos = (u + t + 1) % num_threads;
+                    if (jobs[pos].joinable()) {
+                        jobs[pos].join();
+                        task.reduce(states[pos]);
+                    }
                 }
                 break;
             }
