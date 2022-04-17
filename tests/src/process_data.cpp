@@ -11,14 +11,14 @@ public:
         std::vector<std::string> reads, names;
     };
 
-    void process(State& state, const std::pair<const char*, const char*>& x) {
+    void process(State& state, const std::pair<const char*, const char*>& x) const {
         if constexpr(failtest) {
             throw std::runtime_error("I want a burger");
         }
         state.reads.emplace_back(x.first, x.second);
     }
 
-    void process(State& state, const std::pair<const char*, const char*>& x, const std::pair<const char*, const char*>& y) {
+    void process(State& state, const std::pair<const char*, const char*>& x, const std::pair<const char*, const char*>& y) const {
         state.names.emplace_back(x.first, x.second);
         state.reads.emplace_back(y.first, y.second);
     };
@@ -142,7 +142,7 @@ public:
         typename SingleEndCollector<unames>::State read1, read2;
     };
 
-    void process(State& state, const std::pair<const char*, const char*>& x1, const std::pair<const char*, const char*>& x2) {
+    void process(State& state, const std::pair<const char*, const char*>& x1, const std::pair<const char*, const char*>& x2) const {
         if constexpr(failtest) {
             throw std::runtime_error("I want some fries");
         }
@@ -155,7 +155,7 @@ public:
         const std::pair<const char*, const char*>& y1,
         const std::pair<const char*, const char*>& x2,
         const std::pair<const char*, const char*>& y2)
-    {
+    const {
         read1.process(state.read1, x1, y1);
         read2.process(state.read2, x2, y2);
     }
