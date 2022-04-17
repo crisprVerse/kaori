@@ -79,6 +79,9 @@ void process_single_end_data(byteme::Reader* input, Task& task, int num_threads 
         }
     };
 
+    // Safety measure to enforce const-ness within each thread.
+    const Task& contask = task;
+
     try {
         while (!finished) {
             for (int t = 0; t < num_threads; ++t) {
@@ -106,11 +109,11 @@ void process_single_end_data(byteme::Reader* input, Task& task, int num_threads 
 
                         if constexpr(!Task::use_names) {
                             for (size_t b = 0; b < nreads; ++b) {
-                                task.process(state, curreads.get_sequence(b));
+                                contask.process(state, curreads.get_sequence(b));
                             }
                         } else {
                             for (size_t b = 0; b < nreads; ++b) {
-                                task.process(state, curreads.get_name(b), curreads.get_sequence(b));
+                                contask.process(state, curreads.get_name(b), curreads.get_sequence(b));
                             }
                         }
                     } catch (std::exception& e) {
