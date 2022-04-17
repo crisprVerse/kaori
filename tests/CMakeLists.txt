@@ -17,6 +17,7 @@ add_executable(
     src/MismatchTrie.cpp
     src/MatchSequence.cpp
     src/process_data.cpp
+    src/handlers/SingleBarcodeSingleEnd.cpp
 )
 
 target_link_libraries(
