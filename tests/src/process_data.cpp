@@ -2,6 +2,7 @@
 #include "kaori/process_data.hpp"
 #include <random>
 #include "byteme/RawBufferReader.hpp"
+#include "utils.h"
 
 template<bool unames, bool failtest = false>
 class SingleEndCollector {
@@ -66,18 +67,6 @@ protected:
                 }
             }
             output.push_back(current);
-        }
-
-        return output;
-    }
-
-    std::string convert_to_fastq(const std::vector<std::string>& reads, std::string prefix = "READ") {
-        std::string output;
-
-        for (size_t i = 0; i < reads.size(); ++i) {
-            output += "@" + prefix + std::to_string(i+1) + "\n";
-            output += reads[i] + "\n";
-            output += "+\n" + std::string(reads[i].size(), '!') + "\n";
         }
 
         return output;
