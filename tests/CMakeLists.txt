@@ -16,6 +16,7 @@ add_executable(
     src/ConstantTemplate.cpp
     src/MismatchTrie.cpp
     src/MatchSequence.cpp
+    src/process_data.cpp
 )
 
 target_link_libraries(
