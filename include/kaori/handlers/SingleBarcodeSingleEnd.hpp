@@ -25,43 +25,33 @@ public:
     struct State {
         State() {}
 
-        State(const MatchSequence<N>& m, bool f, int mm, size_t nvar) : 
-            matcher(&m),
-            state(m.initialize()),
-            use_first(f),
-            mismatches(mm),
-            counts(nvar)
-        {}
+        State(typename MatchSequence<N>::SearchState s, size_t nvar) : search(std::move(s)), counts(nvar) {}
 
-        void process(const std::pair<const char*, const char*>& x) {
-            bool found = false;
-            if (use_first) {
-                found = matcher->search_first(x.first, x.second - x.first, mismatches, state);
-            } else {
-                found = matcher->search_best(x.first, x.second - x.first, mismatches, state);
-            }
-            if (found) {
-                ++(counts[state.identity[0].first]);
-            }
-        }
-
-        const MatchSequence<N>* matcher = NULL;
-        typename MatchSequence<N>::SearchState state;
-        bool use_first;
-        int mismatches;
-
+        typename MatchSequence<N>::SearchState search;
         std::vector<int> counts;
     };
+
+    void process(State& state, const std::pair<const char*, const char*>& x) const {
+        bool found = false;
+        if (use_first) {
+            found = matcher.search_first(x.first, x.second - x.first, mismatches, state.search);
+        } else {
+            found = matcher.search_best(x.first, x.second - x.first, mismatches, state.search);
+        }
+        if (found) {
+            ++(state.counts[state.search.identity[0].first]);
+        }
+    }
 
     static constexpr bool use_names = false;
 
 public:
     State initialize() const {
-        return State(matcher, use_first, mismatches, counts.size());
+        return State(matcher.initialize(), counts.size());
     }
 
     void reduce(State& s) {
-        matcher.reduce(s.state);
+        matcher.reduce(s.search);
         for (size_t i = 0; i < counts.size(); ++i) {
             counts[i] += s.counts[i];
         }

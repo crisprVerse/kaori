@@ -26,62 +26,52 @@ public:
     struct State {
         State() {}
 
-        State(const MatchSequence<N>& m, bool f, int mm, size_t nvar) : 
-            matcher(&m),
-            state(m.initialize()),
-            use_first(f),
-            mismatches(mm),
-            counts(nvar)
-        {}
+        State(typename MatchSequence<N>::SearchState s, size_t nvar) : search(std::move(s)), counts(nvar) {}
 
-        void process(const std::pair<const char*, const char*>& r1, const std::pair<const char*, const char*>& r2) {
-            if (use_first) {
-                if (matcher->search_first(r1.first, r1.second - r1.first, mismatches, state)) {
-                    ++counts[state.identity[0].first];
-                } else if (matcher->search_first(r2.first, r2.second - r2.first, mismatches, state)) {
-                    ++counts[state.identity[0].first];
-                }
-            } else {
-                bool found1 = matcher->search_best(r1.first, r1.second - r1.first, mismatches, state);
-                auto res1 = state.identity[0];
+        typename MatchSequence<N>::SearchState search;
+        std::vector<int> counts;
+    };
 
-                bool found2 = matcher->search_best(r2.first, r2.second - r2.first, mismatches, state);
-                auto res2 = state.identity[0];
+    void process(State& state, const std::pair<const char*, const char*>& r1, const std::pair<const char*, const char*>& r2) const {
+        if (use_first) {
+            if (matcher.search_first(r1.first, r1.second - r1.first, mismatches, state.search)) {
+                ++state.counts[state.search.identity[0].first];
+            } else if (matcher.search_first(r2.first, r2.second - r2.first, mismatches, state.search)) {
+                ++state.counts[state.search.identity[0].first];
+            }
+        } else {
+            bool found1 = matcher.search_best(r1.first, r1.second - r1.first, mismatches, state.search);
+            auto res1 = state.search.identity[0];
 
-                if (found1 && !found2) {
-                    ++counts[res1.first];
-                } else if (!found1 && found2) {
-                    ++counts[res2.first];
-                } else if (found1 && found2) {
-                    auto diff = res1.second - res2.second;
-                    if (diff < 0) {
-                        ++counts[res1.first];
-                    } else if (diff > 0) {
-                        ++counts[res2.first];
-                    } else if (res2.first == res1.first) {
-                        ++counts[res1.first];
-                    }
+            bool found2 = matcher.search_best(r2.first, r2.second - r2.first, mismatches, state.search);
+            auto res2 = state.search.identity[0];
+
+            if (found1 && !found2) {
+                ++state.counts[res1.first];
+            } else if (!found1 && found2) {
+                ++state.counts[res2.first];
+            } else if (found1 && found2) {
+                auto diff = res1.second - res2.second;
+                if (diff < 0) {
+                    ++state.counts[res1.first];
+                } else if (diff > 0) {
+                    ++state.counts[res2.first];
+                } else if (res2.first == res1.first) {
+                    ++state.counts[res1.first];
                 }
             }
         }
-
-        const MatchSequence<N>* matcher;
-        typename MatchSequence<N>::SearchState state;
-        bool use_first;
-        int mismatches;
-
-        std::vector<int> counts;
-    };
+    }
 
     static constexpr bool use_names = false;
 
 public:
     State initialize() const {
-        return State(matcher, use_first, mismatches, counts.size());
+        return State(matcher.initialize(), counts.size());
     }
 
     void reduce(State& s) {
-        matcher.reduce(s.state);
+        matcher.reduce(s.search);
         for (size_t i = 0; i < counts.size(); ++i) {
             counts[i] += s.counts[i];
         }
