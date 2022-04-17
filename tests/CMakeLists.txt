@@ -18,6 +18,7 @@ add_executable(
     src/MatchSequence.cpp
     src/process_data.cpp
     src/handlers/SingleBarcodeSingleEnd.cpp
+    src/handlers/SingleBarcodePairedEnd.cpp
 )
 
 target_link_libraries(

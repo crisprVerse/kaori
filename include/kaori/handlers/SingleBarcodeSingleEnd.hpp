@@ -1,7 +1,6 @@
 #ifndef KAORI_SINGLE_BARCODE_SINGLE_END_HPP
 #define KAORI_SINGLE_BARCODE_SINGLE_END_HPP
 
-#include "byteme/Reader.hpp"
 #include "../MatchSequence.hpp"
 
 namespace kaori {
