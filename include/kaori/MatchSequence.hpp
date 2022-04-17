@@ -99,6 +99,8 @@ public:
         /**
          * @cond
          */
+        SearchState() {}
+
         SearchState(size_t nopt) : identity(nopt), seqbuffer(nopt), resbuffer(nopt), forward_cache(nopt), reverse_cache(nopt) {}
 
         std::vector<std::string> seqbuffer;
@@ -111,7 +113,7 @@ public:
          */
     };
 
-    SearchState initialize() {
+    SearchState initialize() const {
         return SearchState(num_options);
     }
 
