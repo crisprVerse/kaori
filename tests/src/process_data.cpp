@@ -9,18 +9,18 @@ class SingleEndCollector {
 public:
     struct State {
         std::vector<std::string> reads, names;
+    };
 
-        void process(const std::pair<const char*, const char*>& x) {
-            if constexpr(failtest) {
-                throw std::runtime_error("I want a burger");
-            }
-            reads.emplace_back(x.first, x.second);
+    void process(State& state, const std::pair<const char*, const char*>& x) {
+        if constexpr(failtest) {
+            throw std::runtime_error("I want a burger");
         }
+        state.reads.emplace_back(x.first, x.second);
+    }
 
-        void process(const std::pair<const char*, const char*>& x, const std::pair<const char*, const char*>& y) {
-            names.emplace_back(x.first, x.second);
-            reads.emplace_back(y.first, y.second);
-        }
+    void process(State& state, const std::pair<const char*, const char*>& x, const std::pair<const char*, const char*>& y) {
+        state.names.emplace_back(x.first, x.second);
+        state.reads.emplace_back(y.first, y.second);
     };
 
     State initialize() {
@@ -140,21 +140,25 @@ public:
 
     struct State {
         typename SingleEndCollector<unames>::State read1, read2;
-
-        void process(const std::pair<const char*, const char*>& x1, const std::pair<const char*, const char*>& x2) {
-            if constexpr(failtest) {
-                throw std::runtime_error("I want some fries");
-            }
-            read1.process(x1);
-            read2.process(x2);
-        }
-
-        void process(const std::pair<const char*, const char*>& x1, const std::pair<const char*, const char*>& y1,
-                     const std::pair<const char*, const char*>& x2, const std::pair<const char*, const char*>& y2) {
-            read1.process(x1, y1);
-            read2.process(x2, y2);
-        }
     };
+
+    void process(State& state, const std::pair<const char*, const char*>& x1, const std::pair<const char*, const char*>& x2) {
+        if constexpr(failtest) {
+            throw std::runtime_error("I want some fries");
+        }
+        read1.process(state.read1, x1);
+        read2.process(state.read2, x2);
+    }
+
+    void process(State& state, 
+        const std::pair<const char*, const char*>& x1,
+        const std::pair<const char*, const char*>& y1,
+        const std::pair<const char*, const char*>& x2,
+        const std::pair<const char*, const char*>& y2)
+    {
+        read1.process(state.read1, x1, y1);
+        read2.process(state.read2, x2, y2);
+    }
 
     State initialize() {
         return State();

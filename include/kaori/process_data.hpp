@@ -106,11 +106,11 @@ void process_single_end_data(byteme::Reader* input, Task& task, int num_threads 
 
                         if constexpr(!Task::use_names) {
                             for (size_t b = 0; b < nreads; ++b) {
-                                state.process(curreads.get_sequence(b));
+                                task.process(state, curreads.get_sequence(b));
                             }
                         } else {
                             for (size_t b = 0; b < nreads; ++b) {
-                                state.process(curreads.get_name(b), curreads.get_sequence(b));
+                                task.process(state, curreads.get_name(b), curreads.get_sequence(b));
                             }
                         }
                     } catch (std::exception& e) {
@@ -218,11 +218,12 @@ void process_paired_end_data(byteme::Reader* input1, byteme::Reader* input2, Tas
                     try {
                         if constexpr(!Task::use_names) {
                             for (size_t b = 0; b < nreads; ++b) {
-                                state.process(curreads1.get_sequence(b), curreads2.get_sequence(b));
+                                task.process(state, curreads1.get_sequence(b), curreads2.get_sequence(b));
                             }
                         } else {
                             for (size_t b = 0; b < nreads; ++b) {
-                                state.process(
+                                task.process(
+                                    state,
                                     curreads1.get_name(b), 
                                     curreads1.get_sequence(b),
                                     curreads2.get_name(b), 
