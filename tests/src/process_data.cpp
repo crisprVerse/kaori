@@ -3,13 +3,16 @@
 #include <random>
 #include "byteme/RawBufferReader.hpp"
 
-template<bool unames>
+template<bool unames, bool failtest = false>
 class SingleEndCollector {
 public:
     struct State {
         std::vector<std::string> reads, names;
 
         void process(const std::pair<const char*, const char*>& x) {
+            if constexpr(failtest) {
+                throw std::runtime_error("I want a burger");
+            }
             reads.emplace_back(x.first, x.second);
         }
 
@@ -118,7 +121,30 @@ TEST_P(ProcessDataTester, SingleEnd) {
     }
 }
 
-template<bool unames>
+TEST_P(ProcessDataTester, SingleEndErrors) {
+    // Errors in the processing are caught and handled correctly,
+    // especially with respect to closing down all the threads.
+    auto param = GetParam();
+    auto nthreads = std::get<0>(param);
+    auto blocksize = std::get<1>(param);
+
+    auto reads = simulate_reads(nthreads + blocksize);
+    auto fastq_str = convert_to_fastq(reads, "FOO");
+
+    byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fastq_str.c_str()), fastq_str.size());
+    SingleEndCollector<false, true> task;
+
+    EXPECT_ANY_THROW({
+        try {
+            kaori::process_single_end_data(&reader, task, nthreads, blocksize);
+        } catch (std::exception& e) {
+            EXPECT_TRUE(std::string(e.what()) == "I want a burger");
+            throw e;
+        }
+    });
+}
+
+template<bool unames, bool failtest = false>
 class PairedEndCollector {
 public:
     SingleEndCollector<unames> read1, read2;
@@ -127,6 +153,9 @@ public:
         typename SingleEndCollector<unames>::State read1, read2;
 
         void process(const std::pair<const char*, const char*>& x1, const std::pair<const char*, const char*>& x2) {
+            if constexpr(failtest) {
+                throw std::runtime_error("I want some fries");
+            }
             read1.process(x1);
             read2.process(x2);
         }
@@ -149,7 +178,6 @@ public:
 
     static constexpr bool use_names = unames;
 };
-
 
 TEST_P(ProcessDataTester, PairedEnd) {
     auto param = GetParam();
@@ -199,8 +227,35 @@ TEST_P(ProcessDataTester, PairedEnd) {
         }
         EXPECT_TRUE(all_okay);
     }
+}
 
-    // Errors out correctly.
+TEST_P(ProcessDataTester, PairedEndErrors) {
+    auto param = GetParam();
+    auto nthreads = std::get<0>(param);
+    auto blocksize = std::get<1>(param);
+
+    auto reads1 = simulate_reads(nthreads + blocksize);
+    auto reads2 = simulate_reads((nthreads + blocksize) * 2);
+    auto fastq_str1 = convert_to_fastq(reads1, "FOO");
+    auto fastq_str2 = convert_to_fastq(reads2, "BAR");
+
+    // Errors out correctly due to the process.
+    {
+        byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fastq_str1.c_str()), fastq_str1.size());
+        byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fastq_str2.c_str()), fastq_str2.size());
+
+        PairedEndCollector<false, true> task;
+        EXPECT_ANY_THROW({
+            try {
+                kaori::process_paired_end_data(&reader1, &reader2, task, nthreads, blocksize);
+            } catch (std::exception& e) {
+                EXPECT_TRUE(std::string(e.what()).find("I want some fries") != std::string::npos);
+                throw e;
+            }
+        });
+    }
+
+    // Errors out correctly due to the read number.
     {
         auto reads3 = reads2;
         reads3.resize(10);
@@ -220,7 +275,6 @@ TEST_P(ProcessDataTester, PairedEnd) {
         });
     }
 }
-
 
 INSTANTIATE_TEST_SUITE_P(
     ProcessData,
