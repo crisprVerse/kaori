@@ -30,11 +30,13 @@ TEST(SingleBarcodePairedEnd, Forward) {
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
         kaori::process_paired_end_data(&reader1, &reader2, handler);
 
-        const auto& counts = handler.results();
+        const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 1);
         EXPECT_EQ(counts[1], 2);
         EXPECT_EQ(counts[2], 0);
         EXPECT_EQ(counts[3], 0);
+
+        EXPECT_EQ(handler.get_total(), 3);
     }
 
     // Okay, 2 mismatches, in which case the search on the first read is always favored.
@@ -44,11 +46,13 @@ TEST(SingleBarcodePairedEnd, Forward) {
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
         kaori::process_paired_end_data(&reader1, &reader2, handler);
 
-        const auto& counts = handler.results();
+        const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 3);
         EXPECT_EQ(counts[1], 0);
         EXPECT_EQ(counts[2], 0);
         EXPECT_EQ(counts[3], 0);
+
+        EXPECT_EQ(handler.get_total(), 3);
     }
 }
 
@@ -77,7 +81,7 @@ TEST(SingleBarcodePairedEnd, Reverse) {
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
         kaori::process_paired_end_data(&reader1, &reader2, handler);
 
-        const auto& counts = handler.results();
+        const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 0);
         EXPECT_EQ(counts[1], 0);
         EXPECT_EQ(counts[2], 2);
@@ -91,7 +95,7 @@ TEST(SingleBarcodePairedEnd, Reverse) {
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
         kaori::process_paired_end_data(&reader1, &reader2, handler);
 
-        const auto& counts = handler.results();
+        const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 0);
         EXPECT_EQ(counts[1], 0);
         EXPECT_EQ(counts[2], 0);
@@ -130,7 +134,7 @@ TEST(SingleBarcodePairedEnd, Best) {
          * 2 = second read wins, CCCC
          * 3 = first read wins, GGGG.
          */
-        const auto& counts = handler.results();
+        const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 2);
         EXPECT_EQ(counts[1], 1);
         EXPECT_EQ(counts[2], 1);
@@ -150,7 +154,7 @@ TEST(SingleBarcodePairedEnd, Best) {
          * 2 = second read wins, CCCC
          * 3 = first read wins, GGGG.
          */
-        const auto& counts = handler.results();
+        const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 1);
         EXPECT_EQ(counts[1], 1);
         EXPECT_EQ(counts[2], 1);

@@ -25,6 +25,7 @@ public:
 
         typename SimpleSingleMatch<N>::SearchState search;
         std::vector<int> counts;
+        int total = 0;
     };
 
     void process(State& state, const std::pair<const char*, const char*>& x) const {
@@ -37,6 +38,7 @@ public:
         if (found) {
             ++(state.counts[state.search.index]);
         }
+        ++state.total;
     }
 
     static constexpr bool use_names = false;
@@ -51,16 +53,22 @@ public:
         for (size_t i = 0; i < counts.size(); ++i) {
             counts[i] += s.counts[i];
         }
+        total += s.total;
     }
 
 private:
     SimpleSingleMatch<N> matcher;
     std::vector<int> counts;
+    int total = 0;
     bool use_first = true;
 
 public:
-    const std::vector<int>& results() const {
+    const std::vector<int>& get_counts() const {
         return counts;        
+    }
+
+    int get_total() const {
+        return total;
     }
 };
 
