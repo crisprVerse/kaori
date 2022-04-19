@@ -306,3 +306,27 @@ TEST_F(CombinatorialBarcodesTest, Best) {
     }
 }
 
+TEST_F(CombinatorialBarcodesTest, Sorting) {
+    kaori::CombinatorialBarcodes<128, 2> x(constant.c_str(), constant.size(), 0, make_pointers());
+
+    auto state = x.initialize(); 
+    state.collected.push_back(std::array<int, 2>{ 3, 1 });
+    state.collected.push_back(std::array<int, 2>{ 1, 3 });
+    state.collected.push_back(std::array<int, 2>{ 2, 3 });
+    state.collected.push_back(std::array<int, 2>{ 3, 2 });
+    state.collected.push_back(std::array<int, 2>{ 3, 1 });
+    state.collected.push_back(std::array<int, 2>{ 0, 2 });
+    state.collected.push_back(std::array<int, 2>{ 1, 3 });
+
+    auto copy = state.collected;
+    std::sort(copy.begin(), copy.end());
+    x.reduce(state);
+    x.sort();
+
+    EXPECT_EQ(x.get_combinations().front()[0], 0);
+    EXPECT_EQ(x.get_combinations().front()[1], 2);
+    EXPECT_EQ(x.get_combinations().back()[0], 3);
+    EXPECT_EQ(x.get_combinations().back()[1], 2);
+
+    EXPECT_EQ(x.get_combinations(), copy);
+}

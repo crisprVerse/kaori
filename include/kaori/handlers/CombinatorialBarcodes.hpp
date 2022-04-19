@@ -211,14 +211,18 @@ public:
 
 public:
     void sort() {
-        for (size_t i = 0; i < V; ++i) {
+        // Going back to front as the last iteration gives the slowest changing index.
+        // This ensures that we get the same results as std::sort() on the arrays.
+        for (size_t i_ = 0; i_ < V; ++i_) {
+            auto i = V - i_ - 1;
+
             std::vector<size_t> counts(num_options[i] + 1);
             for (const auto& x : combinations) {
                 ++(counts[x[i] + 1]);
             }
 
-            for (size_t i = 1; i < counts.size(); ++i) {
-                counts[i] += counts[i-1];
+            for (size_t j = 1; j < counts.size(); ++j) {
+                counts[j] += counts[j-1];
             }
 
             std::vector<std::array<int, V> > copy(combinations.size());
