@@ -11,10 +11,8 @@ TEST(ConstantTemplate, Basic) {
     EXPECT_EQ(fvar.front().first, 4);
     EXPECT_EQ(fvar.front().second, 8);
 
-    auto rvar = stuff.variable_regions(false);
-    ASSERT_EQ(rvar.size(), 1);
-    EXPECT_EQ(rvar.front().first, 4);
-    EXPECT_EQ(rvar.front().second, 8);
+    auto rvar = stuff.variable_regions<true>();
+    EXPECT_EQ(rvar.size(), 0); // not computed if reverse = false.
 
     {
         std::string seq = "ACGTAAAATTTT";
@@ -107,7 +105,7 @@ TEST(ConstantTemplate, Multiple) {
     EXPECT_EQ(fvar.back().first, 10);
     EXPECT_EQ(fvar.back().second, 15);
 
-    auto rvar = stuff.variable_regions(true);
+    auto rvar = stuff.variable_regions<true>();
     ASSERT_EQ(rvar.size(), 2);
     EXPECT_EQ(rvar.front().first, 2);
     EXPECT_EQ(rvar.front().second, 7);
@@ -145,7 +143,7 @@ TEST(ConstantTemplate, Mismatches) {
     EXPECT_EQ(fvar.front().first, 4);
     EXPECT_EQ(fvar.front().second, 8);
 
-    auto rvar = stuff.variable_regions(true);
+    auto rvar = stuff.variable_regions<true>();
     EXPECT_EQ(rvar.size(), 0); // as we set reverse=false.
 
     {
