@@ -1,9 +1,9 @@
 #ifndef KAORI_COMBINATORIAL_BARCODES_HPP
 #define KAORI_COMBINATORIAL_BARCODES_HPP
 
-#include "ConstantTemplate.hpp"
-#include "VariableLibrary.hpp"
-#include "utils.hpp"
+#include "../ConstantTemplate.hpp"
+#include "../VariableLibrary.hpp"
+#include "../utils.hpp"
 
 #include <array>
 #include <unordered_map>
@@ -19,7 +19,7 @@ public:
         max_mismatches(mismatches),
         constant_matcher(constant, size, forward, reverse)
     {
-        const auto& regions = constant.variable_regions();
+        const auto& regions = constant_matcher.variable_regions();
         if (regions.size() != V) { 
             throw std::runtime_error("expected " + std::to_string(V) + " variable regions in the constant template");
         }
@@ -41,10 +41,11 @@ public:
         }
 
         if (reverse) {
+            const auto& rev_regions = constant_matcher.variable_regions(true);
             for (size_t i = 0; i < V; ++i) {
-                const auto& current = regions[V - i - 1];
+                const auto& current = rev_regions[i];
                 size_t len = current.second - current.first;
-                reverse_lib[i] = VariableLibrary(variable[i], len, mismatches, true);
+                reverse_lib[i] = VariableLibrary(variable[V - i - 1], len, mismatches, true);
             }
         }
     }
@@ -56,7 +57,7 @@ public:
 
 public:
     struct State {
-        std::vector<std::array<int>, V> >collected;
+        std::vector<std::array<int, V> >collected;
         int total = 0;
 
         /**
@@ -72,10 +73,10 @@ public:
     };
 
 private:
+    template<bool reverse>
     std::pair<bool, int> find_match(
         const char* seq, 
         size_t position, 
-        bool reverse, 
         int obs_mismatches, 
         const std::array<VariableLibrary, V>& libs, 
         std::array<typename VariableLibrary::SearchState, V>& states, 
@@ -85,48 +86,54 @@ private:
 
         for (size_t r = 0; r < V; ++r) {
             auto range = regions[r];
-            std::string current(seq + range.first, seq + range.second);
-            libs[r].match(current, states[r]);
+            auto start = seq + position;
+            std::string current(start + range.first, start + range.second);
 
-            if (current.index < 0) {
+            auto& curstate = states[r];
+            libs[r].match(current, curstate);
+            if (curstate.index < 0) {
                 return std::make_pair(false, 0);
             }
             
-            obs_mismatches += current.mismatches;
+            obs_mismatches += curstate.mismatches;
             if (obs_mismatches > max_mismatches) {
                 return std::make_pair(false, 0);
             }
 
-            temp[r] = current.index;
+            if constexpr(reverse) {
+                temp[V - r - 1] = curstate.index;
+            } else {
+                temp[r] = curstate.index;
+            }
         }
 
         return std::make_pair(true, obs_mismatches);
     }
 
-    bool forward_match(const char* seq, const typename ConstantTemplate<N>::MatchState& deets, State& state) const {
-        return find_match(seq, deets.position, false, deets.forward_mismatches, forward_lib, state.forward_details, state.temp);
+    std::pair<bool, int> forward_match(const char* seq, const typename ConstantTemplate<N>::MatchDetails& deets, State& state) const {
+        return find_match<false>(seq, deets.position, deets.forward_mismatches, forward_lib, state.forward_details, state.temp);
     }
 
-    bool reverse_match(const char* seq, const typename ConstantTemplate<N>::MatchState& deets, State& state) const {
-        return find_match(seq, deets.position, true, deets.reverse_mismatches, reverse_lib, state.reverse_details, state.temp);
+    std::pair<bool, int> reverse_match(const char* seq, const typename ConstantTemplate<N>::MatchDetails& deets, State& state) const {
+        return find_match<true>(seq, deets.position, deets.reverse_mismatches, reverse_lib, state.reverse_details, state.temp);
     }
 
 private:
     void process_first(State& state, const std::pair<const char*, const char*>& x) const {
-        auto deets = constant_template.initialize(x.first, x.second - x.first);
+        auto deets = constant_matcher.initialize(x.first, x.second - x.first);
 
         while (!deets.finished) {
-            constant_template.next(deets);
+            constant_matcher.next(deets);
 
             if (forward && deets.forward_mismatches <= max_mismatches) {
-                if (forward_match(seq, deets, state).first) {
+                if (forward_match(x.first, deets, state).first) {
                     state.collected.push_back(state.temp);
                     return;
                 }
             }
 
             if (reverse && deets.reverse_mismatches <= max_mismatches) {
-                if (reverse_match(seq, deets, state).first) {
+                if (reverse_match(x.first, deets, state).first) {
                     state.collected.push_back(state.temp);
                     return;
                 }
@@ -135,38 +142,32 @@ private:
     }
 
     void process_best(State& state, const std::pair<const char*, const char*>& x) const {
-        auto deets = constant_template.initialize(x.first, x.second - x.first);
+        auto deets = constant_matcher.initialize(x.first, x.second - x.first);
         bool found = false;
-        int best = max_mismatches + 1;
+        int best_mismatches = max_mismatches + 1;
         std::array<int, V> best_id;
 
+        auto update = [&](std::pair<int, int> match) -> void {
+            if (match.first && match.second <= best_mismatches) {
+                if (match.second == best_mismatches) {
+                    found = false;
+                } else { 
+                    found = true;
+                    best_mismatches = match.second;
+                    best_id = state.temp;
+                }
+            }
+        };
+
         while (!deets.finished) {
-            constant_template.next(deets);
+            constant_matcher.next(deets);
 
             if (forward && deets.forward_mismatches <= max_mismatches) {
-                auto fout = forward_match(seq, deets, state);
-                if (fout.first && fout.second <= best) {
-                    if (fout.second == best) {
-                        found = false;
-                    } else { 
-                        found = true;
-                        best = fout.second;
-                        best_id = state.temp;
-                    }
-                }
+                update(forward_match(x.first, deets, state));
             }
 
             if (reverse && deets.reverse_mismatches <= max_mismatches) {
-                auto rout = reverse_match(seq, deets, state);
-                if (rout.first && rout.second <= best) {
-                    if (rout.second == best) {
-                        found = false;
-                    } else { 
-                        found = true;
-                        best = rout.second;
-                        best_id = state.temp;
-                    }
-                }
+                update(reverse_match(x.first, deets, state));
             }
         }
 
@@ -196,6 +197,16 @@ public:
         return;
     }
 
+    void process(State& state, const std::pair<const char*, const char*>& x) const {
+        if (use_first) {
+            process_first(state, x);
+        } else {
+            process_best(state, x);
+        }
+    }
+
+    static constexpr bool use_names = false;
+
 public:
     void sort() {
         for (size_t i = 0; i < V; ++i) {
@@ -219,7 +230,7 @@ public:
         }
     }
 
-    const std::vector<std::array<int, N> >& get_combinations() const {
+    const std::vector<std::array<int, V> >& get_combinations() const {
         return combinations;
     }
 
@@ -235,6 +246,8 @@ private:
 
     std::vector<std::array<int, V> > combinations;
     std::array<size_t, V> num_options;
+};
+
 }
 
 #endif
