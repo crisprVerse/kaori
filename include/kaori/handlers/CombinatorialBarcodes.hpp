@@ -41,7 +41,7 @@ public:
         }
 
         if (reverse) {
-            const auto& rev_regions = constant_matcher.variable_regions(true);
+            const auto& rev_regions = constant_matcher.template variable_regions<true>();
             for (size_t i = 0; i < V; ++i) {
                 const auto& current = rev_regions[i];
                 size_t len = current.second - current.first;
@@ -82,7 +82,7 @@ private:
         std::array<typename VariableLibrary::SearchState, V>& states, 
         std::array<int, V>& temp) 
     const {
-        const auto& regions = constant_matcher.variable_regions(reverse);
+        const auto& regions = constant_matcher.template variable_regions<reverse>();
 
         for (size_t r = 0; r < V; ++r) {
             auto range = regions[r];
