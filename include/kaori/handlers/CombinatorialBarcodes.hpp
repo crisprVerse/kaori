@@ -194,6 +194,7 @@ public:
         }
 
         combinations.insert(combinations.end(), s.collected.begin(), s.collected.end());
+        total += s.total;
         return;
     }
 
@@ -203,6 +204,7 @@ public:
         } else {
             process_best(state, x);
         }
+        ++state.total;
     }
 
     static constexpr bool use_names = false;
@@ -234,6 +236,9 @@ public:
         return combinations;
     }
 
+    int get_total() const {
+        return total;
+    }
 private:
     bool forward;
     bool reverse;
@@ -243,9 +248,10 @@ private:
 
     ConstantTemplate<N> constant_matcher;
     std::array<VariableLibrary, V> forward_lib, reverse_lib;
+    std::array<size_t, V> num_options;
 
     std::vector<std::array<int, V> > combinations;
-    std::array<size_t, V> num_options;
+    int total = 0;
 };
 
 }

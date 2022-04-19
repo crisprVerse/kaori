@@ -56,6 +56,8 @@ TEST_F(CombinatorialBarcodesTest, BasicFirst) {
 
         const auto& combos = stuff.get_combinations();
         ASSERT_EQ(combos.size(), 4); // from the previous invokation of process().
+        EXPECT_EQ(stuff.get_total(), 4);
+
         EXPECT_EQ(combos[1][0], 1);
         EXPECT_EQ(combos[1][1], 2);
         EXPECT_EQ(combos[2][0], 2);
@@ -81,6 +83,7 @@ TEST_F(CombinatorialBarcodesTest, ReverseComplementFirst) {
     {
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, forward);
+        EXPECT_EQ(forward.get_total(), 2);
 
         const auto& combos = forward.get_combinations();
         ASSERT_EQ(combos.size(), 1);
@@ -92,6 +95,7 @@ TEST_F(CombinatorialBarcodesTest, ReverseComplementFirst) {
     {
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, reverse);
+        EXPECT_EQ(reverse.get_total(), 2);
 
         const auto& combos = reverse.get_combinations();
         ASSERT_EQ(combos.size(), 1);
