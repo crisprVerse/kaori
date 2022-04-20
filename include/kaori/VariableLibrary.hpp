@@ -96,7 +96,7 @@ public:
 
 private:
     std::unordered_map<std::string, int> exact;
-    MismatchTrie trie;
+    SimpleMismatchTrie trie;
     std::unordered_map<std::string, std::pair<int, int> > cache;
     int max_mismatches;
 };
