@@ -29,10 +29,10 @@ public:
         size_t var_length = regions[0].second - regions[0].first;
 
         if (forward) {
-            forward_lib = VariableLibrary(options, var_length, max_mismatches);
+            forward_lib = SimpleVariableLibrary(options, var_length, max_mismatches);
         }
         if (reverse) {
-            reverse_lib = VariableLibrary(options, var_length, max_mismatches, true);
+            reverse_lib = SimpleVariableLibrary(options, var_length, max_mismatches, true);
         }
     }
 
@@ -47,7 +47,7 @@ public:
         /**
          * @cond
          */
-        typename VariableLibrary::SearchState forward_details, reverse_details;
+        typename SimpleVariableLibrary::SearchState forward_details, reverse_details;
         /**
          * @endcond
          */
@@ -93,7 +93,7 @@ public:
         state.mismatches = 0;
         state.variable_mismatches = 0;
 
-        auto update = [&](bool rev, int const_mismatches, const typename VariableLibrary::SearchState& x) -> bool {
+        auto update = [&](bool rev, int const_mismatches, const typename SimpleVariableLibrary::SearchState& x) -> bool {
             if (x.index < 0) {
                 return false;
             }
@@ -139,7 +139,7 @@ public:
         bool found = false;
         int best = max_mismatches + 1;
 
-        auto update = [&](bool rev,  int const_mismatches, const typename VariableLibrary::SearchState& x) -> void {
+        auto update = [&](bool rev,  int const_mismatches, const typename SimpleVariableLibrary::SearchState& x) -> void {
             if (x.index < 0) {
                 return;
             }
@@ -187,7 +187,7 @@ private:
     int max_mismatches;
 
     ConstantTemplate<N> constant;
-    VariableLibrary forward_lib, reverse_lib;
+    SimpleVariableLibrary forward_lib, reverse_lib;
 };
 
 }

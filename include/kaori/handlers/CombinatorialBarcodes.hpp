@@ -36,7 +36,7 @@ public:
             for (size_t i = 0; i < V; ++i) {
                 const auto& current = regions[i];
                 size_t len = current.second - current.first;
-                forward_lib[i] = VariableLibrary(variable[i], len, mismatches);
+                forward_lib[i] = SimpleVariableLibrary(variable[i], len, mismatches);
             }
         }
 
@@ -45,7 +45,7 @@ public:
             for (size_t i = 0; i < V; ++i) {
                 const auto& current = rev_regions[i];
                 size_t len = current.second - current.first;
-                reverse_lib[i] = VariableLibrary(variable[V - i - 1], len, mismatches, true);
+                reverse_lib[i] = SimpleVariableLibrary(variable[V - i - 1], len, mismatches, true);
             }
         }
     }
@@ -66,7 +66,7 @@ public:
         std::array<int, V> temp;
 
         // Default constructors should be called in this case, so it should be fine.
-        std::array<typename VariableLibrary::SearchState, V> forward_details, reverse_details;
+        std::array<typename SimpleVariableLibrary::SearchState, V> forward_details, reverse_details;
         /**
          * @endcond
          */
@@ -78,8 +78,8 @@ private:
         const char* seq, 
         size_t position, 
         int obs_mismatches, 
-        const std::array<VariableLibrary, V>& libs, 
-        std::array<typename VariableLibrary::SearchState, V>& states, 
+        const std::array<SimpleVariableLibrary, V>& libs, 
+        std::array<typename SimpleVariableLibrary::SearchState, V>& states, 
         std::array<int, V>& temp) 
     const {
         const auto& regions = constant_matcher.template variable_regions<reverse>();
@@ -251,7 +251,7 @@ private:
     size_t nregions;
 
     ConstantTemplate<N> constant_matcher;
-    std::array<VariableLibrary, V> forward_lib, reverse_lib;
+    std::array<SimpleVariableLibrary, V> forward_lib, reverse_lib;
     std::array<size_t, V> num_options;
 
     std::vector<std::array<int, V> > combinations;

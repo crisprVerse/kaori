@@ -4,11 +4,11 @@
 #include <vector>
 #include "utils.h"
 
-TEST(VariableLibrary, Basic) {
+TEST(SimpleVariableLibrary, Basic) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
     auto ptrs = to_pointers(variables);
 
-    kaori::VariableLibrary stuff(ptrs, 4);
+    kaori::SimpleVariableLibrary stuff(ptrs, 4);
     auto init = stuff.initialize();
 
     stuff.match("AAAA", init);
@@ -20,11 +20,11 @@ TEST(VariableLibrary, Basic) {
     EXPECT_EQ(init.index, -1);
 }
 
-TEST(VariableLibrary, ReverseComplement) {
+TEST(SimpleVariableLibrary, ReverseComplement) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
     auto ptrs = to_pointers(variables);
 
-    kaori::VariableLibrary stuff(ptrs, 4, 0, true);
+    kaori::SimpleVariableLibrary stuff(ptrs, 4, 0, true);
     auto init = stuff.initialize();
 
     stuff.match("AAAA", init);
@@ -33,12 +33,12 @@ TEST(VariableLibrary, ReverseComplement) {
     EXPECT_EQ(init.index, 0);
 }
 
-TEST(VariableLibrary, Mismatches) {
+TEST(SimpleVariableLibrary, Mismatches) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
     auto ptrs = to_pointers(variables);
 
     {
-        kaori::VariableLibrary stuff(ptrs, 4, 1);
+        kaori::SimpleVariableLibrary stuff(ptrs, 4, 1);
         auto init = stuff.initialize();
 
         stuff.match("AAAA", init);
@@ -57,7 +57,7 @@ TEST(VariableLibrary, Mismatches) {
     }
 
     {
-        kaori::VariableLibrary stuff(ptrs, 4, 2);
+        kaori::SimpleVariableLibrary stuff(ptrs, 4, 2);
         auto init = stuff.initialize();
 
         stuff.match("CCAC", init);
@@ -73,10 +73,10 @@ TEST(VariableLibrary, Mismatches) {
     }
 }
 
-TEST(VariableLibrary, Caching) {
+TEST(SimpleVariableLibrary, Caching) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
     auto ptrs = to_pointers(variables);
-    kaori::VariableLibrary stuff(ptrs, 4, 1);
+    kaori::SimpleVariableLibrary stuff(ptrs, 4, 1);
 
     auto state = stuff.initialize();
 
@@ -112,4 +112,23 @@ TEST(VariableLibrary, Caching) {
         stuff.match("AATA", state);
         EXPECT_EQ(state.index, 2); // re-uses the cache value!
     }
+}
+
+TEST(SegmentedVariableLibrary, Basic) {
+    std::vector<std::string> variables { "AAAAAA", "AACCCC", "AAGGGG", "AATTTT" };
+    auto ptrs = to_pointers(variables);
+
+    kaori::SegmentedVariableLibrary<2> stuff(ptrs, { 2, 4 }, { 0, 1 });
+    auto init = stuff.initialize();
+
+    stuff.match("AAAAAAA", init);
+    EXPECT_EQ(init.index, 0);
+    stuff.match("AATTTT", init);
+    EXPECT_EQ(init.index, 3);
+
+    stuff.match("AACCAC", init);
+    EXPECT_EQ(init.index, 1);
+
+    stuff.match("ACCCCC", init); // ambiguous.
+    EXPECT_EQ(init.index, -1);
 }

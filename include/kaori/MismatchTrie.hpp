@@ -45,6 +45,10 @@ public:
         ++counter;
     }
 
+    size_t get_length() const {
+        return length;
+    }
+
 protected:
     size_t length;
     std::vector<int> pointers;
