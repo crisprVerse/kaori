@@ -1,6 +1,7 @@
 #ifndef KAORI_MISMATCH_TRIE_HPP
 #define KAORI_MISMATCH_TRIE_HPP
 
+#include <array>
 #include <vector>
 #include <stdexcept>
 #include <numeric>
