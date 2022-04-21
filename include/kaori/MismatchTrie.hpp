@@ -161,6 +161,8 @@ private:
 template<size_t num_segments>
 class SegmentedMismatchTrie : public MismatchTrie {
 public:
+    SegmentedMismatchTrie() {}
+
     SegmentedMismatchTrie(std::array<int, num_segments> segments) : MismatchTrie(std::accumulate(segments.begin(), segments.end(), 0)), boundaries(segments) {
         for (size_t i = 1; i < num_segments; ++i) {
             boundaries[i] += boundaries[i-1];

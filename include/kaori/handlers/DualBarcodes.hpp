@@ -85,7 +85,7 @@ public:
 
         varlib = SegmentedVariableLibrary(
             ptrs, 
-            std::array<int, 2>{ len1, len2 }, 
+            std::array<int, 2>{ static_cast<int>(len1), static_cast<int>(len2) }, 
             std::array<int, 2>{ max_mismatches1, max_mismatches2 }
         );
     }
@@ -107,14 +107,14 @@ public:
         std::vector<std::pair<std::string, int> > buffer2;
 
         // Default constructors should be called in this case, so it should be fine.
-        typename VariableLibrary::SearchState details;
+        typename SegmentedVariableLibrary<2>::SearchState details;
         /**
          * @endcond
          */
     };
 
     State initialize() const {
-        return State(num_options);
+        return State(counts.size());
     }
 
     void reduce(State& s) {
@@ -126,36 +126,36 @@ public:
     }
 
 private:
-    static void emit_output(std::pair<std::string, int>& output, const char* start, const char* end, mm) {
+    static void emit_output(std::pair<std::string, int>& output, const char* start, const char* end, int mm) {
         output.first = std::string(start, end);
         output.second = mm;
         return;
     }
 
-    static void emit_output(std::vector<std::pair<std::string, int> >& output, const char* start, const char* end, mm) {
+    static void emit_output(std::vector<std::pair<std::string, int> >& output, const char* start, const char* end, int mm) {
         output.emplace_back(std::string(start, end), mm);
         return;
     }
 
     template<class Store>
-    bool inner_process(
+    static bool inner_process(
         bool reverse, 
         const ConstantTemplate<N>& constant, 
         int max_mismatches,
         const char* against,
-        ConstantTemplate<N>::MatchDetails& deets,
+        typename ConstantTemplate<N>::MatchDetails& deets,
         Store& output)
-    const {
+    {
         while (!deets.finished) {
             if (reverse) {
-                if (deets.reverse_mismatches <= constant_mismatches) {
-                    const auto& reg = constant.variable_regions<true>();
+                if (deets.reverse_mismatches <= max_mismatches) {
+                    const auto& reg = constant.template variable_regions<true>();
                     auto start = against + deets.position;
                     emit_output(output, start + reg.first, start + reg.second, deets.reverse_mismatches);
                     return true;
                 }
             } else {
-                if (deets.forward_mismatches <= constant_mismatches) {
+                if (deets.forward_mismatches <= max_mismatches) {
                     const auto& reg = constant.variable_regions();
                     auto start = against + deets.position;
                     emit_output(output, start + reg.first, start + reg.second, deets.forward_mismatches);
