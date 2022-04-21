@@ -20,7 +20,7 @@ add_executable(
     src/process_data.cpp
     src/handlers/SingleBarcodeSingleEnd.cpp
     src/handlers/SingleBarcodePairedEnd.cpp
-    src/handlers/CombinatorialBarcodes.cpp
+    src/handlers/CombinatorialBarcodesSingleEnd.cpp
     src/handlers/DualBarcodes.cpp
 )
 

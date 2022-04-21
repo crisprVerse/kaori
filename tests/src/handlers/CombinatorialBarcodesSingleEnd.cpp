@@ -1,13 +1,13 @@
 #include <gtest/gtest.h>
-#include "kaori/handlers/CombinatorialBarcodes.hpp"
+#include "kaori/handlers/CombinatorialBarcodesSingleEnd.hpp"
 #include "kaori/process_data.hpp"
 #include "byteme/RawBufferReader.hpp"
 #include "../utils.h"
 #include <string>
 
-class CombinatorialBarcodesTest : public testing::Test {
+class CombinatorialBarcodesSingleEndTest : public testing::Test {
 protected:
-    CombinatorialBarcodesTest() : 
+    CombinatorialBarcodesSingleEndTest() : 
         constant("AAAA----CGGC------TTTT"),
         variables1(std::vector<std::string>{ "AAAA", "CCCC", "GGGG", "TTTT" }),
         variables2(std::vector<std::string>{ "ACACAC", "TGTGTG", "AGAGAG", "CTCTCT" })
@@ -22,8 +22,8 @@ protected:
     std::vector<std::string> variables2;
 };
 
-TEST_F(CombinatorialBarcodesTest, BasicFirst) {
-    kaori::CombinatorialBarcodes<128, 2> stuff(constant.c_str(), constant.size(), 0, make_pointers());
+TEST_F(CombinatorialBarcodesSingleEndTest, BasicFirst) {
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> stuff(constant.c_str(), constant.size(), 0, make_pointers());
 
     // Perfect match.
     {
@@ -63,11 +63,11 @@ TEST_F(CombinatorialBarcodesTest, BasicFirst) {
     }
 }
 
-TEST_F(CombinatorialBarcodesTest, ReverseComplementFirst) {
+TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementFirst) {
     auto ptrs = make_pointers();
-    kaori::CombinatorialBarcodes<128, 2> forward(constant.c_str(), constant.size(), 0, ptrs);
-    kaori::CombinatorialBarcodes<128, 2> reverse(constant.c_str(), constant.size(), 1, ptrs);
-    kaori::CombinatorialBarcodes<128, 2> both(constant.c_str(), constant.size(), 2, ptrs);
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> forward(constant.c_str(), constant.size(), 0, ptrs);
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> reverse(constant.c_str(), constant.size(), 1, ptrs);
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> both(constant.c_str(), constant.size(), 2, ptrs);
 
     std::vector<std::string> seq{ 
         "AAAACACACAGCCGCCCCTTTTccccc", // (GGGG = 2, TGTGTG = 1), and then reverse complemented.
@@ -108,14 +108,14 @@ TEST_F(CombinatorialBarcodesTest, ReverseComplementFirst) {
     }
 }
 
-TEST_F(CombinatorialBarcodesTest, MismatchFirst) {
-    kaori::CombinatorialBarcodes<128, 2> mm0(constant.c_str(), constant.size(), 0, 
+TEST_F(CombinatorialBarcodesSingleEndTest, MismatchFirst) {
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm0(constant.c_str(), constant.size(), 0, 
         std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) }, 0);
 
-    kaori::CombinatorialBarcodes<128, 2> mm1(constant.c_str(), constant.size(), 0, 
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm1(constant.c_str(), constant.size(), 0, 
         std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) }, 1);
 
-    kaori::CombinatorialBarcodes<128, 2> mm2(constant.c_str(), constant.size(), 0, 
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm2(constant.c_str(), constant.size(), 0, 
         std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) }, 2);
 
     // One mismatch.
@@ -201,14 +201,14 @@ TEST_F(CombinatorialBarcodesTest, MismatchFirst) {
     }
 }
 
-TEST_F(CombinatorialBarcodesTest, ReverseComplementMismatchFirst) {
-    kaori::CombinatorialBarcodes<128, 2> mm0(constant.c_str(), constant.size(), 1, 
+TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementMismatchFirst) {
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm0(constant.c_str(), constant.size(), 1, 
         std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) }, 0);
 
-    kaori::CombinatorialBarcodes<128, 2> mm1(constant.c_str(), constant.size(), 1, 
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm1(constant.c_str(), constant.size(), 1, 
         std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) }, 1);
 
-    kaori::CombinatorialBarcodes<128, 2> mm2(constant.c_str(), constant.size(), 1, 
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm2(constant.c_str(), constant.size(), 1, 
         std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) }, 2);
 
     // One mismatch.
@@ -242,11 +242,11 @@ TEST_F(CombinatorialBarcodesTest, ReverseComplementMismatchFirst) {
     }
 }
 
-TEST_F(CombinatorialBarcodesTest, Best) {
-    kaori::CombinatorialBarcodes<128, 2> bst(constant.c_str(), constant.size(), 0, make_pointers());
+TEST_F(CombinatorialBarcodesSingleEndTest, Best) {
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> bst(constant.c_str(), constant.size(), 0, make_pointers());
     bst.set_first(false);
     
-    kaori::CombinatorialBarcodes<128, 2> mm1(constant.c_str(), constant.size(), 0, make_pointers(), 1);
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm1(constant.c_str(), constant.size(), 0, make_pointers(), 1);
 
     // Overrides the first mismatch.
     {
@@ -276,10 +276,10 @@ TEST_F(CombinatorialBarcodesTest, Best) {
 
     // Works across strands.
     {
-        kaori::CombinatorialBarcodes<128, 2> reverse(constant.c_str(), constant.size(), 1, make_pointers());
+        kaori::CombinatorialBarcodesSingleEnd<128, 2> reverse(constant.c_str(), constant.size(), 1, make_pointers());
         reverse.set_first(false);
 
-        kaori::CombinatorialBarcodes<128, 2> both(constant.c_str(), constant.size(), 2, make_pointers());
+        kaori::CombinatorialBarcodesSingleEnd<128, 2> both(constant.c_str(), constant.size(), 2, make_pointers());
         both.set_first(false);
 
         std::string seq = "cagAAAAAAAACGGCTGTGTGTTTTacacAAAAGTGTGTGCCGGGGGTTTT"; // second one is (CCCC = 1, ACACAC = 0)
@@ -302,8 +302,8 @@ TEST_F(CombinatorialBarcodesTest, Best) {
     }
 }
 
-TEST_F(CombinatorialBarcodesTest, Sorting) {
-    kaori::CombinatorialBarcodes<128, 2> x(constant.c_str(), constant.size(), 0, make_pointers());
+TEST_F(CombinatorialBarcodesSingleEndTest, Sorting) {
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> x(constant.c_str(), constant.size(), 0, make_pointers());
 
     auto state = x.initialize(); 
     state.collected.push_back(std::array<int, 2>{ 3, 1 });

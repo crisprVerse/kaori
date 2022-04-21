@@ -1,5 +1,5 @@
-#ifndef KAORI_COMBINATORIAL_BARCODES_HPP
-#define KAORI_COMBINATORIAL_BARCODES_HPP
+#ifndef KAORI_COMBINATORIAL_BARCODES_SINGLE_END_HPP
+#define KAORI_COMBINATORIAL_BARCODES_SINGLE_END_HPP
 
 #include "../ConstantTemplate.hpp"
 #include "../VariableLibrary.hpp"
@@ -11,9 +11,9 @@
 namespace kaori {
 
 template<size_t N, size_t V>
-class CombinatorialBarcodes {
+class CombinatorialBarcodesSingleEnd {
 public:
-    CombinatorialBarcodes(const char* constant, size_t size, int strand, const std::vector<std::vector<const char*> >& variable, int mismatches = 0) : 
+    CombinatorialBarcodesSingleEnd(const char* constant, size_t size, int strand, const std::vector<std::vector<const char*> >& variable, int mismatches = 0) : 
         forward(strand != 1),
         reverse(strand != 0),
         max_mismatches(mismatches),
@@ -50,7 +50,7 @@ public:
         }
     }
         
-    CombinatorialBarcodes& set_first(bool t = true) {
+    CombinatorialBarcodesSingleEnd& set_first(bool t = true) {
         use_first = t;
         return *this;
     }
@@ -215,29 +215,7 @@ public:
 
 public:
     void sort() {
-        // Going back to front as the last iteration gives the slowest changing index.
-        // This ensures that we get the same results as std::sort() on the arrays.
-        for (size_t i_ = 0; i_ < V; ++i_) {
-            auto i = V - i_ - 1;
-
-            std::vector<size_t> counts(num_options[i] + 1);
-            for (const auto& x : combinations) {
-                ++(counts[x[i] + 1]);
-            }
-
-            for (size_t j = 1; j < counts.size(); ++j) {
-                counts[j] += counts[j-1];
-            }
-
-            std::vector<std::array<int, V> > copy(combinations.size());
-            for (const auto& x : combinations) {
-                auto& pos = counts[x[i]];
-                copy[pos] = x;
-                ++pos;
-            }
-
-            combinations.swap(copy);
-        }
+        sort_combinations(combinations, num_options);
     }
 
     const std::vector<std::array<int, V> >& get_combinations() const {
