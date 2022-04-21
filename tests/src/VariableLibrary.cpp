@@ -87,6 +87,13 @@ TEST(SimpleVariableLibrary, Caching) {
         EXPECT_TRUE(it == state.cache.end());
     }
 
+    // No cache when the number of mismatches is lower than that in the constructor.
+    {
+        stuff.match("AATA", state, 0);
+        auto it = state.cache.find("AATA");
+        EXPECT_TRUE(it == state.cache.end());
+    }
+
     // Stored in cache for >1 mismatches.
     {
         stuff.match("AATA", state);
@@ -165,6 +172,14 @@ TEST(SegmentedVariableLibrary, Caching) {
         auto it = state.cache.find("AAAA");
         EXPECT_TRUE(it == state.cache.end());
     }
+
+    // No cache when the number of mismatches is less than that in the constructor.
+    {
+        stuff.match("AATA", state, { 0, 0 });
+        auto it = state.cache.find("AATA");
+        EXPECT_TRUE(it == state.cache.end());
+    }
+
 
     // Stored in cache for >1 mismatches.
     {
