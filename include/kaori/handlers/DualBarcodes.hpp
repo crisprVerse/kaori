@@ -1,23 +1,26 @@
 #ifndef KAORI_DUAL_BARCODES_HPP
 #define KAORI_DUAL_BARCODES_HPP
 
+#include "../ConstantTemplate.hpp"
+#include "../VariableLibrary.hpp"
+#include "../utils.hpp"
+
 namespace kaori {
 
 template<size_t N>
 class DualBarcodes { 
 public:
     DualBarcodes(
-        const char* con1, size_t n1, bool rev1, const std::vector<const char*>& var1,
-        const char* con2, size_t n2, bool rev2, const std::vector<const char*>& var2,
-        int total_mismatches, bool random = false
+        const char* con1, size_t n1, bool rev1, const std::vector<const char*>& var1, int mm1, 
+        const char* con2, size_t n2, bool rev2, const std::vector<const char*>& var2, int mm2,
+        bool random = false
     ) :
         reverse1(rev1),
         reverse2(rev2),
         constant1(con1, n1, !reverse1, reverse1),
         constant2(con2, n2, !reverse2, reverse2),
-        constant_mismatches1(total_mismatches),
-        constant_mismatches2(total_mismatches),
-        max_mismatches(total_mismatches),
+        max_mismatches1(mm1),
+        max_mismatches2(mm2),
         randomized(random)
     {
         auto num_options = var1.size();
@@ -44,7 +47,7 @@ public:
             len2 = regions[0].second - regions[0].first;
         }
 
-        // Constructing the combined thing.
+        // Constructing the combined strings.
         std::vector<std::string> combined;
         combined.reserve(num_options);
 
@@ -79,7 +82,17 @@ public:
         for (size_t i =0 ; i <num_options; ++i) {
             ptrs.push_back(combined[i].c_str());
         }
-        varlib = VariableLibrary(ptrs, len1 + len2, max_mismatches, false);
+
+        varlib = SegmentedVariableLibrary(
+            ptrs, 
+            std::array<int, 2>{ len1, len2 }, 
+            std::array<int, 2>{ max_mismatches1, max_mismatches2 }
+        );
+    }
+
+    DualBarcodes& set_first(bool t = true) {
+        use_first = t;
+        return *this;
     }
 
 public:
@@ -91,6 +104,8 @@ public:
         /**
          * @cond
          */
+        std::vector<std::pair<std::string, int> > buffer2;
+
         // Default constructors should be called in this case, so it should be fine.
         typename VariableLibrary::SearchState details;
         /**
@@ -111,82 +126,160 @@ public:
     }
 
 private:
-    void inner_process(
+    static void emit_output(std::pair<std::string, int>& output, const char* start, const char* end, mm) {
+        output.first = std::string(start, end);
+        output.second = mm;
+        return;
+    }
+
+    static void emit_output(std::vector<std::pair<std::string, int> >& output, const char* start, const char* end, mm) {
+        output.emplace_back(std::string(start, end), mm);
+        return;
+    }
+
+    template<class Store>
+    bool inner_process(
         bool reverse, 
         const ConstantTemplate<N>& constant, 
-        int constant_mismatches,
-        const std::pair<const char*, const char*>& against, 
-        std::string& current) 
-    {
-        bool found = false;
-        const deets = constant.initialize(against.first, against.second - against.first);
-
+        int max_mismatches,
+        const char* against,
+        ConstantTemplate<N>::MatchDetails& deets,
+        Store& output)
+    const {
         while (!deets.finished) {
-            constant.next(deets);
             if (reverse) {
                 if (deets.reverse_mismatches <= constant_mismatches) {
                     const auto& reg = constant.variable_regions<true>();
-                    auto start = against.first + deets.position;
-                    search.insert(search.end(), start + reg.first, start + reg.second);
-                    found = true;
-                    break;
+                    auto start = against + deets.position;
+                    emit_output(output, start + reg.first, start + reg.second, deets.reverse_mismatches);
+                    return true;
                 }
             } else {
                 if (deets.forward_mismatches <= constant_mismatches) {
                     const auto& reg = constant.variable_regions();
-                    auto start = against.first + deets.position;
-                    search.insert(search.end(), start + reg.first, start + reg.second);
-                    found = true;
+                    auto start = against + deets.position;
+                    emit_output(output, start + reg.first, start + reg.second, deets.forward_mismatches);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool process_first(State& state, const std::pair<const char*, const char*>& against1, const std::pair<const char*, const char*>& against2) const {
+        auto deets1 = constant1.initialize(against1.first, against1.second - against1.first);
+        std::pair<std::string, int> match1;
+
+        auto deets2 = constant2.initialize(against2.first, against2.second - against2.first);
+        state.buffer2.clear();
+
+        auto checker = [&](size_t idx2) -> bool {
+            const auto& current2 = state.buffer2[idx2];
+            auto combined = match1.first + current2.first;
+            varlib.match(combined, state.details, std::array<int, 2>{ max_mismatches1 - match1.second, max_mismatches2 - current2.second });
+
+            if (state.details.index != -1) {
+                ++counts[state.details.index];
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        // Looping over all hits of the second for each hit of the first.
+        while (inner_process(reverse1, constant1, max_mismatches1, against1.first, deets1, match1)) {
+            if (deets2.finished) {
+                for (size_t i = 0; i < state.buffer2.size(); ++i) {
+                    if (checker(i)) {
+                        return true;
+                    }
+                }
+            } else {
+                while (inner_process(reverse2, constant2, max_mismatches2, against2.first, deets2, state.buffer2)) {
+                    if (checker(state.buffer2.size() - 1)) {
+                        return true;
+                    }
+                }
+                if (state.buffer2.empty()) {
                     break;
                 }
             }
         }
 
-        return found;
+        return false;
     }
 
-    bool process_(State& state, const std::pair<const char*, const char*>& against1, const std::pair<const char*, const char*>& against2) {
-        std::string search;
+    std::pair<int, int> process_best(State& state, const std::pair<const char*, const char*>& against1, const std::pair<const char*, const char*>& against2) const {
+        auto deets1 = constant1.initialize(against1.first, against1.second - against1.first);
+        std::pair<std::string, int> match1;
 
-        if (!inner_process(reverse1, constant1, constant_mismatches1, against1, search)) {
-            return false;
-        }
-        if (!inner_process(reverse2, constant2, constant_mismatches2, against2, search)) {
-            return false;
+        auto deets2 = constant2.initialize(against2.first, against2.second - against2.first);
+        state.buffer2.clear();
+
+        int chosen = -1;
+        int best_mismatches = max_mismatches1 + max_mismatches2;
+
+        auto checker = [&](size_t idx2) -> void {
+            const auto& current2 = state.buffer2[idx2];
+            auto combined = match1.first + current2.first;
+            varlib.match(combined, state.details, std::array<int, 2>{ max_mismatches1 - match1.second, max_mismatches2 - current2.second });
+
+            if (state.details.mismatches < best_mismatches) {
+                chosen = state.details.index;
+                best_mismatches = state.details.mismatches;
+            } else if (state.details == best_mismatches) { // ambiguous.
+                chosen = -1;
+            }
+        };
+
+        while (inner_process(reverse1, constant1, max_mismatches1, against1.first, deets1, match1)) {
+            if (deets2.finished) {
+                for (size_t i = 0; i < state.buffer2.size(); ++i) {
+                    checker(i);
+                }
+            } else {
+                while (inner_process(reverse2, constant2, max_mismatches2, against2.first, deets2, state.buffer2)) {
+                    checker(state.buffer2.size() - 1);
+                }
+                if (state.buffer2.empty()) {
+                    break;
+                }
+            }
         }
 
-        varlib.match(state.details, search.c_str());
-        if (state.details.index >= 0 && state.details.mismatch <= max_mismatches) {
-            ++(counts[state.details.index]);
-        }
-
-        // i.e., was any constant match found? We don't care so much about the 
-        // successful recovery of the variable region when deciding whether to 
-        // quit in the upstream function.
-        return true;
+        return std::make_pair(chosen, best_mismatches);
     }
 
 public:
-    void process(State& state, const std::pair<const char*, const char*>& r1, const std::pair<const char*, const char*>& r2) {
-        bool constant_found = process_(state, r1, r2);
-
-        if (!constant_found && randomized) {
-            process_(state, r2, r1);
+    void process(State& state, const std::pair<const char*, const char*>& r1, const std::pair<const char*, const char*>& r2) const {
+        if (use_first) {
+            auto found = process_first(state, r1, r2);
+            if (!found && randomized) {
+                process_first(state, r2, r1);
+            }
+        } else {
+            auto best = process_best(state, r1, r2);
+            if (randomized) {
+                auto best2 = process_best(state, r2, r1);
+                if (best.first < 0 || best.second >= best2.second) {
+                    best = best2;
+                }
+            }
+            if (best.first >= 0) {
+                ++counts[best.first];
+            }
         }
-
-        ++total;
     }
 
 private:
     bool reverse1, reverse2;
 
     ConstantTemplate<N> constant1, constant2;
-    int constant_mismatches1, constant_mismatches2;
-
-    VariableLibrary varlib;
-    int max_mismatches;
+    SegmentedVariableLibrary<2> varlib;
+    int max_mismatches1, max_mismatches2;
 
     bool randomized;
+    bool use_first;
 
     std::vector<int> counts;
     int total = 0;
