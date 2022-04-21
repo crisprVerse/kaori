@@ -17,10 +17,6 @@ protected:
         return std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) };
     }
 
-    std::pair<const char*, const char*> bounds(const std::string& s) {
-        return std::make_pair(s.c_str(), s.c_str() + s.size());
-    }
-
     std::string constant;
     std::vector<std::string> variables1;
     std::vector<std::string> variables2;

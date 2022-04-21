@@ -125,6 +125,8 @@ public:
         total += s.total;
     }
 
+    constexpr static bool use_names = false;
+
 private:
     static void emit_output(std::pair<std::string, int>& output, const char* start, const char* end, int mm) {
         output.first = std::string(start, end);
@@ -147,16 +149,17 @@ private:
         Store& output)
     {
         while (!deets.finished) {
+            constant.next(deets);
             if (reverse) {
                 if (deets.reverse_mismatches <= max_mismatches) {
-                    const auto& reg = constant.template variable_regions<true>();
+                    const auto& reg = constant.template variable_regions<true>()[0];
                     auto start = against + deets.position;
                     emit_output(output, start + reg.first, start + reg.second, deets.reverse_mismatches);
                     return true;
                 }
             } else {
                 if (deets.forward_mismatches <= max_mismatches) {
-                    const auto& reg = constant.variable_regions();
+                    const auto& reg = constant.variable_regions()[0];
                     auto start = against + deets.position;
                     emit_output(output, start + reg.first, start + reg.second, deets.forward_mismatches);
                     return true;
@@ -176,10 +179,11 @@ private:
         auto checker = [&](size_t idx2) -> bool {
             const auto& current2 = state.buffer2[idx2];
             auto combined = match1.first + current2.first;
+            std::cout << combined << std::endl;
             varlib.match(combined, state.details, std::array<int, 2>{ max_mismatches1 - match1.second, max_mismatches2 - current2.second });
 
             if (state.details.index != -1) {
-                ++counts[state.details.index];
+                ++state.counts[state.details.index];
                 return true;
             } else {
                 return false;
@@ -217,17 +221,18 @@ private:
         state.buffer2.clear();
 
         int chosen = -1;
-        int best_mismatches = max_mismatches1 + max_mismatches2;
+        int best_mismatches = max_mismatches1 + max_mismatches2 + 1;
 
         auto checker = [&](size_t idx2) -> void {
             const auto& current2 = state.buffer2[idx2];
             auto combined = match1.first + current2.first;
             varlib.match(combined, state.details, std::array<int, 2>{ max_mismatches1 - match1.second, max_mismatches2 - current2.second });
 
-            if (state.details.mismatches < best_mismatches) {
+            int cur_mismatches = state.details.mismatches;
+            if (cur_mismatches < best_mismatches) {
                 chosen = state.details.index;
-                best_mismatches = state.details.mismatches;
-            } else if (state.details == best_mismatches) { // ambiguous.
+                best_mismatches = cur_mismatches;
+            } else if (cur_mismatches == best_mismatches) { // ambiguous.
                 chosen = -1;
             }
         };
@@ -261,14 +266,17 @@ public:
             auto best = process_best(state, r1, r2);
             if (randomized) {
                 auto best2 = process_best(state, r2, r1);
-                if (best.first < 0 || best.second >= best2.second) {
+                if (best.first < 0 || best.second > best2.second) {
                     best = best2;
+                } else if (best.second == best2.second && best.first != best2.first) {
+                    best.first = -1; // ambiguous.
                 }
             }
             if (best.first >= 0) {
-                ++counts[best.first];
+                ++state.counts[best.first];
             }
         }
+        ++state.total;
     }
 
 private:
@@ -279,7 +287,7 @@ private:
     int max_mismatches1, max_mismatches2;
 
     bool randomized;
-    bool use_first;
+    bool use_first = true;
 
     std::vector<int> counts;
     int total = 0;
