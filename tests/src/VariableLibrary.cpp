@@ -121,7 +121,7 @@ TEST(SegmentedVariableLibrary, Basic) {
     kaori::SegmentedVariableLibrary<2> stuff(ptrs, { 2, 4 }, { 0, 1 });
     auto init = stuff.initialize();
 
-    stuff.match("AAAAAAA", init);
+    stuff.match("AAAAAA", init);
     EXPECT_EQ(init.index, 0);
     stuff.match("AATTTT", init);
     EXPECT_EQ(init.index, 3);
@@ -129,6 +129,66 @@ TEST(SegmentedVariableLibrary, Basic) {
     stuff.match("AACCAC", init);
     EXPECT_EQ(init.index, 1);
 
-    stuff.match("ACCCCC", init); // ambiguous.
+    stuff.match("AAccgg", init); // ambiguous.
     EXPECT_EQ(init.index, -1);
+}
+
+TEST(SegmentedVariableLibrary, Basic) {
+    std::vector<std::string> variables { "AAAAAA", "AACCCC", "AAGGGG", "AATTTT" };
+    auto ptrs = to_pointers(variables);
+
+    kaori::SegmentedVariableLibrary<2> stuff(ptrs, { 2, 4 }, { 0, 1 });
+    auto init = stuff.initialize();
+
+    stuff.match("AAAAAA", init);
+    EXPECT_EQ(init.index, 0);
+    stuff.match("AATTTT", init);
+    EXPECT_EQ(init.index, 3);
+
+    stuff.match("AACCAC", init);
+    EXPECT_EQ(init.index, 1);
+
+    stuff.match("AAccgg", init); // ambiguous.
+    EXPECT_EQ(init.index, -1);
+}
+
+TEST(SegmentedVariableLibrary, Caching) {
+    std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
+    auto ptrs = to_pointers(variables);
+    kaori::SegmentedVariableLibrary<2> stuff(ptrs, {2, 2}, {1, 1});
+
+    auto state = stuff.initialize();
+
+    // No cache when there is no mismatch.
+    {
+        stuff.match("AAAA", state);
+        auto it = state.cache.find("AAAA");
+        EXPECT_TRUE(it == state.cache.end());
+    }
+
+    // Stored in cache for >1 mismatches.
+    {
+        stuff.match("AATA", state);
+        auto it = state.cache.find("AATA");
+        EXPECT_TRUE(it != state.cache.end());
+        EXPECT_EQ((it->second).index, 0);
+        EXPECT_EQ((it->second).total, 1);
+    }
+
+    {
+        stuff.match("ACTA", state);
+        auto it = state.cache.find("ACTA");
+        EXPECT_TRUE(it != state.cache.end());
+        EXPECT_EQ((it->second).index, -1);
+    }
+    
+    // Checking that the reduction works correctly.
+    state.cache["AATA"].index = 2;
+    stuff.reduce(state);
+    EXPECT_TRUE(state.cache.empty());
+
+    {
+        stuff.match("AATA", state);
+        EXPECT_EQ(state.index, 2); // re-uses the cache value!
+    }
 }

@@ -45,7 +45,7 @@ void fill_library(
 }
 
 template<class Indexer, class Updater, class Cache, class Trie, class Result, class Mismatch>
-void matcher_in_the_rye(const std::string& x, Cache& cache, Trie& trie, Result& res, const Mismatch& mismatches, const Mismatch& max_mismatches) {
+void matcher_in_the_rye(const std::string& x, const Cache& cache, const Trie& trie, Result& res, const Mismatch& mismatches, const Mismatch& max_mismatches) {
     // Seeing if it's any of the caches; otherwise searching the trie.
     auto cit = cache.find(x);
     if (cit == cache.end()) {
@@ -135,10 +135,9 @@ public:
         if (it != exact.end()) {
             state.index = it->second;
             state.mismatches = 0;
-            return;
+        } else {
+            matcher_in_the_rye<Index, Updator>(x, cache, trie, state, mismatches, max_mismatches);
         }
-        matcher_in_the_rye<Index, Updator>(x, cache, trie, state, mismatches, max_mismatches);
-        return;
     }
 
 private:
@@ -154,7 +153,8 @@ public:
     SegmentedVariableLibrary() {}
 
     SegmentedVariableLibrary(const std::vector<const char*>& options, std::array<int, num_segments> segments, std::array<int, num_segments> mismatches, bool reverse = false) : 
-        trie(segments), max_mismatches(mismatches) 
+        trie(segments), 
+        max_mismatches(mismatches) 
     {
         fill_library(options, exact, trie, reverse);
         return;
@@ -162,6 +162,7 @@ public:
 
 public:
     struct SearchState {
+        SearchState() : per_segment() {}
         int index = 0;
         int mismatches = 0;
         std::array<int, num_segments> per_segment;
@@ -214,10 +215,9 @@ public:
             state.index = it->second;
             state.mismatches = 0;
             std::fill_n(state.per_segment.begin(), num_segments, 0);
-            return;
+        } else {
+            matcher_in_the_rye<Index, Updator>(x, cache, trie, state, mismatches, max_mismatches);
         }
-        matcher_in_the_rye<Index, Updator>(x, cache, trie, state, mismatches, max_mismatches);
-        return;
     }
 
 private:
