@@ -24,4 +24,8 @@ inline std::string convert_to_fastq(const std::vector<std::string>& reads, std::
     return output;
 }
 
+inline std::pair<const char*, const char*> bounds(const std::string& s) {
+    return std::make_pair(s.c_str(), s.c_str() + s.size());
+}
+
 #endif
