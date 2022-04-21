@@ -90,7 +90,7 @@ private:
             std::string current(start + range.first, start + range.second);
 
             auto& curstate = states[r];
-            libs[r].match(current, curstate);
+            libs[r].match(current, curstate, max_mismatches - obs_mismatches);
             if (curstate.index < 0) {
                 return std::make_pair(false, 0);
             }
@@ -152,6 +152,10 @@ private:
                 if (match.second == best_mismatches) {
                     found = false;
                 } else { 
+                    // A further optimization at this point would be to narrow
+                    // max_mismatches to the current 'best_mismatches'. But
+                    // this probably isn't worth it.
+
                     found = true;
                     best_mismatches = match.second;
                     best_id = state.temp;

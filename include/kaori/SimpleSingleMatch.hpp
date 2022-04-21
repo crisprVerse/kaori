@@ -75,14 +75,14 @@ private:
         auto start = seq + details.position;
         const auto& range = constant.variable_regions()[0];
         std::string curseq(start + range.first, start + range.second);
-        forward_lib.match(curseq, state.forward_details);
+        forward_lib.match(curseq, state.forward_details, max_mismatches - details.forward_mismatches);
     }
 
     void reverse_match(const char* seq, const typename ConstantTemplate<N>::MatchDetails& details, SearchState& state) const {
         auto start = seq + details.position;
         const auto& range = constant.template variable_regions<true>()[0];
         std::string curseq(start + range.first, start + range.second);
-        reverse_lib.match(curseq, state.reverse_details);
+        reverse_lib.match(curseq, state.reverse_details, max_mismatches - details.reverse_mismatches);
     }
 
 public:
@@ -151,10 +151,10 @@ public:
 
             } else if (total < best) {
                 found = true;
-                best = total;
-                // As tempting as it might be, don't adjust max_mismatches to
-                // the current 'best'. This would tighten the search for the
-                // current sequence but could invalidate the matcher cache.
+                best = total; 
+                // A further optimization at this point would be to narrow
+                // max_mismatches to the current 'best'. But this probably
+                // isn't worth it.
 
                 state.index = x.index;
                 state.mismatches = total;
