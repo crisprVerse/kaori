@@ -126,29 +126,29 @@ TEST(SegmentedVariableLibrary, Basic) {
     stuff.match("AATTTT", init);
     EXPECT_EQ(init.index, 3);
 
-    stuff.match("AACCAC", init);
+    stuff.match("AACCAC", init); // 1 mismatch
     EXPECT_EQ(init.index, 1);
 
     stuff.match("AAccgg", init); // ambiguous.
     EXPECT_EQ(init.index, -1);
 }
 
-TEST(SegmentedVariableLibrary, Basic) {
+TEST(SegmentedVariableLibrary, ReverseComplement) {
     std::vector<std::string> variables { "AAAAAA", "AACCCC", "AAGGGG", "AATTTT" };
     auto ptrs = to_pointers(variables);
 
-    kaori::SegmentedVariableLibrary<2> stuff(ptrs, { 2, 4 }, { 0, 1 });
+    kaori::SegmentedVariableLibrary<2> stuff(ptrs, { 2, 4 }, { 0, 1 }, true);
     auto init = stuff.initialize();
 
-    stuff.match("AAAAAA", init);
-    EXPECT_EQ(init.index, 0);
-    stuff.match("AATTTT", init);
+    stuff.match("AAAATT", init);
     EXPECT_EQ(init.index, 3);
-
-    stuff.match("AACCAC", init);
+    stuff.match("GGGGTT", init);
     EXPECT_EQ(init.index, 1);
 
-    stuff.match("AAccgg", init); // ambiguous.
+    stuff.match("CCACTT", init);
+    EXPECT_EQ(init.index, 2);
+
+    stuff.match("GGCCTT", init); // ambiguous.
     EXPECT_EQ(init.index, -1);
 }
 
