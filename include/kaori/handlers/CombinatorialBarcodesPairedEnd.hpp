@@ -103,40 +103,37 @@ public:
                 } else if (m2) {
                     ++state.read2_only;
                 }
-            } else {
-                if (m1 && m2) {
-                    std::array<int, 2> candidate{ state.search1.index, state.search2.index };
-                    int mismatches = state.search1.mismatches + state.search2.mismatches;
-                    
-                    bool n1 = matcher1.search_best(r2.first, r2.second - r2.first, state.search1);
-                    bool n2 = matcher2.search_best(r1.first, r1.second - r1.first, state.search2);
+            } else if (m1 && m2) {
+                std::array<int, 2> candidate{ state.search1.index, state.search2.index };
+                int mismatches = state.search1.mismatches + state.search2.mismatches;
 
-                    if (n1 && n2) {
-                        int rmismatches = state.search1.mismatches + state.search2.mismatches;
-                        if (mismatches > rmismatches) {
-                            state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
-                        } else if (mismatches < rmismatches) {
-                            state.collected.emplace_back(candidate);
-                        } else if (candidate[0] == state.search1.index && candidate[1] == state.search2.index) {
-                            // If the mismatches are the same, it may not be ambiguous
-                            // if the indices would be the same anyway.
-                            state.collected.emplace_back(candidate);
-                        }
-                    } else {
+                bool n1 = matcher1.search_best(r2.first, r2.second - r2.first, state.search1);
+                bool n2 = matcher2.search_best(r1.first, r1.second - r1.first, state.search2);
+
+                if (n1 && n2) {
+                    int rmismatches = state.search1.mismatches + state.search2.mismatches;
+                    if (mismatches > rmismatches) {
+                        state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
+                    } else if (mismatches < rmismatches) {
+                        state.collected.emplace_back(candidate);
+                    } else if (candidate[0] == state.search1.index && candidate[1] == state.search2.index) {
+                        // If the mismatches are the same, it may not be ambiguous
+                        // if the indices would be the same anyway.
                         state.collected.emplace_back(candidate);
                     }
-
                 } else {
-                    bool n1 = matcher1.search_best(r2.first, r2.second - r2.first, state.search1);
-                    bool n2 = matcher2.search_best(r1.first, r1.second - r1.first, state.search2);
-                    
-                    if (n1 && n2) {
-                        state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
-                    } else if (n1) {
-                        ++state.read1_only;
-                    } else if (n2) {
-                        ++state.read2_only;
-                    }
+                    state.collected.emplace_back(candidate);
+                }
+            } else {
+                bool n1 = matcher1.search_best(r2.first, r2.second - r2.first, state.search1);
+                bool n2 = matcher2.search_best(r1.first, r1.second - r1.first, state.search2);
+
+                if (n1 && n2) {
+                    state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
+                } else if (m1 || n1) {
+                    ++state.read1_only;
+                } else if (m2 || n2) {
+                    ++state.read2_only;
                 }
             }
         }
