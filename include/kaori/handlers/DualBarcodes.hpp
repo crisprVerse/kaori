@@ -255,12 +255,15 @@ private:
     }
 
 public:
-    void process(State& state, const std::pair<const char*, const char*>& r1, const std::pair<const char*, const char*>& r2) const {
+    bool process(State& state, const std::pair<const char*, const char*>& r1, const std::pair<const char*, const char*>& r2) const {
+        bool found;
+
         if (use_first) {
-            auto found = process_first(state, r1, r2);
+            found = process_first(state, r1, r2);
             if (!found && randomized) {
-                process_first(state, r2, r1);
+                found = process_first(state, r2, r1);
             }
+
         } else {
             auto best = process_best(state, r1, r2);
             if (randomized) {
@@ -271,11 +274,15 @@ public:
                     best.first = -1; // ambiguous.
                 }
             }
-            if (best.first >= 0) {
+
+            found = best.first >= 0;
+            if (found) {
                 ++state.counts[best.first];
             }
         }
+
         ++state.total;
+        return found;
     }
 
 private:

@@ -14,10 +14,6 @@ protected:
         variables2(std::vector<std::string>{ "ACACAC", "TGTGTG", "AGAGAG", "CTCTCT" })
     {}
 
-    std::vector<std::vector<const char*> > make_pointers() const {
-        return std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) };
-    }
-
     std::string constant1, constant2;
     std::vector<std::string> variables1;
     std::vector<std::string> variables2;

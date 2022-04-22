@@ -23,6 +23,7 @@ add_executable(
     src/handlers/CombinatorialBarcodesSingleEnd.cpp
     src/handlers/CombinatorialBarcodesPairedEnd.cpp
     src/handlers/DualBarcodes.cpp
+    src/handlers/DualBarcodesWithDiagnostics.cpp
 )
 
 target_link_libraries(
