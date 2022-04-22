@@ -73,6 +73,12 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicFirst) {
         EXPECT_EQ(out[0][1], 1);
         EXPECT_EQ(out[1][0], 2);
         EXPECT_EQ(out[1][1], 2);
+
+        stuff.sort(); // for some coverage.
+
+        EXPECT_EQ(stuff.get_total(), 2);
+        EXPECT_EQ(stuff.get_read1_only(), 0);
+        EXPECT_EQ(stuff.get_read2_only(), 0);
     }
 }
 

@@ -154,6 +154,13 @@ public:
         return total;
     }
 
+    int get_read1_only() const {
+        return read1_only;
+    }
+
+    int get_read2_only() const {
+        return read2_only;
+    }
 private:
     SimpleSingleMatch<N> matcher1, matcher2;
     std::array<size_t, 2> num_options;
