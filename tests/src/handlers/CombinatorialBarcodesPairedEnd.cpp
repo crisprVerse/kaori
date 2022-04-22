@@ -90,4 +90,18 @@ TEST_F(CombinatorialBarcodesPairedEndTest, ReverseComplementFirst) {
         EXPECT_EQ(state.collected.front()[0], 3);
         EXPECT_EQ(state.collected.front()[1], 0);
     }
+
+    {
+        kaori::CombinatorialBarcodesPairedEnd<128> stuff(
+            constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
+            constant2.c_str(), constant2.size(), true, to_pointers(variables2), 0
+        );
+
+        auto state = stuff.initialize();
+        std::string seq1 = "AAAACCCCCGGCacacacac", seq2 = "gacgacgaAAAAAGAGAGAGCT";
+        stuff.process(state, bounds(seq1), bounds(seq2));
+        ASSERT_EQ(state.collected.size(), 1);
+        EXPECT_EQ(state.collected.front()[0], 1);
+        EXPECT_EQ(state.collected.front()[1], 3);
+    }
 }
