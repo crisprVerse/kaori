@@ -34,8 +34,8 @@ public:
         State(typename SimpleSingleMatch<N>::SearchState s1, typename SimpleSingleMatch<N>::SearchState s2) : search1(std::move(s1)), search2(std::move(s2)) {}
 
         std::vector<std::array<int, 2> >collected;
-        int matched1 = 0;
-        int matched2 = 0;
+        int read1_only = 0;
+        int read2_only = 0;
         int total = 0;
 
         /**
@@ -57,6 +57,8 @@ public:
         matcher2.reduce(s.search2);
         combinations.insert(combinations.end(), s.collected.begin(), s.collected.end());
         total += s.total;
+        read1_only += s.read1_only;
+        read2_only += s.read2_only;
     }
 
     constexpr static bool use_names = false;
@@ -64,18 +66,82 @@ public:
 public:
     void process(State& state, const std::pair<const char*, const char*>& r1, const std::pair<const char*, const char*>& r2) const {
         if (use_first) {
-            if ( (matcher1.search_first(r1.first, r1.second - r1.first, state.search1) && matcher2.search_first(r2.first, r2.second - r2.first, state.search2)) ||
-                 (randomized && matcher1.search_first(r2.first, r2.second - r2.first, state.search1) && matcher2.search_first(r1.first, r1.second - r1.first, state.search2)) )
-            {
+            bool m1 = matcher1.search_first(r1.first, r1.second - r1.first, state.search1);
+            bool m2 = matcher2.search_first(r2.first, r2.second - r2.first, state.search2);
+
+            if (m1 && m2) {
                 state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
+            } else if (randomized) {
+                bool n1 = matcher1.search_first(r2.first, r2.second - r2.first, state.search1);
+                bool n2 = matcher2.search_first(r1.first, r1.second - r1.first, state.search2);
+                if (n1 && n2) {
+                    state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
+                } else {
+                    if (m1 || n1) {
+                        ++state.read1_only;
+                    } else if (m2 || n2) {
+                        ++state.read2_only;
+                    }
+                }
+            } else {
+                if (m1) {
+                    ++state.read1_only;
+                } else if (m2) {
+                    ++state.read2_only;
+                }
             }
+
         } else {
-            if ( (matcher1.search_best(r1.first, r1.second - r1.first, state.search1) && matcher2.search_best(r2.first, r2.second - r2.first, state.search2)) ||
-                 (randomized && matcher1.search_best(r2.first, r2.second - r2.first, state.search1) && matcher2.search_best(r1.first, r1.second - r1.first, state.search2)) )
-            {
-                state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
+            bool m1 = matcher1.search_best(r1.first, r1.second - r1.first, state.search1);
+            bool m2 = matcher2.search_best(r2.first, r2.second - r2.first, state.search2);
+
+            if (!randomized) {
+                if (m1 && m2) {
+                    state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
+                } else if (m1) {
+                    ++state.read1_only;
+                } else if (m2) {
+                    ++state.read2_only;
+                }
+            } else {
+                if (m1 && m2) {
+                    std::array<int, 2> candidate{ state.search1.index, state.search2.index };
+                    int mismatches = state.search1.mismatches + state.search2.mismatches;
+                    
+                    bool n1 = matcher1.search_best(r2.first, r2.second - r2.first, state.search1);
+                    bool n2 = matcher2.search_best(r1.first, r1.second - r1.first, state.search2);
+
+                    if (n1 && n2) {
+                        int rmismatches = state.search1.mismatches + state.search2.mismatches;
+                        if (mismatches > rmismatches) {
+                            state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
+                        } else if (mismatches < rmismatches) {
+                            state.collected.emplace_back(candidate);
+                        } else if (candidate[0] == state.search1.index && candidate[1] == state.search2.index) {
+                            // If the mismatches are the same, it may not be ambiguous
+                            // if the indices would be the same anyway.
+                            state.collected.emplace_back(candidate);
+                        }
+                    } else {
+                        state.collected.emplace_back(candidate);
+                    }
+
+                } else {
+                    bool n1 = matcher1.search_best(r2.first, r2.second - r2.first, state.search1);
+                    bool n2 = matcher2.search_best(r1.first, r1.second - r1.first, state.search2);
+                    
+                    if (n1 && n2) {
+                        state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
+                    } else if (n1) {
+                        ++state.read1_only;
+                    } else if (n2) {
+                        ++state.read2_only;
+                    }
+                }
             }
         }
+
+        ++state.total;
     }
 
 public:
@@ -100,6 +166,8 @@ private:
 
     std::vector<std::array<int, 2> > combinations;
     int total = 0;
+    int read1_only = 0;
+    int read2_only = 0;
 };
 
 }

@@ -91,6 +91,7 @@ TEST_F(CombinatorialBarcodesPairedEndTest, ReverseComplementFirst) {
         EXPECT_EQ(state.collected.front()[1], 0);
     }
 
+    // Just some due diligence here...
     {
         kaori::CombinatorialBarcodesPairedEnd<128> stuff(
             constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
@@ -103,5 +104,137 @@ TEST_F(CombinatorialBarcodesPairedEndTest, ReverseComplementFirst) {
         ASSERT_EQ(state.collected.size(), 1);
         EXPECT_EQ(state.collected.front()[0], 1);
         EXPECT_EQ(state.collected.front()[1], 3);
+    }
+}
+
+TEST_F(CombinatorialBarcodesPairedEndTest, MismatchesFirst) {
+    kaori::CombinatorialBarcodesPairedEnd<128> stuff(
+        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
+        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0
+    );
+
+    kaori::CombinatorialBarcodesPairedEnd<128> stuff10(
+        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 1,
+        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0
+    );
+
+    kaori::CombinatorialBarcodesPairedEnd<128> stuff20(
+        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 2,
+        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0
+    );
+
+    // Works in the simple case.
+    {
+        std::string seq1 = "AAAATTATCGGC", seq2 = "AGCTACACACTTTT";
+
+        auto state = stuff.initialize();
+        stuff.process(state, bounds(seq1), bounds(seq2));
+        ASSERT_EQ(state.collected.size(), 0);
+
+        auto state10 = stuff10.initialize();
+        stuff10.process(state10, bounds(seq1), bounds(seq2));
+        ASSERT_EQ(state10.collected.size(), 1);
+        EXPECT_EQ(state10.collected.front()[0], 3);
+        EXPECT_EQ(state10.collected.front()[1], 0);
+    }
+
+    // Handles ambiguity.
+    {
+        std::string seq1 = "AAAATAATCGGC", seq2 = "AGCTACACACTTTT";
+
+        auto state20 = stuff20.initialize();
+        stuff.process(state20, bounds(seq1), bounds(seq2));
+        ASSERT_EQ(state20.collected.size(), 0);
+
+        seq1[5] = 'C';
+        stuff20.process(state20, bounds(seq1), bounds(seq2));
+        ASSERT_EQ(state20.collected.size(), 1);
+        EXPECT_EQ(state20.collected.front()[0], 3);
+        EXPECT_EQ(state20.collected.front()[1], 0);
+    }
+}
+
+TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedFirst) {
+    kaori::CombinatorialBarcodesPairedEnd<128> nonrandom(
+        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
+        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0
+    );
+
+    kaori::CombinatorialBarcodesPairedEnd<128> randomized(
+        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
+        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0,
+        true
+    );
+
+    std::string seq1 = "ctagcgaAGCTTGTGTGTTTTagaga", seq2 = "acacAAAAGGGGCGGCacac";
+
+    {
+        auto nrstate = nonrandom.initialize();
+        nonrandom.process(nrstate, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(nrstate.collected.size(), 0);
+
+        auto rstate = randomized.initialize();
+        randomized.process(rstate, bounds(seq1), bounds(seq2));
+        ASSERT_EQ(rstate.collected.size(), 1);
+        EXPECT_EQ(rstate.collected.front()[0], 2);
+        EXPECT_EQ(rstate.collected.front()[1], 1);
+    }
+
+    // Positive control, check that the sequences were right.
+    {
+        auto nrstate = nonrandom.initialize();
+        nonrandom.process(nrstate, bounds(seq2), bounds(seq1));
+        ASSERT_EQ(nrstate.collected.size(), 1);
+        EXPECT_EQ(nrstate.collected.front()[0], 2);
+        EXPECT_EQ(nrstate.collected.front()[1], 1);
+
+        auto rstate = randomized.initialize();
+        randomized.process(rstate, bounds(seq2), bounds(seq1));
+        ASSERT_EQ(rstate.collected.size(), 1);
+        EXPECT_EQ(rstate.collected.front()[0], 2);
+        EXPECT_EQ(rstate.collected.front()[1], 1);
+    }
+}
+
+TEST_F(CombinatorialBarcodesPairedEndTest, DiagnosticsFirst) {
+    kaori::CombinatorialBarcodesPairedEnd<128> nonrandom(
+        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
+        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0
+    );
+
+    kaori::CombinatorialBarcodesPairedEnd<128> randomized(
+        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
+        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0,
+        true
+    );
+
+    // Only read 1.
+    {
+        std::string seq1 = "AAAATTTTCGGC", seq2 = "acacaaacca";
+
+        auto nrstate = nonrandom.initialize();
+        nonrandom.process(nrstate, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(nrstate.read1_only, 1);
+        EXPECT_EQ(nrstate.read2_only, 0);
+
+        auto rstate = randomized.initialize();
+        randomized.process(rstate, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(rstate.read1_only, 1);
+        EXPECT_EQ(rstate.read2_only, 0);
+    }
+
+    // Only read 2.
+    {
+        std::string seq1 = "acacacacacacca", seq2 = "ctagcgaAGCTTGTGTGTTTTagaga";
+
+        auto nrstate = nonrandom.initialize();
+        nonrandom.process(nrstate, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(nrstate.read1_only, 0);
+        EXPECT_EQ(nrstate.read2_only, 1);
+
+        auto rstate = randomized.initialize();
+        randomized.process(rstate, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(rstate.read1_only, 0);
+        EXPECT_EQ(rstate.read2_only, 1);
     }
 }
