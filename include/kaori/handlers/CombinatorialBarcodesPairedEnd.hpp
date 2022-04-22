@@ -1,8 +1,7 @@
 #ifndef KAORI_COMBINATORIAL_BARCODES_PAIRED_END_HPP
 #define KAORI_COMBINATORIAL_BARCODES_PAIRED_END_HPP
 
-#include "../ConstantTemplate.hpp"
-#include "../VariableLibrary.hpp"
+#include "../SimpleSingleMatch.hpp"
 #include "../utils.hpp"
 
 namespace kaori {
@@ -68,13 +67,13 @@ public:
             if ( (matcher1.search_first(r1.first, r1.second - r1.first, state.search1) && matcher2.search_first(r2.first, r2.second - r2.first, state.search2)) ||
                  (randomized && matcher1.search_first(r2.first, r2.second - r2.first, state.search1) && matcher2.search_first(r1.first, r1.second - r1.first, state.search2)) )
             {
-                state.collected.emplace_back({ state.search1.index, state.search2.index });
+                state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
             }
         } else {
             if ( (matcher1.search_best(r1.first, r1.second - r1.first, state.search1) && matcher2.search_best(r2.first, r2.second - r2.first, state.search2)) ||
                  (randomized && matcher1.search_best(r2.first, r2.second - r2.first, state.search1) && matcher2.search_best(r1.first, r1.second - r1.first, state.search2)) )
             {
-                state.collected.emplace_back({ state.search1.index, state.search2.index });
+                state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
             }
         }
     }
@@ -84,7 +83,7 @@ public:
         sort_combinations(combinations, num_options);
     }
 
-    const std::vector<std::array<int, V> >& get_combinations() const {
+    const std::vector<std::array<int, 2> >& get_combinations() const {
         return combinations;
     }
 
