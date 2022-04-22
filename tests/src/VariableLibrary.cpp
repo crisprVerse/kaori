@@ -121,6 +121,46 @@ TEST(SimpleVariableLibrary, Caching) {
     }
 }
 
+TEST(SimpleVariableLibrary, Duplicates) {
+    std::vector<std::string> things { "ACGT", "ACGT", "AGTT", "AGTT" };
+    auto ptrs = to_pointers(things);
+
+    EXPECT_ANY_THROW({
+        try {
+            kaori::SimpleVariableLibrary stuff(ptrs, 4, 0, false, false);
+        } catch (std::exception& e) {
+            EXPECT_TRUE(std::string(e.what()).find("duplicate") != std::string::npos);
+            throw e;
+        }
+    });
+
+    // Gets the first occurrence.
+    {
+        kaori::SimpleVariableLibrary stuff(ptrs, 4, 0, false, true);
+        auto state = stuff.initialize();
+
+        stuff.match("ACGT", state);
+        EXPECT_EQ(state.index, 0);
+
+        stuff.match("AGTT", state);
+        EXPECT_EQ(state.index, 2);
+    }
+
+    // ... even with a mismatch.
+    {
+        kaori::SimpleVariableLibrary stuff(ptrs, 4, 1, false, true);
+        auto state = stuff.initialize();
+
+        stuff.match("ACGA", state);
+        EXPECT_EQ(state.index, 0);
+        EXPECT_EQ(state.mismatches, 1);
+
+        stuff.match("AGTA", state);
+        EXPECT_EQ(state.index, 2);
+        EXPECT_EQ(state.mismatches, 1);
+    }
+}
+
 TEST(SegmentedVariableLibrary, Basic) {
     std::vector<std::string> variables { "AAAAAA", "AACCCC", "AAGGGG", "AATTTT" };
     auto ptrs = to_pointers(variables);

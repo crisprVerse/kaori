@@ -18,7 +18,8 @@ void fill_library(
     const std::vector<const char*>& options, 
     std::unordered_map<std::string, int>& exact,
     Trie& trie,
-    bool reverse
+    bool reverse,
+    bool duplicates
 ) {
     size_t len = trie.get_length();
 
@@ -36,11 +37,16 @@ void fill_library(
 
         auto it = exact.find(current);
         if (exact.find(current) != exact.end()) {
-            throw std::runtime_error("duplicate variable sequence '" + current + "'");
+            if (!duplicates) {
+                throw std::runtime_error("duplicate variable sequence '" + current + "'");
+            }
+        } else {
+            exact[current] = i;
         }
-        exact[current] = i;
 
-        trie.add(current.c_str());
+        // Note that this must be called, even if the sequence is duplicated;
+        // otherwise the trie's internal counter will not be properly incremented.
+        trie.add(current.c_str(), duplicates);
     }
     return;
 }
@@ -82,8 +88,8 @@ class SimpleVariableLibrary {
 public:
     SimpleVariableLibrary() {}
 
-    SimpleVariableLibrary(const std::vector<const char*>& options, size_t len, int m = 0, bool reverse = false) : trie(len), max_mismatches(m) {
-        fill_library(options, exact, trie, reverse);
+    SimpleVariableLibrary(const std::vector<const char*>& options, size_t len, int m = 0, bool reverse = false, bool duplicates = false) : trie(len), max_mismatches(m) {
+        fill_library(options, exact, trie, reverse, duplicates);
         return;
     }
 
@@ -153,11 +159,11 @@ class SegmentedVariableLibrary {
 public:
     SegmentedVariableLibrary() {}
 
-    SegmentedVariableLibrary(const std::vector<const char*>& options, std::array<int, num_segments> segments, std::array<int, num_segments> mismatches, bool reverse = false) : 
+    SegmentedVariableLibrary(const std::vector<const char*>& options, std::array<int, num_segments> segments, std::array<int, num_segments> mismatches, bool reverse = false, bool duplicates = false) : 
         trie(segments), 
         max_mismatches(mismatches) 
     {
-        fill_library(options, exact, trie, reverse);
+        fill_library(options, exact, trie, reverse, duplicates);
         return;
     }
 

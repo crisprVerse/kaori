@@ -16,7 +16,7 @@ public:
         bool random = false
     ) :
         dual_handler(con1, n1, rev1, var1, mm1, con2, n2, rev2, var2, mm2, random),
-        combo_handler(con1, n1, rev1, var1, mm1, con2, n2, rev2, var2, mm2, random)
+        combo_handler(con1, n1, rev1, var1, mm1, con2, n2, rev2, var2, mm2, random, true) // we allow duplicates in the trie.
     {}
 
     DualBarcodesWithDiagnostics& set_first(bool t = true) {

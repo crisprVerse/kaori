@@ -13,14 +13,14 @@ class MismatchTrie {
 public:
     MismatchTrie(size_t n = 0) : length(n), pointers(4, -1), counter(0) {}
 
-    MismatchTrie(const std::vector<const char*>& seq, size_t n) : MismatchTrie(n) {
+    MismatchTrie(const std::vector<const char*>& seq, size_t n, bool duplicates = false) : MismatchTrie(n) {
         for (auto s : seq) {
-            add(s);
+            add(s, duplicates);
         }
     }
 
 public:
-    void add(const char* seq) {
+    void add(const char* seq, bool duplicates = false) {
         int position = 0;
 
         for (size_t i = 0; i < length; ++i) {
@@ -29,9 +29,12 @@ public:
             if (i + 1 == length) {
                 // Last position is the index of the sequence.
                 if (current >= 0) {
-                    throw std::runtime_error("duplicate sequences detected when constructing the trie");
+                    if (!duplicates) {
+                        throw std::runtime_error("duplicate sequences detected when constructing the trie");
+                    }
+                } else {
+                    current = counter;
                 }
-                current = counter;
             } else {
                 if (current < 0) {
                     current = pointers.size();
@@ -82,7 +85,7 @@ class SimpleMismatchTrie : public MismatchTrie {
 public:
     SimpleMismatchTrie(size_t n = 0) : MismatchTrie(n) {}
 
-    SimpleMismatchTrie(const std::vector<const char*>& seq, size_t n) : MismatchTrie(seq, n) {}
+    SimpleMismatchTrie(const std::vector<const char*>& seq, size_t n, bool duplicates = false) : MismatchTrie(seq, n, duplicates) {}
 
     std::pair<int, int> search(const char* seq, int max_mismatch) const {
         return search(seq, 0, 0, 0, max_mismatch);
@@ -170,9 +173,9 @@ public:
         }
     }
 
-    SegmentedMismatchTrie(const std::vector<const char*>& seq, std::array<int, num_segments> segments) : SegmentedMismatchTrie(segments) {
+    SegmentedMismatchTrie(const std::vector<const char*>& seq, std::array<int, num_segments> segments, bool duplicates = false) : SegmentedMismatchTrie(segments) {
         for (auto s : seq) {
-            add(s);
+            add(s, duplicates);
         }
     }
 

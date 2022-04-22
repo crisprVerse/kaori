@@ -108,6 +108,28 @@ TEST(SimpleMismatchTrie, Ambiguous) {
     }
 }
 
+TEST(SimpleMismatchTrie, Duplicates) {
+    std::vector<std::string> things { "ACGT", "ACGT", "AGTT", "AGTT" };
+    auto ptrs = to_pointers(things);
+
+    EXPECT_ANY_THROW({
+        try {
+            kaori::SimpleMismatchTrie stuff(ptrs, 4);
+        } catch (std::exception& e) {
+            EXPECT_TRUE(std::string(e.what()).find("duplicate") != std::string::npos);
+            throw e;
+        }
+    });
+
+    // Gets the first occurrence.
+    kaori::SimpleMismatchTrie stuff(ptrs, 4, true);
+    auto res = stuff.search("ACGT", 0);
+    EXPECT_EQ(res.first, 0);
+
+    auto res2= stuff.search("AGTT", 0);
+    EXPECT_EQ(res2.first, 2);
+}
+
 TEST(SegmentedMismatchTrie, Segmented) {
     std::vector<std::string> things { "AAAAAA", "CCCCCC", "GGGGGG", "TTTTTT" };
     auto ptrs = to_pointers(things);

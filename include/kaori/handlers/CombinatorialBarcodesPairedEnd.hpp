@@ -12,10 +12,11 @@ public:
     CombinatorialBarcodesPairedEnd(
         const char* con1, size_t n1, bool rev1, const std::vector<const char*>& var1, int mm1, 
         const char* con2, size_t n2, bool rev2, const std::vector<const char*>& var2, int mm2,
-        bool random = false
+        bool random = false,
+        bool duplicates = false
     ) :
-        matcher1(con1, n1, !rev1, rev1, var1, mm1),
-        matcher2(con2, n2, !rev2, rev2, var2, mm2),
+        matcher1(con1, n1, !rev1, rev1, var1, mm1, duplicates),
+        matcher2(con2, n2, !rev2, rev2, var2, mm2, duplicates),
         randomized(random)
     {
         num_options[0] = var1.size();

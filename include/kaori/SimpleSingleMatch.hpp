@@ -14,7 +14,7 @@ namespace kaori {
 template<size_t N>
 class SimpleSingleMatch {
 public:
-    SimpleSingleMatch(const char* s, size_t n, bool f, bool r, const std::vector<const char*>& options, int mm = 0) : 
+    SimpleSingleMatch(const char* s, size_t n, bool f, bool r, const std::vector<const char*>& options, int mm = 0, bool duplicates = false) : 
         num_options(options.size()),
         forward(f), 
         reverse(r),
@@ -29,10 +29,10 @@ public:
         size_t var_length = regions[0].second - regions[0].first;
 
         if (forward) {
-            forward_lib = SimpleVariableLibrary(options, var_length, max_mismatches);
+            forward_lib = SimpleVariableLibrary(options, var_length, max_mismatches, false, duplicates);
         }
         if (reverse) {
-            reverse_lib = SimpleVariableLibrary(options, var_length, max_mismatches, true);
+            reverse_lib = SimpleVariableLibrary(options, var_length, max_mismatches, true, duplicates);
         }
     }
 
