@@ -219,10 +219,22 @@ TEST(SimpleSingleMatch, BasicBest) {
 
     // ... unless it's ambiguous.
     {
-        kaori::SimpleSingleMatch<64> stuff0(constant.c_str(), constant.size(), true, false, ptrs);
-        std::string seq = "gatcgtgaACGTAAAATGCAcacggagACGTGGGGTGCA";
-        auto state = stuff0.initialize();
-        EXPECT_FALSE(stuff0.search_best(seq.c_str(), seq.size(), state));
+        {
+            kaori::SimpleSingleMatch<64> stuff0(constant.c_str(), constant.size(), true, false, ptrs);
+            std::string seq = "gatcgtgaACGTAAAATGCAcacggagACGTGGGGTGCA";
+            auto state = stuff0.initialize();
+            EXPECT_FALSE(stuff0.search_best(seq.c_str(), seq.size(), state));
+        }
+
+        // ... unless the ambiguity refers to the same read!
+        {
+            kaori::SimpleSingleMatch<64> stuff0(constant.c_str(), constant.size(), true, false, ptrs);
+            std::string seq = "gatcgtgaACGTAAAATGCAcacggagACGTAAAATGCA";
+            auto state = stuff0.initialize();
+            EXPECT_TRUE(stuff0.search_best(seq.c_str(), seq.size(), state));
+            EXPECT_EQ(state.position, 8);
+            EXPECT_EQ(state.mismatches, 0);
+        }
     }
 
     // Works at the start.

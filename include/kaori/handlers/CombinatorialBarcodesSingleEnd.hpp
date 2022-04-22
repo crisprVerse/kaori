@@ -150,7 +150,9 @@ private:
         auto update = [&](std::pair<int, int> match) -> void {
             if (match.first && match.second <= best_mismatches) {
                 if (match.second == best_mismatches) {
-                    found = false;
+                    if (best_id != state.temp) { // ambiguous.
+                        found = false;
+                    }
                 } else { 
                     // A further optimization at this point would be to narrow
                     // max_mismatches to the current 'best_mismatches'. But

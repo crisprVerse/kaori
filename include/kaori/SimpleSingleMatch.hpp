@@ -145,10 +145,11 @@ public:
             }
 
             auto total = x.mismatches + const_mismatches;
-            if (total == best) { // ambiguous, setting back to a mismatch.
-                found = false;
-                state.index = -1;
-
+            if (total == best) { 
+                if (state.index != x.index) { // ambiguous, setting back to a mismatch.
+                    found = false;
+                    state.index = -1;
+                }
             } else if (total < best) {
                 found = true;
                 best = total; 

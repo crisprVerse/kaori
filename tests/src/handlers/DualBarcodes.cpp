@@ -251,6 +251,14 @@ TEST_F(DualBarcodesTest, BasicBest) {
         EXPECT_EQ(fstate0.counts[1], 0);
         EXPECT_EQ(fstate0.counts[3], 0);
     }
+
+    // ... unless the ambiguous regions are the same.
+    {
+        auto state = stuff.initialize();
+        std::string seq1 = "AAAATTTTCGGCcacacacaAAAATTTTCGGC", seq2 = "AGCTCTCTCTTTTTcgtacgactAGCTCTCTCTTTTT";
+        stuff.process(state, bounds(seq1), bounds(seq2)); // ambiguous
+        EXPECT_EQ(state.counts[3], 1);
+    }
 }
 
 TEST_F(DualBarcodesTest, ReverseComplementBest) {

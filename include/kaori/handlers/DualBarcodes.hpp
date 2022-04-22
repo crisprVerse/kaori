@@ -179,7 +179,6 @@ private:
         auto checker = [&](size_t idx2) -> bool {
             const auto& current2 = state.buffer2[idx2];
             auto combined = match1.first + current2.first;
-            std::cout << combined << std::endl;
             varlib.match(combined, state.details, std::array<int, 2>{ max_mismatches1 - match1.second, max_mismatches2 - current2.second });
 
             if (state.details.index != -1) {
@@ -232,7 +231,7 @@ private:
             if (cur_mismatches < best_mismatches) {
                 chosen = state.details.index;
                 best_mismatches = cur_mismatches;
-            } else if (cur_mismatches == best_mismatches) { // ambiguous.
+            } else if (cur_mismatches == best_mismatches && chosen != state.details.index) { // ambiguous.
                 chosen = -1;
             }
         };

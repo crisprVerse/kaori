@@ -267,11 +267,24 @@ TEST_F(CombinatorialBarcodesSingleEndTest, Best) {
 
     // Two perfect matches => ambiguous.
     {
-        std::string seq = "cagAAAAAAAACGGCTGTGTGTTTTacacAAAATTTTCGGCCTCTCTTTTT";
+        {
+            std::string seq = "cagAAAAAAAACGGCTGTGTGTTTTacacAAAATTTTCGGCCTCTCTTTTT";
 
-        auto state = bst.initialize();
-        bst.process(state, bounds(seq));
-        EXPECT_EQ(state.collected.size(), 0);
+            auto state = bst.initialize();
+            bst.process(state, bounds(seq));
+            EXPECT_EQ(state.collected.size(), 0);
+        }
+
+        // Unless they're the same match!
+        {
+            std::string seq = "cagAAAAAAAACGGCTGTGTGTTTTacacAAAAAAAACGGCTGTGTGTTTT";
+
+            auto state = bst.initialize();
+            bst.process(state, bounds(seq));
+            ASSERT_EQ(state.collected.size(), 1);
+            EXPECT_EQ(state.collected.front()[0], 0);
+            EXPECT_EQ(state.collected.front()[1], 1);
+        }
     }
 
     // Works across strands.
