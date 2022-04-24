@@ -13,8 +13,8 @@ protected:
         variables2(std::vector<std::string>{ "ACACAC", "TGTGTG", "AGAGAG", "CTCTCT" })
     {}
 
-    std::vector<std::vector<const char*> > make_pointers() const {
-        return std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) };
+    std::array<kaori::SequenceSet, 2> make_pointers() const {
+        return std::array<kaori::SequenceSet, 2>{ kaori::SequenceSet(variables1), kaori::SequenceSet(variables2) };
     }
 
     std::string constant;
@@ -109,14 +109,10 @@ TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementFirst) {
 }
 
 TEST_F(CombinatorialBarcodesSingleEndTest, MismatchFirst) {
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm0(constant.c_str(), constant.size(), 0, 
-        std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) }, 0);
-
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm1(constant.c_str(), constant.size(), 0, 
-        std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) }, 1);
-
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm2(constant.c_str(), constant.size(), 0, 
-        std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) }, 2);
+    auto ptrs = make_pointers();
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm0(constant.c_str(), constant.size(), 0, ptrs, 0);
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm1(constant.c_str(), constant.size(), 0, ptrs, 1);
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm2(constant.c_str(), constant.size(), 0, ptrs, 2); 
 
     // One mismatch.
     {
@@ -202,14 +198,10 @@ TEST_F(CombinatorialBarcodesSingleEndTest, MismatchFirst) {
 }
 
 TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementMismatchFirst) {
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm0(constant.c_str(), constant.size(), 1, 
-        std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) }, 0);
-
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm1(constant.c_str(), constant.size(), 1, 
-        std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) }, 1);
-
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm2(constant.c_str(), constant.size(), 1, 
-        std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) }, 2);
+    auto ptrs = make_pointers();
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm0(constant.c_str(), constant.size(), 1, ptrs, 0);
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm1(constant.c_str(), constant.size(), 1, ptrs, 1);
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm2(constant.c_str(), constant.size(), 1, ptrs, 2);
 
     // One mismatch.
     {
@@ -338,4 +330,18 @@ TEST_F(CombinatorialBarcodesSingleEndTest, Sorting) {
     EXPECT_EQ(x.get_combinations().back()[1], 2);
 
     EXPECT_EQ(x.get_combinations(), copy);
+}
+
+TEST_F(CombinatorialBarcodesSingleEndTest, Error) {
+    typedef kaori::CombinatorialBarcodesSingleEnd<128, 2> Thing; // Type causes problems inside the macro... who knows what's going on.
+
+    EXPECT_ANY_THROW({
+        try {
+            std::string constant2 = "AAAA----CGGC----TTTT";
+            Thing stuff(constant2.c_str(), constant2.size(), 0, make_pointers());
+        } catch (std::exception& e) {
+            EXPECT_TRUE(std::string(e.what()).find("should be the same") != std::string::npos);
+            throw e;
+        }
+    });
 }

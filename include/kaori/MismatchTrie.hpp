@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <numeric>
 #include "utils.hpp"
+#include "SequenceSet.hpp"
 
 namespace kaori {
 
@@ -13,8 +14,8 @@ class MismatchTrie {
 public:
     MismatchTrie(size_t n = 0) : length(n), pointers(4, -1), counter(0) {}
 
-    MismatchTrie(const std::vector<const char*>& seq, size_t n, bool duplicates = false) : MismatchTrie(n) {
-        for (auto s : seq) {
+    MismatchTrie(const SequenceSet& seq, bool duplicates = false) : MismatchTrie(seq.length) {
+        for (auto s : seq.choices) {
             add(s, duplicates);
         }
     }
@@ -85,8 +86,9 @@ class SimpleMismatchTrie : public MismatchTrie {
 public:
     SimpleMismatchTrie(size_t n = 0) : MismatchTrie(n) {}
 
-    SimpleMismatchTrie(const std::vector<const char*>& seq, size_t n, bool duplicates = false) : MismatchTrie(seq, n, duplicates) {}
+    SimpleMismatchTrie(const SequenceSet& seq, bool duplicates = false) : MismatchTrie(seq, duplicates) {}
 
+public:
     std::pair<int, int> search(const char* seq, int max_mismatch) const {
         return search(seq, 0, 0, 0, max_mismatch);
     }
@@ -173,12 +175,16 @@ public:
         }
     }
 
-    SegmentedMismatchTrie(const std::vector<const char*>& seq, std::array<int, num_segments> segments, bool duplicates = false) : SegmentedMismatchTrie(segments) {
-        for (auto s : seq) {
+    SegmentedMismatchTrie(const SequenceSet& seq, std::array<int, num_segments> segments, bool duplicates = false) : SegmentedMismatchTrie(segments) {
+        if (length != seq.length) {
+            throw std::runtime_error("length of variable sequences should equal total length of segments");
+        }
+        for (auto s : seq.choices) {
             add(s, duplicates);
         }
     }
 
+public:
     struct SearchResult {
         SearchResult() : per_segment() {}
         int index = 0;

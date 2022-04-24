@@ -9,7 +9,7 @@ namespace kaori {
 template<size_t N>
 class SingleBarcodeSingleEnd {
 public:
-    SingleBarcodeSingleEnd(const char* constant, size_t size, int strand, const std::vector<const char*>& variable, int mismatches = 0) : 
+    SingleBarcodeSingleEnd(const char* constant, size_t size, int strand, const SequenceSet& variable, int mismatches = 0) : 
         matcher(constant, size, strand != 1, strand != 0, variable, mismatches), counts(variable.size()) {}
         
     SingleBarcodeSingleEnd& set_first(bool t = true) {

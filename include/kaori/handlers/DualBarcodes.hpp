@@ -11,8 +11,8 @@ template<size_t N>
 class DualBarcodes { 
 public:
     DualBarcodes(
-        const char* con1, size_t n1, bool rev1, const std::vector<const char*>& var1, int mm1, 
-        const char* con2, size_t n2, bool rev2, const std::vector<const char*>& var2, int mm2,
+        const char* con1, size_t n1, bool rev1, const SequenceSet& var1, int mm1, 
+        const char* con2, size_t n2, bool rev2, const SequenceSet& var2, int mm2,
         bool random = false
     ) :
         reverse1(rev1),
@@ -36,6 +36,9 @@ public:
                 throw std::runtime_error("expected one variable region in the first constant template");
             }
             len1 = regions[0].second - regions[0].first;
+            if (len1 != var1.length) {
+                throw std::runtime_error("length of variable sequences (" + std::to_string(var1.length) + ") should be the same as the variable region (" + std::to_string(len1) + ")");
+            }
         }
 
         size_t len2;
@@ -45,6 +48,9 @@ public:
                 throw std::runtime_error("expected one variable region in the second constant template");
             }
             len2 = regions[0].second - regions[0].first;
+            if (len2 != var2.length) {
+                throw std::runtime_error("length of variable sequences (" + std::to_string(var2.length) + ") should be the same as the variable region (" + std::to_string(len2) + ")");
+            }
         }
 
         // Constructing the combined strings.
@@ -76,15 +82,9 @@ public:
         }
 
         // Constructing the combined varlib.
-        std::vector<const char*> ptrs;
-        ptrs.reserve(num_options);
-
-        for (size_t i =0 ; i <num_options; ++i) {
-            ptrs.push_back(combined[i].c_str());
-        }
-
+        SequenceSet combined_set(combined);
         varlib = SegmentedVariableLibrary(
-            ptrs, 
+            combined_set,
             std::array<int, 2>{ static_cast<int>(len1), static_cast<int>(len2) }, 
             std::array<int, 2>{ max_mismatches1, max_mismatches2 }
         );

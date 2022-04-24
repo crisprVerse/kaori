@@ -2,6 +2,7 @@
 #define KAORI_SIMPLE_SINGLE_MATCH_HPP
 
 #include "ConstantTemplate.hpp"
+#include "SequenceSet.hpp"
 #include "VariableLibrary.hpp"
 #include "utils.hpp"
 
@@ -14,11 +15,11 @@ namespace kaori {
 template<size_t N>
 class SimpleSingleMatch {
 public:
-    SimpleSingleMatch(const char* s, size_t n, bool f, bool r, const std::vector<const char*>& options, int mm = 0, bool duplicates = false) : 
-        num_options(options.size()),
+    SimpleSingleMatch(const char* s, size_t n, bool f, bool r, const SequenceSet& variable, int mismatch = 0, bool duplicates = false) : 
+        num_options(variable.choices.size()),
         forward(f), 
         reverse(r),
-        max_mismatches(mm),
+        max_mismatches(mismatch),
         constant(s, n, f, r)
     {
         // Exact strandedness doesn't matter here, just need the number and length.
@@ -26,13 +27,17 @@ public:
         if (regions.size() != 1) {
             throw std::runtime_error("expected a single variable region only");
         }
+
         size_t var_length = regions[0].second - regions[0].first;
+        if (var_length != variable.length) {
+            throw std::runtime_error("length of variable sequences (" + std::to_string(variable.length) + ") should be the same as the variable region (" + std::to_string(var_length) + ")");
+        }
 
         if (forward) {
-            forward_lib = SimpleVariableLibrary(options, var_length, max_mismatches, false, duplicates);
+            forward_lib = SimpleVariableLibrary(variable, max_mismatches, false, duplicates);
         }
         if (reverse) {
-            reverse_lib = SimpleVariableLibrary(options, var_length, max_mismatches, true, duplicates);
+            reverse_lib = SimpleVariableLibrary(variable, max_mismatches, true, duplicates);
         }
     }
 

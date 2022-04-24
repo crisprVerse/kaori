@@ -4,14 +4,6 @@
 #include <vector>
 #include <string>
 
-inline std::vector<const char*> to_pointers(const std::vector<std::string>& inputs) {
-    std::vector<const char*> ptrs;
-    for (const auto& t : inputs) {
-        ptrs.push_back(t.c_str());
-    }
-    return ptrs;
-}
-
 inline std::string convert_to_fastq(const std::vector<std::string>& reads, std::string prefix = "READ") {
     std::string output;
 

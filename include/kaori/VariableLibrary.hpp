@@ -1,6 +1,7 @@
 #ifndef KAORI_VARIABLE_LIBRARY_HPP
 #define KAORI_VARIABLE_LIBRARY_HPP
 
+#include "SequenceSet.hpp"
 #include "MismatchTrie.hpp"
 #include "utils.hpp"
 #include <unordered_map>
@@ -88,8 +89,11 @@ class SimpleVariableLibrary {
 public:
     SimpleVariableLibrary() {}
 
-    SimpleVariableLibrary(const std::vector<const char*>& options, size_t len, int m = 0, bool reverse = false, bool duplicates = false) : trie(len), max_mismatches(m) {
-        fill_library(options, exact, trie, reverse, duplicates);
+    SimpleVariableLibrary(const SequenceSet& sequences, int mismatch = 0, bool reverse = false, bool duplicates = false) : 
+        trie(sequences.length), 
+        max_mismatches(mismatch) 
+    {
+        fill_library(sequences.choices, exact, trie, reverse, duplicates);
         return;
     }
 
@@ -159,11 +163,11 @@ class SegmentedVariableLibrary {
 public:
     SegmentedVariableLibrary() {}
 
-    SegmentedVariableLibrary(const std::vector<const char*>& options, std::array<int, num_segments> segments, std::array<int, num_segments> mismatches, bool reverse = false, bool duplicates = false) : 
+    SegmentedVariableLibrary(const SequenceSet& sequences, std::array<int, num_segments> segments, std::array<int, num_segments> mismatches, bool reverse = false, bool duplicates = false) : 
         trie(segments), 
         max_mismatches(mismatches) 
     {
-        fill_library(options, exact, trie, reverse, duplicates);
+        fill_library(sequences.choices, exact, trie, reverse, duplicates);
         return;
     }
 

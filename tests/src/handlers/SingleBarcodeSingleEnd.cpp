@@ -19,7 +19,7 @@ TEST(SingleBarcodeSingleEnd, ForwardOnly) {
 
     // No mismatches allowed.
     {
-        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 0, to_pointers(variables));
+        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 0, kaori::SequenceSet(variables));
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -34,7 +34,7 @@ TEST(SingleBarcodeSingleEnd, ForwardOnly) {
 
     // Okay, 2 mismatches.
     {
-        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 0, to_pointers(variables), 2);
+        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 0, kaori::SequenceSet(variables), 2);
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -62,7 +62,7 @@ TEST(SingleBarcodeSingleEnd, Stranded) {
 
     // Forward only.
     {
-        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 0, to_pointers(variables));
+        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 0, kaori::SequenceSet(variables));
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -75,7 +75,7 @@ TEST(SingleBarcodeSingleEnd, Stranded) {
 
     // Reverse only.
     {
-        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 1, to_pointers(variables));
+        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 1, kaori::SequenceSet(variables));
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -88,7 +88,7 @@ TEST(SingleBarcodeSingleEnd, Stranded) {
 
     // Both.
     {
-        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 2, to_pointers(variables));
+        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 2, kaori::SequenceSet(variables));
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -101,7 +101,7 @@ TEST(SingleBarcodeSingleEnd, Stranded) {
 
     // Both plus mismatches.
     {
-        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 2, to_pointers(variables), 2);
+        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 2, kaori::SequenceSet(variables), 2);
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -125,7 +125,7 @@ TEST(SingleBarcodeSingleEnd, Best) {
 
     // First only.
     {
-        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 2, to_pointers(variables), 1);
+        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 2, kaori::SequenceSet(variables), 1);
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -138,7 +138,7 @@ TEST(SingleBarcodeSingleEnd, Best) {
 
     // Best.
     {
-        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 2, to_pointers(variables), 1);
+        kaori::SingleBarcodeSingleEnd<64> handler(thing.c_str(), thing.size(), 2, kaori::SequenceSet(variables), 1);
         handler.set_first(false);
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);

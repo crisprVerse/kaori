@@ -11,8 +11,8 @@ template<size_t N>
 class DualBarcodesWithDiagnostics { 
 public:
     DualBarcodesWithDiagnostics(
-        const char* con1, size_t n1, bool rev1, const std::vector<const char*>& var1, int mm1, 
-        const char* con2, size_t n2, bool rev2, const std::vector<const char*>& var2, int mm2,
+        const char* con1, size_t n1, bool rev1, const SequenceSet& var1, int mm1, 
+        const char* con2, size_t n2, bool rev2, const SequenceSet& var2, int mm2,
         bool random = false
     ) :
         dual_handler(con1, n1, rev1, var1, mm1, con2, n2, rev2, var2, mm2, random),

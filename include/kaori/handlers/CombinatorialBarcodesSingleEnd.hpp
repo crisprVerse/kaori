@@ -13,7 +13,7 @@ namespace kaori {
 template<size_t N, size_t V>
 class CombinatorialBarcodesSingleEnd {
 public:
-    CombinatorialBarcodesSingleEnd(const char* constant, size_t size, int strand, const std::vector<std::vector<const char*> >& variable, int mismatches = 0) : 
+    CombinatorialBarcodesSingleEnd(const char* constant, size_t size, int strand, const std::array<SequenceSet, V>& variable, int mismatches = 0) : 
         forward(strand != 1),
         reverse(strand != 0),
         max_mismatches(mismatches),
@@ -23,20 +23,25 @@ public:
         if (regions.size() != V) { 
             throw std::runtime_error("expected " + std::to_string(V) + " variable regions in the constant template");
         }
-        if (variable.size() != V) {
-            throw std::runtime_error("expected " + std::to_string(V) + " sets of variable sequences");
+        for (size_t i = 0; i < V; ++i) {
+            size_t rlen = regions[i].second - regions[i].first;
+            size_t vlen = variable[i].length;
+            if (vlen != rlen) {
+                throw std::runtime_error("length of variable region " + std::to_string(i + 1) + " (" + std::to_string(rlen) + 
+                    ") should be the same as its sequences (" + std::to_string(vlen) + ")");
+            }
         }
 
-        // We'll be using the later.
+        // We'll be using this later.
         for (size_t i = 0; i < V; ++i) {
-            num_options[i] = variable[i].size();
+            num_options[i] = variable[i].choices.size();
         }
 
         if (forward) {
             for (size_t i = 0; i < V; ++i) {
                 const auto& current = regions[i];
                 size_t len = current.second - current.first;
-                forward_lib[i] = SimpleVariableLibrary(variable[i], len, mismatches);
+                forward_lib[i] = SimpleVariableLibrary(variable[i], mismatches);
             }
         }
 
@@ -45,7 +50,7 @@ public:
             for (size_t i = 0; i < V; ++i) {
                 const auto& current = rev_regions[i];
                 size_t len = current.second - current.first;
-                reverse_lib[i] = SimpleVariableLibrary(variable[V - i - 1], len, mismatches, true);
+                reverse_lib[i] = SimpleVariableLibrary(variable[V - i - 1], mismatches, true);
             }
         }
     }

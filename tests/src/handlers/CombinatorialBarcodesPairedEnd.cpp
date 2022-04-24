@@ -14,10 +14,6 @@ protected:
         variables2(std::vector<std::string>{ "ACACAC", "TGTGTG", "AGAGAG", "CTCTCT" })
     {}
 
-    std::vector<std::vector<const char*> > make_pointers() const {
-        return std::vector<std::vector<const char*> >{ to_pointers(variables1), to_pointers(variables2) };
-    }
-
     std::string constant1, constant2;
     std::vector<std::string> variables1;
     std::vector<std::string> variables2;
@@ -25,8 +21,8 @@ protected:
 
 TEST_F(CombinatorialBarcodesPairedEndTest, BasicFirst) {
     kaori::CombinatorialBarcodesPairedEnd<128> stuff(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 0,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 0
     );
 
     // Works in the simple case.
@@ -85,8 +81,8 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicFirst) {
 TEST_F(CombinatorialBarcodesPairedEndTest, ReverseComplementFirst) {
     {
         kaori::CombinatorialBarcodesPairedEnd<128> stuff(
-            constant1.c_str(), constant1.size(), true, to_pointers(variables1), 0,
-            constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0
+            constant1.c_str(), constant1.size(), true, kaori::SequenceSet(variables1), 0,
+            constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 0
         );
 
         auto state = stuff.initialize();
@@ -100,8 +96,8 @@ TEST_F(CombinatorialBarcodesPairedEndTest, ReverseComplementFirst) {
     // Just some due diligence here...
     {
         kaori::CombinatorialBarcodesPairedEnd<128> stuff(
-            constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
-            constant2.c_str(), constant2.size(), true, to_pointers(variables2), 0
+            constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 0,
+            constant2.c_str(), constant2.size(), true, kaori::SequenceSet(variables2), 0
         );
 
         auto state = stuff.initialize();
@@ -115,18 +111,18 @@ TEST_F(CombinatorialBarcodesPairedEndTest, ReverseComplementFirst) {
 
 TEST_F(CombinatorialBarcodesPairedEndTest, MismatchesFirst) {
     kaori::CombinatorialBarcodesPairedEnd<128> stuff(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 0,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 0
     );
 
     kaori::CombinatorialBarcodesPairedEnd<128> stuff10(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 1,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 1,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 0
     );
 
     kaori::CombinatorialBarcodesPairedEnd<128> stuff20(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 2,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 2,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 0
     );
 
     // Works in the simple case.
@@ -162,13 +158,13 @@ TEST_F(CombinatorialBarcodesPairedEndTest, MismatchesFirst) {
 
 TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedFirst) {
     kaori::CombinatorialBarcodesPairedEnd<128> nonrandom(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 0,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 0
     );
 
     kaori::CombinatorialBarcodesPairedEnd<128> randomized(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0,
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 0,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 0,
         true
     );
 
@@ -204,13 +200,13 @@ TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedFirst) {
 
 TEST_F(CombinatorialBarcodesPairedEndTest, DiagnosticsFirst) {
     kaori::CombinatorialBarcodesPairedEnd<128> nonrandom(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 0,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 0
     );
 
     kaori::CombinatorialBarcodesPairedEnd<128> randomized(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0,
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 0,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 0,
         true
     );
 
@@ -247,14 +243,14 @@ TEST_F(CombinatorialBarcodesPairedEndTest, DiagnosticsFirst) {
 
 TEST_F(CombinatorialBarcodesPairedEndTest, BasicBest) {
     kaori::CombinatorialBarcodesPairedEnd<128> best(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 1,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 1
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 1,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 1
     );
     best.set_first(false);
 
     kaori::CombinatorialBarcodesPairedEnd<128> first(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 1,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 1
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 1,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 1
     );
 
     {
@@ -292,21 +288,21 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicBest) {
 
 TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedBest) {
     kaori::CombinatorialBarcodesPairedEnd<128> best(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 1,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 1,
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 1,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 1,
         true
     );
     best.set_first(false);
 
     kaori::CombinatorialBarcodesPairedEnd<128> nonrandom(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 1,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 1
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 1,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 1
     );
     nonrandom.set_first(false);
 
     kaori::CombinatorialBarcodesPairedEnd<128> first(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 1,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 1,
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 1,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 1,
         true
     );
 
@@ -378,14 +374,14 @@ TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedBest) {
 
 TEST_F(CombinatorialBarcodesPairedEndTest, DiagnosticsBest) {
     kaori::CombinatorialBarcodesPairedEnd<128> nonrandom(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 0,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 0
     );
     nonrandom.set_first(false);
 
     kaori::CombinatorialBarcodesPairedEnd<128> randomized(
-        constant1.c_str(), constant1.size(), false, to_pointers(variables1), 0,
-        constant2.c_str(), constant2.size(), false, to_pointers(variables2), 0,
+        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 0,
+        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 0,
         true
     );
     randomized.set_first(false);
