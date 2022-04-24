@@ -47,6 +47,7 @@ public:
      * Constant sequences should only contain `A`, `C`, `G` or `T` (or their lower-case equivalents).
      * Variable regions should be marked with `-`.
      * @param template_length Length of the array pointed to by `template_seq`.
+     * This should be less than or equal to `max_size`.
      * @param search_forward Should the search be performed on the forward strand of the read sequence?
      * @param search_reverse Should the search be performed on the reverse strand of the read sequence?
      */

@@ -15,26 +15,26 @@ namespace kaori {
 /**
  * @brief Handler for paired-end single barcodes.
  *
- * A construct contains the barcode sequence on one side and is subjected to paired-end sequencing.
- * However, either read could contain the barcode sequence.
- * This handler will search both reads for the barcode and count the frequency.
+ * In this design, the target sequence is created from a template with a single variable region drawn from a pool of barcode sequences.
+ * The construct containing the target sequence is then subjected to paired-end sequencing, where either end could contain the target sequence.
+ * This handler will search both reads for the target sequence and count the frequency of each barcode.
  *
- * @tparam N Size of the bitset to use for each constant template.
- * The maximum size of the template is defined as `N / 4`, see `ConstantTemplate` for details.
+ * @tparam max_size Maximum length of the template sequence.
  */
 template<size_t N>
 class SingleBarcodePairedEnd {
 public:
     /**
-     * @param[in] constant Template sequence for the first barcode.
-     * This should contain one variable regions.
-     * @param size Length of the template.
-     * @param reverse Whether to search the reverse strand of the read sequence.
-     * @param variable Known sequences for the variable region.
-     * @param mismatches Maximum number of mismatches allowed across the target sequence.
+     * @param[in] template_seq Template sequence for the first barcode.
+     * This should contain exactly one variable region.
+     * @param template_length Length of the template.
+     * This should be less than or equal to `max_size`.
+     * @param reverse Whether to search the reverse strand of each read.
+     * @param barcode_pool Known barcode sequences for the variable region.
+     * @param max_mismatches Maximum number of mismatches allowed across the target sequence.
      */
-    SingleBarcodePairedEnd(const char* constant, size_t size, bool reverse, const SequenceSet& variable, int mismatches = 0) : 
-        matcher(constant, size, !reverse, reverse, variable, mismatches), counts(variable.size()) {}
+    SingleBarcodePairedEnd(const char* template_seq, size_t template_length, bool reverse, const SequenceSet& barcode_pool, int max_mismatches = 0) : 
+        matcher(template_seq, template_length, !reverse, reverse, barcode_pool, max_mismatches), counts(barcode_pool.size()) {}
         
     /**
      * @param t Whether to search only for the first match.
@@ -127,7 +127,7 @@ private:
 public:
     /**
      * @return Vector containing the frequency of each barcode.
-     * This has length equal to the number of valid barcodes (i.e., the length of `variable` in the constructor).
+     * This has length equal to the number of valid barcodes (i.e., the length of `barcode_pool` in the constructor).
      */
     const std::vector<int>& get_counts() const {
         return counts;        

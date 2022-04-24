@@ -4,6 +4,9 @@
 #include "../SimpleSingleMatch.hpp"
 #include "../utils.hpp"
 
+#include <array>
+#include <vector>
+
 /**
  * @file CombinatorialBarcodesPairedEnd.hpp
  *
@@ -15,50 +18,52 @@ namespace kaori {
 /**
  * @brief Handler for paired-end combinatorial barcodes.
  *
- * One of the paired reads contains a barcode from one pool of options, while the other read contains a barcode from another pool.
- * Typically, these combinations are assembled randomly by library construction.
+ * In this design, each read contains a target sequence created from a template with a single variable region.
+ * For one read, the barcode is drawn from one pool of options, while the other read contains a barcode from another pool.
+ * Combinations are assembled randomly by library construction, where the large number of combinations provide many unique identifiers for cell-tracing applications.
  * This handler will capture the frequencies of each barcode combination. 
  *
- * @tparam N Size of the bitset to use for each constant template.
- * The maximum size of the template is defined as `N / 4`, see `ConstantTemplate` for details.
+ * @tparam max_size Maximum length of the template sequences on both reads.
  */
-template<size_t N>
+template<size_t max_size>
 class CombinatorialBarcodesPairedEnd { 
 public:
     /**
-     * @param[in] con1 Template sequence for the first barcode.
-     * This should contain one variable region.
-     * @param n1 Length of the first barcode template.
-     * @param rev1 Whether to search the reverse strand for the first barcode template.
-     * @param var1 Set of known sequences for the variable region in the first barcode.
-     * @param mm1 Maximum number of mismatches for the first barcode.
-     * @param[in] con2 Template sequence for the second barcode.
-     * This should contain one variable region.
-     * @param n2 Length of the second barcode template.
-     * @param rev2 Whether to search the reverse strand for the second barcode template.
-     * @param var2 Set of known sequences for the variable region in the second barcode.
-     * @param mm2 Maximum number of mismatches for the second barcode.
-     * @param random Whether the reads are randomized with respect to the first/second barcode.
-     * If `false`, the first read is searched for the first barcode only, and the second read is searched for the second barcode only.
+     * @param[in] template_seq1 Pointer to a character array containing the first template sequence. 
+     * This should contain exactly one variable region.
+     * @param template_length1 Length of the first template.
+     * This should be less than or equal to `max_size`.
+     * @param reverse1 Whether to search the reverse strand of the read for the first template.
+     * @param barcode_pool1 Pool of known barcode sequences for the variable region in the first template.
+     * @param max_mismatches1 Maximum number of mismatches across the target sequence corresponding to the first template.
+     * @param[in] template_seq2 Pointer to a character array containing the second template sequence. 
+     * This should contain exactly one variable region.
+     * @param template_length2 Length of the second template.
+     * This should be less than or equal to `max_size`.
+     * @param reverse2 Whether to search the reverse strand of the read for the second template.
+     * @param barcode_pool2 Pool of known barcode sequences for the variable region in the second template.
+     * @param max_mismatches2 Maximum number of mismatches across the target sequence corresponding to the second template.
+     * @param random Whether the reads are randomized with respect to the first/second target sequences.
+     * If `false`, the first read is searched for the first template only, and the second read is searched for the second template only.
      * If `true`, an additional search will be performed in the opposite orientation.
-     * @param duplicates Whether to allow duplicates in `var1` and `var2`, see `MismatchTrie` for details.
+     * @param duplicates Whether to allow duplicates in `barcode_pool1` and `barcode_pool2`, see `MismatchTrie` for details.
      */
     CombinatorialBarcodesPairedEnd(
-        const char* con1, size_t n1, bool rev1, const SequenceSet& var1, int mm1, 
-        const char* con2, size_t n2, bool rev2, const SequenceSet& var2, int mm2,
+        const char* template_seq1, size_t template_length1, bool reverse1, const SequenceSet& barcode_pool1, int max_mismatches1, 
+        const char* template_seq2, size_t template_length2, bool reverse2, const SequenceSet& barcode_pool2, int max_mismatches2,
         bool random = false,
         bool duplicates = false
     ) :
-        matcher1(con1, n1, !rev1, rev1, var1, mm1, duplicates),
-        matcher2(con2, n2, !rev2, rev2, var2, mm2, duplicates),
+        matcher1(template_seq1, template_length1, !reverse1, reverse1, barcode_pool1, max_mismatches1, duplicates),
+        matcher2(template_seq2, template_length2, !reverse2, reverse2, barcode_pool2, max_mismatches2, duplicates),
         randomized(random)
     {
-        num_options[0] = var1.size();
-        num_options[1] = var2.size();
+        num_options[0] = barcode_pool1.size();
+        num_options[1] = barcode_pool2.size();
     }
 
     /**
-     * @param t Whether to search only for the first match in each read.
+     * @param t Whether to search only for the first match to the target sequence in each read.
      * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
      *
      * @return A reference to this `CombinatorialBarcodesPairedEnd` instance.
@@ -75,7 +80,7 @@ public:
     struct State {
         State() {}
 
-        State(typename SimpleSingleMatch<N>::SearchState s1, typename SimpleSingleMatch<N>::SearchState s2) : search1(std::move(s1)), search2(std::move(s2)) {}
+        State(typename SimpleSingleMatch<max_size>::SearchState s1, typename SimpleSingleMatch<max_size>::SearchState s2) : search1(std::move(s1)), search2(std::move(s2)) {}
 
         std::vector<std::array<int, 2> >collected;
         int barcode1_only = 0;
@@ -85,8 +90,8 @@ public:
         /**
          * @cond
          */
-        typename SimpleSingleMatch<N>::SearchState search1;
-        typename SimpleSingleMatch<N>::SearchState search2;
+        typename SimpleSingleMatch<max_size>::SearchState search1;
+        typename SimpleSingleMatch<max_size>::SearchState search2;
         /**
          * @endcond
          */
@@ -197,6 +202,7 @@ public:
 public:
     /**
      * @return Sort the combinations for easier frequency counting.
+     * Combinations are sorted by the first index, and then the second index.
      */
     void sort() {
         sort_combinations(combinations, num_options);
@@ -204,6 +210,7 @@ public:
 
     /**
      * @return All combinations encountered by the handler.
+     * In each array, the first and second element contains the indices of known barcodes in the first and second pools, respectively.
      */
     const std::vector<std::array<int, 2> >& get_combinations() const {
         return combinations;
@@ -230,7 +237,7 @@ public:
         return barcode2_only;
     }
 private:
-    SimpleSingleMatch<N> matcher1, matcher2;
+    SimpleSingleMatch<max_size> matcher1, matcher2;
     std::array<size_t, 2> num_options;
 
     bool randomized;

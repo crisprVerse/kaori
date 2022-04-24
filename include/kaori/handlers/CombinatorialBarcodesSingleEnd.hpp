@@ -1,12 +1,12 @@
 #ifndef KAORI_COMBINATORIAL_BARCODES_SINGLE_END_HPP
 #define KAORI_COMBINATORIAL_BARCODES_SINGLE_END_HPP
 
-#include "../ConstantTemplate.hpp"
-#include "../VariableLibrary.hpp"
+#include "../ScanTemplate.hpp"
+#include "../BarcodeSearch.hpp"
 #include "../utils.hpp"
 
 #include <array>
-#include <unordered_map>
+#include <vector>
 
 /**
  * @file CombinatorialBarcodesSingleEnd.hpp
@@ -19,37 +19,39 @@ namespace kaori {
 /**
  * @brief Handler for single-end combinatorial barcodes.
  *
- * Each read contains a construct with multiple variable regions, where each region contains a barcode from a different pool of options.
+ * In this design, the target sequence is created from a template with multiple variable regions.
+ * Each region contains a barcode from a different pool of options, where combinations are assembled randomly by library construction.
+ * The idea is to use the large number of combinations to provide many unique identifiers, e.g., for cell-tracing applications.
  * This handler will capture the frequencies of each barcode combination. 
  *
- * @tparam N Size of the bitset to use for each constant template.
- * The maximum size of the template is defined as `N / 4`, see `ConstantTemplate` for details.
- * @tparam V Number of variable regions in the construct.
+ * @tparam max_size Maximum length of the template sequences on both reads.
+ * @tparam num_variable Number of variable regions in the construct.
  */
-template<size_t N, size_t V>
+template<size_t max_size, size_t num_variable>
 class CombinatorialBarcodesSingleEnd {
 public:
     /**
-     * @param[in] constant Template sequence for the first barcode.
-     * This should contain `V` variable regions.
-     * @param size Length of the template.
-     * @param strand Strand to use for searching the read sequence - forward (0), reverse (1) or both (2).
-     * @param variable Array containing the known sequences for each of the variable regions.
-     * @param mismatches Maximum number of mismatches across the entire construct.
+     * @param[in] template_seq Template sequence for the first barcode.
+     * This should contain exactly `num_variable` variable regions.
+     * @param template_length Length of the template.
+     * This should be less than or equal to `max_size`.
+     * @param strand Strand to use when searching the read sequence - forward (0), reverse (1) or both (2).
+     * @param barcode_pools Array containing the known barcode sequences for each of the variable regions, in the order of their appearance in the template sequence.
+     * @param max_mismatches Maximum number of mismatches across the entire target sequence.
      */
-    CombinatorialBarcodesSingleEnd(const char* constant, size_t size, int strand, const std::array<SequenceSet, V>& variable, int mismatches = 0) : 
+    CombinatorialBarcodesSingleEnd(const char* template_seq, size_t template_length, int strand, const std::array<BarcodePool, num_variable>& barcode_pools, int max_mismatches = 0) : 
         forward(strand != 1),
         reverse(strand != 0),
-        max_mismatches(mismatches),
-        constant_matcher(constant, size, forward, reverse)
+        max_mm(max_mismatches),
+        constant_matcher(template_seq, template_length, forward, reverse)
     {
         const auto& regions = constant_matcher.variable_regions();
-        if (regions.size() != V) { 
-            throw std::runtime_error("expected " + std::to_string(V) + " variable regions in the constant template");
+        if (regions.size() != num_variable) { 
+            throw std::runtime_error("expected " + std::to_string(num_variable) + " variable regions in the constant template");
         }
-        for (size_t i = 0; i < V; ++i) {
+        for (size_t i = 0; i < num_variable; ++i) {
             size_t rlen = regions[i].second - regions[i].first;
-            size_t vlen = variable[i].length;
+            size_t vlen = barcode_pools[i].length;
             if (vlen != rlen) {
                 throw std::runtime_error("length of variable region " + std::to_string(i + 1) + " (" + std::to_string(rlen) + 
                     ") should be the same as its sequences (" + std::to_string(vlen) + ")");
@@ -57,24 +59,24 @@ public:
         }
 
         // We'll be using this later.
-        for (size_t i = 0; i < V; ++i) {
-            num_options[i] = variable[i].choices.size();
+        for (size_t i = 0; i < num_variable; ++i) {
+            num_options[i] = barcode_pools[i].choices.size();
         }
 
         if (forward) {
-            for (size_t i = 0; i < V; ++i) {
+            for (size_t i = 0; i < num_variable; ++i) {
                 const auto& current = regions[i];
                 size_t len = current.second - current.first;
-                forward_lib[i] = SimpleVariableLibrary(variable[i], mismatches);
+                forward_lib[i] = SimpleBarcodeSearch(barcode_pools[i], mismatches);
             }
         }
 
         if (reverse) {
             const auto& rev_regions = constant_matcher.template variable_regions<true>();
-            for (size_t i = 0; i < V; ++i) {
+            for (size_t i = 0; i < num_variable; ++i) {
                 const auto& current = rev_regions[i];
                 size_t len = current.second - current.first;
-                reverse_lib[i] = SimpleVariableLibrary(variable[V - i - 1], mismatches, true);
+                reverse_lib[i] = SimpleBarcodeSearch(barcode_pools[num_variable - i - 1], mismatches, true);
             }
         }
     }
@@ -95,13 +97,13 @@ public:
      * @cond
      */
     struct State {
-        std::vector<std::array<int, V> >collected;
+        std::vector<std::array<int, num_variable> >collected;
         int total = 0;
 
-        std::array<int, V> temp;
+        std::array<int, num_variable> temp;
 
         // Default constructors should be called in this case, so it should be fine.
-        std::array<typename SimpleVariableLibrary::SearchState, V> forward_details, reverse_details;
+        std::array<typename SimpleBarcodeSearch::State, num_variable> forward_details, reverse_details;
     };
     /**
      * @endcond
@@ -113,30 +115,30 @@ private:
         const char* seq, 
         size_t position, 
         int obs_mismatches, 
-        const std::array<SimpleVariableLibrary, V>& libs, 
-        std::array<typename SimpleVariableLibrary::SearchState, V>& states, 
-        std::array<int, V>& temp) 
+        const std::array<SimpleBarcodeSearch, num_variable>& libs, 
+        std::array<typename SimpleBarcodeSearch::State, num_variable>& states, 
+        std::array<int, num_variable>& temp) 
     const {
         const auto& regions = constant_matcher.template variable_regions<reverse>();
 
-        for (size_t r = 0; r < V; ++r) {
+        for (size_t r = 0; r < num_variable; ++r) {
             auto range = regions[r];
             auto start = seq + position;
             std::string current(start + range.first, start + range.second);
 
             auto& curstate = states[r];
-            libs[r].match(current, curstate, max_mismatches - obs_mismatches);
+            libs[r].match(current, curstate, max_mm - obs_mismatches);
             if (curstate.index < 0) {
                 return std::make_pair(false, 0);
             }
             
             obs_mismatches += curstate.mismatches;
-            if (obs_mismatches > max_mismatches) {
+            if (obs_mismatches > max_mm) {
                 return std::make_pair(false, 0);
             }
 
             if constexpr(reverse) {
-                temp[V - r - 1] = curstate.index;
+                temp[num_variable - r - 1] = curstate.index;
             } else {
                 temp[r] = curstate.index;
             }
@@ -145,11 +147,11 @@ private:
         return std::make_pair(true, obs_mismatches);
     }
 
-    std::pair<bool, int> forward_match(const char* seq, const typename ConstantTemplate<N>::MatchDetails& deets, State& state) const {
+    std::pair<bool, int> forward_match(const char* seq, const typename ConstantTemplate<max_size>::MatchDetails& deets, State& state) const {
         return find_match<false>(seq, deets.position, deets.forward_mismatches, forward_lib, state.forward_details, state.temp);
     }
 
-    std::pair<bool, int> reverse_match(const char* seq, const typename ConstantTemplate<N>::MatchDetails& deets, State& state) const {
+    std::pair<bool, int> reverse_match(const char* seq, const typename ConstantTemplate<max_size>::MatchDetails& deets, State& state) const {
         return find_match<true>(seq, deets.position, deets.reverse_mismatches, reverse_lib, state.reverse_details, state.temp);
     }
 
@@ -160,14 +162,14 @@ private:
         while (!deets.finished) {
             constant_matcher.next(deets);
 
-            if (forward && deets.forward_mismatches <= max_mismatches) {
+            if (forward && deets.forward_mismatches <= max_mm) {
                 if (forward_match(x.first, deets, state).first) {
                     state.collected.push_back(state.temp);
                     return;
                 }
             }
 
-            if (reverse && deets.reverse_mismatches <= max_mismatches) {
+            if (reverse && deets.reverse_mismatches <= max_mm) {
                 if (reverse_match(x.first, deets, state).first) {
                     state.collected.push_back(state.temp);
                     return;
@@ -179,8 +181,8 @@ private:
     void process_best(State& state, const std::pair<const char*, const char*>& x) const {
         auto deets = constant_matcher.initialize(x.first, x.second - x.first);
         bool found = false;
-        int best_mismatches = max_mismatches + 1;
-        std::array<int, V> best_id;
+        int best_mismatches = max_mm + 1;
+        std::array<int, num_variable> best_id;
 
         auto update = [&](std::pair<int, int> match) -> void {
             if (match.first && match.second <= best_mismatches) {
@@ -190,7 +192,7 @@ private:
                     }
                 } else { 
                     // A further optimization at this point would be to narrow
-                    // max_mismatches to the current 'best_mismatches'. But
+                    // max_mm to the current 'best_mismatches'. But
                     // this probably isn't worth it.
 
                     found = true;
@@ -203,11 +205,11 @@ private:
         while (!deets.finished) {
             constant_matcher.next(deets);
 
-            if (forward && deets.forward_mismatches <= max_mismatches) {
+            if (forward && deets.forward_mismatches <= max_mm) {
                 update(forward_match(x.first, deets, state));
             }
 
-            if (reverse && deets.reverse_mismatches <= max_mismatches) {
+            if (reverse && deets.reverse_mismatches <= max_mm) {
                 update(reverse_match(x.first, deets, state));
             }
         }
@@ -227,12 +229,12 @@ public:
 
     void reduce(State& s) {
         if (forward) {
-            for (size_t r = 0; r < V; ++r) {
+            for (size_t r = 0; r < num_variable; ++r) {
                 forward_lib[r].reduce(s.forward_details[r]);
             }
         }
         if (reverse) {
-            for (size_t r = 0; r < V; ++r) {
+            for (size_t r = 0; r < num_variable; ++r) {
                 reverse_lib[r].reduce(s.reverse_details[r]);
             }
         }
@@ -267,7 +269,7 @@ public:
     /**
      * @return All combinations encountered by the handler.
      */
-    const std::vector<std::array<int, V> >& get_combinations() const {
+    const std::vector<std::array<int, num_variable> >& get_combinations() const {
         return combinations;
     }
 
@@ -281,14 +283,14 @@ private:
     bool forward;
     bool reverse;
     bool use_first = true;
-    int max_mismatches;
+    int max_mm;
     size_t nregions;
 
-    ConstantTemplate<N> constant_matcher;
-    std::array<SimpleVariableLibrary, V> forward_lib, reverse_lib;
-    std::array<size_t, V> num_options;
+    ConstantTemplate<max_size> constant_matcher;
+    std::array<SimpleBarcodeSearch, num_variable> forward_lib, reverse_lib;
+    std::array<size_t, num_variable> num_options;
 
-    std::vector<std::array<int, V> > combinations;
+    std::vector<std::array<int, num_variable> > combinations;
     int total = 0;
 };
 

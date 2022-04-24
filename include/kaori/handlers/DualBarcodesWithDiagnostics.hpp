@@ -20,39 +20,42 @@ namespace kaori {
  * These frequences can be helpful for diagnosing problems with library construction.
  * The handler also counts the number of reads where only one barcode construct matches to a read.
  *
- * @tparam N Size of the bitset to use for each constant template.
- * The maximum size of the template is defined as `N / 4`, see `ConstantTemplate` for details.
+ * @tparam max_size Maximum length of the template sequences on both reads.
  */
-template<size_t N>
+template<size_t max_size>
 class DualBarcodesWithDiagnostics { 
 public:
     /**
-     * @param[in] con1 Template sequence for the first barcode.
-     * This should contain one variable region.
-     * @param n1 Length of the first barcode template.
-     * @param rev1 Whether to search the reverse strand for the first barcode template.
-     * @param var1 Set of known sequences for the variable region in the first barcode.
-     * @param mm1 Maximum number of mismatches for the first barcode.
-     * @param[in] con2 Template sequence for the second barcode.
-     * This should contain one variable region.
-     * @param n2 Length of the second barcode template.
-     * @param rev2 Whether to search the reverse strand for the second barcode template.
-     * @param var2 Set of known sequences for the variable region in the second barcode.
-     * @param mm2 Maximum number of mismatches for the second barcode.
-     * @param random Whether the reads are randomized with respect to the first/second barcode.
-     * If `false`, the first read is searched for the first barcode only, and the second read is searched for the second barcode only.
+     * @param[in] template_seq1 Pointer to a character array containing the first template sequence. 
+     * This should contain exactly one variable region.
+     * @param template_length1 Length of the first template.
+     * This should be less than or equal to `max_size`.
+     * @param reverse1 Whether to search the reverse strand of the read for the first template.
+     * @param barcode_pool1 Pool of known barcode sequences for the variable region in the first template.
+     * @param max_mismatches1 Maximum number of mismatches across the target sequence corresponding to the first template.
+     * @param[in] template_seq2 Pointer to a character array containing the second template sequence. 
+     * This should contain exactly one variable region.
+     * @param template_length2 Length of the second template.
+     * This should be less than or equal to `max_size`.
+     * @param reverse2 Whether to search the reverse strand of the read for the second template.
+     * @param barcode_pool2 Pool of known barcode sequences for the variable region in the second template.
+     * @param max_mismatches2 Maximum number of mismatches across the target sequence corresponding to the second template.
+     * @param random Whether the reads are randomized with respect to the first/second target sequences.
+     * If `false`, the first read is searched for the first target sequence only, and the second read is searched for the second target sequence only.
      * If `true`, an additional search will be performed in the opposite orientation.
      *
-     * `var2` and `var1` are assumed to have the same number of barcodes.
-     * Corresponding values across `var1` and `var2` define a particular combination. 
+     * `barcode_pool1` and `barcode_pool2` are expected to have the same number of barcodes (possibly duplicated).
+     * Corresponding values across the two pools define a particular combination of dual barcodes. 
      */
     DualBarcodesWithDiagnostics(
-        const char* con1, size_t n1, bool rev1, const SequenceSet& var1, int mm1, 
-        const char* con2, size_t n2, bool rev2, const SequenceSet& var2, int mm2,
+        const char* template_seq1, size_t template_length1, bool reverse1, const SequenceSet& barcode_pool1, int max_mismatches1, 
+        const char* template_seq2, size_t template_length2, bool reverse2, const SequenceSet& barcode_pool2, int max_mismatches2,
         bool random = false
     ) :
-        dual_handler(con1, n1, rev1, var1, mm1, con2, n2, rev2, var2, mm2, random),
-        combo_handler(con1, n1, rev1, var1, mm1, con2, n2, rev2, var2, mm2, random, true) // we allow duplicates in the trie.
+        dual_handler(template_seq1, template_length1, reverse1, barcode_pool1, max_mismtches1, template_seq2, template_length2, reverse2, barcode_pool2, max_mismatches2, random),
+
+        // we allow duplicates in the trie.
+        combo_handler(template_seq1, template_length1, reverse1, barcode_pool1, max_mismatches1, template_seq2, template_length2, reverse2, barcode_pool2, max_mismatches2, random, true) 
     {}
 
     /**
@@ -68,8 +71,8 @@ public:
     }
 
 private:
-    DualBarcodes<N> dual_handler;
-    CombinatorialBarcodesPairedEnd<N> combo_handler;
+    DualBarcodes<max_size> dual_handler;
+    CombinatorialBarcodesPairedEnd<max_size> combo_handler;
 
 public:
     /**
@@ -77,13 +80,13 @@ public:
      */
     struct State {
         State() {}
-        State(typename DualBarcodes<N>::State ds, typename CombinatorialBarcodesPairedEnd<N>::State cs) : dual_state(std::move(ds)), combo_state(std::move(cs)) {}
+        State(typename DualBarcodes<max_size>::State ds, typename CombinatorialBarcodesPairedEnd<max_size>::State cs) : dual_state(std::move(ds)), combo_state(std::move(cs)) {}
 
         /**
          * @cond
          */
-        typename DualBarcodes<N>::State dual_state;
-        typename CombinatorialBarcodesPairedEnd<N>::State combo_state;
+        typename DualBarcodes<max_size>::State dual_state;
+        typename CombinatorialBarcodesPairedEnd<max_size>::State combo_state;
         /**
          * @endcond
          */
@@ -120,14 +123,16 @@ public:
 public:
     /**
      * @return Sort the invalid combinations for easier frequency counting.
+     * Combinations are sorted by the first index, and then the second index.
      */
     void sort() {
         combo_handler.sort();
     }
 
     /**
-     * @return Vector containing the frequency of each combination.
-     * This has length equal to the number of valid combinations (i.e., the length of `var1` and `var2` in the constructor).
+     * @return Vector containing the frequency of each valid combination.
+     * This has length equal to the number of valid dual barcode combinations (i.e., the length of `barcode_pool1` and `barcode_pool2` in the constructor).
+     * Each entry contains the count for the corresponding dual barcode combination.
      */
     const std::vector<int>& get_counts() const {
         return dual_handler.get_counts();
@@ -135,6 +140,7 @@ public:
 
     /**
      * @return All invalid combinations encountered by the handler.
+     * In each array, the first and second element contains the indices of known barcodes in the first and second pools, respectively.
      */
     const std::vector<std::array<int, 2> >& get_combinations() const {
         return combo_handler.get_combinations();
