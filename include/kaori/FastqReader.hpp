@@ -9,7 +9,7 @@
 /**
  * @file FastqReader.hpp
  *
- * @brief Defines the FastqReader class.
+ * @brief Defines the `FastqReader` class.
  */
 
 namespace kaori {

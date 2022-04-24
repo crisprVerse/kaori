@@ -14,7 +14,7 @@
 namespace kaori {
 
 /**
- * @brief Search a read sequence for a constant template.
+ * @brief Search a read sequence for a constant template sequence.
  *
  * The template sequence is expected to contain constant regions interspersed with one or more variable regions.
  * This class will find the location on the read sequence that matches the constant regions of the template (give or take any number of substitutions).
