@@ -5,11 +5,47 @@
 #include "../VariableLibrary.hpp"
 #include "../utils.hpp"
 
+/**
+ * @file DualBarcodes.hpp
+ *
+ * @brief Process dual barcodes.
+ */
+
 namespace kaori {
 
+/**
+ * @brief Handler for dual barcodes.
+ *
+ * One of the paired reads contains a barcode from one pool of options, while the other read contains a barcode from another pool.
+ * Unlike `CombinatorialBarcodesPairedEnd`, the combinations are known in advance, typically corresponding to specific pairs of genes.
+ * This handler will capture the frequencies of each barcode combination. 
+ *
+ * @tparam N Size of the bitset to use for each constant template.
+ * The maximum size of the template is defined as `N / 4`, see `ConstantTemplate` for details.
+ */
 template<size_t N>
 class DualBarcodes { 
 public:
+    /**
+     * @param[in] con1 Template sequence for the first barcode.
+     * This should contain one variable region.
+     * @param n1 Length of the first barcode template.
+     * @param rev1 Whether to search the reverse strand for the first barcode template.
+     * @param var1 Set of known sequences for the variable region in the first barcode.
+     * @param mm1 Maximum number of mismatches for the first barcode.
+     * @param[in] con2 Template sequence for the second barcode.
+     * This should contain one variable region.
+     * @param n2 Length of the second barcode template.
+     * @param rev2 Whether to search the reverse strand for the second barcode template.
+     * @param var2 Set of known sequences for the variable region in the second barcode.
+     * @param mm2 Maximum number of mismatches for the second barcode.
+     * @param random Whether the reads are randomized with respect to the first/second barcode.
+     * If `false`, the first read is searched for the first barcode only, and the second read is searched for the second barcode only.
+     * If `true`, an additional search will be performed in the opposite orientation.
+     *
+     * `var2` and `var1` are assumed to have the same number of barcodes.
+     * Corresponding values across `var1` and `var2` define a particular combination. 
+     */
     DualBarcodes(
         const char* con1, size_t n1, bool rev1, const SequenceSet& var1, int mm1, 
         const char* con2, size_t n2, bool rev2, const SequenceSet& var2, int mm2,
@@ -90,27 +126,30 @@ public:
         );
     }
 
+    /**
+     * @param t Whether to search only for the first match across both reads.
+     * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
+     *
+     * @return A reference to this `DualBarcodes` instance.
+     */
     DualBarcodes& set_first(bool t = true) {
         use_first = t;
         return *this;
     }
 
 public:
+    /**
+     *@cond
+     */
     struct State {
         State(size_t n = 0) : counts(n) {}
         std::vector<int> counts;
         int total = 0;
 
-        /**
-         * @cond
-         */
         std::vector<std::pair<std::string, int> > buffer2;
 
         // Default constructors should be called in this case, so it should be fine.
         typename SegmentedVariableLibrary<2>::SearchState details;
-        /**
-         * @endcond
-         */
     };
 
     State initialize() const {
@@ -126,6 +165,9 @@ public:
     }
 
     constexpr static bool use_names = false;
+    /**
+     * @endcond
+     */
 
 private:
     static void emit_output(std::pair<std::string, int>& output, const char* start, const char* end, int mm) {
@@ -255,6 +297,9 @@ private:
     }
 
 public:
+    /**
+     *@cond
+     */
     bool process(State& state, const std::pair<const char*, const char*>& r1, const std::pair<const char*, const char*>& r2) const {
         bool found;
 
@@ -284,6 +329,9 @@ public:
         ++state.total;
         return found;
     }
+    /**
+     *@endcond
+     */
 
 private:
     bool reverse1, reverse2;
@@ -299,10 +347,17 @@ private:
     int total = 0;
 
 public:
+    /**
+     * @return Vector containing the frequency of each valid combination.
+     * This has length equal to the number of valid combinations (i.e., the length of `var1` and `var2` in the constructor).
+     */
     const std::vector<int>& get_counts() const {
         return counts;
     }
 
+    /**
+     * @return Total number of read pairs processed by the handler.
+     */
     int get_total() const {
         return total;
     }

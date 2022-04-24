@@ -122,6 +122,7 @@ public:
 public:
     /**
      * @brief State of the search.
+     *
      * This contains both the results of the search for any given input sequence,
      * as well as cached mismatches to optimize searches for future inputs.
      */
@@ -266,6 +267,7 @@ public:
 public:
     /**
      * @brief State of the search.
+     *
      * This contains both the results of the search for any given input sequence,
      * as well as cached mismatches to optimize searches for future inputs.
      */

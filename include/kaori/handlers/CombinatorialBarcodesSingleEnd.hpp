@@ -8,11 +8,35 @@
 #include <array>
 #include <unordered_map>
 
+/**
+ * @file CombinatorialBarcodesSingleEnd.hpp
+ *
+ * @brief Process single-end combinatorial barcodes.
+ */
+
 namespace kaori {
 
+/**
+ * @brief Handler for single-end combinatorial barcodes.
+ *
+ * Each read contains a construct with multiple variable regions, where each region contains a barcode from a different pool of options.
+ * This handler will capture the frequencies of each barcode combination. 
+ *
+ * @tparam N Size of the bitset to use for each constant template.
+ * The maximum size of the template is defined as `N / 4`, see `ConstantTemplate` for details.
+ * @tparam V Number of variable regions in the construct.
+ */
 template<size_t N, size_t V>
 class CombinatorialBarcodesSingleEnd {
 public:
+    /**
+     * @param[in] constant Template sequence for the first barcode.
+     * This should contain `V` variable regions.
+     * @param size Length of the template.
+     * @param strand Strand to use for searching the read sequence - forward (0), reverse (1) or both (2).
+     * @param variable Array containing the known sequences for each of the variable regions.
+     * @param mismatches Maximum number of mismatches across the entire construct.
+     */
     CombinatorialBarcodesSingleEnd(const char* constant, size_t size, int strand, const std::array<SequenceSet, V>& variable, int mismatches = 0) : 
         forward(strand != 1),
         reverse(strand != 0),
@@ -55,27 +79,33 @@ public:
         }
     }
         
+    /**
+     * @param t Whether to search only for the first match.
+     * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
+     *
+     * @return A reference to this `CombinatorialBarcodesSingleEnd` instance.
+     */
     CombinatorialBarcodesSingleEnd& set_first(bool t = true) {
         use_first = t;
         return *this;
     }
 
 public:
+    /**
+     * @cond
+     */
     struct State {
         std::vector<std::array<int, V> >collected;
         int total = 0;
 
-        /**
-         * @cond
-         */
         std::array<int, V> temp;
 
         // Default constructors should be called in this case, so it should be fine.
         std::array<typename SimpleVariableLibrary::SearchState, V> forward_details, reverse_details;
-        /**
-         * @endcond
-         */
     };
+    /**
+     * @endcond
+     */
 
 private:
     template<bool reverse>
@@ -188,6 +218,9 @@ private:
     }
 
 public:
+    /**
+     * @cond
+     */
     State initialize() const {
         return State();
     }
@@ -219,16 +252,28 @@ public:
     }
 
     static constexpr bool use_names = false;
+    /**
+     * @endcond
+     */
 
 public:
+    /**
+     * @return Sort the combinations for easier frequency counting.
+     */
     void sort() {
         sort_combinations(combinations, num_options);
     }
 
+    /**
+     * @return All combinations encountered by the handler.
+     */
     const std::vector<std::array<int, V> >& get_combinations() const {
         return combinations;
     }
 
+    /**
+     * @return Total number of reads processed by the handler.
+     */
     int get_total() const {
         return total;
     }
