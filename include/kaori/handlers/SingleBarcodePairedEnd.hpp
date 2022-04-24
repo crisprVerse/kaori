@@ -21,7 +21,7 @@ namespace kaori {
  *
  * @tparam max_size Maximum length of the template sequence.
  */
-template<size_t N>
+template<size_t max_size>
 class SingleBarcodePairedEnd {
 public:
     /**
@@ -33,7 +33,7 @@ public:
      * @param barcode_pool Known barcode sequences for the variable region.
      * @param max_mismatches Maximum number of mismatches allowed across the target sequence.
      */
-    SingleBarcodePairedEnd(const char* template_seq, size_t template_length, bool reverse, const SequenceSet& barcode_pool, int max_mismatches = 0) : 
+    SingleBarcodePairedEnd(const char* template_seq, size_t template_length, bool reverse, const BarcodePool& barcode_pool, int max_mismatches = 0) : 
         matcher(template_seq, template_length, !reverse, reverse, barcode_pool, max_mismatches), counts(barcode_pool.size()) {}
         
     /**
@@ -54,9 +54,9 @@ public:
     struct State {
         State() {}
 
-        State(typename SimpleSingleMatch<N>::SearchState s, size_t nvar) : search(std::move(s)), counts(nvar) {}
+        State(typename SimpleSingleMatch<max_size>::State s, size_t nvar) : search(std::move(s)), counts(nvar) {}
 
-        typename SimpleSingleMatch<N>::SearchState search;
+        typename SimpleSingleMatch<max_size>::State search;
         std::vector<int> counts;
         int total = 0;
     };
@@ -119,7 +119,7 @@ public:
      */
 
 private:
-    SimpleSingleMatch<N> matcher;
+    SimpleSingleMatch<max_size> matcher;
     std::vector<int> counts;
     int total = 0;
     bool use_first = true;

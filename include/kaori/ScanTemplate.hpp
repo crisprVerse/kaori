@@ -82,7 +82,7 @@ public:
 
         if (reverse) {
             for (size_t i = 0; i < length; ++i) {
-                char b = template_[length - i - 1];
+                char b = template_seq[length - i - 1];
                 if (b != '-') {
                     add_base(reverse_ref, reverse_complement(b));
                     add_mask(reverse_mask, i);
@@ -148,8 +148,8 @@ public:
      */
     State initialize(const char* read_seq, size_t read_length) const {
         State out;
-        out.seq = seq;
-        out.len = len;
+        out.seq = read_seq;
+        out.len = read_length;
 
         if (length <= read_length) {
             for (size_t i = 0; i < length - 1; ++i) {
@@ -235,7 +235,7 @@ private:
         }
     }
 
-    static int strand_match(const MatchDetails& match, const std::bitset<N>& ref, const std::bitset<N>& mask) {
+    static int strand_match(const State& match, const std::bitset<N>& ref, const std::bitset<N>& mask) {
         // pop count here is equal to the number of non-ambiguous mismatches *
         // 2 + number of ambiguous mismatches * 3. This is because
         // non-ambiguous bases are encoded by 1 set bit per 4 bases (so 2 are
@@ -256,7 +256,7 @@ private:
         }
     }
 
-    void full_match(MatchDetails& match) const {
+    void full_match(State& match) const {
         if (forward) {
             match.forward_mismatches = strand_match(match, forward_ref, forward_mask);
         }

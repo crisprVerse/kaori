@@ -41,10 +41,10 @@ public:
      * @param duplicates Whether duplicate sequences are allowed in `barcode_pool`, see `MismatchTrie`.
      */
     SimpleSingleMatch(const char* template_seq, size_t template_length, bool search_forward, bool search_reverse, const BarcodePool& barcode_pool, int max_mismatches = 0, bool duplicates = false) : 
-        num_options(variable.choices.size()),
+        num_options(barcode_pool.pool.size()),
         forward(search_forward), 
         reverse(search_reverse),
-        esmax_mm(max_mismatches),
+        max_mm(max_mismatches),
         constant(template_seq, template_length, forward, reverse)
     {
         // Exact strandedness doesn't matter here, just need the number and length.
@@ -54,15 +54,16 @@ public:
         }
 
         size_t var_length = regions[0].second - regions[0].first;
-        if (var_length != variable.length) {
-            throw std::runtime_error("length of variable sequences (" + std::to_string(variable.length) + ") should be the same as the variable region (" + std::to_string(var_length) + ")");
+        if (var_length != barcode_pool.length) {
+            throw std::runtime_error("length of barcode_pool sequences (" + std::to_string(barcode_pool.length) + 
+                ") should be the same as the barcode_pool region (" + std::to_string(var_length) + ")");
         }
 
         if (forward) {
-            forward_lib = SimpleBarcodeSearch(variable, max_mm, false, duplicates);
+            forward_lib = SimpleBarcodeSearch(barcode_pool, max_mm, false, duplicates);
         }
         if (reverse) {
-            reverse_lib = SimpleBarcodeSearch(variable, max_mm, true, duplicates);
+            reverse_lib = SimpleBarcodeSearch(barcode_pool, max_mm, true, duplicates);
         }
     }
 
@@ -141,18 +142,18 @@ private:
         return (obs_mismatches >= 0 && obs_mismatches <= max_mm);
     }
 
-    void forward_match(const char* seq, const typename ConstantTemplate<N>::MatchDetails& details, State& state) const {
+    void forward_match(const char* seq, const typename ScanTemplate<max_size>::State& details, State& state) const {
         auto start = seq + details.position;
         const auto& range = constant.variable_regions()[0];
         std::string curseq(start + range.first, start + range.second);
-        forward_lib.match(curseq, state.forward_details, max_mm - details.forward_mismatches);
+        forward_lib.search(curseq, state.forward_details, max_mm - details.forward_mismatches);
     }
 
-    void reverse_match(const char* seq, const typename ConstantTemplate<N>::MatchDetails& details, State& state) const {
+    void reverse_match(const char* seq, const typename ScanTemplate<max_size>::State& details, State& state) const {
         auto start = seq + details.position;
         const auto& range = constant.template variable_regions<true>()[0];
         std::string curseq(start + range.first, start + range.second);
-        reverse_lib.match(curseq, state.reverse_details, max_mm - details.reverse_mismatches);
+        reverse_lib.search(curseq, state.reverse_details, max_mm - details.reverse_mismatches);
     }
 
 public:
@@ -198,14 +199,14 @@ public:
             constant.next(deets);
 
             if (forward && has_match(deets.forward_mismatches)) {
-                forward_match(seq, deets, state);
+                forward_match(read_seq, deets, state);
                 if (update(false, deets.forward_mismatches, state.forward_details)) {
                     break;
                 }
             }
 
             if (reverse && has_match(deets.reverse_mismatches)) {
-                reverse_match(seq, deets, state);
+                reverse_match(read_seq, deets, state);
                 if (update(true, deets.reverse_mismatches, state.reverse_details)) {
                     break;
                 }
@@ -263,12 +264,12 @@ public:
             constant.next(deets);
 
             if (forward && has_match(deets.forward_mismatches)) {
-                forward_match(seq, deets, state);
+                forward_match(read_seq, deets, state);
                 update(false, deets.forward_mismatches, state.forward_details);
             }
 
             if (reverse && has_match(deets.reverse_mismatches)) {
-                reverse_match(seq, deets, state);
+                reverse_match(read_seq, deets, state);
                 update(true, deets.reverse_mismatches, state.reverse_details);
             }
         }

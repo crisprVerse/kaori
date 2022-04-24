@@ -35,7 +35,7 @@ public:
      * @param duplicates Whether duplicated sequences in `barcode_pool` should be supported, see `add()`.
      */
     MismatchTrie(const BarcodePool& barcode_pool, bool duplicates = false) : MismatchTrie(barcode_pool.length) {
-        for (auto s : barcode_pool.choices) {
+        for (auto s : barcode_pool.pool) {
             add(s, duplicates);
         }
     }
@@ -160,7 +160,7 @@ public:
      * 2. The number of mismatches.
      */
     std::pair<int, int> search(const char* search_seq, int max_mismatches) const {
-        return search(seq, 0, 0, 0, max_mismatches);
+        return search(search_seq, 0, 0, 0, max_mismatches);
     }
 
 private:
@@ -272,7 +272,7 @@ public:
         if (length != barcode_pool.length) {
             throw std::runtime_error("length of barcode sequences should equal the sum of segment lengths");
         }
-        for (auto s : barcode_pool.choices) {
+        for (auto s : barcode_pool.pool) {
             add(s, duplicates);
         }
     }

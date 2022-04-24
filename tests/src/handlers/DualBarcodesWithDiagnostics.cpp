@@ -42,8 +42,8 @@ TEST_F(DualBarcodesWithDiagnosticsTest, BasicFirst) {
     byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
 
     kaori::DualBarcodesWithDiagnostics<128> stuff(
-        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 0,
-        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 0
+        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
+        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
     );
     kaori::process_paired_end_data(&reader1, &reader2, stuff);
 
@@ -88,8 +88,8 @@ TEST_F(DualBarcodesWithDiagnosticsTest, WithDuplicates) {
     byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
 
     kaori::DualBarcodesWithDiagnostics<128> stuff(
-        constant1.c_str(), constant1.size(), false, kaori::SequenceSet(variables1), 0,
-        constant2.c_str(), constant2.size(), false, kaori::SequenceSet(variables2), 0
+        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
+        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
     );
     kaori::process_paired_end_data(&reader1, &reader2, stuff);
 

@@ -3,10 +3,10 @@
 #include <string>
 #include "utils.h"
 
-TEST(SimpleMismatchTrie, Basic) {
+TEST(AnyMismatches, Basic) {
     std::vector<std::string> things { "ACGT", "AAAA", "ACAA", "AGTT" };
-    kaori::SequenceSet ptrs(things);
-    kaori::SimpleMismatchTrie stuff(ptrs);
+    kaori::BarcodePool ptrs(things);
+    kaori::AnyMismatches stuff(ptrs);
 
     {
         auto res = stuff.search("ACGT", 0);
@@ -33,10 +33,10 @@ TEST(SimpleMismatchTrie, Basic) {
     }
 }
 
-TEST(SimpleMismatchTrie, MoreMismatches) {
+TEST(AnyMismatches, MoreMismatches) {
     std::vector<std::string> things { "ACGTACGTACGT", "TTTGGGCCCAAA" };
-    kaori::SequenceSet ptrs(things);
-    kaori::SimpleMismatchTrie stuff(ptrs);
+    kaori::BarcodePool ptrs(things);
+    kaori::AnyMismatches stuff(ptrs);
 
     {
         auto res = stuff.search("ACGTACGTCCGT", 2);
@@ -63,11 +63,11 @@ TEST(SimpleMismatchTrie, MoreMismatches) {
     }
 }
 
-TEST(SimpleMismatchTrie, CappedMismatch) {
+TEST(AnyMismatches, CappedMismatch) {
     // Force an early return.
     std::vector<std::string> things { "ACGT", "AAAA", "ACAA", "AGTT" };
-    kaori::SequenceSet ptrs(things);
-    kaori::SimpleMismatchTrie stuff(ptrs);
+    kaori::BarcodePool ptrs(things);
+    kaori::AnyMismatches stuff(ptrs);
 
     {
         auto res = stuff.search("AAAT", 0);
@@ -82,10 +82,10 @@ TEST(SimpleMismatchTrie, CappedMismatch) {
     }
 }
 
-TEST(SimpleMismatchTrie, Ambiguous) {
+TEST(AnyMismatches, Ambiguous) {
     std::vector<std::string> things { "AAAAGAAAA", "AAAACAAAA", "AAAAAAAAG", "AAAAAAAAC" };
-    kaori::SequenceSet ptrs(things);
-    kaori::SimpleMismatchTrie stuff(ptrs);
+    kaori::BarcodePool ptrs(things);
+    kaori::AnyMismatches stuff(ptrs);
 
     {
         // Positive control first.
@@ -108,13 +108,13 @@ TEST(SimpleMismatchTrie, Ambiguous) {
     }
 }
 
-TEST(SimpleMismatchTrie, Duplicates) {
+TEST(AnyMismatches, Duplicates) {
     std::vector<std::string> things { "ACGT", "ACGT", "AGTT", "AGTT" };
-    kaori::SequenceSet ptrs(things);
+    kaori::BarcodePool ptrs(things);
 
     EXPECT_ANY_THROW({
         try {
-            kaori::SimpleMismatchTrie stuff(ptrs);
+            kaori::AnyMismatches stuff(ptrs);
         } catch (std::exception& e) {
             EXPECT_TRUE(std::string(e.what()).find("duplicate") != std::string::npos);
             throw e;
@@ -122,7 +122,7 @@ TEST(SimpleMismatchTrie, Duplicates) {
     });
 
     // Gets the first occurrence.
-    kaori::SimpleMismatchTrie stuff(ptrs, true);
+    kaori::AnyMismatches stuff(ptrs, true);
     auto res = stuff.search("ACGT", 0);
     EXPECT_EQ(res.first, 0);
 
@@ -130,10 +130,10 @@ TEST(SimpleMismatchTrie, Duplicates) {
     EXPECT_EQ(res2.first, 2);
 }
 
-TEST(SegmentedMismatchTrie, Segmented) {
+TEST(SegmentedMismatches, Segmented) {
     std::vector<std::string> things { "AAAAAA", "CCCCCC", "GGGGGG", "TTTTTT" };
-    kaori::SequenceSet ptrs(things);
-    kaori::SegmentedMismatchTrie<2> stuff(ptrs, {4, 2});
+    kaori::BarcodePool ptrs(things);
+    kaori::SegmentedMismatches<2> stuff(ptrs, {4, 2});
 
     {
         auto res = stuff.search("AAAAAAA", { 0, 0 });
@@ -158,10 +158,10 @@ TEST(SegmentedMismatchTrie, Segmented) {
     }
 }
 
-TEST(SegmentedMismatchTrie, Mismatches) {
+TEST(SegmentedMismatches, Mismatches) {
     std::vector<std::string> things { "AAAAAA", "CCCCCC", "GGGGGG", "TTTTTT" };
-    kaori::SequenceSet ptrs(things);
-    kaori::SegmentedMismatchTrie<2> stuff(ptrs, {4, 2});
+    kaori::BarcodePool ptrs(things);
+    kaori::SegmentedMismatches<2> stuff(ptrs, {4, 2});
 
     // Handles one mismatch.
     {
@@ -211,11 +211,11 @@ TEST(SegmentedMismatchTrie, Mismatches) {
     }
 }
 
-TEST(SegmentedMismatchTrie, Ambiguity) {
+TEST(SegmentedMismatches, Ambiguity) {
     {
         std::vector<std::string> things { "AAAAAA", "CCCCCC", "GGGGGG", "TTTTTT" };
-        kaori::SequenceSet ptrs(things);
-        kaori::SegmentedMismatchTrie<2> stuff(ptrs, {4, 2});
+        kaori::BarcodePool ptrs(things);
+        kaori::SegmentedMismatches<2> stuff(ptrs, {4, 2});
 
         // Handles ambiguity properly.
         {
@@ -237,8 +237,8 @@ TEST(SegmentedMismatchTrie, Ambiguity) {
     // Handles ambiguity properly at the end
     {
         std::vector<std::string> things { "AAAAAA", "AAAAAT" };
-        kaori::SequenceSet ptrs(things);
-        kaori::SegmentedMismatchTrie<2> stuff(ptrs, {4, 2});
+        kaori::BarcodePool ptrs(things);
+        kaori::SegmentedMismatches<2> stuff(ptrs, {4, 2});
 
         auto res = stuff.search("AAAAAC", { 0, 1 });
         EXPECT_EQ(res.index, -1);

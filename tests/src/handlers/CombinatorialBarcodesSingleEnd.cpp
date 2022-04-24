@@ -13,8 +13,8 @@ protected:
         variables2(std::vector<std::string>{ "ACACAC", "TGTGTG", "AGAGAG", "CTCTCT" })
     {}
 
-    std::array<kaori::SequenceSet, 2> make_pointers() const {
-        return std::array<kaori::SequenceSet, 2>{ kaori::SequenceSet(variables1), kaori::SequenceSet(variables2) };
+    std::array<kaori::BarcodePool, 2> make_pointers() const {
+        return std::array<kaori::BarcodePool, 2>{ kaori::BarcodePool(variables1), kaori::BarcodePool(variables2) };
     }
 
     std::string constant;

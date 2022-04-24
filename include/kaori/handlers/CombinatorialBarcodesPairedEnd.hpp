@@ -49,8 +49,8 @@ public:
      * @param duplicates Whether to allow duplicates in `barcode_pool1` and `barcode_pool2`, see `MismatchTrie` for details.
      */
     CombinatorialBarcodesPairedEnd(
-        const char* template_seq1, size_t template_length1, bool reverse1, const SequenceSet& barcode_pool1, int max_mismatches1, 
-        const char* template_seq2, size_t template_length2, bool reverse2, const SequenceSet& barcode_pool2, int max_mismatches2,
+        const char* template_seq1, size_t template_length1, bool reverse1, const BarcodePool& barcode_pool1, int max_mismatches1, 
+        const char* template_seq2, size_t template_length2, bool reverse2, const BarcodePool& barcode_pool2, int max_mismatches2,
         bool random = false,
         bool duplicates = false
     ) :
@@ -80,7 +80,7 @@ public:
     struct State {
         State() {}
 
-        State(typename SimpleSingleMatch<max_size>::SearchState s1, typename SimpleSingleMatch<max_size>::SearchState s2) : search1(std::move(s1)), search2(std::move(s2)) {}
+        State(typename SimpleSingleMatch<max_size>::State s1, typename SimpleSingleMatch<max_size>::State s2) : search1(std::move(s1)), search2(std::move(s2)) {}
 
         std::vector<std::array<int, 2> >collected;
         int barcode1_only = 0;
@@ -90,8 +90,8 @@ public:
         /**
          * @cond
          */
-        typename SimpleSingleMatch<max_size>::SearchState search1;
-        typename SimpleSingleMatch<max_size>::SearchState search2;
+        typename SimpleSingleMatch<max_size>::State search1;
+        typename SimpleSingleMatch<max_size>::State search2;
         /**
          * @endcond
          */

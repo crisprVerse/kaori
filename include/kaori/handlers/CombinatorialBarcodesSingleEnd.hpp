@@ -60,14 +60,14 @@ public:
 
         // We'll be using this later.
         for (size_t i = 0; i < num_variable; ++i) {
-            num_options[i] = barcode_pools[i].choices.size();
+            num_options[i] = barcode_pools[i].pool.size();
         }
 
         if (forward) {
             for (size_t i = 0; i < num_variable; ++i) {
                 const auto& current = regions[i];
                 size_t len = current.second - current.first;
-                forward_lib[i] = SimpleBarcodeSearch(barcode_pools[i], mismatches);
+                forward_lib[i] = SimpleBarcodeSearch(barcode_pools[i], max_mm);
             }
         }
 
@@ -76,7 +76,7 @@ public:
             for (size_t i = 0; i < num_variable; ++i) {
                 const auto& current = rev_regions[i];
                 size_t len = current.second - current.first;
-                reverse_lib[i] = SimpleBarcodeSearch(barcode_pools[num_variable - i - 1], mismatches, true);
+                reverse_lib[i] = SimpleBarcodeSearch(barcode_pools[num_variable - i - 1], max_mm, true);
             }
         }
     }
@@ -127,7 +127,7 @@ private:
             std::string current(start + range.first, start + range.second);
 
             auto& curstate = states[r];
-            libs[r].match(current, curstate, max_mm - obs_mismatches);
+            libs[r].search(current, curstate, max_mm - obs_mismatches);
             if (curstate.index < 0) {
                 return std::make_pair(false, 0);
             }
@@ -147,11 +147,11 @@ private:
         return std::make_pair(true, obs_mismatches);
     }
 
-    std::pair<bool, int> forward_match(const char* seq, const typename ConstantTemplate<max_size>::MatchDetails& deets, State& state) const {
+    std::pair<bool, int> forward_match(const char* seq, const typename ScanTemplate<max_size>::State& deets, State& state) const {
         return find_match<false>(seq, deets.position, deets.forward_mismatches, forward_lib, state.forward_details, state.temp);
     }
 
-    std::pair<bool, int> reverse_match(const char* seq, const typename ConstantTemplate<max_size>::MatchDetails& deets, State& state) const {
+    std::pair<bool, int> reverse_match(const char* seq, const typename ScanTemplate<max_size>::State& deets, State& state) const {
         return find_match<true>(seq, deets.position, deets.reverse_mismatches, reverse_lib, state.reverse_details, state.temp);
     }
 
@@ -286,7 +286,7 @@ private:
     int max_mm;
     size_t nregions;
 
-    ConstantTemplate<max_size> constant_matcher;
+    ScanTemplate<max_size> constant_matcher;
     std::array<SimpleBarcodeSearch, num_variable> forward_lib, reverse_lib;
     std::array<size_t, num_variable> num_options;
 

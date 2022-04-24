@@ -48,11 +48,11 @@ public:
      * Corresponding values across the two pools define a particular combination of dual barcodes. 
      */
     DualBarcodesWithDiagnostics(
-        const char* template_seq1, size_t template_length1, bool reverse1, const SequenceSet& barcode_pool1, int max_mismatches1, 
-        const char* template_seq2, size_t template_length2, bool reverse2, const SequenceSet& barcode_pool2, int max_mismatches2,
+        const char* template_seq1, size_t template_length1, bool reverse1, const BarcodePool& barcode_pool1, int max_mismatches1, 
+        const char* template_seq2, size_t template_length2, bool reverse2, const BarcodePool& barcode_pool2, int max_mismatches2,
         bool random = false
     ) :
-        dual_handler(template_seq1, template_length1, reverse1, barcode_pool1, max_mismtches1, template_seq2, template_length2, reverse2, barcode_pool2, max_mismatches2, random),
+        dual_handler(template_seq1, template_length1, reverse1, barcode_pool1, max_mismatches1, template_seq2, template_length2, reverse2, barcode_pool2, max_mismatches2, random),
 
         // we allow duplicates in the trie.
         combo_handler(template_seq1, template_length1, reverse1, barcode_pool1, max_mismatches1, template_seq2, template_length2, reverse2, barcode_pool2, max_mismatches2, random, true) 

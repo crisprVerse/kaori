@@ -1,8 +1,8 @@
 #ifndef KAORI_DUAL_BARCODES_HPP
 #define KAORI_DUAL_BARCODES_HPP
 
-#include "../ConstantTemplate.hpp"
-#include "../VariableLibrary.hpp"
+#include "../ScanTemplate.hpp"
+#include "../BarcodeSearch.hpp"
 #include "../utils.hpp"
 
 /**
@@ -49,8 +49,8 @@ public:
      * Corresponding values across the two pools define a particular combination of dual barcodes. 
      */
     DualBarcodes(
-        const char* template_seq1, size_t template_length1, bool reverse1, const SequenceSet& barcode_pool1, int max_mismatches1, 
-        const char* template_seq2, size_t template_length2, bool reverse2, const SequenceSet& barcode_pool2, int max_mismatches2,
+        const char* template_seq1, size_t template_length1, bool reverse1, const BarcodePool& barcode_pool1, int max_mismatches1, 
+        const char* template_seq2, size_t template_length2, bool reverse2, const BarcodePool& barcode_pool2, int max_mismatches2,
         bool random = false
     ) :
         search_reverse1(reverse1),
@@ -75,7 +75,8 @@ public:
             }
             len1 = regions[0].second - regions[0].first;
             if (len1 != barcode_pool1.length) {
-                throw std::runtime_error("length of variable sequences (" + std::to_string(var1.length) + ") should be the same as the variable region (" + std::to_string(len1) + ")");
+                throw std::runtime_error("length of variable sequences (" + std::to_string(barcode_pool1.length) + 
+                    ") should be the same as the variable region (" + std::to_string(len1) + ")");
             }
         }
 
@@ -87,7 +88,8 @@ public:
             }
             len2 = regions[0].second - regions[0].first;
             if (len2 != barcode_pool2.length) {
-                throw std::runtime_error("length of variable sequences (" + std::to_string(var2.length) + ") should be the same as the variable region (" + std::to_string(len2) + ")");
+                throw std::runtime_error("length of variable sequences (" + std::to_string(barcode_pool2.length) + 
+                    ") should be the same as the variable region (" + std::to_string(len2) + ")");
             }
         }
 
@@ -120,8 +122,8 @@ public:
         }
 
         // Constructing the combined varlib.
-        SequenceSet combined_set(combined);
-        varlib = SegmentedVariableLibrary(
+        BarcodePool combined_set(combined);
+        varlib = SegmentedBarcodeSearch(
             combined_set,
             std::array<int, 2>{ static_cast<int>(len1), static_cast<int>(len2) }, 
             std::array<int, 2>{ max_mm1, max_mm2 }
@@ -151,7 +153,7 @@ public:
         std::vector<std::pair<std::string, int> > buffer2;
 
         // Default constructors should be called in this case, so it should be fine.
-        typename SegmentedVariableLibrary<2>::SearchState details;
+        typename SegmentedBarcodeSearch<2>::State details;
     };
 
     State initialize() const {
@@ -186,10 +188,10 @@ private:
     template<class Store>
     static bool inner_process(
         bool reverse, 
-        const ConstantTemplate<max_size>& constant, 
+        const ScanTemplate<max_size>& constant, 
         int max_mm,
         const char* against,
-        typename ConstantTemplate<max_size>::MatchDetails& deets,
+        typename ScanTemplate<max_size>::State& deets,
         Store& output)
     {
         while (!deets.finished) {
@@ -223,7 +225,7 @@ private:
         auto checker = [&](size_t idx2) -> bool {
             const auto& current2 = state.buffer2[idx2];
             auto combined = match1.first + current2.first;
-            varlib.match(combined, state.details, std::array<int, 2>{ max_mm1 - match1.second, max_mm2 - current2.second });
+            varlib.search(combined, state.details, std::array<int, 2>{ max_mm1 - match1.second, max_mm2 - current2.second });
 
             if (state.details.index != -1) {
                 ++state.counts[state.details.index];
@@ -269,7 +271,7 @@ private:
         auto checker = [&](size_t idx2) -> void {
             const auto& current2 = state.buffer2[idx2];
             auto combined = match1.first + current2.first;
-            varlib.match(combined, state.details, std::array<int, 2>{ max_mm1 - match1.second, max_mm2 - current2.second });
+            varlib.search(combined, state.details, std::array<int, 2>{ max_mm1 - match1.second, max_mm2 - current2.second });
 
             int cur_mismatches = state.details.mismatches;
             if (cur_mismatches < best_mismatches) {
@@ -339,7 +341,7 @@ private:
     bool search_reverse1, search_reverse2;
 
     ScanTemplate<max_size> constant1, constant2;
-    SegmentedVariableLibrary<2> varlib;
+    SegmentedBarcodeSearch<2> varlib;
     int max_mm1, max_mm2;
 
     bool randomized;

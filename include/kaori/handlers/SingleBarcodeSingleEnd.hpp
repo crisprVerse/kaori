@@ -54,9 +54,9 @@ public:
     struct State {
         State() {}
 
-        State(typename SimpleSingleMatch<max_size>::SearchState s, size_t nvar) : search(std::move(s)), counts(nvar) {}
+        State(typename SimpleSingleMatch<max_size>::State s, size_t nvar) : search(std::move(s)), counts(nvar) {}
 
-        typename SimpleSingleMatch<max_size>::SearchState search;
+        typename SimpleSingleMatch<max_size>::State search;
         std::vector<int> counts;
         int total = 0;
     };

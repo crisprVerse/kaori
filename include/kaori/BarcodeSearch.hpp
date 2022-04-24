@@ -112,10 +112,10 @@ public:
      * @param duplicates Whether duplicated `sequences` in `barcode_pool` are supported, see `MismatchTrie`.
      */
     SimpleBarcodeSearch(const BarcodePool& barcode_pool, int max_mismatches = 0, bool reverse = false, bool duplicates = false) : 
-        trie(sequences.length), 
-        max_mm(mismatch) 
+        trie(barcode_pool.length), 
+        max_mm(max_mismatches) 
     {
-        fill_library(sequences.pool, exact, trie, reverse, duplicates);
+        fill_library(barcode_pool.pool, exact, trie, reverse, duplicates);
         return;
     }
 
@@ -300,7 +300,7 @@ public:
          */
         State() : per_segment() {}
 
-        std::unordered_map<std::string, typename SegmentedMismatches<num_segments>::SearchResult> cache;
+        std::unordered_map<std::string, typename SegmentedMismatches<num_segments>::Result> cache;
         /**
          * @endcond
          */
@@ -330,7 +330,7 @@ public:
     }
 
 private:
-    typedef typename SegmentedMismatches<num_segments>::SearchResult SegmentedResult;
+    typedef typename SegmentedMismatches<num_segments>::Result SegmentedResult;
 
     struct Index {
         static int index(const SegmentedResult& val) {
