@@ -344,4 +344,14 @@ TEST_F(CombinatorialBarcodesSingleEndTest, Error) {
             throw e;
         }
     });
+
+    EXPECT_ANY_THROW({
+        try {
+            std::string constant2 = "AAAA----CGGCTTTT";
+            Thing stuff(constant2.c_str(), constant2.size(), 0, make_pointers());
+        } catch (std::exception& e) {
+            EXPECT_TRUE(std::string(e.what()).find("expected 2 variable regions") != std::string::npos);
+            throw e;
+        }
+    });
 }

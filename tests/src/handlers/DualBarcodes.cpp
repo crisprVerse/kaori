@@ -346,4 +346,17 @@ TEST_F(DualBarcodesTest, Error) {
             throw e;
         }
     });
+
+    constant2 = "ACGTTGCA";
+    EXPECT_ANY_THROW({
+        try {
+            kaori::DualBarcodes<128> stuff(
+                constant1.c_str(), constant1.size(), true, kaori::SequenceSet(variables1), 0,
+                constant2.c_str(), constant2.size(), true, kaori::SequenceSet(variables2), 0
+            );
+        } catch (std::exception& e) {
+            EXPECT_TRUE(std::string(e.what()).find("expected one variable region") != std::string::npos);
+            throw e;
+        }
+    });
 }

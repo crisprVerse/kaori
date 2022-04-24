@@ -25,7 +25,7 @@ public:
         // Exact strandedness doesn't matter here, just need the number and length.
         const auto& regions = constant.variable_regions();
         if (regions.size() != 1) {
-            throw std::runtime_error("expected a single variable region only");
+            throw std::runtime_error("expected one variable region in the constant template");
         }
 
         size_t var_length = regions[0].second - regions[0].first;

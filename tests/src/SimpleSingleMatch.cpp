@@ -323,4 +323,14 @@ TEST(SimpleSingleMatch, Error) {
             throw e;
         }
     });
+
+    EXPECT_ANY_THROW({
+        try {
+            constant = "ACACACCAC";
+            kaori::SimpleSingleMatch<64> stuff(constant.c_str(), constant.size(), true, true, ptrs);
+        } catch (std::exception& e) {
+            EXPECT_TRUE(std::string(e.what()).find("expected one variable region") != std::string::npos);
+            throw e;
+        }
+    });
 }
