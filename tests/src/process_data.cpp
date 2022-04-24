@@ -249,9 +249,10 @@ TEST_P(ProcessDataTester, PairedEndErrors) {
     }
 
     // Errors out correctly due to the read number.
-    {
+    std::vector<size_t> size_options { 10, static_cast<size_t>(blocksize), reads2.size() - 1 };
+    for (auto resized : size_options) {
         auto reads3 = reads2;
-        reads3.resize(10);
+        reads3.resize(resized);
         auto fastq_str3 = convert_to_fastq(reads3, "FOO");
 
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fastq_str1.c_str()), fastq_str1.size());

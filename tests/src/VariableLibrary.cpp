@@ -4,11 +4,10 @@
 #include <vector>
 #include "utils.h"
 
-TEST(VariableLibrary, Basic) {
+TEST(SimpleVariableLibrary, Basic) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    auto ptrs = to_pointers(variables);
-
-    kaori::VariableLibrary stuff(ptrs, 4);
+    kaori::SequenceSet ptrs(variables);
+    kaori::SimpleVariableLibrary stuff(ptrs);
     auto init = stuff.initialize();
 
     stuff.match("AAAA", init);
@@ -20,11 +19,10 @@ TEST(VariableLibrary, Basic) {
     EXPECT_EQ(init.index, -1);
 }
 
-TEST(VariableLibrary, ReverseComplement) {
+TEST(SimpleVariableLibrary, ReverseComplement) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    auto ptrs = to_pointers(variables);
-
-    kaori::VariableLibrary stuff(ptrs, 4, 0, true);
+    kaori::SequenceSet ptrs(variables);
+    kaori::SimpleVariableLibrary stuff(ptrs, 0, true);
     auto init = stuff.initialize();
 
     stuff.match("AAAA", init);
@@ -33,12 +31,12 @@ TEST(VariableLibrary, ReverseComplement) {
     EXPECT_EQ(init.index, 0);
 }
 
-TEST(VariableLibrary, Mismatches) {
+TEST(SimpleVariableLibrary, Mismatches) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    auto ptrs = to_pointers(variables);
+    kaori::SequenceSet ptrs(variables);
 
     {
-        kaori::VariableLibrary stuff(ptrs, 4, 1);
+        kaori::SimpleVariableLibrary stuff(ptrs, 1);
         auto init = stuff.initialize();
 
         stuff.match("AAAA", init);
@@ -57,7 +55,7 @@ TEST(VariableLibrary, Mismatches) {
     }
 
     {
-        kaori::VariableLibrary stuff(ptrs, 4, 2);
+        kaori::SimpleVariableLibrary stuff(ptrs, 2);
         auto init = stuff.initialize();
 
         stuff.match("CCAC", init);
@@ -73,10 +71,10 @@ TEST(VariableLibrary, Mismatches) {
     }
 }
 
-TEST(VariableLibrary, Caching) {
+TEST(SimpleVariableLibrary, Caching) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    auto ptrs = to_pointers(variables);
-    kaori::VariableLibrary stuff(ptrs, 4, 1);
+    kaori::SequenceSet ptrs(variables);
+    kaori::SimpleVariableLibrary stuff(ptrs, 1);
 
     auto state = stuff.initialize();
 
@@ -84,6 +82,13 @@ TEST(VariableLibrary, Caching) {
     {
         stuff.match("AAAA", state);
         auto it = state.cache.find("AAAA");
+        EXPECT_TRUE(it == state.cache.end());
+    }
+
+    // No cache when the number of mismatches is lower than that in the constructor.
+    {
+        stuff.match("AATA", state, 0);
+        auto it = state.cache.find("AATA");
         EXPECT_TRUE(it == state.cache.end());
     }
 
@@ -105,6 +110,133 @@ TEST(VariableLibrary, Caching) {
     
     // Checking that the reduction works correctly.
     state.cache["AATA"].first = 2;
+    stuff.reduce(state);
+    EXPECT_TRUE(state.cache.empty());
+
+    {
+        stuff.match("AATA", state);
+        EXPECT_EQ(state.index, 2); // re-uses the cache value!
+    }
+}
+
+TEST(SimpleVariableLibrary, Duplicates) {
+    std::vector<std::string> things { "ACGT", "ACGT", "AGTT", "AGTT" };
+    kaori::SequenceSet ptrs(things);
+
+    EXPECT_ANY_THROW({
+        try {
+            kaori::SimpleVariableLibrary stuff(ptrs, 0, false, false);
+        } catch (std::exception& e) {
+            EXPECT_TRUE(std::string(e.what()).find("duplicate") != std::string::npos);
+            throw e;
+        }
+    });
+
+    // Gets the first occurrence.
+    {
+        kaori::SimpleVariableLibrary stuff(ptrs, 0, false, true);
+        auto state = stuff.initialize();
+
+        stuff.match("ACGT", state);
+        EXPECT_EQ(state.index, 0);
+
+        stuff.match("AGTT", state);
+        EXPECT_EQ(state.index, 2);
+    }
+
+    // ... even with a mismatch.
+    {
+        kaori::SimpleVariableLibrary stuff(ptrs, 1, false, true);
+        auto state = stuff.initialize();
+
+        stuff.match("ACGA", state);
+        EXPECT_EQ(state.index, 0);
+        EXPECT_EQ(state.mismatches, 1);
+
+        stuff.match("AGTA", state);
+        EXPECT_EQ(state.index, 2);
+        EXPECT_EQ(state.mismatches, 1);
+    }
+}
+
+TEST(SegmentedVariableLibrary, Basic) {
+    std::vector<std::string> variables { "AAAAAA", "AACCCC", "AAGGGG", "AATTTT" };
+    kaori::SequenceSet ptrs(variables);
+ 
+    kaori::SegmentedVariableLibrary<2> stuff(ptrs, { 2, 4 }, { 0, 1 });
+    auto init = stuff.initialize();
+
+    stuff.match("AAAAAA", init);
+    EXPECT_EQ(init.index, 0);
+    stuff.match("AATTTT", init);
+    EXPECT_EQ(init.index, 3);
+
+    stuff.match("AACCAC", init); // 1 mismatch
+    EXPECT_EQ(init.index, 1);
+
+    stuff.match("AAccgg", init); // ambiguous.
+    EXPECT_EQ(init.index, -1);
+}
+
+TEST(SegmentedVariableLibrary, ReverseComplement) {
+    std::vector<std::string> variables { "AAAAAA", "AACCCC", "AAGGGG", "AATTTT" };
+    kaori::SequenceSet ptrs(variables);
+
+    kaori::SegmentedVariableLibrary<2> stuff(ptrs, { 2, 4 }, { 0, 1 }, true);
+    auto init = stuff.initialize();
+
+    stuff.match("AAAATT", init);
+    EXPECT_EQ(init.index, 3);
+    stuff.match("GGGGTT", init);
+    EXPECT_EQ(init.index, 1);
+
+    stuff.match("CCACTT", init);
+    EXPECT_EQ(init.index, 2);
+
+    stuff.match("GGCCTT", init); // ambiguous.
+    EXPECT_EQ(init.index, -1);
+}
+
+TEST(SegmentedVariableLibrary, Caching) {
+    std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
+    kaori::SequenceSet ptrs(variables);
+    kaori::SegmentedVariableLibrary<2> stuff(ptrs, {2, 2}, {1, 1});
+
+    auto state = stuff.initialize();
+
+    // No cache when there is no mismatch.
+    {
+        stuff.match("AAAA", state);
+        auto it = state.cache.find("AAAA");
+        EXPECT_TRUE(it == state.cache.end());
+    }
+
+    // No cache when the number of mismatches is less than that in the constructor.
+    {
+        stuff.match("AATA", state, { 0, 0 });
+        auto it = state.cache.find("AATA");
+        EXPECT_TRUE(it == state.cache.end());
+    }
+
+
+    // Stored in cache for >1 mismatches.
+    {
+        stuff.match("AATA", state);
+        auto it = state.cache.find("AATA");
+        EXPECT_TRUE(it != state.cache.end());
+        EXPECT_EQ((it->second).index, 0);
+        EXPECT_EQ((it->second).total, 1);
+    }
+
+    {
+        stuff.match("ACTA", state);
+        auto it = state.cache.find("ACTA");
+        EXPECT_TRUE(it != state.cache.end());
+        EXPECT_EQ((it->second).index, -1);
+    }
+    
+    // Checking that the reduction works correctly.
+    state.cache["AATA"].index = 2;
     stuff.reduce(state);
     EXPECT_TRUE(state.cache.empty());
 

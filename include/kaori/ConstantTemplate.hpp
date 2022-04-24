@@ -259,14 +259,19 @@ public:
     /**
      * Get the details about the variable regions in the constant template.
      *
-     * @param reverse Should we return the coordinates of the variable regions when searching on the reverse strand?
+     * @tparam reverse Should we return the coordinates of the variable regions when searching on the reverse strand?
      *
      * @return A vector of pairs where each pair specifies the start and one-past-the-end position of each variable region in the template.
      * Coordinates are reported relative to the start of the template.
      * If `reverse = true`, coordinates are reported after reverse-complementing the template sequence.
      */
-    const std::vector<std::pair<int, int> >& variable_regions(bool reverse = false) const {
-        return (reverse ? reverse_variables : forward_variables);
+    template<bool reverse = false>
+    const std::vector<std::pair<int, int> >& variable_regions() const {
+        if constexpr(reverse) { 
+            return reverse_variables;
+        } else {
+            return forward_variables;
+        }
     } 
 
 private:
