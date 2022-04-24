@@ -1,56 +1,65 @@
-#ifndef KAORI_CONSTANT_TEMPLATE_HPP
-#define KAORI_CONSTANT_TEMPLATE_HPP
+#ifndef KAORI_SCAN_TEMPLATE_HPP
+#define KAORI_SCAN_TEMPLATE_HPP
 
 #include <bitset>
 #include <deque>
 #include "utils.hpp"
 
 /**
- * @file ConstantTemplate.hpp
+ * @file ScanTemplate.hpp
  *
- * @brief Defines the `ConstantTemplate` class.
+ * @brief Defines the `ScanTemplate` class.
  */
 
 namespace kaori {
 
 /**
- * @brief Search a read sequence for a constant template sequence.
+ * @brief Scan a read sequence for the template sequence.
  *
- * The template sequence is expected to contain constant regions interspersed with one or more variable regions.
- * This class will find the location on the read sequence that matches the constant regions of the template (give or take any number of substitutions).
- * Once a match is found, the variable regions can be extracted for look-up with, e.g., the `VariableLibrary` class.
+ * When searching for barcodes, **kaori** first searches for a "template sequence" in the read sequence.
+ * The template sequence contains constant regions interspersed with one or more variable regions.
+ * The template is realized into a target sequence by replacing each variable region with one sequence from the corresponding pool of barcodes.
  *
+ * This class will scan read sequence to find a location that matches the constant regions of the template, give or take any number of substitutions.
+ * Multiple locations on the read may match the template, provided `next()` is called repeatedly.
  * For efficiency, the search itself is done after converting all base sequences into a bit encoding.
- * The maximum bit size of the encoding window is determined at compile-time using `N`.
- * As four bits are used in the encoding, the maximum size of the constant template is `N / 4`.
+ * The maximum size of this encoding is determined at compile-time by the `max_length` template parameter.
  *
- * @tparam N Size of the bitset used to represent the constant template sequence.
+ * Once a match is found, the sequence of the read at each variable region can be matched against a pool of known barcode sequences.
+ * See the `VariableLibrary` class for details.
+ *
+ * @tparam max_size Maximum length of the template sequence.
  */
-template<size_t N>
-class ConstantTemplate { 
+template<size_t max_size>
+class ScanTemplate { 
+private:
+    static constexpr size_t N = max_size * 4;
+
 public:
     /**
      * Default constructor.
      * This is only provided to enable composition, the resulting object should not be used until it is copy-assigned to a properly constructed instance.
      */
-    ConstantTemplate() {}
+    ScanTemplate() {}
 
     /**
-     * @param[in] s Pointer to a character array containing the constant template.
+     * @param[in] template_seq Pointer to a character array containing the template sequence.
      * Constant sequences should only contain `A`, `C`, `G` or `T` (or their lower-case equivalents).
      * Variable regions should be marked with `-`.
-     * @param n Length of the array pointed to by `s`.
-     * @param f Should the search be performed on the forward strand of the read sequence?
-     * @param r Should the search be performed on the reverse strand of the read sequence?
+     * @param template_length Length of the array pointed to by `template_seq`.
+     * @param search_forward Should the search be performed on the forward strand of the read sequence?
+     * @param search_reverse Should the search be performed on the reverse strand of the read sequence?
      */
-    ConstantTemplate(const char* s, size_t n, bool f, bool r) : length(n), forward(f), reverse(r) {
-        if (n * 4 > N) {
-            throw std::runtime_error("maximum constant size should be " + std::to_string(N/4) + " nt");
+    ScanTemplate(const char* template_seq, size_t template_length, bool search_forward, bool search_reverse) : 
+        length(template_length), forward(search_forward), reverse(search_reverse)
+    {
+        if (length > max_size) {
+            throw std::runtime_error("maximum template size should be " + std::to_string(max_size) + " bp");
         }
 
         if (forward) {
-            for (size_t i = 0; i < n; ++i) {
-                char b = s[i];
+            for (size_t i = 0; i < length; ++i) {
+                char b = template_seq[i];
                 if (b != '-') {
                     add_base(forward_ref, b);
                     add_mask(forward_mask, i);
@@ -62,8 +71,8 @@ public:
             }
         } else {
             // Forward variable regions are always defined.
-            for (size_t i = 0; i < n; ++i) {
-                char b = s[i];
+            for (size_t i = 0; i < length; ++i) {
+                char b = template_seq[i];
                 if (b == '-') {
                     add_variable_base(forward_variables, i);
                 }
@@ -71,8 +80,8 @@ public:
         }
 
         if (reverse) {
-            for (size_t i = 0; i < n; ++i) {
-                char b = s[n - i - 1];
+            for (size_t i = 0; i < length; ++i) {
+                char b = template_[length - i - 1];
                 if (b != '-') {
                     add_base(reverse_ref, reverse_complement(b));
                     add_mask(reverse_mask, i);
@@ -89,21 +98,22 @@ public:
     /**
      * @brief Details on the current match to the read sequence.
      */
-    struct MatchDetails {
+    struct State {
         /**
          * Position of the match.
+         * This should only be used once `next()` is called.
          */
         size_t position = static_cast<size_t>(-1); // overflow should be sane.
 
         /**
          * Number of mismatches on the forward strand.
-         * If negative, no search was performed.
+         * This should only be used once `next()` is called.
          */
         int forward_mismatches = -1;
 
         /**
          * Number of mismatches on the reverse strand.
-         * If negative, no search was performed.
+         * This should only be used once `next()` is called.
          */
         int reverse_mismatches = -1;
 
@@ -128,19 +138,21 @@ public:
     /**
      * Begin a new search for the template in a read sequence.
      *
-     * @param[in] seq Pointer to an array containing the read sequence.
-     * @param len Length of the read sequence.
+     * @param[in] read_seq Pointer to an array containing the read sequence.
+     * @param read_length Length of the read sequence.
      *
-     * @return A `MatchDetails` object that can be passed to `next()`.
+     * @return An empty `State` object.
+     * If its `finished` member is `false`, it should be passed to `next()` before accessing its other members.
+     * If `true`, the read sequence was too short for any match to be found.
      */
-    MatchDetails initialize(const char* seq, size_t len) const {
-        MatchDetails out;
+    State initialize(const char* read_seq, size_t read_length) const {
+        State out;
         out.seq = seq;
         out.len = len;
 
-        if (length <= len) {
+        if (length <= read_length) {
             for (size_t i = 0; i < length - 1; ++i) {
-                char base = seq[i];
+                char base = read_seq[i];
 
                 if (is_good(base)) {
                     add_base(out.state, base);
@@ -167,41 +179,41 @@ public:
      * The first invocation will search for a match at position 0;
      * this can be repeatedly called until `match.finished` is `true`.
      *
-     * @param match A `MatchDetails` object produced by `initialize()`.
+     * @param state A `State` object produced by `initialize()`.
      *
-     * @return `match` is updated with the details of the current match at a particular position on the read sequence.
+     * @return `state` is updated with the details of the current match at a particular position on the read sequence.
      */
-    void next(MatchDetails& match) const {
-        if (!match.bad.empty() && match.bad.front() == match.position) {
-            match.bad.pop_front();
-            if (match.bad.empty()) {
+    void next(State& state) const {
+        if (!state.bad.empty() && state.bad.front() == state.position) {
+            state.bad.pop_front();
+            if (state.bad.empty()) {
                 // This should effectively clear the ambiguous bitset, allowing
                 // us to skip its shifting if there are no more ambiguous
                 // bases. We do it here because we won't get an opportunity to
                 // do it later; as 'bad' is empty, the shift below is skipped.
-                shift(match.ambiguous); 
+                shift(state.ambiguous); 
             }
         }
 
-        size_t right = match.position + length;
-        char base = match.seq[right];
+        size_t right = state.position + length;
+        char base = state.seq[right];
         if (is_good(base)) {
-            add_base(match.state, base); // no need to trim off the end, the mask will handle that.
-            if (!match.bad.empty()) {
-                shift(match.ambiguous);
+            add_base(state.state, base); // no need to trim off the end, the mask will handle that.
+            if (!state.bad.empty()) {
+                shift(state.ambiguous);
             }
         } else {
-            shift(match.state);
-            match.state |= other_<N>;
-            shift(match.ambiguous);
-            match.ambiguous |= other_<N>;
-            match.bad.push_back(right);
+            shift(state.state);
+            state.state |= other_<N>;
+            shift(state.ambiguous);
+            state.ambiguous |= other_<N>;
+            state.bad.push_back(right);
         }
 
-        ++match.position;
-        full_match(match);
-        if (right + 1 == match.len) {
-            match.finished = true;
+        ++state.position;
+        full_match(state);
+        if (right + 1 == state.len) {
+            state.finished = true;
         }
 
         return;
@@ -257,12 +269,13 @@ private:
 
 public:
     /**
-     * Get the details about the variable regions in the constant template.
+     * Extract details about the variable regions in the template sequence.
      *
      * @tparam reverse Should we return the coordinates of the variable regions when searching on the reverse strand?
      *
      * @return A vector of pairs where each pair specifies the start and one-past-the-end position of each variable region in the template.
      * Coordinates are reported relative to the start of the template.
+     * Pairs are ordered by the start positions.
      * If `reverse = true`, coordinates are reported after reverse-complementing the template sequence.
      */
     template<bool reverse = false>
