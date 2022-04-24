@@ -4,20 +4,53 @@
 #include "../SimpleSingleMatch.hpp"
 #include <vector>
 
+/**
+ * @file SingleBarcodePairedEnd.hpp
+ *
+ * @brief Process paired-end single barcodes.
+ */
+
 namespace kaori {
 
+/**
+ * @brief Handler for paired-end single barcodes.
+ *
+ * A construct contains the barcode sequence on one side and is subjected to paired-end sequencing.
+ * However, either read could contain the barcode sequence.
+ * This handler will search both reads for the barcode and count the frequency.
+ *
+ * @tparam N Size of the bitset to use for each constant template.
+ * The maximum size of the template is defined as `N / 4`, see `ConstantTemplate` for details.
+ */
 template<size_t N>
 class SingleBarcodePairedEnd {
 public:
-    SingleBarcodePairedEnd(const char* constant, size_t size, int strand, const SequenceSet& variable, int mismatches = 0) : 
-        matcher(constant, size, strand != 1, strand != 0, variable, mismatches), counts(variable.size()) {}
+    /**
+     * @param[in] constant Template sequence for the first barcode.
+     * This should contain one variable regions.
+     * @param size Length of the template.
+     * @param reverse Whether to search the reverse strand of the read sequence.
+     * @param variable Known sequences for the variable region.
+     * @param mismatches Maximum number of mismatches allowed across the target sequence.
+     */
+    SingleBarcodePairedEnd(const char* constant, size_t size, bool reverse, const SequenceSet& variable, int mismatches = 0) : 
+        matcher(constant, size, !reverse, reverse, variable, mismatches), counts(variable.size()) {}
         
+    /**
+     * @param t Whether to search only for the first match.
+     * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
+     *
+     * @return A reference to this `SingleBarcodePairedEnd` instance.
+     */
     SingleBarcodePairedEnd& set_first(bool t = true) {
         use_first = t;
         return *this;
     }
 
 public:
+    /**
+     * @cond
+     */
     struct State {
         State() {}
 
@@ -62,8 +95,14 @@ public:
     }
 
     static constexpr bool use_names = false;
+    /**
+     * @endcond
+     */
 
 public:
+    /**
+     * @cond
+     */
     State initialize() const {
         return State(matcher.initialize(), counts.size());
     }
@@ -75,6 +114,9 @@ public:
         }
         total += s.total;
     }
+    /**
+     * @endcond
+     */
 
 private:
     SimpleSingleMatch<N> matcher;
@@ -83,10 +125,17 @@ private:
     bool use_first = true;
 
 public:
+    /**
+     * @return Vector containing the frequency of each barcode.
+     * This has length equal to the number of valid barcodes (i.e., the length of `variable` in the constructor).
+     */
     const std::vector<int>& get_counts() const {
         return counts;        
     }
 
+    /**
+     * @return Total number of reads processed by the handler.
+     */
     int get_total() const {
         return total;
     }

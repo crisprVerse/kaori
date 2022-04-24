@@ -59,8 +59,8 @@ TEST_F(DualBarcodesWithDiagnosticsTest, BasicFirst) {
     EXPECT_EQ(combos.front()[0], 2);
     EXPECT_EQ(combos.front()[1], 1);
 
-    EXPECT_EQ(stuff.get_read1_only(), 1);
-    EXPECT_EQ(stuff.get_read2_only(), 1);
+    EXPECT_EQ(stuff.get_barcode1_only(), 1);
+    EXPECT_EQ(stuff.get_barcode2_only(), 1);
 }
 
 TEST_F(DualBarcodesWithDiagnosticsTest, WithDuplicates) {

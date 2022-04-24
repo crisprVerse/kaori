@@ -73,8 +73,8 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicFirst) {
         stuff.sort(); // for some coverage.
 
         EXPECT_EQ(stuff.get_total(), 2);
-        EXPECT_EQ(stuff.get_read1_only(), 0);
-        EXPECT_EQ(stuff.get_read2_only(), 0);
+        EXPECT_EQ(stuff.get_barcode1_only(), 0);
+        EXPECT_EQ(stuff.get_barcode2_only(), 0);
     }
 }
 
@@ -216,13 +216,13 @@ TEST_F(CombinatorialBarcodesPairedEndTest, DiagnosticsFirst) {
 
         auto nrstate = nonrandom.initialize();
         nonrandom.process(nrstate, bounds(seq1), bounds(seq2));
-        EXPECT_EQ(nrstate.read1_only, 1);
-        EXPECT_EQ(nrstate.read2_only, 0);
+        EXPECT_EQ(nrstate.barcode1_only, 1);
+        EXPECT_EQ(nrstate.barcode2_only, 0);
 
         auto rstate = randomized.initialize();
         randomized.process(rstate, bounds(seq1), bounds(seq2));
-        EXPECT_EQ(rstate.read1_only, 1);
-        EXPECT_EQ(rstate.read2_only, 0);
+        EXPECT_EQ(rstate.barcode1_only, 1);
+        EXPECT_EQ(rstate.barcode2_only, 0);
     }
 
     // Only read 2.
@@ -231,13 +231,13 @@ TEST_F(CombinatorialBarcodesPairedEndTest, DiagnosticsFirst) {
 
         auto nrstate = nonrandom.initialize();
         nonrandom.process(nrstate, bounds(seq1), bounds(seq2));
-        EXPECT_EQ(nrstate.read1_only, 0);
-        EXPECT_EQ(nrstate.read2_only, 1);
+        EXPECT_EQ(nrstate.barcode1_only, 0);
+        EXPECT_EQ(nrstate.barcode2_only, 1);
 
         auto rstate = randomized.initialize();
         randomized.process(rstate, bounds(seq1), bounds(seq2));
-        EXPECT_EQ(rstate.read1_only, 0);
-        EXPECT_EQ(rstate.read2_only, 1);
+        EXPECT_EQ(rstate.barcode1_only, 0);
+        EXPECT_EQ(rstate.barcode2_only, 1);
     }
 }
 
@@ -392,13 +392,13 @@ TEST_F(CombinatorialBarcodesPairedEndTest, DiagnosticsBest) {
 
         auto nrstate = nonrandom.initialize();
         nonrandom.process(nrstate, bounds(seq1), bounds(seq2));
-        EXPECT_EQ(nrstate.read1_only, 1);
-        EXPECT_EQ(nrstate.read2_only, 0);
+        EXPECT_EQ(nrstate.barcode1_only, 1);
+        EXPECT_EQ(nrstate.barcode2_only, 0);
 
         auto rstate = randomized.initialize();
         randomized.process(rstate, bounds(seq1), bounds(seq2));
-        EXPECT_EQ(rstate.read1_only, 1);
-        EXPECT_EQ(rstate.read2_only, 0);
+        EXPECT_EQ(rstate.barcode1_only, 1);
+        EXPECT_EQ(rstate.barcode2_only, 0);
     }
 
     // Only read 2.
@@ -407,13 +407,13 @@ TEST_F(CombinatorialBarcodesPairedEndTest, DiagnosticsBest) {
 
         auto nrstate = nonrandom.initialize();
         nonrandom.process(nrstate, bounds(seq1), bounds(seq2));
-        EXPECT_EQ(nrstate.read1_only, 0);
-        EXPECT_EQ(nrstate.read2_only, 1);
+        EXPECT_EQ(nrstate.barcode1_only, 0);
+        EXPECT_EQ(nrstate.barcode2_only, 1);
 
         auto rstate = randomized.initialize();
         randomized.process(rstate, bounds(seq1), bounds(seq2));
-        EXPECT_EQ(rstate.read1_only, 0);
-        EXPECT_EQ(rstate.read2_only, 1);
+        EXPECT_EQ(rstate.barcode1_only, 0);
+        EXPECT_EQ(rstate.barcode2_only, 1);
     }
 }
 

@@ -7,7 +7,7 @@
 /**
  * @file SequenceSet.hpp
  *
- * @brief Represent sequences for a variable region.
+ * @brief Define the `SequenceSet` class.
  */
 
 namespace kaori {
@@ -15,8 +15,8 @@ namespace kaori {
 /**
  * @brief Choice of sequences for a variable region.
  *
- * The construct template can be realized into a construct sequence by replacing each variable region with a known sequence.
- * The `SequenceSet` class defines the set of possible sequences that may be used for a given variable region.
+ * The constant template can be realized by replacing each variable region with a known sequence.
+ * The `SequenceSet` class defines the possible set of known sequences that may be used for a given variable region.
  * All sequences in this set are assumed to have the same length.
  */
 struct SequenceSet {
