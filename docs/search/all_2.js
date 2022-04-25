@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['dualbarcodes_0',['DualBarcodes',['../classkaori_1_1DualBarcodes.html#af7cf18bf1dbbd35824f9d845b90361ea',1,'kaori::DualBarcodes::DualBarcodes()'],['../classkaori_1_1DualBarcodes.html',1,'kaori::DualBarcodes&lt; N &gt;']]],
-  ['dualbarcodes_2ehpp_1',['DualBarcodes.hpp',['../DualBarcodes_8hpp.html',1,'']]],
-  ['dualbarcodeswithdiagnostics_2',['DualBarcodesWithDiagnostics',['../classkaori_1_1DualBarcodesWithDiagnostics.html#a96dd3a4ffd391f98b414c708aacf8beb',1,'kaori::DualBarcodesWithDiagnostics::DualBarcodesWithDiagnostics()'],['../classkaori_1_1DualBarcodesWithDiagnostics.html',1,'kaori::DualBarcodesWithDiagnostics&lt; N &gt;']]],
-  ['dualbarcodeswithdiagnostics_2ehpp_3',['DualBarcodesWithDiagnostics.hpp',['../DualBarcodesWithDiagnostics_8hpp.html',1,'']]]
+  ['c_2b_2b_20library_20for_20counting_20screen_20data_0',['C++ library for counting screen data',['../index.html',1,'']]],
+  ['combinatorialbarcodespairedend_1',['CombinatorialBarcodesPairedEnd',['../classkaori_1_1CombinatorialBarcodesPairedEnd.html#a6970f2be6e5245fa398122c0513bd650',1,'kaori::CombinatorialBarcodesPairedEnd::CombinatorialBarcodesPairedEnd()'],['../classkaori_1_1CombinatorialBarcodesPairedEnd.html',1,'kaori::CombinatorialBarcodesPairedEnd&lt; max_size &gt;']]],
+  ['combinatorialbarcodespairedend_2ehpp_2',['CombinatorialBarcodesPairedEnd.hpp',['../CombinatorialBarcodesPairedEnd_8hpp.html',1,'']]],
+  ['combinatorialbarcodessingleend_3',['CombinatorialBarcodesSingleEnd',['../classkaori_1_1CombinatorialBarcodesSingleEnd.html#a18958b442319e0888d127fd9d84abfe0',1,'kaori::CombinatorialBarcodesSingleEnd::CombinatorialBarcodesSingleEnd()'],['../classkaori_1_1CombinatorialBarcodesSingleEnd.html',1,'kaori::CombinatorialBarcodesSingleEnd&lt; max_size, num_variable &gt;']]],
+  ['combinatorialbarcodessingleend_2ehpp_4',['CombinatorialBarcodesSingleEnd.hpp',['../CombinatorialBarcodesSingleEnd_8hpp.html',1,'']]]
 ];

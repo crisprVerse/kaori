@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['fastqreader_2ehpp_0',['FastqReader.hpp',['../FastqReader_8hpp.html',1,'']]]
+  ['dualbarcodes_2ehpp_0',['DualBarcodes.hpp',['../DualBarcodes_8hpp.html',1,'']]],
+  ['dualbarcodeswithdiagnostics_2ehpp_1',['DualBarcodesWithDiagnostics.hpp',['../DualBarcodesWithDiagnostics_8hpp.html',1,'']]]
 ];

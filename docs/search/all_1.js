@@ -1,11 +1,6 @@
 var searchData=
 [
-  ['c_2b_2b_20library_20for_20counting_20screen_20data_0',['C++ library for counting screen data',['../index.html',1,'']]],
-  ['choices_1',['choices',['../structkaori_1_1SequenceSet.html#acdaab245a06fabe99f2b1c680df781fe',1,'kaori::SequenceSet']]],
-  ['combinatorialbarcodespairedend_2',['CombinatorialBarcodesPairedEnd',['../classkaori_1_1CombinatorialBarcodesPairedEnd.html#a60bc91d4e9eda68ee5399a75817efa29',1,'kaori::CombinatorialBarcodesPairedEnd::CombinatorialBarcodesPairedEnd()'],['../classkaori_1_1CombinatorialBarcodesPairedEnd.html',1,'kaori::CombinatorialBarcodesPairedEnd&lt; N &gt;']]],
-  ['combinatorialbarcodespairedend_2ehpp_3',['CombinatorialBarcodesPairedEnd.hpp',['../CombinatorialBarcodesPairedEnd_8hpp.html',1,'']]],
-  ['combinatorialbarcodessingleend_4',['CombinatorialBarcodesSingleEnd',['../classkaori_1_1CombinatorialBarcodesSingleEnd.html#a6571f4b656afbf3101360da8de9c7258',1,'kaori::CombinatorialBarcodesSingleEnd::CombinatorialBarcodesSingleEnd()'],['../classkaori_1_1CombinatorialBarcodesSingleEnd.html',1,'kaori::CombinatorialBarcodesSingleEnd&lt; N, V &gt;']]],
-  ['combinatorialbarcodessingleend_2ehpp_5',['CombinatorialBarcodesSingleEnd.hpp',['../CombinatorialBarcodesSingleEnd_8hpp.html',1,'']]],
-  ['constanttemplate_6',['ConstantTemplate',['../classkaori_1_1ConstantTemplate.html#abc1c7821ab6511900e39b5c72ba99559',1,'kaori::ConstantTemplate::ConstantTemplate()'],['../classkaori_1_1ConstantTemplate.html#aa13feffd0fc518f14e289e763bf2b9ce',1,'kaori::ConstantTemplate::ConstantTemplate(const char *s, size_t n, bool f, bool r)'],['../classkaori_1_1ConstantTemplate.html',1,'kaori::ConstantTemplate&lt; N &gt;']]],
-  ['constanttemplate_2ehpp_7',['ConstantTemplate.hpp',['../ConstantTemplate_8hpp.html',1,'']]]
+  ['barcodepool_0',['BarcodePool',['../structkaori_1_1BarcodePool.html#a6e16e6274b7e76ad83c1087a3a2f33b0',1,'kaori::BarcodePool::BarcodePool()'],['../structkaori_1_1BarcodePool.html#a92015fb57976df1ca7c681dd4191aca1',1,'kaori::BarcodePool::BarcodePool(std::vector&lt; const char * &gt; barcode_pool, size_t barcode_length)'],['../structkaori_1_1BarcodePool.html#ab5e34b3effd35adc63324dd3c3982b3c',1,'kaori::BarcodePool::BarcodePool(const std::vector&lt; std::string &gt; &amp;barcode_pool)'],['../structkaori_1_1BarcodePool.html',1,'kaori::BarcodePool']]],
+  ['barcodepool_2ehpp_1',['BarcodePool.hpp',['../BarcodePool_8hpp.html',1,'']]],
+  ['barcodesearch_2ehpp_2',['BarcodeSearch.hpp',['../BarcodeSearch_8hpp.html',1,'']]]
 ];

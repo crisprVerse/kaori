@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['matchdetails_0',['MatchDetails',['../structkaori_1_1ConstantTemplate_1_1MatchDetails.html',1,'kaori::ConstantTemplate']]],
-  ['mismatchtrie_1',['MismatchTrie',['../classkaori_1_1MismatchTrie.html',1,'kaori']]]
+  ['dualbarcodes_0',['DualBarcodes',['../classkaori_1_1DualBarcodes.html',1,'kaori']]],
+  ['dualbarcodeswithdiagnostics_1',['DualBarcodesWithDiagnostics',['../classkaori_1_1DualBarcodesWithDiagnostics.html',1,'kaori']]]
 ];

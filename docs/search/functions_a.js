@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['reduce_0',['reduce',['../classkaori_1_1SimpleSingleMatch.html#a0934034b1dde56c39fc7f17b3789f073',1,'kaori::SimpleSingleMatch::reduce()'],['../classkaori_1_1SimpleVariableLibrary.html#a0f2f8bd4cc48616904a7ea2fab2f62aa',1,'kaori::SimpleVariableLibrary::reduce()'],['../classkaori_1_1SegmentedVariableLibrary.html#a185be6326ba56508a76b0a6465d8e0f2',1,'kaori::SegmentedVariableLibrary::reduce()']]]
+  ['process_5fpaired_5fend_5fdata_0',['process_paired_end_data',['../process__data_8hpp.html#a408a5050e76c4c7e247b69e8928f57b7',1,'kaori']]],
+  ['process_5fsingle_5fend_5fdata_1',['process_single_end_data',['../process__data_8hpp.html#a07d0975935b340ea2fa4c31cd5a39235',1,'kaori']]]
 ];

@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['fastqreader_0',['FastqReader',['../classkaori_1_1FastqReader.html#afb515894cec4533dfaaa31069a0124db',1,'kaori::FastqReader::FastqReader()'],['../classkaori_1_1FastqReader.html',1,'kaori::FastqReader']]],
-  ['fastqreader_2ehpp_1',['FastqReader.hpp',['../FastqReader_8hpp.html',1,'']]],
-  ['finished_2',['finished',['../structkaori_1_1ConstantTemplate_1_1MatchDetails.html#a81d706f65e4904f9632ecfd580dfb776',1,'kaori::ConstantTemplate::MatchDetails']]],
-  ['forward_5fmismatches_3',['forward_mismatches',['../structkaori_1_1ConstantTemplate_1_1MatchDetails.html#a77f774547d8e342ff04dd8499560a0b9',1,'kaori::ConstantTemplate::MatchDetails']]]
+  ['dualbarcodes_0',['DualBarcodes',['../classkaori_1_1DualBarcodes.html#adcc44f35a96a3c1e7f2b13480766361a',1,'kaori::DualBarcodes::DualBarcodes()'],['../classkaori_1_1DualBarcodes.html',1,'kaori::DualBarcodes&lt; max_size &gt;']]],
+  ['dualbarcodes_2ehpp_1',['DualBarcodes.hpp',['../DualBarcodes_8hpp.html',1,'']]],
+  ['dualbarcodeswithdiagnostics_2',['DualBarcodesWithDiagnostics',['../classkaori_1_1DualBarcodesWithDiagnostics.html#abfb2626203ef129a84f207d68a34f5e3',1,'kaori::DualBarcodesWithDiagnostics::DualBarcodesWithDiagnostics()'],['../classkaori_1_1DualBarcodesWithDiagnostics.html',1,'kaori::DualBarcodesWithDiagnostics&lt; max_size &gt;']]],
+  ['dualbarcodeswithdiagnostics_2ehpp_3',['DualBarcodesWithDiagnostics.hpp',['../DualBarcodesWithDiagnostics_8hpp.html',1,'']]]
 ];
