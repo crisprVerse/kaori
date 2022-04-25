@@ -96,7 +96,7 @@ TEST(ScanTemplate, ReverseComplement) {
 
 TEST(ScanTemplate, Multiple) {
     std::string thing = "ACGT----TT-----GG"; 
-    kaori::ScanTemplate<128> stuff(thing.c_str(), thing.size(), true, true);
+    kaori::ScanTemplate<32> stuff(thing.c_str(), thing.size(), true, true);
 
     auto fvar = stuff.variable_regions();
     ASSERT_EQ(fvar.size(), 2);

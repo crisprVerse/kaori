@@ -41,7 +41,7 @@ TEST_F(DualBarcodesWithDiagnosticsTest, BasicFirst) {
     byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
     byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
 
-    kaori::DualBarcodesWithDiagnostics<128> stuff(
+    kaori::DualBarcodesWithDiagnostics<32> stuff(
         constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
         constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
     );
@@ -87,7 +87,7 @@ TEST_F(DualBarcodesWithDiagnosticsTest, WithDuplicates) {
     byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
     byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
 
-    kaori::DualBarcodesWithDiagnostics<128> stuff(
+    kaori::DualBarcodesWithDiagnostics<32> stuff(
         constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
         constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
     );
