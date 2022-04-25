@@ -1,100 +1,100 @@
 #include <gtest/gtest.h>
-#include "kaori/VariableLibrary.hpp"
+#include "kaori/BarcodeSearch.hpp"
 #include <string>
 #include <vector>
 #include "utils.h"
 
-TEST(SimpleVariableLibrary, Basic) {
+TEST(SimpleBarcodeSearch, Basic) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    kaori::SequenceSet ptrs(variables);
-    kaori::SimpleVariableLibrary stuff(ptrs);
+    kaori::BarcodePool ptrs(variables);
+    kaori::SimpleBarcodeSearch stuff(ptrs);
     auto init = stuff.initialize();
 
-    stuff.match("AAAA", init);
+    stuff.search("AAAA", init);
     EXPECT_EQ(init.index, 0);
-    stuff.match("TTTT", init);
+    stuff.search("TTTT", init);
     EXPECT_EQ(init.index, 3);
 
-    stuff.match("CCAC", init);
+    stuff.search("CCAC", init);
     EXPECT_EQ(init.index, -1);
 }
 
-TEST(SimpleVariableLibrary, ReverseComplement) {
+TEST(SimpleBarcodeSearch, ReverseComplement) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    kaori::SequenceSet ptrs(variables);
-    kaori::SimpleVariableLibrary stuff(ptrs, 0, true);
+    kaori::BarcodePool ptrs(variables);
+    kaori::SimpleBarcodeSearch stuff(ptrs, 0, true);
     auto init = stuff.initialize();
 
-    stuff.match("AAAA", init);
+    stuff.search("AAAA", init);
     EXPECT_EQ(init.index, 3);
-    stuff.match("TTTT", init);
+    stuff.search("TTTT", init);
     EXPECT_EQ(init.index, 0);
 }
 
-TEST(SimpleVariableLibrary, Mismatches) {
+TEST(SimpleBarcodeSearch, Mismatches) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    kaori::SequenceSet ptrs(variables);
+    kaori::BarcodePool ptrs(variables);
 
     {
-        kaori::SimpleVariableLibrary stuff(ptrs, 1);
+        kaori::SimpleBarcodeSearch stuff(ptrs, 1);
         auto init = stuff.initialize();
 
-        stuff.match("AAAA", init);
+        stuff.search("AAAA", init);
         EXPECT_EQ(init.index, 0);
         EXPECT_EQ(init.mismatches, 0);
         
-        stuff.match("TTTT", init);
+        stuff.search("TTTT", init);
         EXPECT_EQ(init.index, 3);
         EXPECT_EQ(init.mismatches, 0);
 
-        stuff.match("CCAC", init);
+        stuff.search("CCAC", init);
         EXPECT_EQ(init.index, 1);
         EXPECT_EQ(init.mismatches, 1);
-        stuff.match("CGAC", init);
+        stuff.search("CGAC", init);
         EXPECT_EQ(init.index, -1);
     }
 
     {
-        kaori::SimpleVariableLibrary stuff(ptrs, 2);
+        kaori::SimpleBarcodeSearch stuff(ptrs, 2);
         auto init = stuff.initialize();
 
-        stuff.match("CCAC", init);
+        stuff.search("CCAC", init);
         EXPECT_EQ(init.index, 1);
         EXPECT_EQ(init.mismatches, 1);
 
-        stuff.match("CGAC", init);
+        stuff.search("CGAC", init);
         EXPECT_EQ(init.index, 1);
         EXPECT_EQ(init.mismatches, 2);
 
-        stuff.match("CGGC", init); // ambiguous.
+        stuff.search("CGGC", init); // ambiguous.
         EXPECT_EQ(init.index, -1);
     }
 }
 
-TEST(SimpleVariableLibrary, Caching) {
+TEST(SimpleBarcodeSearch, Caching) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    kaori::SequenceSet ptrs(variables);
-    kaori::SimpleVariableLibrary stuff(ptrs, 1);
+    kaori::BarcodePool ptrs(variables);
+    kaori::SimpleBarcodeSearch stuff(ptrs, 1);
 
     auto state = stuff.initialize();
 
     // No cache when there is no mismatch.
     {
-        stuff.match("AAAA", state);
+        stuff.search("AAAA", state);
         auto it = state.cache.find("AAAA");
         EXPECT_TRUE(it == state.cache.end());
     }
 
     // No cache when the number of mismatches is lower than that in the constructor.
     {
-        stuff.match("AATA", state, 0);
+        stuff.search("AATA", state, 0);
         auto it = state.cache.find("AATA");
         EXPECT_TRUE(it == state.cache.end());
     }
 
     // Stored in cache for >1 mismatches.
     {
-        stuff.match("AATA", state);
+        stuff.search("AATA", state);
         auto it = state.cache.find("AATA");
         EXPECT_TRUE(it != state.cache.end());
         EXPECT_EQ((it->second).first, 0);
@@ -102,7 +102,7 @@ TEST(SimpleVariableLibrary, Caching) {
     }
 
     {
-        stuff.match("ACTA", state);
+        stuff.search("ACTA", state);
         auto it = state.cache.find("ACTA");
         EXPECT_TRUE(it != state.cache.end());
         EXPECT_EQ((it->second).first, -1);
@@ -114,18 +114,18 @@ TEST(SimpleVariableLibrary, Caching) {
     EXPECT_TRUE(state.cache.empty());
 
     {
-        stuff.match("AATA", state);
+        stuff.search("AATA", state);
         EXPECT_EQ(state.index, 2); // re-uses the cache value!
     }
 }
 
-TEST(SimpleVariableLibrary, Duplicates) {
+TEST(SimpleBarcodeSearch, Duplicates) {
     std::vector<std::string> things { "ACGT", "ACGT", "AGTT", "AGTT" };
-    kaori::SequenceSet ptrs(things);
+    kaori::BarcodePool ptrs(things);
 
     EXPECT_ANY_THROW({
         try {
-            kaori::SimpleVariableLibrary stuff(ptrs, 0, false, false);
+            kaori::SimpleBarcodeSearch stuff(ptrs, 0, false, false);
         } catch (std::exception& e) {
             EXPECT_TRUE(std::string(e.what()).find("duplicate") != std::string::npos);
             throw e;
@@ -134,86 +134,86 @@ TEST(SimpleVariableLibrary, Duplicates) {
 
     // Gets the first occurrence.
     {
-        kaori::SimpleVariableLibrary stuff(ptrs, 0, false, true);
+        kaori::SimpleBarcodeSearch stuff(ptrs, 0, false, true);
         auto state = stuff.initialize();
 
-        stuff.match("ACGT", state);
+        stuff.search("ACGT", state);
         EXPECT_EQ(state.index, 0);
 
-        stuff.match("AGTT", state);
+        stuff.search("AGTT", state);
         EXPECT_EQ(state.index, 2);
     }
 
     // ... even with a mismatch.
     {
-        kaori::SimpleVariableLibrary stuff(ptrs, 1, false, true);
+        kaori::SimpleBarcodeSearch stuff(ptrs, 1, false, true);
         auto state = stuff.initialize();
 
-        stuff.match("ACGA", state);
+        stuff.search("ACGA", state);
         EXPECT_EQ(state.index, 0);
         EXPECT_EQ(state.mismatches, 1);
 
-        stuff.match("AGTA", state);
+        stuff.search("AGTA", state);
         EXPECT_EQ(state.index, 2);
         EXPECT_EQ(state.mismatches, 1);
     }
 }
 
-TEST(SegmentedVariableLibrary, Basic) {
+TEST(SegmentedBarcodeSearch, Basic) {
     std::vector<std::string> variables { "AAAAAA", "AACCCC", "AAGGGG", "AATTTT" };
-    kaori::SequenceSet ptrs(variables);
+    kaori::BarcodePool ptrs(variables);
  
-    kaori::SegmentedVariableLibrary<2> stuff(ptrs, { 2, 4 }, { 0, 1 });
+    kaori::SegmentedBarcodeSearch<2> stuff(ptrs, { 2, 4 }, { 0, 1 });
     auto init = stuff.initialize();
 
-    stuff.match("AAAAAA", init);
+    stuff.search("AAAAAA", init);
     EXPECT_EQ(init.index, 0);
-    stuff.match("AATTTT", init);
+    stuff.search("AATTTT", init);
     EXPECT_EQ(init.index, 3);
 
-    stuff.match("AACCAC", init); // 1 mismatch
+    stuff.search("AACCAC", init); // 1 mismatch
     EXPECT_EQ(init.index, 1);
 
-    stuff.match("AAccgg", init); // ambiguous.
+    stuff.search("AAccgg", init); // ambiguous.
     EXPECT_EQ(init.index, -1);
 }
 
-TEST(SegmentedVariableLibrary, ReverseComplement) {
+TEST(SegmentedBarcodeSearch, ReverseComplement) {
     std::vector<std::string> variables { "AAAAAA", "AACCCC", "AAGGGG", "AATTTT" };
-    kaori::SequenceSet ptrs(variables);
+    kaori::BarcodePool ptrs(variables);
 
-    kaori::SegmentedVariableLibrary<2> stuff(ptrs, { 2, 4 }, { 0, 1 }, true);
+    kaori::SegmentedBarcodeSearch<2> stuff(ptrs, { 2, 4 }, { 0, 1 }, true);
     auto init = stuff.initialize();
 
-    stuff.match("AAAATT", init);
+    stuff.search("AAAATT", init);
     EXPECT_EQ(init.index, 3);
-    stuff.match("GGGGTT", init);
+    stuff.search("GGGGTT", init);
     EXPECT_EQ(init.index, 1);
 
-    stuff.match("CCACTT", init);
+    stuff.search("CCACTT", init);
     EXPECT_EQ(init.index, 2);
 
-    stuff.match("GGCCTT", init); // ambiguous.
+    stuff.search("GGCCTT", init); // ambiguous.
     EXPECT_EQ(init.index, -1);
 }
 
-TEST(SegmentedVariableLibrary, Caching) {
+TEST(SegmentedBarcodeSearch, Caching) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    kaori::SequenceSet ptrs(variables);
-    kaori::SegmentedVariableLibrary<2> stuff(ptrs, {2, 2}, {1, 1});
+    kaori::BarcodePool ptrs(variables);
+    kaori::SegmentedBarcodeSearch<2> stuff(ptrs, {2, 2}, {1, 1});
 
     auto state = stuff.initialize();
 
     // No cache when there is no mismatch.
     {
-        stuff.match("AAAA", state);
+        stuff.search("AAAA", state);
         auto it = state.cache.find("AAAA");
         EXPECT_TRUE(it == state.cache.end());
     }
 
     // No cache when the number of mismatches is less than that in the constructor.
     {
-        stuff.match("AATA", state, { 0, 0 });
+        stuff.search("AATA", state, { 0, 0 });
         auto it = state.cache.find("AATA");
         EXPECT_TRUE(it == state.cache.end());
     }
@@ -221,7 +221,7 @@ TEST(SegmentedVariableLibrary, Caching) {
 
     // Stored in cache for >1 mismatches.
     {
-        stuff.match("AATA", state);
+        stuff.search("AATA", state);
         auto it = state.cache.find("AATA");
         EXPECT_TRUE(it != state.cache.end());
         EXPECT_EQ((it->second).index, 0);
@@ -229,7 +229,7 @@ TEST(SegmentedVariableLibrary, Caching) {
     }
 
     {
-        stuff.match("ACTA", state);
+        stuff.search("ACTA", state);
         auto it = state.cache.find("ACTA");
         EXPECT_TRUE(it != state.cache.end());
         EXPECT_EQ((it->second).index, -1);
@@ -241,7 +241,7 @@ TEST(SegmentedVariableLibrary, Caching) {
     EXPECT_TRUE(state.cache.empty());
 
     {
-        stuff.match("AATA", state);
+        stuff.search("AATA", state);
         EXPECT_EQ(state.index, 2); // re-uses the cache value!
     }
 }

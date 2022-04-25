@@ -13,9 +13,9 @@ enable_testing()
 add_executable(
     libtest 
     src/FastqReader.cpp
-    src/ConstantTemplate.cpp
+    src/ScanTemplate.cpp
     src/MismatchTrie.cpp
-    src/VariableLibrary.cpp
+    src/BarcodeSearch.cpp
     src/SimpleSingleMatch.cpp
     src/process_data.cpp
     src/handlers/SingleBarcodeSingleEnd.cpp

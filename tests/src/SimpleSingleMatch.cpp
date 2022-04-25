@@ -7,8 +7,8 @@
 TEST(SimpleSingleMatch, BasicFirst) {
     std::string constant = "ACGT----TGCA";
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    kaori::SequenceSet ptrs(variables);
-    kaori::SimpleSingleMatch<64> stuff(constant.c_str(), constant.size(), true, false, ptrs);
+    kaori::BarcodePool ptrs(variables);
+    kaori::SimpleSingleMatch<16> stuff(constant.c_str(), constant.size(), true, false, ptrs);
 
     // Perfect match.
     {
@@ -41,10 +41,10 @@ TEST(SimpleSingleMatch, BasicFirst) {
 TEST(SimpleSingleMatch, MismatchFirst) {
     std::string constant = "ACGT----TGCA";
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    kaori::SequenceSet ptrs(variables);
+    kaori::BarcodePool ptrs(variables);
     
-    kaori::SimpleSingleMatch<64> stuff1(constant.c_str(), constant.size(), true, false, ptrs, 1);
-    kaori::SimpleSingleMatch<64> stuff2(constant.c_str(), constant.size(), true, false, ptrs, 2);
+    kaori::SimpleSingleMatch<16> stuff1(constant.c_str(), constant.size(), true, false, ptrs, 1);
+    kaori::SimpleSingleMatch<16> stuff2(constant.c_str(), constant.size(), true, false, ptrs, 2);
 
     // 1 mismatch in constant region.
     {
@@ -125,11 +125,11 @@ TEST(SimpleSingleMatch, MismatchFirst) {
 TEST(SimpleSingleMatch, ReverseComplementFirst) {
     std::string constant = "ACGT----TGCA";
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    kaori::SequenceSet ptrs(variables);
+    kaori::BarcodePool ptrs(variables);
 
-    kaori::SimpleSingleMatch<64> forward_only(constant.c_str(), constant.size(), true, false, ptrs);
-    kaori::SimpleSingleMatch<64> reverse_only(constant.c_str(), constant.size(), false, true, ptrs);
-    kaori::SimpleSingleMatch<64> both(constant.c_str(), constant.size(), true, true, ptrs);
+    kaori::SimpleSingleMatch<16> forward_only(constant.c_str(), constant.size(), true, false, ptrs);
+    kaori::SimpleSingleMatch<16> reverse_only(constant.c_str(), constant.size(), false, true, ptrs);
+    kaori::SimpleSingleMatch<16> both(constant.c_str(), constant.size(), true, true, ptrs);
 
     // Forward only.
     {
@@ -191,8 +191,8 @@ TEST(SimpleSingleMatch, ReverseComplementFirst) {
 TEST(SimpleSingleMatch, BasicBest) {
     std::string constant = "ACGT----TGCA";
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    kaori::SequenceSet ptrs(variables);
-    kaori::SimpleSingleMatch<64> stuff1(constant.c_str(), constant.size(), true, false, ptrs, 1);
+    kaori::BarcodePool ptrs(variables);
+    kaori::SimpleSingleMatch<16> stuff1(constant.c_str(), constant.size(), true, false, ptrs, 1);
 
     // Favors the perfect match.
     {
@@ -222,7 +222,7 @@ TEST(SimpleSingleMatch, BasicBest) {
     // ... unless it's ambiguous.
     {
         {
-            kaori::SimpleSingleMatch<64> stuff0(constant.c_str(), constant.size(), true, false, ptrs);
+            kaori::SimpleSingleMatch<16> stuff0(constant.c_str(), constant.size(), true, false, ptrs);
             std::string seq = "gatcgtgaACGTAAAATGCAcacggagACGTGGGGTGCA";
             auto state = stuff0.initialize();
             EXPECT_FALSE(stuff0.search_best(seq.c_str(), seq.size(), state));
@@ -230,7 +230,7 @@ TEST(SimpleSingleMatch, BasicBest) {
 
         // ... unless the ambiguity refers to the same read!
         {
-            kaori::SimpleSingleMatch<64> stuff0(constant.c_str(), constant.size(), true, false, ptrs);
+            kaori::SimpleSingleMatch<16> stuff0(constant.c_str(), constant.size(), true, false, ptrs);
             std::string seq = "gatcgtgaACGTAAAATGCAcacggagACGTAAAATGCA";
             auto state = stuff0.initialize();
             EXPECT_TRUE(stuff0.search_best(seq.c_str(), seq.size(), state));
@@ -253,7 +253,7 @@ TEST(SimpleSingleMatch, BasicBest) {
 
     // Handles ambiguity correctly within a single region.
     { 
-        kaori::SimpleSingleMatch<64> stuff2(constant.c_str(), constant.size(), true, false, ptrs);
+        kaori::SimpleSingleMatch<16> stuff2(constant.c_str(), constant.size(), true, false, ptrs);
         std::string seq = "ACGTATTATGCA";
         auto state = stuff2.initialize();
         EXPECT_FALSE(stuff2.search_best(seq.c_str(), seq.size(), state));
@@ -263,11 +263,11 @@ TEST(SimpleSingleMatch, BasicBest) {
 TEST(SimpleSingleMatch, ReverseComplementBest) {
     std::string constant = "ACGT----TGCA";
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    kaori::SequenceSet ptrs(variables);
+    kaori::BarcodePool ptrs(variables);
 
-    kaori::SimpleSingleMatch<64> stuff(constant.c_str(), constant.size(), true, false, ptrs);
-    kaori::SimpleSingleMatch<64> reverse_only(constant.c_str(), constant.size(), false, true, ptrs);
-    kaori::SimpleSingleMatch<64> both(constant.c_str(), constant.size(), true, true, ptrs);
+    kaori::SimpleSingleMatch<16> stuff(constant.c_str(), constant.size(), true, false, ptrs);
+    kaori::SimpleSingleMatch<16> reverse_only(constant.c_str(), constant.size(), false, true, ptrs);
+    kaori::SimpleSingleMatch<16> both(constant.c_str(), constant.size(), true, true, ptrs);
 
     // Handles hits in both directions.
     {
@@ -293,9 +293,9 @@ TEST(SimpleSingleMatch, ReverseComplementBest) {
 TEST(SimpleSingleMatch, Caching) {
     std::string constant = "ACGT----TGCA";
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    kaori::SequenceSet ptrs(variables);
+    kaori::BarcodePool ptrs(variables);
 
-    kaori::SimpleSingleMatch<64> stuff(constant.c_str(), constant.size(), true, true, ptrs, 1);
+    kaori::SimpleSingleMatch<16> stuff(constant.c_str(), constant.size(), true, true, ptrs, 1);
 
     auto state = stuff.initialize();
 
@@ -313,11 +313,11 @@ TEST(SimpleSingleMatch, Caching) {
 TEST(SimpleSingleMatch, Error) {
     std::string constant = "ACGT------TGCA";
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
-    kaori::SequenceSet ptrs(variables);
+    kaori::BarcodePool ptrs(variables);
 
     EXPECT_ANY_THROW({
         try {
-            kaori::SimpleSingleMatch<64> stuff(constant.c_str(), constant.size(), true, true, ptrs);
+            kaori::SimpleSingleMatch<16> stuff(constant.c_str(), constant.size(), true, true, ptrs);
         } catch (std::exception& e) {
             EXPECT_TRUE(std::string(e.what()).find("should be the same") != std::string::npos);
             throw e;
@@ -327,7 +327,7 @@ TEST(SimpleSingleMatch, Error) {
     EXPECT_ANY_THROW({
         try {
             constant = "ACACACCAC";
-            kaori::SimpleSingleMatch<64> stuff(constant.c_str(), constant.size(), true, true, ptrs);
+            kaori::SimpleSingleMatch<16> stuff(constant.c_str(), constant.size(), true, true, ptrs);
         } catch (std::exception& e) {
             EXPECT_TRUE(std::string(e.what()).find("expected one variable region") != std::string::npos);
             throw e;

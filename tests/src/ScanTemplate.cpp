@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
-#include "kaori/ConstantTemplate.hpp"
+#include "kaori/ScanTemplate.hpp"
 #include <string>
 
-TEST(ConstantTemplate, Basic) {
+TEST(ScanTemplate, Basic) {
     std::string thing = "ACGT----TTTT"; 
-    kaori::ConstantTemplate<64> stuff(thing.c_str(), thing.size(), true, false);
+    kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), true, false);
 
     auto fvar = stuff.variable_regions();
     ASSERT_EQ(fvar.size(), 1);
@@ -40,9 +40,9 @@ TEST(ConstantTemplate, Basic) {
     }
 }
 
-TEST(ConstantTemplate, TooShort) {
+TEST(ScanTemplate, TooShort) {
     std::string thing = "ACGT----TTTT"; 
-    kaori::ConstantTemplate<64> stuff(thing.c_str(), thing.size(), true, false);
+    kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), true, false);
 
     std::string seq = "ACGT";
     auto out = stuff.initialize(seq.c_str(), seq.size());
@@ -52,11 +52,11 @@ TEST(ConstantTemplate, TooShort) {
     EXPECT_TRUE(out.finished);
 }
 
-TEST(ConstantTemplate, ReverseComplement) {
+TEST(ScanTemplate, ReverseComplement) {
     std::string thing = "ACGT----TTTT"; 
 
     {
-        kaori::ConstantTemplate<64> stuff(thing.c_str(), thing.size(), true, true);
+        kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), true, true);
         std::string seq = "AAAATTTTACGT";
         auto out = stuff.initialize(seq.c_str(), seq.size());
 
@@ -67,7 +67,7 @@ TEST(ConstantTemplate, ReverseComplement) {
     }
 
     {
-        kaori::ConstantTemplate<64> stuff(thing.c_str(), thing.size(), false, true);
+        kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), false, true);
         std::string seq = "AAAATTTTACGT";
         auto out = stuff.initialize(seq.c_str(), seq.size());
 
@@ -83,7 +83,7 @@ TEST(ConstantTemplate, ReverseComplement) {
     }
 
     {
-        kaori::ConstantTemplate<64> stuff(thing.c_str(), thing.size(), true, false);
+        kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), true, false);
         std::string seq = "AAAATTTTACGT";
         auto out = stuff.initialize(seq.c_str(), seq.size());
 
@@ -94,9 +94,9 @@ TEST(ConstantTemplate, ReverseComplement) {
     }
  }
 
-TEST(ConstantTemplate, Multiple) {
+TEST(ScanTemplate, Multiple) {
     std::string thing = "ACGT----TT-----GG"; 
-    kaori::ConstantTemplate<128> stuff(thing.c_str(), thing.size(), true, true);
+    kaori::ScanTemplate<128> stuff(thing.c_str(), thing.size(), true, true);
 
     auto fvar = stuff.variable_regions();
     ASSERT_EQ(fvar.size(), 2);
@@ -134,9 +134,9 @@ TEST(ConstantTemplate, Multiple) {
     }
 }
 
-TEST(ConstantTemplate, Mismatches) {
+TEST(ScanTemplate, Mismatches) {
     std::string thing = "ACGT----TTTT"; 
-    kaori::ConstantTemplate<64> stuff(thing.c_str(), thing.size(), true, false);
+    kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), true, false);
 
     auto fvar = stuff.variable_regions();
     ASSERT_EQ(fvar.size(), 1);
@@ -177,9 +177,9 @@ TEST(ConstantTemplate, Mismatches) {
     }
 }
 
-TEST(ConstantTemplate, BadBases) {
+TEST(ScanTemplate, BadBases) {
     std::string thing = "ACGT----TTTT"; 
-    kaori::ConstantTemplate<64> stuff(thing.c_str(), thing.size(), true, false);
+    kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), true, false);
 
     {
         std::string seq = "aACGTNNNNTTTTa";

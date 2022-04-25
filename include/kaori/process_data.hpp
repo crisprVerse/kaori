@@ -216,13 +216,13 @@ void process_single_end_data(byteme::Reader* input, Handler& handler, int num_th
  * If `use_names` is `false`, the `Handler` class should implement:
  * - `process(State& state, const std::pair<const char*, const char*>& seq1, const std::pair<const char*, const char*>& seq2)`: 
  *   this should be a `const` method that processes the paired reads in `seq1` and `seq2`, and stores its results in `state`.
- *   `seq` will contain pointers to the start and one-past-the-end of the read sequence.
+ *   `seq1` and `seq2` will contain pointers to the start and one-past-the-end of the sequences of the paired reads.
  *
  * Otherwise, if `use_names` is `true`, the class should implement:
  * - `process(State& state, const std::pair<const char*, const char*>& name1, const std::pair<const char*, const char*>& seq1, const std::pair<const char*, const char*>& name2, const std::pair<const char*, const char*>& seq2)`: 
  *   this should be a `const` method that processes the paired reads in `seq1` and `seq2`, and stores its results in `state`.
  *   `name1` and `name2` will contain pointers to the start and one-past-the-end of the read names.
- *   `seq1` and `seq2` will contain pointers to the start and one-past-the-end of the read sequence.
+ *   `seq1` and `seq2` will contain pointers to the start and one-past-the-end of the read sequences.
  */
 template<class Handler>
 void process_paired_end_data(byteme::Reader* input1, byteme::Reader* input2, Handler& handler, int num_threads = 1, int block_size = 100000) {
