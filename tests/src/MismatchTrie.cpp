@@ -63,6 +63,30 @@ TEST(AnyMismatches, MoreMismatches) {
     }
 }
 
+TEST(AnyMismatches, MismatchesWithNs) {
+    std::vector<std::string> things { "ACGTACGTACGT", "TTTGGGCCCAAA" };
+    kaori::BarcodePool ptrs(things);
+    kaori::AnyMismatches stuff(ptrs);
+
+    {
+        auto res = stuff.search("ACGTACGTACGN", 0);
+        EXPECT_EQ(res.first, -1);
+
+        auto res2 = stuff.search("ACGTACGTACGN", 1);
+        EXPECT_EQ(res2.first, 0);
+        EXPECT_EQ(res2.second, 1);
+    }
+
+    {
+        auto res = stuff.search("TTNGGGNCCAAA", 1);
+        EXPECT_EQ(res.first, -1);
+
+        auto res2 = stuff.search("TTNGGGNCCAAA", 2);
+        EXPECT_EQ(res2.first, 1);
+        EXPECT_EQ(res2.second, 2);
+    }
+}
+
 TEST(AnyMismatches, CappedMismatch) {
     // Force an early return.
     std::vector<std::string> things { "ACGT", "AAAA", "ACAA", "AGTT" };
@@ -210,6 +234,35 @@ TEST(SegmentedMismatches, Mismatches) {
         EXPECT_EQ(res.per_segment[1], 2);
     }
 }
+
+TEST(SegmentedMismatches, MismatchesWithNs) {
+    std::vector<std::string> things { "AAAAAA", "CCCCCC", "GGGGGG", "TTTTTT" };
+    kaori::BarcodePool ptrs(things);
+    kaori::SegmentedMismatches<2> stuff(ptrs, {4, 2});
+
+    {
+        auto res = stuff.search("CCCCNC", { 0, 1 });
+        EXPECT_EQ(res.index, 1);
+        EXPECT_EQ(res.total, 1);
+        EXPECT_EQ(res.per_segment[0], 0);
+        EXPECT_EQ(res.per_segment[1], 1);
+    }
+
+    {
+        auto res = stuff.search("GNGGGN", { 1, 2 });
+        EXPECT_EQ(res.index, 2);
+        EXPECT_EQ(res.total, 2);
+        EXPECT_EQ(res.per_segment[0], 1);
+        EXPECT_EQ(res.per_segment[1], 1);
+    }
+
+    // Not in the wrong place, though.
+    {
+        auto res = stuff.search("CCCCNC", { 1, 0 });
+        EXPECT_EQ(res.index, -1);
+    }
+}
+
 
 TEST(SegmentedMismatches, Ambiguity) {
     {
