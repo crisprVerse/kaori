@@ -81,6 +81,8 @@ TEST(SimpleBarcodeSearch, Caching) {
     // No cache when there is no mismatch.
     {
         stuff.search("AAAA", state);
+        EXPECT_EQ(state.index, 0);
+        EXPECT_EQ(state.mismatches, 0);
         auto it = state.cache.find("AAAA");
         EXPECT_TRUE(it == state.cache.end());
     }
@@ -88,6 +90,7 @@ TEST(SimpleBarcodeSearch, Caching) {
     // No cache when the number of mismatches is lower than that in the constructor.
     {
         stuff.search("AATA", state, 0);
+        EXPECT_EQ(state.index, -1);
         auto it = state.cache.find("AATA");
         EXPECT_TRUE(it == state.cache.end());
     }
@@ -95,6 +98,9 @@ TEST(SimpleBarcodeSearch, Caching) {
     // Stored in cache for >1 mismatches.
     {
         stuff.search("AATA", state);
+        EXPECT_EQ(state.index, 0);
+        EXPECT_EQ(state.mismatches, 1);
+
         auto it = state.cache.find("AATA");
         EXPECT_TRUE(it != state.cache.end());
         EXPECT_EQ((it->second).first, 0);
@@ -103,11 +109,21 @@ TEST(SimpleBarcodeSearch, Caching) {
 
     {
         stuff.search("ACTA", state);
+        EXPECT_EQ(state.index, -1);
+
         auto it = state.cache.find("ACTA");
         EXPECT_TRUE(it != state.cache.end());
         EXPECT_EQ((it->second).first, -1);
     }
-    
+
+    // Retrieval from cache respects a lower mismatch threshold.  This uses the
+    // same barcode as above, which should be cached with a match that is
+    // revoked at a lower mismatch threshold.
+    {
+        stuff.search("AATA", state, 0); 
+        EXPECT_EQ(state.index, -1);
+    }
+ 
     // Checking that the reduction works correctly.
     state.cache["AATA"].first = 2;
     stuff.reduce(state);
@@ -207,6 +223,8 @@ TEST(SegmentedBarcodeSearch, Caching) {
     // No cache when there is no mismatch.
     {
         stuff.search("AAAA", state);
+        EXPECT_EQ(state.index, 0);
+        EXPECT_EQ(state.mismatches, 0);
         auto it = state.cache.find("AAAA");
         EXPECT_TRUE(it == state.cache.end());
     }
@@ -214,14 +232,16 @@ TEST(SegmentedBarcodeSearch, Caching) {
     // No cache when the number of mismatches is less than that in the constructor.
     {
         stuff.search("AATA", state, { 0, 0 });
+        EXPECT_EQ(state.index, -1);
         auto it = state.cache.find("AATA");
         EXPECT_TRUE(it == state.cache.end());
     }
 
-
     // Stored in cache for >1 mismatches.
     {
         stuff.search("AATA", state);
+        EXPECT_EQ(state.index, 0);
+        EXPECT_EQ(state.mismatches, 1);
         auto it = state.cache.find("AATA");
         EXPECT_TRUE(it != state.cache.end());
         EXPECT_EQ((it->second).index, 0);
@@ -230,11 +250,23 @@ TEST(SegmentedBarcodeSearch, Caching) {
 
     {
         stuff.search("ACTA", state);
+        EXPECT_EQ(state.index, -1);
         auto it = state.cache.find("ACTA");
         EXPECT_TRUE(it != state.cache.end());
         EXPECT_EQ((it->second).index, -1);
     }
-    
+
+    // Retrieval from cache respects a lower mismatch threshold.  This uses the
+    // same barcode as above, which should be cached with a match that is
+    // revoked at a lower mismatch threshold.
+    {
+        stuff.search("AATA", state, { 0, 1 }); //ok
+        EXPECT_EQ(state.index, 0);
+
+        stuff.search("AATA", state, { 0, 0 }); //fail
+        EXPECT_EQ(state.index, -1);
+    }
+
     // Checking that the reduction works correctly.
     state.cache["AATA"].index = 2;
     stuff.reduce(state);
