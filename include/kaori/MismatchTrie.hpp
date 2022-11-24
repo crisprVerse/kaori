@@ -165,78 +165,124 @@ public:
      * 2. The number of mismatches.
      */
     std::pair<int, int> search(const char* search_seq, int max_mismatches) const {
-        return search(search_seq, 0, 0, 0, max_mismatches);
-    }
+        int mismatches = 0;
+        int node = 0;
+        size_t pos = 0;
 
-private:
-    std::pair<int, int> search(const char* seq, size_t pos, int node, int mismatches, int& max_mismatches) const {
-        int shift = base_shift<true>(seq[pos]);
-        int current = (shift >= 0 ? pointers[node + shift] : -1);
+        struct Step {
+            Step(int n, int s, int m) : node(n), shift(s), misshift(m) {}
+            int node = 0;
+            int shift = 0;
+            int misshift = 0;
+        };
+        std::vector<Step> steps;
 
-        // At the end: we prepare to return the actual values. We also refine
-        // the max number of mismatches so that we don't search for things with
-        // more mismatches than the best hit that was already encountered.
-        if (pos + 1 == length) {
-            if (current >= 0) {
-                max_mismatches = mismatches;
-                return std::make_pair(current, mismatches);
+        // we'll be requiring mismatches to be strictly less than this number,
+        // so we increment it such that the <= contract in the interface works.
+        std::pair<int, int> best(-1, max_mismatches + 1);
+
+        // Depth-first search, where each step always attempts the exact base first.
+        // This encourages the algorithm to minimize best.second ASAP to tighten
+        // the search space as much as possible.
+        while (1) {
+            if (steps.size() == pos) {
+                int shift = base_shift<true>(search_seq[pos]);
+                int nextnode = (shift >= 0 ? pointers[node + shift] : -1);
+
+                if (nextnode == 0) {
+                    ++pos;
+                    if (pos < length) {
+                        steps.emplace_back(node, shift, -1);
+                        node = nextnode;
+                        continue;
+                    }
+
+                    if (mismatches < best.second) {
+                        best.first = nextnode;
+                        best.second = mismatches;
+                    } else if (mismatches == best.second) {
+                        best.first = -1; // ambiguous.
+                    }
+
+                    // If the number of mismatches is zero, don't bother with
+                    // more searches. No need to worry about ambiguities as
+                    // everything should be unique at zero (or exact duplicates
+                    // are explicitly allowed).
+                    if (mismatches == 0) { 
+                        break;
+                    }
+
+                    // No need to search mismatching bases at the same step,
+                    // because we're already at the local minima; so we 
+                    // reverse back up to the previous step before continuing
+                    // down to the mismatch section.
+                    --pos;
+                    if (!pos) {
+                        break;
+                    } else {
+                        --pos;
+                    }
+                } else if (pos < length) {
+                    // Fall down to the mismatch section.
+                    steps.emplace_back(node, shift, -1);
+                }
             }
 
+            // If we're already at the mismatch limit, we stop the search and
+            // wind back to the next step.
+            if (mismatches + 1 > best.second) {
+                if (!pos) {
+                    break;
+                } else {
+                    steps.pop_back();
+                    --pos;
+                    continue;
+                }
+            }
+
+            // Find the first valid mismatch node, quitting if none exist.
+            std::cout << pos << "\t" << steps.size() << std::endl;
+            auto& curstep = steps[pos];
+            const auto& n = curstep.node;
+            auto& s = curstep.misshift;
             int alt = -1;
-            ++mismatches;
-            if (mismatches <= max_mismatches) {
-                bool found = false;
-                for (int s = 0; s < 4; ++s) {
-                    if (shift == s) { 
-                        continue;
-                    }
-
-                    int candidate = pointers[node + s];
-                    if (candidate >= 0) {
-                        if (found) { // ambiguous, so we quit early.
-                            alt = -1;
-                            break;
-                        }
-                        alt = candidate;
-                        max_mismatches = mismatches;
-                        found = true;
+            ++s;
+            while (s < 4) {
+                if (s != curstep.shift) {
+                    alt = pointers[n + s];
+                    if (alt >= 0) {
+                        break;
                     }
                 }
+                ++s;
             }
-            return std::make_pair(alt, mismatches);
 
-        } else {
+            if (s == 4) {
+                if (!pos) {
+                    break;
+                } else {
+                    --pos;
+                    --mismatches;
+                    steps.pop_back();
+                    continue;
+                }
+            }
+
+            ++mismatches;
             ++pos;
+            node = alt;
+            if (pos == length) {
+                best.first = (best.second == mismatches ? -1 : alt);
+                best.second = mismatches;
 
-            std::pair<int, int> best(-1, max_mismatches + 1);
-            if (current >= 0) {
-                best = search(seq, pos, current, mismatches, max_mismatches);
+                // Prepare for the next iteration at the same step. 'node'
+                // doesn't need to be reset as it gets overwritten anyway.
+                --mismatches; 
+                --pos;
             }
-
-            ++mismatches;
-            if (mismatches <= max_mismatches) {
-                bool found = false;
-                for (int s = 0; s < 4; ++s) {
-                    if (shift == s) { 
-                        continue;
-                    } 
-                    
-                    int alt = pointers[node + s];
-                    if (alt < 0) {
-                        continue;
-                    }
-
-                    auto chosen = search(seq, pos, alt, mismatches, max_mismatches);
-                    if (chosen.second < best.second) {
-                        best = chosen;
-                    } else if (chosen.second == best.second) {
-                        best.first = -1;
-                    }
-                }
-            }
-
-            return best;
         }
+
+        return best;
     }
 };
 
