@@ -249,9 +249,9 @@ TEST(SegmentedBarcodeSearch, Caching) {
     }
 
     {
-        stuff.search("ACTA", state);
+        stuff.search("ACCA", state);
         EXPECT_EQ(state.index, -1);
-        auto it = state.cache.find("ACTA");
+        auto it = state.cache.find("ACCA");
         EXPECT_TRUE(it != state.cache.end());
         EXPECT_EQ((it->second).index, -1);
     }

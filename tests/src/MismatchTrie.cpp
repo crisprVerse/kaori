@@ -254,13 +254,21 @@ TEST(SegmentedMismatches, Mismatches) {
         EXPECT_EQ(res.index, -1);
     }
 
-    // Testing the handling of mismatches at the end.
+    // Testing the handling of mismatches at the end of each segment.
     {
         auto res = stuff.search("TTTTTA", { 0, 1 });
         EXPECT_EQ(res.index, 3);
         EXPECT_EQ(res.total, 1);
         EXPECT_EQ(res.per_segment[0], 0);
         EXPECT_EQ(res.per_segment[1], 1);
+    }
+
+    {
+        auto res = stuff.search("AAACAA", { 1, 0 });
+        EXPECT_EQ(res.index, 0);
+        EXPECT_EQ(res.total, 1);
+        EXPECT_EQ(res.per_segment[0], 1);
+        EXPECT_EQ(res.per_segment[1], 0);
     }
 
     // Mismatches in both.
@@ -315,7 +323,6 @@ TEST(SegmentedMismatches, MismatchesWithNs) {
     }
 }
 
-
 TEST(SegmentedMismatches, Ambiguity) {
     {
         std::vector<std::string> things { "AAAAAA", "CCCCCC", "GGGGGG", "TTTTTT" };
@@ -324,18 +331,19 @@ TEST(SegmentedMismatches, Ambiguity) {
 
         // Handles ambiguity properly.
         {
-            auto res = stuff.search("GGTGTT", { 2, 2 });
+            auto res = stuff.search("TTGGTG", { 2, 1 });
             EXPECT_EQ(res.index, -1);
         }
 
         {
-            auto res = stuff.search("TTGGTG", { 2, 2 });
+            auto res = stuff.search("TTTGGG", { 3, 2 });
             EXPECT_EQ(res.index, -1);
         }
 
+        // Not ambiguous due to mismatch restrictions.
         {
             auto res = stuff.search("GGGTTT", { 2, 2 });
-            EXPECT_EQ(res.index, -1);
+            EXPECT_EQ(res.index, 2);
         }
     }
 

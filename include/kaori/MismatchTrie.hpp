@@ -442,9 +442,10 @@ private:
             return state;
 
         } else {
-            ++pos;
-            if (pos == boundaries[segment_id]) {
-                ++segment_id;
+            auto next_pos = pos + 1;
+            auto next_segment_id = segment_id;
+            if (next_pos == boundaries[segment_id]) {
+                ++next_segment_id;
             }
 
             Result best;
@@ -453,7 +454,7 @@ private:
 
             if (current >= 0) {
                 state.index = current;
-                best = search(seq, pos, segment_id, state, segment_mismatches, total_mismatches);
+                best = search(seq, next_pos, next_segment_id, state, segment_mismatches, total_mismatches);
             }
 
             ++state.total;
@@ -473,7 +474,7 @@ private:
                     }
 
                     state.index = alt;
-                    auto chosen = search(seq, pos, segment_id, state, segment_mismatches, total_mismatches);
+                    auto chosen = search(seq, next_pos, next_segment_id, state, segment_mismatches, total_mismatches);
                     if (chosen.total < best.total) {
                         best = chosen;
                     } else if (chosen.total == best.total) { // ambiguous
