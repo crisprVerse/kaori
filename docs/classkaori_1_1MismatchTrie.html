@@ -109,6 +109,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab59fa53197bedc1a0b5be0d1b64c6392"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a1333d03728504b6620ca27e34b4152"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#a4a1333d03728504b6620ca27e34b4152">size</a> () const</td></tr>
 <tr class="separator:a4a1333d03728504b6620ca27e34b4152"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f5928901d4dca9e72c18cbfc8c0aec3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#a1f5928901d4dca9e72c18cbfc8c0aec3">optimize</a> ()</td></tr>
+<tr class="separator:a1f5928901d4dca9e72c18cbfc8c0aec3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Base class for the mismatch search. </p>
@@ -257,6 +259,32 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>The length of the barcode sequences. </dd></dl>
+
+</div>
+</div>
+<a id="a1f5928901d4dca9e72c18cbfc8c0aec3" name="a1f5928901d4dca9e72c18cbfc8c0aec3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f5928901d4dca9e72c18cbfc8c0aec3">&#9670;&#160;</a></span>optimize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void kaori::MismatchTrie::optimize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p >Attempt to optimize the trie for more cache-friendly look-ups. This is not necessary if sorted sequences are supplied in <code><a class="el" href="classkaori_1_1MismatchTrie.html#a9f84f9bbc101a4cd5b87aa997059e634">add()</a></code>. </p>
 
 </div>
 </div>
