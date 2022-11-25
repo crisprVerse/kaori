@@ -154,6 +154,58 @@ TEST(AnyMismatches, Duplicates) {
     EXPECT_EQ(res2.first, 2);
 }
 
+TEST(AnyMismatches, Optimized) {
+    // Deliberately not in any order, to check whether optimization behaves
+    // correctly. We try it with and without optimization.
+    std::vector<std::string> things { "ACCA", "TGCC", "CAAA", "AACT", "CGCG", "GGTG" };
+    kaori::BarcodePool ptrs(things);
+
+    for (size_t i = 0; i < 2; ++i) {
+        kaori::AnyMismatches stuff(ptrs);
+        if (i != 0) {
+            stuff.optimize();
+        }
+
+        {
+            auto res = stuff.search("AAAT", 1);
+            EXPECT_EQ(res.first, 3);
+            EXPECT_EQ(res.second, 1);
+        }
+
+        {
+            auto res = stuff.search("CCCG", 1);
+            EXPECT_EQ(res.first, 4);
+            EXPECT_EQ(res.second, 1);
+        }
+
+        {
+            auto res = stuff.search("GGTG", 1);
+            EXPECT_EQ(res.first, 5);
+            EXPECT_EQ(res.second, 0);
+        }
+
+        // Not found with the requested number of mismatches.
+        {
+            auto res = stuff.search("AGGA", 1);
+            EXPECT_EQ(res.first, -1);
+            EXPECT_EQ(res.second, 2);
+        }
+
+        {
+            auto res = stuff.search("AGGA", 2);
+            EXPECT_EQ(res.first, 0);
+            EXPECT_EQ(res.second, 2);
+        }
+
+        // Ambiguous.
+        {
+            auto res = stuff.search("TTTT", 3);
+            EXPECT_EQ(res.first, -1);
+            EXPECT_EQ(res.second, 3);
+        }
+    }
+}
+
 TEST(SegmentedMismatches, Segmented) {
     std::vector<std::string> things { "AAAAAA", "CCCCCC", "GGGGGG", "TTTTTT" };
     kaori::BarcodePool ptrs(things);
@@ -293,7 +345,89 @@ TEST(SegmentedMismatches, Ambiguity) {
         kaori::BarcodePool ptrs(things);
         kaori::SegmentedMismatches<2> stuff(ptrs, {4, 2});
 
-        auto res = stuff.search("AAAAAC", { 0, 1 });
-        EXPECT_EQ(res.index, -1);
+        {
+            auto res = stuff.search("AAAAAC", { 0, 1 });
+            EXPECT_EQ(res.index, -1);
+        }
+
+        {
+            auto res = stuff.search("CAAAAG", { 1, 1 });
+            EXPECT_EQ(res.index, -1);
+        }
+    }
+}
+
+TEST(SegmentedMismatches, Optimized) {
+    // Deliberately out of order.
+    std::vector<std::string> things { "CCCCCC", "AAAAAA", "TTTTTT", "GGGGGG" };
+    kaori::BarcodePool ptrs(things);
+
+    for (size_t i = 0; i < 2; ++i) {
+      kaori::SegmentedMismatches<2> stuff(ptrs, {3, 3});
+      if (i != 0) {
+          stuff.optimize();
+      }
+
+        {
+            auto res = stuff.search("GGGGGG", { 1, 1 });
+            EXPECT_EQ(res.index, 3);
+            EXPECT_EQ(res.total, 0);
+            EXPECT_EQ(res.per_segment[0], 0);
+            EXPECT_EQ(res.per_segment[1], 0);
+        }
+
+        {
+            auto res = stuff.search("TTTTTT", { 0, 0 });
+            EXPECT_EQ(res.index, 2);
+            EXPECT_EQ(res.total, 0);
+            EXPECT_EQ(res.per_segment[0], 0);
+            EXPECT_EQ(res.per_segment[1], 0);
+        }
+
+        // Handles a few mismatches.
+        {
+            auto res = stuff.search("GAAAAA", { 1, 1 });
+            EXPECT_EQ(res.index, 1);
+            EXPECT_EQ(res.total, 1);
+            EXPECT_EQ(res.per_segment[0], 1);
+            EXPECT_EQ(res.per_segment[1], 0);
+        }
+
+        {
+            auto res = stuff.search("CACCTC", { 1, 1 });
+            EXPECT_EQ(res.index, 0);
+            EXPECT_EQ(res.total, 2);
+            EXPECT_EQ(res.per_segment[0], 1);
+            EXPECT_EQ(res.per_segment[1], 1);
+        }
+
+      {
+          auto res = stuff.search("AACAAT", { 1, 1 });
+          EXPECT_EQ(res.index, 1);
+          EXPECT_EQ(res.total, 2);
+          EXPECT_EQ(res.per_segment[0], 1);
+          EXPECT_EQ(res.per_segment[1], 1);
+      }
+
+        {
+            auto res = stuff.search("AAAAGG", { 2, 2 });
+            EXPECT_EQ(res.index, 1);
+            EXPECT_EQ(res.total, 2);
+            EXPECT_EQ(res.per_segment[0], 0);
+            EXPECT_EQ(res.per_segment[1], 2);
+        }
+
+        // But not in the wrong place.
+        {
+            auto res = stuff.search("CACCTC", { 1, 0 });
+            EXPECT_EQ(res.index, -1);
+        }
+
+        // Ambiguous.
+        {
+            auto res = stuff.search("CCAAAC", { 2, 2 });
+            EXPECT_EQ(res.index, -1);
+            EXPECT_EQ(res.total, 3);
+        }
     }
 }
