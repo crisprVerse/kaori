@@ -1,5 +1,5 @@
 <map id="kaori::MismatchTrie" name="kaori::MismatchTrie">
-<area shape="rect" id="node1" title="Base class for the mismatch search." coords="110,5,245,31"/>
-<area shape="rect" id="node2" href="$classkaori_1_1AnyMismatches.html" title="Search for barcodes with mismatches anywhere." coords="5,86,155,111"/>
-<area shape="rect" id="node3" href="$classkaori_1_1SegmentedMismatches.html" title="Search for barcodes with segmented mismatches." coords="179,79,373,119"/>
+<area shape="rect" id="node1" title="Base class for the mismatch search." alt="" coords="110,5,245,31"/>
+<area shape="rect" id="node2" href="$classkaori_1_1AnyMismatches.html" title="Search for barcodes with mismatches anywhere." alt="" coords="5,86,155,111"/>
+<area shape="rect" id="node3" href="$classkaori_1_1SegmentedMismatches.html" title="Search for barcodes with segmented mismatches." alt="" coords="179,79,373,119"/>
 </map>

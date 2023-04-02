@@ -1,5 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classkaori_1_1MismatchTrie.html" title="Base class for the mismatch search." coords="5,35,140,60"/>
-<area shape="rect" id="node2" href="$classkaori_1_1AnyMismatches.html" title="Search for barcodes with mismatches anywhere." coords="210,5,359,31"/>
-<area shape="rect" id="node3" href="$classkaori_1_1SegmentedMismatches.html" title="Search for barcodes with segmented mismatches." coords="188,55,381,95"/>
+<area shape="rect" id="node1" href="$classkaori_1_1MismatchTrie.html" title="Base class for the mismatch search." alt="" coords="5,35,140,60"/>
+<area shape="rect" id="node2" href="$classkaori_1_1AnyMismatches.html" title="Search for barcodes with mismatches anywhere." alt="" coords="210,5,359,31"/>
+<area shape="rect" id="node3" href="$classkaori_1_1SegmentedMismatches.html" title="Search for barcodes with segmented mismatches." alt="" coords="188,55,381,95"/>
 </map>
