@@ -276,7 +276,6 @@ private:
 
             ++mismatches;
             if (mismatches <= max_mismatches) {
-                bool found = false;
                 for (int s = 0; s < 4; ++s) {
                     if (shift == s) { 
                         continue;

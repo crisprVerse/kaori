@@ -42,7 +42,6 @@ void fill_library(
             }
         }
 
-        auto it = exact.find(current);
         if (exact.find(current) != exact.end()) {
             if (!duplicates) {
                 throw std::runtime_error("duplicate variable sequence '" + current + "'");
