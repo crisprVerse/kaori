@@ -7,9 +7,9 @@
 #include <unordered_map>
 
 /**
- * @file SingleBarcodeSingleEnd.hpp
+ * @file RandomBarcodeSingleEnd.hpp
  *
- * @brief Process single-end single barcodes.
+ * @brief Process single-end random barcodes.
  */
 
 namespace kaori {

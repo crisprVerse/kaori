@@ -46,6 +46,7 @@ The same general approach is used for:
 - [Combinatorial barcodes in single-end data](https://ltla.github.io/kaori/classkaori_1_1CombinatorialBarcodesSingleEnd.html)
 - [Combinatorial barcodes in paired-end data](https://ltla.github.io/kaori/classkaori_1_1CombinatorialBarcodesPairedEnd.html)
 - [Dual barcodes](https://ltla.github.io/kaori/classkaori_1_1DualBarcodes.html), with [diagnostics](https://ltla.github.io/kaori/classkaori_1_1DualBarcodesWithDiagnostics.html)
+- [Random barcodes in single-end data](https://ltla.github.io/kaori/classkaori_1_1RandomBarcodeSingleEnd.html)
 
 Check out the [reference documentation](https://ltla.github.io/kaori) for more details.
 
