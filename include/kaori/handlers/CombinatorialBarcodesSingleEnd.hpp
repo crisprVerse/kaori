@@ -70,7 +70,6 @@ public:
         }
 
         if (reverse) {
-            const auto& rev_regions = constant_matcher.template variable_regions<true>();
             for (size_t i = 0; i < num_variable; ++i) {
                 reverse_lib[i] = SimpleBarcodeSearch(barcode_pools[num_variable - i - 1], max_mm, true);
             }

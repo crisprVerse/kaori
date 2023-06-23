@@ -37,7 +37,7 @@ void fill_library(
         if (!reverse) {
             current = std::string(ptr, ptr + len);
         } else {
-            for (int j = 0; j < len; ++j) {
+            for (size_t j = 0; j < len; ++j) {
                 current += reverse_complement(ptr[len - j - 1]);
             }
         }
@@ -254,7 +254,7 @@ struct HasMore {
 
 template<size_t total>
 struct HasMore<total, total> {
-    static bool check(const std::array<int, total>& left, const std::array<int, total>& right) { return false; }
+    static bool check(const std::array<int, total>&, const std::array<int, total>&) { return false; }
 };
 /**
  * @endcond
