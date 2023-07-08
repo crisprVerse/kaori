@@ -1,8 +1,8 @@
 # C++ library for counting barcodes
 
-![Unit tests](https://github.com/LTLA/kaori/actions/workflows/run-tests.yaml/badge.svg)
-![Documentation](https://github.com/LTLA/kaori/actions/workflows/doxygenate.yaml/badge.svg)
-[![Codecov](https://codecov.io/gh/LTLA/kaori/branch/master/graph/badge.svg?token=WZkuJqiGtc)](https://codecov.io/gh/LTLA/kaori)
+![Unit tests](https://github.com/crisprVerse/kaori/actions/workflows/run-tests.yaml/badge.svg)
+![Documentation](https://github.com/crisprVerse/kaori/actions/workflows/doxygenate.yaml/badge.svg)
+[![Codecov](https://codecov.io/gh/crisprVerse/kaori/branch/master/graph/badge.svg?token=WZkuJqiGtc)](https://codecov.io/gh/crisprVerse/kaori)
 
 ## Overview
 
@@ -41,14 +41,14 @@ handler.get_counts();
 
 The same general approach is used for:
 
-- [Single barcodes in single-end data](https://ltla.github.io/kaori/classkaori_1_1SingleBarcodeSingleEnd.html)
-- [Single barcodes in paired-end data](https://ltla.github.io/kaori/classkaori_1_1SingleBarcodePairedEnd.html)
-- [Combinatorial barcodes in single-end data](https://ltla.github.io/kaori/classkaori_1_1CombinatorialBarcodesSingleEnd.html)
-- [Combinatorial barcodes in paired-end data](https://ltla.github.io/kaori/classkaori_1_1CombinatorialBarcodesPairedEnd.html)
-- [Dual barcodes](https://ltla.github.io/kaori/classkaori_1_1DualBarcodes.html), with [diagnostics](https://ltla.github.io/kaori/classkaori_1_1DualBarcodesWithDiagnostics.html)
-- [Random barcodes in single-end data](https://ltla.github.io/kaori/classkaori_1_1RandomBarcodeSingleEnd.html)
+- [Single barcodes in single-end data](https://crisprverse.github.io/kaori/classkaori_1_1SingleBarcodeSingleEnd.html)
+- [Single barcodes in paired-end data](https://crisprverse.github.io/kaori/classkaori_1_1SingleBarcodePairedEnd.html)
+- [Combinatorial barcodes in single-end data](https://crisprverse.github.io/kaori/classkaori_1_1CombinatorialBarcodesSingleEnd.html)
+- [Combinatorial barcodes in paired-end data](https://crisprverse.github.io/kaori/classkaori_1_1CombinatorialBarcodesPairedEnd.html)
+- [Dual barcodes](https://crisprverse.github.io/kaori/classkaori_1_1DualBarcodes.html), with [diagnostics](https://crisprverse.github.io/kaori/classkaori_1_1DualBarcodesWithDiagnostics.html)
+- [Random barcodes in single-end data](https://crisprverse.github.io/kaori/classkaori_1_1RandomBarcodeSingleEnd.html)
 
-Check out the [reference documentation](https://ltla.github.io/kaori) for more details.
+Check out the [reference documentation](https://crisprverse.github.io/kaori) for more details.
 
 ## Library description
 
@@ -90,7 +90,7 @@ if (tmpl.size() <= 32) {
 ```
 
 The library exports a number of utilities to easily construct a new handler - 
-see the [`process_data.hpp`](https://ltla.github.io/kaori/process__data_8hpp.html) documentation for the handler expectations.
+see the [`process_data.hpp`](https://crisprverse.github.io/kaori/process__data_8hpp.html) documentation for the handler expectations.
 This can be used to quickly extend **kaori** to handle other barcode configurations.
 If you have a configuration that is not supported here, create an issue and we'll see what we can do. 
 (Or even better, a pull request.)
