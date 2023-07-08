@@ -74,7 +74,7 @@ $(function() {
   <div class="headertitle"><div class="title">C++ library for counting barcodes </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md__2github_2workspace_2README"></a> <img src="https://github.com/LTLA/kaori/actions/workflows/run-tests.yaml/badge.svg" alt="Unit tests" style="pointer-events: none;" class="inline"/> <img src="https://github.com/LTLA/kaori/actions/workflows/doxygenate.yaml/badge.svg" alt="Documentation" style="pointer-events: none;" class="inline"/> <a href="https://codecov.io/gh/LTLA/kaori"><img src="https://codecov.io/gh/LTLA/kaori/branch/master/graph/badge.svg?token=WZkuJqiGtc" alt="Codecov" style="pointer-events: none;" class="inline"/></a></p>
+<div class="textblock"><p><a class="anchor" id="md__2github_2workspace_2README"></a> <img src="https://github.com/crisprVerse/kaori/actions/workflows/run-tests.yaml/badge.svg" alt="Unit tests" style="pointer-events: none;" class="inline"/> <img src="https://github.com/crisprVerse/kaori/actions/workflows/doxygenate.yaml/badge.svg" alt="Documentation" style="pointer-events: none;" class="inline"/> <a href="https://codecov.io/gh/crisprVerse/kaori"><img src="https://codecov.io/gh/crisprVerse/kaori/branch/master/graph/badge.svg?token=WZkuJqiGtc" alt="Codecov" style="pointer-events: none;" class="inline"/></a></p>
 <h1>Overview</h1>
 <p><b>kaori</b> is a header-only C++ libary for counting the frequency of barcodes in FASTQ files. We support a variety of barcode designs including single, combinatorial and dual barcodes in either single- or paired-end data. Users can specify a maximum number of mismatches for identification of the target sequence (i.e., across both the constant and variable regions). Gzipped FASTQ files can be processed, provided Zlib is available.</p>
 <h1>Quick start</h1>
@@ -105,14 +105,14 @@ $(function() {
 <div class="ttc" id="astructkaori_1_1BarcodePool_html"><div class="ttname"><a href="structkaori_1_1BarcodePool.html">kaori::BarcodePool</a></div><div class="ttdoc">Pool of barcode sequences for a variable region.</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:22</div></div>
 </div><!-- fragment --><p>The same general approach is used for:</p>
 <ul>
-<li><a href="https://ltla.github.io/kaori/classkaori_1_1SingleBarcodeSingleEnd.html">Single barcodes in single-end data</a></li>
-<li><a href="https://ltla.github.io/kaori/classkaori_1_1SingleBarcodePairedEnd.html">Single barcodes in paired-end data</a></li>
-<li><a href="https://ltla.github.io/kaori/classkaori_1_1CombinatorialBarcodesSingleEnd.html">Combinatorial barcodes in single-end data</a></li>
-<li><a href="https://ltla.github.io/kaori/classkaori_1_1CombinatorialBarcodesPairedEnd.html">Combinatorial barcodes in paired-end data</a></li>
-<li><a href="https://ltla.github.io/kaori/classkaori_1_1DualBarcodes.html">Dual barcodes</a>, with <a href="https://ltla.github.io/kaori/classkaori_1_1DualBarcodesWithDiagnostics.html">diagnostics</a></li>
-<li><a href="https://ltla.github.io/kaori/classkaori_1_1RandomBarcodeSingleEnd.html">Random barcodes in single-end data</a></li>
+<li><a href="https://crisprverse.github.io/kaori/classkaori_1_1SingleBarcodeSingleEnd.html">Single barcodes in single-end data</a></li>
+<li><a href="https://crisprverse.github.io/kaori/classkaori_1_1SingleBarcodePairedEnd.html">Single barcodes in paired-end data</a></li>
+<li><a href="https://crisprverse.github.io/kaori/classkaori_1_1CombinatorialBarcodesSingleEnd.html">Combinatorial barcodes in single-end data</a></li>
+<li><a href="https://crisprverse.github.io/kaori/classkaori_1_1CombinatorialBarcodesPairedEnd.html">Combinatorial barcodes in paired-end data</a></li>
+<li><a href="https://crisprverse.github.io/kaori/classkaori_1_1DualBarcodes.html">Dual barcodes</a>, with <a href="https://crisprverse.github.io/kaori/classkaori_1_1DualBarcodesWithDiagnostics.html">diagnostics</a></li>
+<li><a href="https://crisprverse.github.io/kaori/classkaori_1_1RandomBarcodeSingleEnd.html">Random barcodes in single-end data</a></li>
 </ul>
-<p>Check out the <a href="https://ltla.github.io/kaori">reference documentation</a> for more details.</p>
+<p>Check out the <a href="https://crisprverse.github.io/kaori">reference documentation</a> for more details.</p>
 <h1>Library description</h1>
 <p>All <b>kaori</b> handlers will first scan each read for the constant template sequence using bitwise comparisons. If a suitable match to the template is found, the sequence of the read at each variable region is extracted and searched against the pool of known barcodes. Imperfect barcode matches are identified through a trie-based search; the total number of mismatches is summed across the constant and variable regions. <b>kaori</b> also caches information about imperfect matches to avoid a redundant look-up when the same sequence is encountered in later reads.</p>
 <p>Our approach is fast and relatively easy to implement compared to full-blown sequence aligners. Any number of mismatches are supported and the framework can be easily adapted to new barcode configurations. However, the downside is that indels are not supported in the search process. We consider this limitation to be acceptable as indels are quite rare in (Illumina) sequencing data.</p>
@@ -136,7 +136,7 @@ $(function() {
 <div class="line">} <span class="keywordflow">else</span> {</div>
 <div class="line">    <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;template sequence is too large&quot;</span>);</div>
 <div class="line">}</div>
-</div><!-- fragment --><p>The library exports a number of utilities to easily construct a new handler - see the <a href="https://ltla.github.io/kaori/process__data_8hpp.html"><code>process_data.hpp</code></a> documentation for the handler expectations. This can be used to quickly extend <b>kaori</b> to handle other barcode configurations. If you have a configuration that is not supported here, create an issue and we'll see what we can do. (Or even better, a pull request.)</p>
+</div><!-- fragment --><p>The library exports a number of utilities to easily construct a new handler - see the <a href="https://crisprverse.github.io/kaori/process__data_8hpp.html"><code>process_data.hpp</code></a> documentation for the handler expectations. This can be used to quickly extend <b>kaori</b> to handle other barcode configurations. If you have a configuration that is not supported here, create an issue and we'll see what we can do. (Or even better, a pull request.)</p>
 <h1>Building projects</h1>
 <p>If you're using CMake, you just need to add something like this to your <code>CMakeLists.txt</code>:</p>
 <div class="fragment"><div class="line">include(FetchContent)</div>
