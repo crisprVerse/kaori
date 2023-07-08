@@ -157,3 +157,47 @@ TEST(RandomBarcodeSingleEnd, Best) {
         EXPECT_EQ(counts["CCGC"], 1);
     }
 }
+
+TEST(RandomBarcodeSingleEnd, BadBases) {
+    std::string thing = "ACGT----TTTT";
+
+    // Passes N's through correctly.
+    {
+        std::vector<std::string> seq{ 
+            "accgggAAAATNCTACGTacaca",
+            "accACGTAANATTTTactgcgact",
+            "accACGTNNNNTTTTactgcgact"
+        };
+        std::string fq = convert_to_fastq(seq);
+
+        kaori::RandomBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), 2, 1);
+        byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
+        kaori::process_single_end_data(&reader, handler);
+
+        auto counts = handler.get_counts();
+        EXPECT_EQ(counts.size(), 3);
+        EXPECT_EQ(counts["AGNA"], 1);
+        EXPECT_EQ(counts["AANA"], 1);
+        EXPECT_EQ(counts["NNNN"], 1);
+    }
+
+    // Fails on seeing bad bases.
+    {
+        std::vector<std::string> seq{ 
+            "accgggAAAATXCACGTacaca"
+        };
+
+        std::string fq = convert_to_fastq(seq);
+
+        kaori::RandomBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), 2, 1);
+        byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
+
+        std::string failed;
+        try {
+            kaori::process_single_end_data(&reader, handler);
+        } catch(std::exception& e) {
+            failed = e.what();
+        }
+        EXPECT_TRUE(failed.find("X") != std::string::npos);
+    }
+}
