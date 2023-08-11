@@ -103,7 +103,7 @@ private:
         // This reduces the recursion depth among the (fewer) ambiguous codes.
         while (1) {
             auto shift = base_shift<true>(barcode_seq[i]);
-            if (shift != -1) {
+            if (shift == -1) {
                break;
             }
 
@@ -118,13 +118,12 @@ private:
         // Processing the ambiguous codes.
         auto process = [&](char base) -> void {
             auto shift = base_shift(base);
-            ++i;
-
-            if (i == length) {
+            if (i + 1 == length) {
                 end(shift, position, duplicates);
             } else {
-                next(shift, position);
-                add_recursive_iupac(i, position, barcode_seq, duplicates);
+                auto curpos = position;
+                next(shift, curpos);
+                add_recursive_iupac(i + 1, curpos, barcode_seq, duplicates);
             }
         };
 

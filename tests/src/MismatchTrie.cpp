@@ -154,6 +154,59 @@ TEST(AnyMismatches, Duplicates) {
     EXPECT_EQ(res2.first, 2);
 }
 
+TEST(AnyMismatches, Iupac) {
+    {
+        std::vector<std::string> things { "rACsCGk", "YacWcgM" };
+        kaori::BarcodePool ptrs(things);
+        kaori::AnyMismatches stuff(ptrs, false, true);
+
+        EXPECT_EQ(stuff.search("AacGcgT", 0), std::make_pair(0, 0));
+        EXPECT_EQ(stuff.search("GacCcgG", 0), std::make_pair(0, 0));
+        EXPECT_EQ(stuff.search("CacTcgA", 0), std::make_pair(1, 0));
+        EXPECT_EQ(stuff.search("TacAcgC", 0), std::make_pair(1, 0));
+
+        EXPECT_EQ(stuff.search("AacAcgA", 0).first, -1);
+    }
+
+    {
+        std::vector<std::string> things { "Bcgt", "aDgt", "acHt", "acgV" };
+        kaori::BarcodePool ptrs(things);
+        kaori::AnyMismatches stuff(ptrs, false, true);
+
+        EXPECT_EQ(stuff.search("ccgt", 0), std::make_pair(0, 0));
+        EXPECT_EQ(stuff.search("aagt", 0), std::make_pair(1, 0));
+        EXPECT_EQ(stuff.search("actt", 0), std::make_pair(2, 0));
+        EXPECT_EQ(stuff.search("acgg", 0), std::make_pair(3, 0));
+
+        EXPECT_EQ(stuff.search("acgt", 0).first, -1);
+    }
+
+    {
+        std::vector<std::string> things { "ANNA", "CNNC" };
+        kaori::BarcodePool ptrs(things);
+        kaori::AnyMismatches stuff(ptrs, false, true);
+
+        EXPECT_EQ(stuff.search("acga", 0), std::make_pair(0, 0));
+        EXPECT_EQ(stuff.search("catc", 0), std::make_pair(1, 0));
+
+        EXPECT_EQ(stuff.search("catg", 0).first, -1);
+    }
+
+    {
+        std::vector<std::string> things { "__U__" };
+        kaori::BarcodePool ptrs(things);
+
+        EXPECT_ANY_THROW({
+            try {
+                kaori::AnyMismatches stuff(ptrs);
+            } catch (std::exception& e) {
+                EXPECT_TRUE(std::string(e.what()).find("unknown base") != std::string::npos);
+                throw e;
+            }
+        });
+    }
+}
+
 TEST(AnyMismatches, Optimized) {
     // Deliberately not in any order, to check whether optimization behaves
     // correctly. We try it with and without optimization.
