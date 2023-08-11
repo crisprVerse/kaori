@@ -34,13 +34,9 @@ public:
      * @param barcode_pool Pool of known barcode sequences.
      * @param duplicates Whether duplicated sequences in `barcode_pool` should be supported, see `add()`.
      */
-    MismatchTrie(const BarcodePool& barcode_pool, bool duplicates = false, bool iupac = false) : MismatchTrie(barcode_pool.length) {
+    MismatchTrie(const BarcodePool& barcode_pool, bool duplicates = false) : MismatchTrie(barcode_pool.length) {
         for (auto s : barcode_pool.pool) {
-            if (iupac) {
-                add_iupac(s, duplicates);
-            } else {
-                add(s, duplicates);
-            }
+            add(s, duplicates);
         }
     }
 
@@ -70,37 +66,9 @@ private:
         }
     }
 
-public:
-    /**
-     * @param[in] barcode_seq Pointer to a character array containing a barcode sequence.
-     * The array should have length equal to `get_length()` and should only contain A, C, G or T (or their lower-case equivalents).
-     * @param duplicates Whether duplicate sequences are allowed.
-     * If `false`, an error is raised if `seq` is a duplicate of a previously `add()`ed sequence.
-     * If `true`, only the first instance of the duplicates will be reported in searches.
-     *
-     * @return The barcode sequence is added to the trie.
-     * The index of the newly added sequence is defined as the number of sequences that were previously added. 
-     */
-    void add(const char* barcode_seq, bool duplicates = false) {
-        if (!length) {
-            return;
-        }
-
-        int position = 0;
-        size_t length_1 = length - 1;
-
-        for (size_t i = 0; i < length_1; ++i) {
-            next(base_shift(barcode_seq[i]), position);
-        }
-
-        end(base_shift(barcode_seq[length_1]), position, duplicates);
-        ++counter;
-    }
-
-private:
     void add_recursive_iupac(size_t i, int position, const char* barcode_seq, bool duplicates) {
         // Processing a stretch of non-ambiguous codes, where possible.
-        // This reduces the recursion depth among the (fewer) ambiguous codes.
+        // This reduces the recursion depth among the (hopefully fewer) ambiguous codes.
         while (1) {
             auto shift = base_shift<true>(barcode_seq[i]);
             if (shift == -1) {
@@ -158,7 +126,7 @@ private:
 public:
     /**
      * @param[in] barcode_seq Pointer to a character array containing a barcode sequence.
-     * The array should have length equal to `get_length()` and should only contain IUPAC nucleotides or their lower-case equivalents (except for U or gaps).
+     * The array should have length equal to `get_length()` and should only contain IUPAC nucleotides or their lower-case equivalents (excepting U or gap characters).
      * @param duplicates Whether duplicate sequences are allowed.
      * If `false`, an error is raised if `seq` is a duplicate of a previously `add()`ed sequence.
      * If `true`, only the first instance of the duplicates will be reported in searches.
@@ -166,7 +134,7 @@ public:
      * @return The barcode sequence is added to the trie.
      * The index of the newly added sequence is defined as the number of sequences that were previously added. 
      */
-    void add_iupac(const char* barcode_seq, bool duplicates) {
+    void add(const char* barcode_seq, bool duplicates) {
         add_recursive_iupac(0, 0, barcode_seq, duplicates);
         ++counter;
     }
@@ -303,7 +271,7 @@ public:
      * @param barcode_pool Pool of known barcode sequences.
      * @param duplicates Whether duplicated sequences in `barcode_pool` should be supported, see `add()`.
      */
-    AnyMismatches(const BarcodePool& barcode_pool, bool duplicates = false, bool iupac = false) : MismatchTrie(barcode_pool, duplicates, iupac) {}
+    AnyMismatches(const BarcodePool& barcode_pool, bool duplicates = false) : MismatchTrie(barcode_pool, duplicates) {}
 
 public:
     /**
@@ -425,16 +393,12 @@ public:
      * Each entry should be positive and the sum should be equal to the total length of the barcode sequence.
      * @param duplicates Whether duplicated sequences in `barcode_pool` should be supported, see `add()`.
      */
-    SegmentedMismatches(const BarcodePool& barcode_pool, std::array<int, num_segments> segments, bool duplicates = false, bool iupac = false) : SegmentedMismatches(segments) {
+    SegmentedMismatches(const BarcodePool& barcode_pool, std::array<int, num_segments> segments, bool duplicates = false) : SegmentedMismatches(segments) {
         if (length != barcode_pool.length) {
             throw std::runtime_error("length of barcode sequences should equal the sum of segment lengths");
         }
         for (auto s : barcode_pool.pool) {
-            if (iupac) {
-                add_iupac(s, duplicates);
-            } else {
-                add(s, duplicates);
-            }
+            add(s, duplicates);
         }
     }
 

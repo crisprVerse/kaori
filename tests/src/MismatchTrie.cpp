@@ -158,7 +158,7 @@ TEST(AnyMismatches, Iupac) {
     {
         std::vector<std::string> things { "rACsCGk", "YacWcgM" };
         kaori::BarcodePool ptrs(things);
-        kaori::AnyMismatches stuff(ptrs, false, true);
+        kaori::AnyMismatches stuff(ptrs);
 
         EXPECT_EQ(stuff.search("AacGcgT", 0), std::make_pair(0, 0));
         EXPECT_EQ(stuff.search("GacCcgG", 0), std::make_pair(0, 0));
@@ -171,7 +171,7 @@ TEST(AnyMismatches, Iupac) {
     {
         std::vector<std::string> things { "Bcgt", "aDgt", "acHt", "acgV" };
         kaori::BarcodePool ptrs(things);
-        kaori::AnyMismatches stuff(ptrs, false, true);
+        kaori::AnyMismatches stuff(ptrs);
 
         EXPECT_EQ(stuff.search("ccgt", 0), std::make_pair(0, 0));
         EXPECT_EQ(stuff.search("aagt", 0), std::make_pair(1, 0));
@@ -184,7 +184,7 @@ TEST(AnyMismatches, Iupac) {
     {
         std::vector<std::string> things { "ANNA", "CNNC" };
         kaori::BarcodePool ptrs(things);
-        kaori::AnyMismatches stuff(ptrs, false, true);
+        kaori::AnyMismatches stuff(ptrs);
 
         EXPECT_EQ(stuff.search("acga", 0), std::make_pair(0, 0));
         EXPECT_EQ(stuff.search("catc", 0), std::make_pair(1, 0));
