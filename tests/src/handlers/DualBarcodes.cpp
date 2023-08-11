@@ -111,6 +111,46 @@ TEST_F(DualBarcodesTest, ReverseComplementFirst) {
     }
 }
 
+TEST_F(DualBarcodesTest, Iupac) {
+    variables1 = std::vector<std::string>{ "ARRA", "CYYC", "GSSG", "TWWT" };
+    variables2 = std::vector<std::string>{ "ABACAC", "TVTGTG", "AGHGAG", "CDCTCT" };
+
+    // Forward.
+    {
+        kaori::DualBarcodes<32> stuff(
+            constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
+            constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
+        );
+
+        auto state = stuff.initialize();
+        std::string seq1 = "AAAATTTTCGGC", seq2 = "AGCTCTCTCTTTTT";
+        stuff.process(state, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(state.counts[0], 0);
+        EXPECT_EQ(state.counts[1], 0);
+        EXPECT_EQ(state.counts[2], 0);
+        EXPECT_EQ(state.counts[3], 1);
+        EXPECT_EQ(state.total, 1);
+    }
+
+    // Reverse-complement.
+    {
+        kaori::DualBarcodes<32> stuff(
+            constant1.c_str(), constant1.size(), true, kaori::BarcodePool(variables1), 0,
+            constant2.c_str(), constant2.size(), true, kaori::BarcodePool(variables2), 0
+        );
+
+        auto state = stuff.initialize();
+        std::string seq1 = "cgataGCCGCCCCTTTTacttc", seq2 = "ccacacAAAACTCTCTAGCT";
+        stuff.process(state, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(state.counts[0], 0);
+        EXPECT_EQ(state.counts[1], 0);
+        EXPECT_EQ(state.counts[2], 1);
+        EXPECT_EQ(state.counts[3], 0);
+        EXPECT_EQ(state.total, 1);
+    }
+}
+
+
 TEST_F(DualBarcodesTest, MismatchFirst) {
     kaori::DualBarcodes<32> stuff00(constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0, 
                                      constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0);

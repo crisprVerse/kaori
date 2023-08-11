@@ -37,22 +37,25 @@ void fill_library(
         if (!reverse) {
             current = std::string(ptr, ptr + len);
         } else {
+            current.reserve(len);
             for (size_t j = 0; j < len; ++j) {
-                current += reverse_complement(ptr[len - j - 1]);
+                current += reverse_complement<true, true>(ptr[len - j - 1]);
             }
-        }
-
-        if (exact.find(current) != exact.end()) {
-            if (!duplicates) {
-                throw std::runtime_error("duplicate variable sequence '" + current + "'");
-            }
-        } else {
-            exact[current] = i;
         }
 
         // Note that this must be called, even if the sequence is duplicated;
         // otherwise the trie's internal counter will not be properly incremented.
-        trie.add(current.c_str(), duplicates);
+        bool has_iupac = trie.add(current.c_str(), duplicates);
+
+        if (!has_iupac) {
+            if (exact.find(current) != exact.end()) {
+                if (!duplicates) {
+                    throw std::runtime_error("duplicate variable sequence '" + current + "'");
+                }
+            } else {
+                exact[current] = i;
+            }
+        }
     }
 
     trie.optimize();

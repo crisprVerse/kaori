@@ -66,7 +66,7 @@ private:
         }
     }
 
-    void add_recursive_iupac(size_t i, int position, const char* barcode_seq, bool duplicates) {
+    bool add_recursive_iupac(size_t i, int position, const char* barcode_seq, bool duplicates) {
         // Processing a stretch of non-ambiguous codes, where possible.
         // This reduces the recursion depth among the (hopefully fewer) ambiguous codes.
         while (1) {
@@ -77,7 +77,7 @@ private:
 
             if ((++i) == length) {
                 end(shift, position, duplicates);
-                return;
+                return false;
             } else {
                 next(shift, position);
             }
@@ -121,6 +121,8 @@ private:
             default:
                 throw std::runtime_error("unknown base '" + std::string(1, barcode_seq[i]) + "' detected when constructing the trie");
         }
+
+        return true;
     }
 
 public:
@@ -133,10 +135,12 @@ public:
      *
      * @return The barcode sequence is added to the trie.
      * The index of the newly added sequence is defined as the number of sequences that were previously added. 
+     * A boolean is returned indicating whether any ambiguous IUPAC characters were present.
      */
-    void add(const char* barcode_seq, bool duplicates) {
-        add_recursive_iupac(0, 0, barcode_seq, duplicates);
+    bool add(const char* barcode_seq, bool duplicates) {
+        auto has_iupac = add_recursive_iupac(0, 0, barcode_seq, duplicates);
         ++counter;
+        return has_iupac;
     }
 
 public:

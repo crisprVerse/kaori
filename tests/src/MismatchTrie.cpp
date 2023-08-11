@@ -205,6 +205,12 @@ TEST(AnyMismatches, Iupac) {
             }
         });
     }
+
+    {
+        kaori::AnyMismatches stuff(6);
+        EXPECT_FALSE(stuff.add("AAAAAA", false));
+        EXPECT_TRUE(stuff.add("RYSWKM", false));
+    }
 }
 
 TEST(AnyMismatches, Optimized) {
