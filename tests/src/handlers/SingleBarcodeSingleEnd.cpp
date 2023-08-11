@@ -151,3 +151,26 @@ TEST(SingleBarcodeSingleEnd, Best) {
     }
 }
 
+TEST(SingleBarcodeSingleEnd, Iupac) {
+    std::string thing = "ACGT----TTTT";
+    std::vector<std::string> variables { "ARRA", "CSSC", "GKKG", "TNNT" };
+
+    std::vector<std::string> seq{ 
+        "cagcatcgatcgtgaACGTAAAATTTTacggaggaga", 
+        "acaccacaAAAACCCCACGTcacacacaca",
+        "acaccacaAAAAACCAACGTcacacacaca",
+        "cagcatcgatcgtgaACGTTCGTTTTTacggaggaga", 
+        "acaccacaACGTCAACTTTTcacacacaca" // doesn't match anything
+    };
+    std::string fq = convert_to_fastq(seq);
+
+    kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), 2, kaori::BarcodePool(variables));
+    byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
+    kaori::process_single_end_data(&reader, handler);
+
+    const auto& counts = handler.get_counts();
+    EXPECT_EQ(counts[0], 1);
+    EXPECT_EQ(counts[1], 0);
+    EXPECT_EQ(counts[2], 1);
+    EXPECT_EQ(counts[3], 2);
+}

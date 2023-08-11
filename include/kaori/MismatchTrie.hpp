@@ -19,8 +19,8 @@ namespace kaori {
 /**
  * @brief Base class for the mismatch search.
  *
- * Given a (typically read-derived) sequence, we can perform a mismatch-aware search to known sequences in a pool of barcode sequences.
- * The idea is to find the barcode with the fewest mismatches to the input sequence.
+ * Given a (typically read-derived) sequence, this class will perform a mismatch-aware search to a pool of known barcode sequences.
+ * It will then return the barcode with the fewest mismatches to the input sequence.
  * Any number of mismatches are supported; subclasses will decide how the mismatches can be distributed throughout the length of the sequence.
  */
 class MismatchTrie {
@@ -40,46 +40,110 @@ public:
         }
     }
 
+protected:
+    static constexpr int error_none = -1;
+
+private:
+    void next(int shift, int& position) {
+        auto& current = pointers[position + shift];
+        if (current < 0) {
+            current = pointers.size();
+            position = current;
+            pointers.resize(position + 4, error_none);
+        } else {
+            position = current;
+        }
+    }
+
+    void end(int shift, int position, bool duplicates) {
+        auto& current = pointers[position + shift];
+        if (current >= 0) {
+            if (!duplicates) {
+                throw std::runtime_error("duplicate sequences detected when constructing the trie");
+            }
+        } else {
+            current = counter;
+        }
+    }
+
+    bool add_recursive_iupac(size_t i, int position, const char* barcode_seq, bool duplicates) {
+        // Processing a stretch of non-ambiguous codes, where possible.
+        // This reduces the recursion depth among the (hopefully fewer) ambiguous codes.
+        while (1) {
+            auto shift = base_shift<true>(barcode_seq[i]);
+            if (shift == -1) {
+               break;
+            }
+
+            if ((++i) == length) {
+                end(shift, position, duplicates);
+                return false;
+            } else {
+                next(shift, position);
+            }
+        } 
+
+        // Processing the ambiguous codes.
+        auto process = [&](char base) -> void {
+            auto shift = base_shift(base);
+            if (i + 1 == length) {
+                end(shift, position, duplicates);
+            } else {
+                auto curpos = position;
+                next(shift, curpos);
+                add_recursive_iupac(i + 1, curpos, barcode_seq, duplicates);
+            }
+        };
+
+        switch(barcode_seq[i]) {
+            case 'R': case 'r':
+                process('A'); process('G'); break;
+            case 'Y': case 'y':
+                process('C'); process('T'); break;
+            case 'S': case 's':
+                process('C'); process('G'); break;
+            case 'W': case 'w':
+                process('A'); process('T'); break;
+            case 'K': case 'k':
+                process('G'); process('T'); break;
+            case 'M': case 'm':
+                process('A'); process('C'); break;
+            case 'B': case 'b':
+                process('C'); process('G'); process('T'); break;
+            case 'D': case 'd':
+                process('A'); process('G'); process('T'); break;
+            case 'H': case 'h':
+                process('A'); process('C'); process('T'); break;
+            case 'V': case 'v':
+                process('A'); process('C'); process('G'); break;
+            case 'N': case 'n':
+                process('A'); process('C'); process('G'); process('T'); break;
+            default:
+                throw std::runtime_error("unknown base '" + std::string(1, barcode_seq[i]) + "' detected when constructing the trie");
+        }
+
+        return true;
+    }
+
 public:
     /**
      * @param[in] barcode_seq Pointer to a character array containing a barcode sequence.
-     * The array should have length equal to `get_length()`.
+     * The array should have length equal to `get_length()` and should only contain IUPAC nucleotides or their lower-case equivalents (excepting U or gap characters).
      * @param duplicates Whether duplicate sequences are allowed.
      * If `false`, an error is raised if `seq` is a duplicate of a previously `add()`ed sequence.
      * If `true`, only the first instance of the duplicates will be reported in searches.
      *
      * @return The barcode sequence is added to the trie.
      * The index of the newly added sequence is defined as the number of sequences that were previously added. 
+     * A boolean is returned indicating whether any ambiguous IUPAC characters were present.
      */
-    void add(const char* barcode_seq, bool duplicates = false) {
-        int position = 0;
-
-        for (size_t i = 0; i < length; ++i) {
-            auto& current = pointers[position + base_shift(barcode_seq[i])];
-
-            if (i + 1 == length) {
-                // Last position is the index of the sequence.
-                if (current >= 0) {
-                    if (!duplicates) {
-                        throw std::runtime_error("duplicate sequences detected when constructing the trie");
-                    }
-                } else {
-                    current = counter;
-                }
-            } else {
-                if (current < 0) {
-                    current = pointers.size();
-                    position = current;
-                    pointers.resize(position + 4, -1);
-                } else {
-                    position = current;
-                }
-            }
-        }
-
+    bool add(const char* barcode_seq, bool duplicates) {
+        auto has_iupac = add_recursive_iupac(0, 0, barcode_seq, duplicates);
         ++counter;
+        return has_iupac;
     }
 
+public:
     /**
      * @return The length of the barcode sequences.
      */

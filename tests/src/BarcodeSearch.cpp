@@ -31,6 +31,53 @@ TEST(SimpleBarcodeSearch, ReverseComplement) {
     EXPECT_EQ(init.index, 0);
 }
 
+TEST(SimpleBarcodeSearch, Iupac) {
+    std::vector<std::string> variables { "ARYA", "CSWC", "GKMG", "ABDC", "GHVT", "ANNT" };
+    kaori::BarcodePool ptrs(variables);
+
+    {
+        kaori::SimpleBarcodeSearch stuff(ptrs);
+        auto init = stuff.initialize();
+
+        stuff.search("AATA", init);
+        EXPECT_EQ(init.index, 0);
+        stuff.search("CGAC", init);
+        EXPECT_EQ(init.index, 1);
+        stuff.search("GTCG", init);
+        EXPECT_EQ(init.index, 2);
+        stuff.search("AGGC", init);
+        EXPECT_EQ(init.index, 3);
+        stuff.search("GCCT", init);
+        EXPECT_EQ(init.index, 4);
+        stuff.search("ACGT", init);
+        EXPECT_EQ(init.index, 5);
+
+        stuff.search("AAAA", init);
+        EXPECT_EQ(init.index, -1);
+    }
+
+    {
+        kaori::SimpleBarcodeSearch stuff(ptrs, 0, true);
+        auto init = stuff.initialize();
+
+        stuff.search("TATT", init);
+        EXPECT_EQ(init.index, 0);
+        stuff.search("GTCG", init);
+        EXPECT_EQ(init.index, 1);
+        stuff.search("CGAC", init);
+        EXPECT_EQ(init.index, 2);
+        stuff.search("GCCT", init);
+        EXPECT_EQ(init.index, 3);
+        stuff.search("AGGC", init);
+        EXPECT_EQ(init.index, 4);
+        stuff.search("ACGT", init);
+        EXPECT_EQ(init.index, 5);
+
+        stuff.search("AATA", init);
+        EXPECT_EQ(init.index, -1);
+    }
+}
+
 TEST(SimpleBarcodeSearch, Mismatches) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
     kaori::BarcodePool ptrs(variables);
