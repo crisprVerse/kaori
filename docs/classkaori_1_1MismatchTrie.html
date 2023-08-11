@@ -77,6 +77,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-static-attribs">Static Protected Attributes</a> &#124;
 <a href="classkaori_1_1MismatchTrie-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">kaori::MismatchTrie Class Reference</div></div>
 </div><!--header-->
@@ -103,18 +104,24 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a5691b3e7196a5613a064a47fb320c861"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1484f9832a975617044b96ec0b46881a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#a1484f9832a975617044b96ec0b46881a">MismatchTrie</a> (const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, bool duplicates=false)</td></tr>
 <tr class="separator:a1484f9832a975617044b96ec0b46881a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f84f9bbc101a4cd5b87aa997059e634"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#a9f84f9bbc101a4cd5b87aa997059e634">add</a> (const char *barcode_seq, bool duplicates=false)</td></tr>
-<tr class="separator:a9f84f9bbc101a4cd5b87aa997059e634"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8537e4f70152cf6aada71f94ebfde679"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#a8537e4f70152cf6aada71f94ebfde679">add</a> (const char *barcode_seq, bool duplicates)</td></tr>
+<tr class="separator:a8537e4f70152cf6aada71f94ebfde679"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab59fa53197bedc1a0b5be0d1b64c6392"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#ab59fa53197bedc1a0b5be0d1b64c6392">get_length</a> () const</td></tr>
 <tr class="separator:ab59fa53197bedc1a0b5be0d1b64c6392"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a1333d03728504b6620ca27e34b4152"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#a4a1333d03728504b6620ca27e34b4152">size</a> () const</td></tr>
 <tr class="separator:a4a1333d03728504b6620ca27e34b4152"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f5928901d4dca9e72c18cbfc8c0aec3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#a1f5928901d4dca9e72c18cbfc8c0aec3">optimize</a> ()</td></tr>
 <tr class="separator:a1f5928901d4dca9e72c18cbfc8c0aec3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-static-attribs" name="pro-static-attribs"></a>
+Static Protected Attributes</h2></td></tr>
+<tr class="memitem:abe3d0c369c8cc08c86e681982d78b280"><td class="memItemLeft" align="right" valign="top"><a id="abe3d0c369c8cc08c86e681982d78b280" name="abe3d0c369c8cc08c86e681982d78b280"></a>
+static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>error_none</b> = -1</td></tr>
+<tr class="separator:abe3d0c369c8cc08c86e681982d78b280"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Base class for the mismatch search. </p>
-<p >Given a (typically read-derived) sequence, we can perform a mismatch-aware search to known sequences in a pool of barcode sequences. The idea is to find the barcode with the fewest mismatches to the input sequence. Any number of mismatches are supported; subclasses will decide how the mismatches can be distributed throughout the length of the sequence. </p>
+<p >Given a (typically read-derived) sequence, this class will perform a mismatch-aware search to a pool of known barcode sequences. It will then return the barcode with the fewest mismatches to the input sequence. Any number of mismatches are supported; subclasses will decide how the mismatches can be distributed throughout the length of the sequence. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a5691b3e7196a5613a064a47fb320c861" name="a5691b3e7196a5613a064a47fb320c861"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5691b3e7196a5613a064a47fb320c861">&#9670;&#160;</a></span>MismatchTrie() <span class="overload">[1/2]</span></h2>
@@ -184,7 +191,7 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">barcode_pool</td><td>Pool of known barcode sequences. </td></tr>
-    <tr><td class="paramname">duplicates</td><td>Whether duplicated sequences in <code>barcode_pool</code> should be supported, see <code><a class="el" href="classkaori_1_1MismatchTrie.html#a9f84f9bbc101a4cd5b87aa997059e634">add()</a></code>. </td></tr>
+    <tr><td class="paramname">duplicates</td><td>Whether duplicated sequences in <code>barcode_pool</code> should be supported, see <code><a class="el" href="classkaori_1_1MismatchTrie.html#a8537e4f70152cf6aada71f94ebfde679">add()</a></code>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -192,8 +199,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a9f84f9bbc101a4cd5b87aa997059e634" name="a9f84f9bbc101a4cd5b87aa997059e634"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9f84f9bbc101a4cd5b87aa997059e634">&#9670;&#160;</a></span>add()</h2>
+<a id="a8537e4f70152cf6aada71f94ebfde679" name="a8537e4f70152cf6aada71f94ebfde679"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8537e4f70152cf6aada71f94ebfde679">&#9670;&#160;</a></span>add()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -202,7 +209,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void kaori::MismatchTrie::add </td>
+          <td class="memname">bool kaori::MismatchTrie::add </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
           <td class="paramname"><em>barcode_seq</em>, </td>
@@ -211,7 +218,7 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>duplicates</em> = <code>false</code>&#160;</td>
+          <td class="paramname"><em>duplicates</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -227,12 +234,12 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">barcode_seq</td><td>Pointer to a character array containing a barcode sequence. The array should have length equal to <code><a class="el" href="classkaori_1_1MismatchTrie.html#ab59fa53197bedc1a0b5be0d1b64c6392">get_length()</a></code>. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">duplicates</td><td>Whether duplicate sequences are allowed. If <code>false</code>, an error is raised if <code>seq</code> is a duplicate of a previously <code><a class="el" href="classkaori_1_1MismatchTrie.html#a9f84f9bbc101a4cd5b87aa997059e634">add()</a></code>ed sequence. If <code>true</code>, only the first instance of the duplicates will be reported in searches.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">barcode_seq</td><td>Pointer to a character array containing a barcode sequence. The array should have length equal to <code><a class="el" href="classkaori_1_1MismatchTrie.html#ab59fa53197bedc1a0b5be0d1b64c6392">get_length()</a></code> and should only contain IUPAC nucleotides or their lower-case equivalents (excepting U or gap characters). </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">duplicates</td><td>Whether duplicate sequences are allowed. If <code>false</code>, an error is raised if <code>seq</code> is a duplicate of a previously <code><a class="el" href="classkaori_1_1MismatchTrie.html#a8537e4f70152cf6aada71f94ebfde679">add()</a></code>ed sequence. If <code>true</code>, only the first instance of the duplicates will be reported in searches.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The barcode sequence is added to the trie. The index of the newly added sequence is defined as the number of sequences that were previously added. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The barcode sequence is added to the trie. The index of the newly added sequence is defined as the number of sequences that were previously added. A boolean is returned indicating whether any ambiguous IUPAC characters were present. </dd></dl>
 
 </div>
 </div>
@@ -284,7 +291,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p >Attempt to optimize the trie for more cache-friendly look-ups. This is not necessary if sorted sequences are supplied in <code><a class="el" href="classkaori_1_1MismatchTrie.html#a9f84f9bbc101a4cd5b87aa997059e634">add()</a></code>. </p>
+<p >Attempt to optimize the trie for more cache-friendly look-ups. This is not necessary if sorted sequences are supplied in <code><a class="el" href="classkaori_1_1MismatchTrie.html#a8537e4f70152cf6aada71f94ebfde679">add()</a></code>. </p>
 
 </div>
 </div>

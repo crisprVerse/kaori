@@ -108,263 +108,266 @@ $(function() {
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        <span class="keywordflow">if</span> (!reverse) {</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>            current = std::string(ptr, ptr + len);</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; len; ++j) {</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>                current += reverse_complement(ptr[len - j - 1]);</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>            }</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        }</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <span class="keywordflow">if</span> (exact.find(current) != exact.end()) {</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>            <span class="keywordflow">if</span> (!duplicates) {</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>                <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;duplicate variable sequence &#39;&quot;</span> + current + <span class="stringliteral">&quot;&#39;&quot;</span>);</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            }</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>            exact[current] = i;</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        }</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        <span class="comment">// Note that this must be called, even if the sequence is duplicated;</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        <span class="comment">// otherwise the trie&#39;s internal counter will not be properly incremented.</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        trie.add(current.c_str(), duplicates);</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    }</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    trie.optimize();</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>}</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="keyword">template</span>&lt;<span class="keyword">class</span> Methods, <span class="keyword">class</span> Cache, <span class="keyword">class</span> Trie, <span class="keyword">class</span> Result, <span class="keyword">class</span> Mismatch&gt;</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="keywordtype">void</span> matcher_in_the_rye(<span class="keyword">const</span> std::string&amp; x, <span class="keyword">const</span> Cache&amp; cache, <span class="keyword">const</span> Trie&amp; trie, Result&amp; res, <span class="keyword">const</span> Mismatch&amp; mismatches, <span class="keyword">const</span> Mismatch&amp; max_mismatches) {</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="comment">// Seeing if it&#39;s any of the caches; otherwise searching the trie.</span></div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keyword">auto</span> cit = cache.find(x);</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keywordflow">if</span> (cit == cache.end()) {</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        <span class="keyword">auto</span> lit = res.cache.find(x);</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        <span class="keywordflow">if</span> (lit != res.cache.end()) {</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>            Methods::update(res, lit-&gt;second, mismatches);</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>            <span class="keyword">auto</span> missed = trie.search(x.c_str(), mismatches);</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            current.reserve(len);</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; len; ++j) {</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>                current += reverse_complement&lt;true, true&gt;(ptr[len - j - 1]);</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>            }</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        }</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="comment">// Note that this must be called, even if the sequence is duplicated;</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <span class="comment">// otherwise the trie&#39;s internal counter will not be properly incremented.</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        <span class="keywordtype">bool</span> has_iupac = trie.add(current.c_str(), duplicates);</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        <span class="keywordflow">if</span> (!has_iupac) {</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>            <span class="keywordflow">if</span> (exact.find(current) != exact.end()) {</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>                <span class="keywordflow">if</span> (!duplicates) {</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>                    <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;duplicate variable sequence &#39;&quot;</span> + current + <span class="stringliteral">&quot;&#39;&quot;</span>);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>                }</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>                exact[current] = i;</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>            }</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        }</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    }</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    trie.optimize();</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>}</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="keyword">template</span>&lt;<span class="keyword">class</span> Methods, <span class="keyword">class</span> Cache, <span class="keyword">class</span> Trie, <span class="keyword">class</span> Result, <span class="keyword">class</span> Mismatch&gt;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="keywordtype">void</span> matcher_in_the_rye(<span class="keyword">const</span> std::string&amp; x, <span class="keyword">const</span> Cache&amp; cache, <span class="keyword">const</span> Trie&amp; trie, Result&amp; res, <span class="keyword">const</span> Mismatch&amp; mismatches, <span class="keyword">const</span> Mismatch&amp; max_mismatches) {</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="comment">// Seeing if it&#39;s any of the caches; otherwise searching the trie.</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="keyword">auto</span> cit = cache.find(x);</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keywordflow">if</span> (cit == cache.end()) {</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        <span class="keyword">auto</span> lit = res.cache.find(x);</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        <span class="keywordflow">if</span> (lit != res.cache.end()) {</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>            Methods::update(res, lit-&gt;second, mismatches);</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>            <span class="comment">// The trie search breaks early when it hits the mismatch cap,</span></div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>            <span class="comment">// but the cap might be different across calls. If we break</span></div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>            <span class="comment">// early and report a miss, the miss will be cached and</span></div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>            <span class="comment">// returned in cases where there is a higher cap (and thus</span></div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>            <span class="comment">// might actually be a hit). As such, we should only store a</span></div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>            <span class="comment">// miss in the cache when the requested number of mismatches is</span></div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            <span class="comment">// equal to the maximum value specified in the constructor.</span></div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>            <span class="keywordflow">if</span> (Methods::index(missed) &gt;= 0 || mismatches == max_mismatches) {</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>                res.cache[x] = missed;</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            }</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>            <span class="comment">// No need to pass the requested number of mismatches,</span></div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>            <span class="comment">// as we explicitly searched for that in the trie.</span></div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>            Methods::update(res, missed);</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        }</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        Methods::update(res, cit-&gt;second, mismatches);</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    }</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>}</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="classkaori_1_1SimpleBarcodeSearch.html">  105</a></span><span class="keyword">class </span><a class="code hl_class" href="classkaori_1_1SimpleBarcodeSearch.html">SimpleBarcodeSearch</a> {</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno"><a class="line" href="classkaori_1_1SimpleBarcodeSearch.html#a9cd99d9aec1bb9686a75aa128e70f077">  110</a></span>    <a class="code hl_function" href="classkaori_1_1SimpleBarcodeSearch.html#a9cd99d9aec1bb9686a75aa128e70f077">SimpleBarcodeSearch</a>() {}</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno"><a class="line" href="classkaori_1_1SimpleBarcodeSearch.html#a59fa55379464fd1ffc9fb22d54b7b86b">  118</a></span>    <a class="code hl_function" href="classkaori_1_1SimpleBarcodeSearch.html#a59fa55379464fd1ffc9fb22d54b7b86b">SimpleBarcodeSearch</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structkaori_1_1BarcodePool.html">BarcodePool</a>&amp; barcode_pool, <span class="keywordtype">int</span> max_mismatches = 0, <span class="keywordtype">bool</span> reverse = <span class="keyword">false</span>, <span class="keywordtype">bool</span> duplicates = <span class="keyword">false</span>) : </div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        trie(barcode_pool.length), </div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        max_mm(max_mismatches) </div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    {</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        fill_library(barcode_pool.<a class="code hl_variable" href="structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1">pool</a>, exact, trie, reverse, duplicates);</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    }</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno"><a class="line" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">  133</a></span>    <span class="keyword">struct </span><a class="code hl_struct" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a> {</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno"><a class="line" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#ac424ab64e2dd798903d4ef8ce5f04e5f">  138</a></span>        <span class="keywordtype">int</span> <a class="code hl_variable" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#ac424ab64e2dd798903d4ef8ce5f04e5f">index</a> = 0;</div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span> </div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno"><a class="line" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#aedd1d05b0ab22edbb8df1c792d17d5d7">  144</a></span>        <span class="keywordtype">int</span> <a class="code hl_variable" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#aedd1d05b0ab22edbb8df1c792d17d5d7">mismatches</a> = 0;</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>        </div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>        std::unordered_map&lt;std::string, std::pair&lt;int, int&gt; &gt; cache;</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    };</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span> </div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno"><a class="line" href="classkaori_1_1SimpleBarcodeSearch.html#ac71e5409f61bf03009046b208de7677c">  160</a></span>    <a class="code hl_struct" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a> <a class="code hl_function" href="classkaori_1_1SimpleBarcodeSearch.html#ac71e5409f61bf03009046b208de7677c">initialize</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        <span class="keywordflow">return</span> <a class="code hl_struct" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a>();</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    }</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span> </div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno"><a class="line" href="classkaori_1_1SimpleBarcodeSearch.html#ac80ba1b9394963f2befe4154da98ef1e">  173</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classkaori_1_1SimpleBarcodeSearch.html#ac80ba1b9394963f2befe4154da98ef1e">reduce</a>(<a class="code hl_struct" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a>&amp; state) {</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>        cache.merge(state.cache);</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        state.cache.clear();</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    }</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span> </div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    <span class="keyword">struct </span>Methods {</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>        <span class="keyword">static</span> <span class="keywordtype">int</span> index(<span class="keyword">const</span> std::pair&lt;int, int&gt;&amp; val) {</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>            <span class="keywordflow">return</span> val.first;</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>        }</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>        <span class="keyword">static</span> <span class="keywordtype">void</span> update(State&amp; state, <span class="keyword">const</span> std::pair&lt;int, int&gt;&amp; val) {</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>            state.<a class="code hl_variable" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#ac424ab64e2dd798903d4ef8ce5f04e5f">index</a> = val.first;</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>            state.mismatches = val.second;</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>            <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>        }</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span> </div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>        <span class="keyword">static</span> <span class="keywordtype">void</span> update(State&amp; state, <span class="keyword">const</span> std::pair&lt;int, int&gt;&amp; val, <span class="keywordtype">int</span> mismatches) {</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>            state.index = (val.second &gt; mismatches ? -1 : val.first);</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>            state.mismatches = val.second;</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>            <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>        }</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>    };</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span> </div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno"><a class="line" href="classkaori_1_1SimpleBarcodeSearch.html#a7e22adc910c1a0993c8932075c8dad12">  208</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classkaori_1_1SimpleBarcodeSearch.html#a7e22adc910c1a0993c8932075c8dad12">search</a>(<span class="keyword">const</span> std::string&amp; search_seq, <a class="code hl_struct" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a>&amp; state)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>        <a class="code hl_function" href="classkaori_1_1SimpleBarcodeSearch.html#a7e22adc910c1a0993c8932075c8dad12">search</a>(search_seq, state, max_mm);</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>        <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    }</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span> </div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno"><a class="line" href="classkaori_1_1SimpleBarcodeSearch.html#a64c891331208f20f8ba1d0853a736791">  226</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classkaori_1_1SimpleBarcodeSearch.html#a64c891331208f20f8ba1d0853a736791">search</a>(<span class="keyword">const</span> std::string&amp; search_seq, <a class="code hl_struct" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a>&amp; state, <span class="keywordtype">int</span> allowed_mismatches)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>        <span class="keyword">auto</span> it = exact.find(search_seq);</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>        <span class="keywordflow">if</span> (it != exact.end()) {</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>            state.<a class="code hl_variable" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#ac424ab64e2dd798903d4ef8ce5f04e5f">index</a> = it-&gt;second;</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>            state.<a class="code hl_variable" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#aedd1d05b0ab22edbb8df1c792d17d5d7">mismatches</a> = 0;</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>            matcher_in_the_rye&lt;Methods&gt;(search_seq, cache, trie, state, allowed_mismatches, max_mm);</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>        }</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    }</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span> </div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>    std::unordered_map&lt;std::string, int&gt; exact;</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>    <a class="code hl_class" href="classkaori_1_1AnyMismatches.html">AnyMismatches</a> trie;</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>    std::unordered_map&lt;std::string, std::pair&lt;int, int&gt; &gt; cache;</div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    <span class="keywordtype">int</span> max_mm;</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>};</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span> </div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span><span class="comment">// Using some template recursion instead of a fixed-length loop.</span></div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span><span class="comment">// Maybe it compiles down to the same thing. </span></div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span><span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> total, <span class="keywordtype">size_t</span> position&gt;</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span><span class="keyword">struct </span>HasMore {</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> check(<span class="keyword">const</span> std::array&lt;int, total&gt;&amp; left, <span class="keyword">const</span> std::array&lt;int, total&gt;&amp; right) {</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>        <span class="keywordflow">return</span> (HasMore&lt;total, position + 1&gt;::check(left, right) || left[position] &gt; right[position]);</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>    }</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>};</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span> </div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span><span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> total&gt;</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span><span class="keyword">struct </span>HasMore&lt;total, total&gt; {</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> check(<span class="keyword">const</span> std::array&lt;int, total&gt;&amp;, <span class="keyword">const</span> std::array&lt;int, total&gt;&amp;) { <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>};</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span><span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> num_segments&gt;</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno"><a class="line" href="classkaori_1_1SegmentedBarcodeSearch.html">  273</a></span><span class="keyword">class </span><a class="code hl_class" href="classkaori_1_1SegmentedBarcodeSearch.html">SegmentedBarcodeSearch</a> {</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno"><a class="line" href="classkaori_1_1SegmentedBarcodeSearch.html#a1bb8a093dea8b7cf60248bca5ed59547">  278</a></span>    <a class="code hl_function" href="classkaori_1_1SegmentedBarcodeSearch.html#a1bb8a093dea8b7cf60248bca5ed59547">SegmentedBarcodeSearch</a>() {}</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span> </div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno"><a class="line" href="classkaori_1_1SegmentedBarcodeSearch.html#a22345459a4bdb86d6e6ba22be5ee1b05">  289</a></span>    <a class="code hl_function" href="classkaori_1_1SegmentedBarcodeSearch.html#a22345459a4bdb86d6e6ba22be5ee1b05">SegmentedBarcodeSearch</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structkaori_1_1BarcodePool.html">BarcodePool</a>&amp; barcode_pool, std::array&lt;int, num_segments&gt; segments, std::array&lt;int, num_segments&gt; max_mismatches, <span class="keywordtype">bool</span> reverse = <span class="keyword">false</span>, <span class="keywordtype">bool</span> duplicates = <span class="keyword">false</span>) : </div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>        trie(segments), </div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>        max_mm(max_mismatches) </div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>    {</div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>        <span class="keywordflow">if</span> (barcode_pool.<a class="code hl_variable" href="structkaori_1_1BarcodePool.html#a5e5c62ef4f8c94e5be302b4c23d89eb5">length</a> != trie.get_length()) {</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>            <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;variable sequences should have the same length as the sum of segment lengths&quot;</span>);</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>        }</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>        fill_library(barcode_pool.<a class="code hl_variable" href="structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1">pool</a>, exact, trie, reverse, duplicates);</div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>    }</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span> </div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno"><a class="line" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">  307</a></span>    <span class="keyword">struct </span><a class="code hl_struct" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a> {</div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno"><a class="line" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#acf848779e11f6741617e458c484c85fe">  312</a></span>        <span class="keywordtype">int</span> <a class="code hl_variable" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#acf848779e11f6741617e458c484c85fe">index</a> = 0;</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span> </div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno"><a class="line" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#af44eaa2a5d16f1587d85f2135ce947ea">  318</a></span>        <span class="keywordtype">int</span> <a class="code hl_variable" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#af44eaa2a5d16f1587d85f2135ce947ea">mismatches</a> = 0;</div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span> </div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno"><a class="line" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#a3f3645e45fd7d182b5bb1481894f2bf6">  324</a></span>        std::array&lt;int, num_segments&gt; <a class="code hl_variable" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#a3f3645e45fd7d182b5bb1481894f2bf6">per_segment</a>;</div>
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>        </div>
-<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>        <a class="code hl_struct" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a>() : <a class="code hl_variable" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#a3f3645e45fd7d182b5bb1481894f2bf6">per_segment</a>() {}</div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span> </div>
-<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>        std::unordered_map&lt;std::string, typename SegmentedMismatches&lt;num_segments&gt;::Result&gt; cache;</div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>    };</div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span> </div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno"><a class="line" href="classkaori_1_1SegmentedBarcodeSearch.html#a6a0476dc43a7ae3006fb961e2e70639a">  342</a></span>    <a class="code hl_struct" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a> <a class="code hl_function" href="classkaori_1_1SegmentedBarcodeSearch.html#a6a0476dc43a7ae3006fb961e2e70639a">initialize</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>        <span class="keywordflow">return</span> <a class="code hl_struct" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a>();</div>
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>    }</div>
-<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span> </div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno"><a class="line" href="classkaori_1_1SegmentedBarcodeSearch.html#a1494ea1af5173c48d52313ed278ba7f6">  355</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classkaori_1_1SegmentedBarcodeSearch.html#a1494ea1af5173c48d52313ed278ba7f6">reduce</a>(<a class="code hl_struct" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a>&amp; state) {</div>
-<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>        cache.merge(state.cache);</div>
-<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>        state.cache.clear();</div>
-<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>    }</div>
-<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span> </div>
-<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>    <span class="keyword">typedef</span> <span class="keyword">typename</span> <a class="code hl_struct" href="structkaori_1_1SegmentedMismatches_1_1Result.html">SegmentedMismatches&lt;num_segments&gt;::Result</a> SegmentedResult;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>            <span class="keyword">auto</span> missed = trie.search(x.c_str(), mismatches);</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>            <span class="comment">// The trie search breaks early when it hits the mismatch cap,</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>            <span class="comment">// but the cap might be different across calls. If we break</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>            <span class="comment">// early and report a miss, the miss will be cached and</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            <span class="comment">// returned in cases where there is a higher cap (and thus</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>            <span class="comment">// might actually be a hit). As such, we should only store a</span></div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>            <span class="comment">// miss in the cache when the requested number of mismatches is</span></div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            <span class="comment">// equal to the maximum value specified in the constructor.</span></div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>            <span class="keywordflow">if</span> (Methods::index(missed) &gt;= 0 || mismatches == max_mismatches) {</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>                res.cache[x] = missed;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>            }</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>            <span class="comment">// No need to pass the requested number of mismatches,</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>            <span class="comment">// as we explicitly searched for that in the trie.</span></div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>            Methods::update(res, missed);</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        }</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        Methods::update(res, cit-&gt;second, mismatches);</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    }</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>}</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno"><a class="line" href="classkaori_1_1SimpleBarcodeSearch.html">  108</a></span><span class="keyword">class </span><a class="code hl_class" href="classkaori_1_1SimpleBarcodeSearch.html">SimpleBarcodeSearch</a> {</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="classkaori_1_1SimpleBarcodeSearch.html#a9cd99d9aec1bb9686a75aa128e70f077">  113</a></span>    <a class="code hl_function" href="classkaori_1_1SimpleBarcodeSearch.html#a9cd99d9aec1bb9686a75aa128e70f077">SimpleBarcodeSearch</a>() {}</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno"><a class="line" href="classkaori_1_1SimpleBarcodeSearch.html#a59fa55379464fd1ffc9fb22d54b7b86b">  121</a></span>    <a class="code hl_function" href="classkaori_1_1SimpleBarcodeSearch.html#a59fa55379464fd1ffc9fb22d54b7b86b">SimpleBarcodeSearch</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structkaori_1_1BarcodePool.html">BarcodePool</a>&amp; barcode_pool, <span class="keywordtype">int</span> max_mismatches = 0, <span class="keywordtype">bool</span> reverse = <span class="keyword">false</span>, <span class="keywordtype">bool</span> duplicates = <span class="keyword">false</span>) : </div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        trie(barcode_pool.length), </div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        max_mm(max_mismatches) </div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    {</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        fill_library(barcode_pool.<a class="code hl_variable" href="structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1">pool</a>, exact, trie, reverse, duplicates);</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    }</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span> </div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno"><a class="line" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">  136</a></span>    <span class="keyword">struct </span><a class="code hl_struct" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a> {</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno"><a class="line" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#ac424ab64e2dd798903d4ef8ce5f04e5f">  141</a></span>        <span class="keywordtype">int</span> <a class="code hl_variable" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#ac424ab64e2dd798903d4ef8ce5f04e5f">index</a> = 0;</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span> </div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno"><a class="line" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#aedd1d05b0ab22edbb8df1c792d17d5d7">  147</a></span>        <span class="keywordtype">int</span> <a class="code hl_variable" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#aedd1d05b0ab22edbb8df1c792d17d5d7">mismatches</a> = 0;</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>        </div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>        std::unordered_map&lt;std::string, std::pair&lt;int, int&gt; &gt; cache;</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    };</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span> </div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno"><a class="line" href="classkaori_1_1SimpleBarcodeSearch.html#ac71e5409f61bf03009046b208de7677c">  163</a></span>    <a class="code hl_struct" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a> <a class="code hl_function" href="classkaori_1_1SimpleBarcodeSearch.html#ac71e5409f61bf03009046b208de7677c">initialize</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        <span class="keywordflow">return</span> <a class="code hl_struct" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a>();</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    }</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno"><a class="line" href="classkaori_1_1SimpleBarcodeSearch.html#ac80ba1b9394963f2befe4154da98ef1e">  176</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classkaori_1_1SimpleBarcodeSearch.html#ac80ba1b9394963f2befe4154da98ef1e">reduce</a>(<a class="code hl_struct" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a>&amp; state) {</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        cache.merge(state.cache);</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>        state.cache.clear();</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    }</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    <span class="keyword">struct </span>Methods {</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>        <span class="keyword">static</span> <span class="keywordtype">int</span> index(<span class="keyword">const</span> std::pair&lt;int, int&gt;&amp; val) {</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>            <span class="keywordflow">return</span> val.first;</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        }</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span> </div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>        <span class="keyword">static</span> <span class="keywordtype">void</span> update(State&amp; state, <span class="keyword">const</span> std::pair&lt;int, int&gt;&amp; val) {</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>            state.<a class="code hl_variable" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#ac424ab64e2dd798903d4ef8ce5f04e5f">index</a> = val.first;</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>            state.mismatches = val.second;</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>            <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        }</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        <span class="keyword">static</span> <span class="keywordtype">void</span> update(State&amp; state, <span class="keyword">const</span> std::pair&lt;int, int&gt;&amp; val, <span class="keywordtype">int</span> mismatches) {</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>            state.index = (val.second &gt; mismatches ? -1 : val.first);</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>            state.mismatches = val.second;</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>            <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        }</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    };</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span> </div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno"><a class="line" href="classkaori_1_1SimpleBarcodeSearch.html#a7e22adc910c1a0993c8932075c8dad12">  211</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classkaori_1_1SimpleBarcodeSearch.html#a7e22adc910c1a0993c8932075c8dad12">search</a>(<span class="keyword">const</span> std::string&amp; search_seq, <a class="code hl_struct" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a>&amp; state)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        <a class="code hl_function" href="classkaori_1_1SimpleBarcodeSearch.html#a7e22adc910c1a0993c8932075c8dad12">search</a>(search_seq, state, max_mm);</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>    }</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span> </div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno"><a class="line" href="classkaori_1_1SimpleBarcodeSearch.html#a64c891331208f20f8ba1d0853a736791">  229</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classkaori_1_1SimpleBarcodeSearch.html#a64c891331208f20f8ba1d0853a736791">search</a>(<span class="keyword">const</span> std::string&amp; search_seq, <a class="code hl_struct" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a>&amp; state, <span class="keywordtype">int</span> allowed_mismatches)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        <span class="keyword">auto</span> it = exact.find(search_seq);</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        <span class="keywordflow">if</span> (it != exact.end()) {</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>            state.<a class="code hl_variable" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#ac424ab64e2dd798903d4ef8ce5f04e5f">index</a> = it-&gt;second;</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>            state.<a class="code hl_variable" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#aedd1d05b0ab22edbb8df1c792d17d5d7">mismatches</a> = 0;</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>            matcher_in_the_rye&lt;Methods&gt;(search_seq, cache, trie, state, allowed_mismatches, max_mm);</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>        }</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>    }</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span> </div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    std::unordered_map&lt;std::string, int&gt; exact;</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>    <a class="code hl_class" href="classkaori_1_1AnyMismatches.html">AnyMismatches</a> trie;</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    std::unordered_map&lt;std::string, std::pair&lt;int, int&gt; &gt; cache;</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>    <span class="keywordtype">int</span> max_mm;</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>};</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span> </div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span><span class="comment">// Using some template recursion instead of a fixed-length loop.</span></div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span><span class="comment">// Maybe it compiles down to the same thing. </span></div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span><span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> total, <span class="keywordtype">size_t</span> position&gt;</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span><span class="keyword">struct </span>HasMore {</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> check(<span class="keyword">const</span> std::array&lt;int, total&gt;&amp; left, <span class="keyword">const</span> std::array&lt;int, total&gt;&amp; right) {</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>        <span class="keywordflow">return</span> (HasMore&lt;total, position + 1&gt;::check(left, right) || left[position] &gt; right[position]);</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>    }</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>};</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span> </div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span><span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> total&gt;</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span><span class="keyword">struct </span>HasMore&lt;total, total&gt; {</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> check(<span class="keyword">const</span> std::array&lt;int, total&gt;&amp;, <span class="keyword">const</span> std::array&lt;int, total&gt;&amp;) { <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>};</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span><span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> num_segments&gt;</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno"><a class="line" href="classkaori_1_1SegmentedBarcodeSearch.html">  276</a></span><span class="keyword">class </span><a class="code hl_class" href="classkaori_1_1SegmentedBarcodeSearch.html">SegmentedBarcodeSearch</a> {</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno"><a class="line" href="classkaori_1_1SegmentedBarcodeSearch.html#a1bb8a093dea8b7cf60248bca5ed59547">  281</a></span>    <a class="code hl_function" href="classkaori_1_1SegmentedBarcodeSearch.html#a1bb8a093dea8b7cf60248bca5ed59547">SegmentedBarcodeSearch</a>() {}</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span> </div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno"><a class="line" href="classkaori_1_1SegmentedBarcodeSearch.html#a22345459a4bdb86d6e6ba22be5ee1b05">  292</a></span>    <a class="code hl_function" href="classkaori_1_1SegmentedBarcodeSearch.html#a22345459a4bdb86d6e6ba22be5ee1b05">SegmentedBarcodeSearch</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structkaori_1_1BarcodePool.html">BarcodePool</a>&amp; barcode_pool, std::array&lt;int, num_segments&gt; segments, std::array&lt;int, num_segments&gt; max_mismatches, <span class="keywordtype">bool</span> reverse = <span class="keyword">false</span>, <span class="keywordtype">bool</span> duplicates = <span class="keyword">false</span>) : </div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>        trie(segments), </div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>        max_mm(max_mismatches) </div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>    {</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>        <span class="keywordflow">if</span> (barcode_pool.<a class="code hl_variable" href="structkaori_1_1BarcodePool.html#a5e5c62ef4f8c94e5be302b4c23d89eb5">length</a> != trie.get_length()) {</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>            <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;variable sequences should have the same length as the sum of segment lengths&quot;</span>);</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        }</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        fill_library(barcode_pool.<a class="code hl_variable" href="structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1">pool</a>, exact, trie, reverse, duplicates);</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>    }</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span> </div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno"><a class="line" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">  310</a></span>    <span class="keyword">struct </span><a class="code hl_struct" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a> {</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno"><a class="line" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#acf848779e11f6741617e458c484c85fe">  315</a></span>        <span class="keywordtype">int</span> <a class="code hl_variable" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#acf848779e11f6741617e458c484c85fe">index</a> = 0;</div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span> </div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno"><a class="line" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#af44eaa2a5d16f1587d85f2135ce947ea">  321</a></span>        <span class="keywordtype">int</span> <a class="code hl_variable" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#af44eaa2a5d16f1587d85f2135ce947ea">mismatches</a> = 0;</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span> </div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno"><a class="line" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#a3f3645e45fd7d182b5bb1481894f2bf6">  327</a></span>        std::array&lt;int, num_segments&gt; <a class="code hl_variable" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#a3f3645e45fd7d182b5bb1481894f2bf6">per_segment</a>;</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>        </div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>        <a class="code hl_struct" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a>() : <a class="code hl_variable" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#a3f3645e45fd7d182b5bb1481894f2bf6">per_segment</a>() {}</div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span> </div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>        std::unordered_map&lt;std::string, typename SegmentedMismatches&lt;num_segments&gt;::Result&gt; cache;</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>    };</div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span> </div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno"><a class="line" href="classkaori_1_1SegmentedBarcodeSearch.html#a6a0476dc43a7ae3006fb961e2e70639a">  345</a></span>    <a class="code hl_struct" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a> <a class="code hl_function" href="classkaori_1_1SegmentedBarcodeSearch.html#a6a0476dc43a7ae3006fb961e2e70639a">initialize</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>        <span class="keywordflow">return</span> <a class="code hl_struct" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a>();</div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>    }</div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span> </div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno"><a class="line" href="classkaori_1_1SegmentedBarcodeSearch.html#a1494ea1af5173c48d52313ed278ba7f6">  358</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classkaori_1_1SegmentedBarcodeSearch.html#a1494ea1af5173c48d52313ed278ba7f6">reduce</a>(<a class="code hl_struct" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a>&amp; state) {</div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>        cache.merge(state.cache);</div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>        state.cache.clear();</div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>    }</div>
 <div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span> </div>
-<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>    <span class="keyword">struct </span>Methods {</div>
-<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>        <span class="keyword">static</span> <span class="keywordtype">int</span> index(<span class="keyword">const</span> SegmentedResult&amp; val) {</div>
-<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>            <span class="keywordflow">return</span> val.<a class="code hl_variable" href="structkaori_1_1SegmentedMismatches_1_1Result.html#a629831fff288a3221f6009da980ddee7">index</a>;</div>
-<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>        }</div>
-<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span> </div>
-<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>        <span class="keyword">static</span> <span class="keywordtype">void</span> update(State&amp; state, <span class="keyword">const</span> SegmentedResult&amp; val) {</div>
-<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>            state.index = val.index;</div>
-<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>            state.mismatches = val.total;</div>
-<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>            state.per_segment = val.per_segment;</div>
-<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>            <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>        }</div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span> </div>
-<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>        <span class="keyword">static</span> <span class="keywordtype">void</span> update(State&amp; state, <span class="keyword">const</span> SegmentedResult&amp; val, <span class="keyword">const</span> std::array&lt;int, num_segments&gt;&amp; mismatches) {</div>
-<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>            state.index = (HasMore&lt;num_segments, 0&gt;::check(val.per_segment, mismatches) ? -1 : val.index);</div>
-<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>            state.mismatches = val.total;</div>
-<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>            state.per_segment = val.per_segment;</div>
-<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>            <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>        }</div>
-<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>    };</div>
-<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span> </div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno"><a class="line" href="classkaori_1_1SegmentedBarcodeSearch.html#a38064ff8bee88d6031acb925be576bc6">  394</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classkaori_1_1SegmentedBarcodeSearch.html#a38064ff8bee88d6031acb925be576bc6">search</a>(<span class="keyword">const</span> std::string&amp; search_seq, <a class="code hl_struct" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a>&amp; state)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>        <a class="code hl_function" href="classkaori_1_1SegmentedBarcodeSearch.html#a38064ff8bee88d6031acb925be576bc6">search</a>(search_seq, state, max_mm);</div>
-<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>        <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>    }</div>
-<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span> </div>
-<div class="line"><a id="l00412" name="l00412"></a><span class="lineno"><a class="line" href="classkaori_1_1SegmentedBarcodeSearch.html#af7830bbf5d48b4fadbe1b5fc57510559">  412</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classkaori_1_1SegmentedBarcodeSearch.html#af7830bbf5d48b4fadbe1b5fc57510559">search</a>(<span class="keyword">const</span> std::string&amp; search_seq, <a class="code hl_struct" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a>&amp; state, std::array&lt;int, num_segments&gt; allowed_mismatches)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>        <span class="keyword">auto</span> it = exact.find(search_seq);</div>
-<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>        <span class="keywordflow">if</span> (it != exact.end()) {</div>
-<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>            state.<a class="code hl_variable" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#acf848779e11f6741617e458c484c85fe">index</a> = it-&gt;second;</div>
-<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>            state.<a class="code hl_variable" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#af44eaa2a5d16f1587d85f2135ce947ea">mismatches</a> = 0;</div>
-<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>            std::fill_n(state.<a class="code hl_variable" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#a3f3645e45fd7d182b5bb1481894f2bf6">per_segment</a>.begin(), num_segments, 0);</div>
-<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>            matcher_in_the_rye&lt;Methods&gt;(search_seq, cache, trie, state, allowed_mismatches, max_mm);</div>
-<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>        }</div>
-<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>    }</div>
-<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span> </div>
-<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>    std::unordered_map&lt;std::string, int&gt; exact;</div>
-<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>    <a class="code hl_class" href="classkaori_1_1SegmentedMismatches.html">SegmentedMismatches&lt;num_segments&gt;</a> trie;</div>
-<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>    std::unordered_map&lt;std::string, SegmentedResult&gt; cache;</div>
-<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>    std::array&lt;int, num_segments&gt; max_mm;</div>
-<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>};</div>
-<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span> </div>
-<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>}</div>
-<div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span> </div>
-<div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>    <span class="keyword">typedef</span> <span class="keyword">typename</span> <a class="code hl_struct" href="structkaori_1_1SegmentedMismatches_1_1Result.html">SegmentedMismatches&lt;num_segments&gt;::Result</a> SegmentedResult;</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span> </div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>    <span class="keyword">struct </span>Methods {</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>        <span class="keyword">static</span> <span class="keywordtype">int</span> index(<span class="keyword">const</span> SegmentedResult&amp; val) {</div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>            <span class="keywordflow">return</span> val.<a class="code hl_variable" href="structkaori_1_1SegmentedMismatches_1_1Result.html#a629831fff288a3221f6009da980ddee7">index</a>;</div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>        }</div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span> </div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>        <span class="keyword">static</span> <span class="keywordtype">void</span> update(State&amp; state, <span class="keyword">const</span> SegmentedResult&amp; val) {</div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>            state.index = val.index;</div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>            state.mismatches = val.total;</div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>            state.per_segment = val.per_segment;</div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>            <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>        }</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span> </div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>        <span class="keyword">static</span> <span class="keywordtype">void</span> update(State&amp; state, <span class="keyword">const</span> SegmentedResult&amp; val, <span class="keyword">const</span> std::array&lt;int, num_segments&gt;&amp; mismatches) {</div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>            state.index = (HasMore&lt;num_segments, 0&gt;::check(val.per_segment, mismatches) ? -1 : val.index);</div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>            state.mismatches = val.total;</div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>            state.per_segment = val.per_segment;</div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>            <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>        }</div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>    };</div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span> </div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno"><a class="line" href="classkaori_1_1SegmentedBarcodeSearch.html#a38064ff8bee88d6031acb925be576bc6">  397</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classkaori_1_1SegmentedBarcodeSearch.html#a38064ff8bee88d6031acb925be576bc6">search</a>(<span class="keyword">const</span> std::string&amp; search_seq, <a class="code hl_struct" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a>&amp; state)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>        <a class="code hl_function" href="classkaori_1_1SegmentedBarcodeSearch.html#a38064ff8bee88d6031acb925be576bc6">search</a>(search_seq, state, max_mm);</div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>    }</div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span> </div>
+<div class="line"><a id="l00415" name="l00415"></a><span class="lineno"><a class="line" href="classkaori_1_1SegmentedBarcodeSearch.html#af7830bbf5d48b4fadbe1b5fc57510559">  415</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classkaori_1_1SegmentedBarcodeSearch.html#af7830bbf5d48b4fadbe1b5fc57510559">search</a>(<span class="keyword">const</span> std::string&amp; search_seq, <a class="code hl_struct" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a>&amp; state, std::array&lt;int, num_segments&gt; allowed_mismatches)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>        <span class="keyword">auto</span> it = exact.find(search_seq);</div>
+<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>        <span class="keywordflow">if</span> (it != exact.end()) {</div>
+<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>            state.<a class="code hl_variable" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#acf848779e11f6741617e458c484c85fe">index</a> = it-&gt;second;</div>
+<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>            state.<a class="code hl_variable" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#af44eaa2a5d16f1587d85f2135ce947ea">mismatches</a> = 0;</div>
+<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>            std::fill_n(state.<a class="code hl_variable" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#a3f3645e45fd7d182b5bb1481894f2bf6">per_segment</a>.begin(), num_segments, 0);</div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>            matcher_in_the_rye&lt;Methods&gt;(search_seq, cache, trie, state, allowed_mismatches, max_mm);</div>
+<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>        }</div>
+<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>    }</div>
+<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span> </div>
+<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>    std::unordered_map&lt;std::string, int&gt; exact;</div>
+<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>    <a class="code hl_class" href="classkaori_1_1SegmentedMismatches.html">SegmentedMismatches&lt;num_segments&gt;</a> trie;</div>
+<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>    std::unordered_map&lt;std::string, SegmentedResult&gt; cache;</div>
+<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>    std::array&lt;int, num_segments&gt; max_mm;</div>
+<div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span>};</div>
+<div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span> </div>
+<div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span>}</div>
+<div class="line"><a id="l00434" name="l00434"></a><span class="lineno">  434</span> </div>
+<div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aBarcodePool_8hpp_html"><div class="ttname"><a href="BarcodePool_8hpp.html">BarcodePool.hpp</a></div><div class="ttdoc">Defines the BarcodePool class.</div></div>
 <div class="ttc" id="aMismatchTrie_8hpp_html"><div class="ttname"><a href="MismatchTrie_8hpp.html">MismatchTrie.hpp</a></div><div class="ttdoc">Defines the MismatchTrie class and its subclasses.</div></div>
-<div class="ttc" id="aclasskaori_1_1AnyMismatches_html"><div class="ttname"><a href="classkaori_1_1AnyMismatches.html">kaori::AnyMismatches</a></div><div class="ttdoc">Search for barcodes with mismatches anywhere.</div><div class="ttdef"><b>Definition:</b> MismatchTrie.hpp:203</div></div>
-<div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html">kaori::SegmentedBarcodeSearch</a></div><div class="ttdoc">Search for known barcode sequences with segmented mismatches.</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:273</div></div>
-<div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html_a1494ea1af5173c48d52313ed278ba7f6"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html#a1494ea1af5173c48d52313ed278ba7f6">kaori::SegmentedBarcodeSearch::reduce</a></div><div class="ttdeci">void reduce(State &amp;state)</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:355</div></div>
-<div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html_a1bb8a093dea8b7cf60248bca5ed59547"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html#a1bb8a093dea8b7cf60248bca5ed59547">kaori::SegmentedBarcodeSearch::SegmentedBarcodeSearch</a></div><div class="ttdeci">SegmentedBarcodeSearch()</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:278</div></div>
-<div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html_a22345459a4bdb86d6e6ba22be5ee1b05"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html#a22345459a4bdb86d6e6ba22be5ee1b05">kaori::SegmentedBarcodeSearch::SegmentedBarcodeSearch</a></div><div class="ttdeci">SegmentedBarcodeSearch(const BarcodePool &amp;barcode_pool, std::array&lt; int, num_segments &gt; segments, std::array&lt; int, num_segments &gt; max_mismatches, bool reverse=false, bool duplicates=false)</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:289</div></div>
-<div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html_a38064ff8bee88d6031acb925be576bc6"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html#a38064ff8bee88d6031acb925be576bc6">kaori::SegmentedBarcodeSearch::search</a></div><div class="ttdeci">void search(const std::string &amp;search_seq, State &amp;state) const</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:394</div></div>
-<div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html_a6a0476dc43a7ae3006fb961e2e70639a"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html#a6a0476dc43a7ae3006fb961e2e70639a">kaori::SegmentedBarcodeSearch::initialize</a></div><div class="ttdeci">State initialize() const</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:342</div></div>
-<div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html_af7830bbf5d48b4fadbe1b5fc57510559"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html#af7830bbf5d48b4fadbe1b5fc57510559">kaori::SegmentedBarcodeSearch::search</a></div><div class="ttdeci">void search(const std::string &amp;search_seq, State &amp;state, std::array&lt; int, num_segments &gt; allowed_mismatches) const</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:412</div></div>
-<div class="ttc" id="aclasskaori_1_1SegmentedMismatches_html"><div class="ttname"><a href="classkaori_1_1SegmentedMismatches.html">kaori::SegmentedMismatches</a></div><div class="ttdoc">Search for barcodes with segmented mismatches.</div><div class="ttdef"><b>Definition:</b> MismatchTrie.hpp:313</div></div>
-<div class="ttc" id="aclasskaori_1_1SimpleBarcodeSearch_html"><div class="ttname"><a href="classkaori_1_1SimpleBarcodeSearch.html">kaori::SimpleBarcodeSearch</a></div><div class="ttdoc">Search for known barcode sequences.</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:105</div></div>
-<div class="ttc" id="aclasskaori_1_1SimpleBarcodeSearch_html_a59fa55379464fd1ffc9fb22d54b7b86b"><div class="ttname"><a href="classkaori_1_1SimpleBarcodeSearch.html#a59fa55379464fd1ffc9fb22d54b7b86b">kaori::SimpleBarcodeSearch::SimpleBarcodeSearch</a></div><div class="ttdeci">SimpleBarcodeSearch(const BarcodePool &amp;barcode_pool, int max_mismatches=0, bool reverse=false, bool duplicates=false)</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:118</div></div>
-<div class="ttc" id="aclasskaori_1_1SimpleBarcodeSearch_html_a64c891331208f20f8ba1d0853a736791"><div class="ttname"><a href="classkaori_1_1SimpleBarcodeSearch.html#a64c891331208f20f8ba1d0853a736791">kaori::SimpleBarcodeSearch::search</a></div><div class="ttdeci">void search(const std::string &amp;search_seq, State &amp;state, int allowed_mismatches) const</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:226</div></div>
-<div class="ttc" id="aclasskaori_1_1SimpleBarcodeSearch_html_a7e22adc910c1a0993c8932075c8dad12"><div class="ttname"><a href="classkaori_1_1SimpleBarcodeSearch.html#a7e22adc910c1a0993c8932075c8dad12">kaori::SimpleBarcodeSearch::search</a></div><div class="ttdeci">void search(const std::string &amp;search_seq, State &amp;state) const</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:208</div></div>
-<div class="ttc" id="aclasskaori_1_1SimpleBarcodeSearch_html_a9cd99d9aec1bb9686a75aa128e70f077"><div class="ttname"><a href="classkaori_1_1SimpleBarcodeSearch.html#a9cd99d9aec1bb9686a75aa128e70f077">kaori::SimpleBarcodeSearch::SimpleBarcodeSearch</a></div><div class="ttdeci">SimpleBarcodeSearch()</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:110</div></div>
-<div class="ttc" id="aclasskaori_1_1SimpleBarcodeSearch_html_ac71e5409f61bf03009046b208de7677c"><div class="ttname"><a href="classkaori_1_1SimpleBarcodeSearch.html#ac71e5409f61bf03009046b208de7677c">kaori::SimpleBarcodeSearch::initialize</a></div><div class="ttdeci">State initialize() const</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:160</div></div>
-<div class="ttc" id="aclasskaori_1_1SimpleBarcodeSearch_html_ac80ba1b9394963f2befe4154da98ef1e"><div class="ttname"><a href="classkaori_1_1SimpleBarcodeSearch.html#ac80ba1b9394963f2befe4154da98ef1e">kaori::SimpleBarcodeSearch::reduce</a></div><div class="ttdeci">void reduce(State &amp;state)</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:173</div></div>
+<div class="ttc" id="aclasskaori_1_1AnyMismatches_html"><div class="ttname"><a href="classkaori_1_1AnyMismatches.html">kaori::AnyMismatches</a></div><div class="ttdoc">Search for barcodes with mismatches anywhere.</div><div class="ttdef"><b>Definition:</b> MismatchTrie.hpp:267</div></div>
+<div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html">kaori::SegmentedBarcodeSearch</a></div><div class="ttdoc">Search for known barcode sequences with segmented mismatches.</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:276</div></div>
+<div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html_a1494ea1af5173c48d52313ed278ba7f6"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html#a1494ea1af5173c48d52313ed278ba7f6">kaori::SegmentedBarcodeSearch::reduce</a></div><div class="ttdeci">void reduce(State &amp;state)</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:358</div></div>
+<div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html_a1bb8a093dea8b7cf60248bca5ed59547"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html#a1bb8a093dea8b7cf60248bca5ed59547">kaori::SegmentedBarcodeSearch::SegmentedBarcodeSearch</a></div><div class="ttdeci">SegmentedBarcodeSearch()</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:281</div></div>
+<div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html_a22345459a4bdb86d6e6ba22be5ee1b05"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html#a22345459a4bdb86d6e6ba22be5ee1b05">kaori::SegmentedBarcodeSearch::SegmentedBarcodeSearch</a></div><div class="ttdeci">SegmentedBarcodeSearch(const BarcodePool &amp;barcode_pool, std::array&lt; int, num_segments &gt; segments, std::array&lt; int, num_segments &gt; max_mismatches, bool reverse=false, bool duplicates=false)</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:292</div></div>
+<div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html_a38064ff8bee88d6031acb925be576bc6"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html#a38064ff8bee88d6031acb925be576bc6">kaori::SegmentedBarcodeSearch::search</a></div><div class="ttdeci">void search(const std::string &amp;search_seq, State &amp;state) const</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:397</div></div>
+<div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html_a6a0476dc43a7ae3006fb961e2e70639a"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html#a6a0476dc43a7ae3006fb961e2e70639a">kaori::SegmentedBarcodeSearch::initialize</a></div><div class="ttdeci">State initialize() const</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:345</div></div>
+<div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html_af7830bbf5d48b4fadbe1b5fc57510559"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html#af7830bbf5d48b4fadbe1b5fc57510559">kaori::SegmentedBarcodeSearch::search</a></div><div class="ttdeci">void search(const std::string &amp;search_seq, State &amp;state, std::array&lt; int, num_segments &gt; allowed_mismatches) const</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:415</div></div>
+<div class="ttc" id="aclasskaori_1_1SegmentedMismatches_html"><div class="ttname"><a href="classkaori_1_1SegmentedMismatches.html">kaori::SegmentedMismatches</a></div><div class="ttdoc">Search for barcodes with segmented mismatches.</div><div class="ttdef"><b>Definition:</b> MismatchTrie.hpp:377</div></div>
+<div class="ttc" id="aclasskaori_1_1SimpleBarcodeSearch_html"><div class="ttname"><a href="classkaori_1_1SimpleBarcodeSearch.html">kaori::SimpleBarcodeSearch</a></div><div class="ttdoc">Search for known barcode sequences.</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:108</div></div>
+<div class="ttc" id="aclasskaori_1_1SimpleBarcodeSearch_html_a59fa55379464fd1ffc9fb22d54b7b86b"><div class="ttname"><a href="classkaori_1_1SimpleBarcodeSearch.html#a59fa55379464fd1ffc9fb22d54b7b86b">kaori::SimpleBarcodeSearch::SimpleBarcodeSearch</a></div><div class="ttdeci">SimpleBarcodeSearch(const BarcodePool &amp;barcode_pool, int max_mismatches=0, bool reverse=false, bool duplicates=false)</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:121</div></div>
+<div class="ttc" id="aclasskaori_1_1SimpleBarcodeSearch_html_a64c891331208f20f8ba1d0853a736791"><div class="ttname"><a href="classkaori_1_1SimpleBarcodeSearch.html#a64c891331208f20f8ba1d0853a736791">kaori::SimpleBarcodeSearch::search</a></div><div class="ttdeci">void search(const std::string &amp;search_seq, State &amp;state, int allowed_mismatches) const</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:229</div></div>
+<div class="ttc" id="aclasskaori_1_1SimpleBarcodeSearch_html_a7e22adc910c1a0993c8932075c8dad12"><div class="ttname"><a href="classkaori_1_1SimpleBarcodeSearch.html#a7e22adc910c1a0993c8932075c8dad12">kaori::SimpleBarcodeSearch::search</a></div><div class="ttdeci">void search(const std::string &amp;search_seq, State &amp;state) const</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:211</div></div>
+<div class="ttc" id="aclasskaori_1_1SimpleBarcodeSearch_html_a9cd99d9aec1bb9686a75aa128e70f077"><div class="ttname"><a href="classkaori_1_1SimpleBarcodeSearch.html#a9cd99d9aec1bb9686a75aa128e70f077">kaori::SimpleBarcodeSearch::SimpleBarcodeSearch</a></div><div class="ttdeci">SimpleBarcodeSearch()</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:113</div></div>
+<div class="ttc" id="aclasskaori_1_1SimpleBarcodeSearch_html_ac71e5409f61bf03009046b208de7677c"><div class="ttname"><a href="classkaori_1_1SimpleBarcodeSearch.html#ac71e5409f61bf03009046b208de7677c">kaori::SimpleBarcodeSearch::initialize</a></div><div class="ttdeci">State initialize() const</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:163</div></div>
+<div class="ttc" id="aclasskaori_1_1SimpleBarcodeSearch_html_ac80ba1b9394963f2befe4154da98ef1e"><div class="ttname"><a href="classkaori_1_1SimpleBarcodeSearch.html#ac80ba1b9394963f2befe4154da98ef1e">kaori::SimpleBarcodeSearch::reduce</a></div><div class="ttdeci">void reduce(State &amp;state)</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:176</div></div>
 <div class="ttc" id="astructkaori_1_1BarcodePool_html"><div class="ttname"><a href="structkaori_1_1BarcodePool.html">kaori::BarcodePool</a></div><div class="ttdoc">Pool of barcode sequences for a variable region.</div><div class="ttdef"><b>Definition:</b> BarcodePool.hpp:22</div></div>
 <div class="ttc" id="astructkaori_1_1BarcodePool_html_a5e5c62ef4f8c94e5be302b4c23d89eb5"><div class="ttname"><a href="structkaori_1_1BarcodePool.html#a5e5c62ef4f8c94e5be302b4c23d89eb5">kaori::BarcodePool::length</a></div><div class="ttdeci">size_t length</div><div class="ttdef"><b>Definition:</b> BarcodePool.hpp:60</div></div>
 <div class="ttc" id="astructkaori_1_1BarcodePool_html_acc2f391a66b03cfe7210bc300237acf1"><div class="ttname"><a href="structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1">kaori::BarcodePool::pool</a></div><div class="ttdeci">std::vector&lt; const char * &gt; pool</div><div class="ttdef"><b>Definition:</b> BarcodePool.hpp:55</div></div>
-<div class="ttc" id="astructkaori_1_1SegmentedBarcodeSearch_1_1State_html"><div class="ttname"><a href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">kaori::SegmentedBarcodeSearch::State</a></div><div class="ttdoc">State of the search.</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:307</div></div>
-<div class="ttc" id="astructkaori_1_1SegmentedBarcodeSearch_1_1State_html_a3f3645e45fd7d182b5bb1481894f2bf6"><div class="ttname"><a href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#a3f3645e45fd7d182b5bb1481894f2bf6">kaori::SegmentedBarcodeSearch::State::per_segment</a></div><div class="ttdeci">std::array&lt; int, num_segments &gt; per_segment</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:324</div></div>
-<div class="ttc" id="astructkaori_1_1SegmentedBarcodeSearch_1_1State_html_acf848779e11f6741617e458c484c85fe"><div class="ttname"><a href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#acf848779e11f6741617e458c484c85fe">kaori::SegmentedBarcodeSearch::State::index</a></div><div class="ttdeci">int index</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:312</div></div>
-<div class="ttc" id="astructkaori_1_1SegmentedBarcodeSearch_1_1State_html_af44eaa2a5d16f1587d85f2135ce947ea"><div class="ttname"><a href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#af44eaa2a5d16f1587d85f2135ce947ea">kaori::SegmentedBarcodeSearch::State::mismatches</a></div><div class="ttdeci">int mismatches</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:318</div></div>
-<div class="ttc" id="astructkaori_1_1SegmentedMismatches_1_1Result_html"><div class="ttname"><a href="structkaori_1_1SegmentedMismatches_1_1Result.html">kaori::SegmentedMismatches::Result</a></div><div class="ttdoc">Result of the segmented search.</div><div class="ttdef"><b>Definition:</b> MismatchTrie.hpp:349</div></div>
-<div class="ttc" id="astructkaori_1_1SegmentedMismatches_1_1Result_html_a629831fff288a3221f6009da980ddee7"><div class="ttname"><a href="structkaori_1_1SegmentedMismatches_1_1Result.html#a629831fff288a3221f6009da980ddee7">kaori::SegmentedMismatches::Result::index</a></div><div class="ttdeci">int index</div><div class="ttdef"><b>Definition:</b> MismatchTrie.hpp:362</div></div>
-<div class="ttc" id="astructkaori_1_1SimpleBarcodeSearch_1_1State_html"><div class="ttname"><a href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">kaori::SimpleBarcodeSearch::State</a></div><div class="ttdoc">State of the search.</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:133</div></div>
-<div class="ttc" id="astructkaori_1_1SimpleBarcodeSearch_1_1State_html_ac424ab64e2dd798903d4ef8ce5f04e5f"><div class="ttname"><a href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#ac424ab64e2dd798903d4ef8ce5f04e5f">kaori::SimpleBarcodeSearch::State::index</a></div><div class="ttdeci">int index</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:138</div></div>
-<div class="ttc" id="astructkaori_1_1SimpleBarcodeSearch_1_1State_html_aedd1d05b0ab22edbb8df1c792d17d5d7"><div class="ttname"><a href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#aedd1d05b0ab22edbb8df1c792d17d5d7">kaori::SimpleBarcodeSearch::State::mismatches</a></div><div class="ttdeci">int mismatches</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:144</div></div>
+<div class="ttc" id="astructkaori_1_1SegmentedBarcodeSearch_1_1State_html"><div class="ttname"><a href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">kaori::SegmentedBarcodeSearch::State</a></div><div class="ttdoc">State of the search.</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:310</div></div>
+<div class="ttc" id="astructkaori_1_1SegmentedBarcodeSearch_1_1State_html_a3f3645e45fd7d182b5bb1481894f2bf6"><div class="ttname"><a href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#a3f3645e45fd7d182b5bb1481894f2bf6">kaori::SegmentedBarcodeSearch::State::per_segment</a></div><div class="ttdeci">std::array&lt; int, num_segments &gt; per_segment</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:327</div></div>
+<div class="ttc" id="astructkaori_1_1SegmentedBarcodeSearch_1_1State_html_acf848779e11f6741617e458c484c85fe"><div class="ttname"><a href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#acf848779e11f6741617e458c484c85fe">kaori::SegmentedBarcodeSearch::State::index</a></div><div class="ttdeci">int index</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:315</div></div>
+<div class="ttc" id="astructkaori_1_1SegmentedBarcodeSearch_1_1State_html_af44eaa2a5d16f1587d85f2135ce947ea"><div class="ttname"><a href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#af44eaa2a5d16f1587d85f2135ce947ea">kaori::SegmentedBarcodeSearch::State::mismatches</a></div><div class="ttdeci">int mismatches</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:321</div></div>
+<div class="ttc" id="astructkaori_1_1SegmentedMismatches_1_1Result_html"><div class="ttname"><a href="structkaori_1_1SegmentedMismatches_1_1Result.html">kaori::SegmentedMismatches::Result</a></div><div class="ttdoc">Result of the segmented search.</div><div class="ttdef"><b>Definition:</b> MismatchTrie.hpp:413</div></div>
+<div class="ttc" id="astructkaori_1_1SegmentedMismatches_1_1Result_html_a629831fff288a3221f6009da980ddee7"><div class="ttname"><a href="structkaori_1_1SegmentedMismatches_1_1Result.html#a629831fff288a3221f6009da980ddee7">kaori::SegmentedMismatches::Result::index</a></div><div class="ttdeci">int index</div><div class="ttdef"><b>Definition:</b> MismatchTrie.hpp:426</div></div>
+<div class="ttc" id="astructkaori_1_1SimpleBarcodeSearch_1_1State_html"><div class="ttname"><a href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">kaori::SimpleBarcodeSearch::State</a></div><div class="ttdoc">State of the search.</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:136</div></div>
+<div class="ttc" id="astructkaori_1_1SimpleBarcodeSearch_1_1State_html_ac424ab64e2dd798903d4ef8ce5f04e5f"><div class="ttname"><a href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#ac424ab64e2dd798903d4ef8ce5f04e5f">kaori::SimpleBarcodeSearch::State::index</a></div><div class="ttdeci">int index</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:141</div></div>
+<div class="ttc" id="astructkaori_1_1SimpleBarcodeSearch_1_1State_html_aedd1d05b0ab22edbb8df1c792d17d5d7"><div class="ttname"><a href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#aedd1d05b0ab22edbb8df1c792d17d5d7">kaori::SimpleBarcodeSearch::State::mismatches</a></div><div class="ttdeci">int mismatches</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:147</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
