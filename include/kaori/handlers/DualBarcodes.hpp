@@ -103,7 +103,7 @@ public:
             auto ptr1 = barcode_pool1[i];
             if (search_reverse1) {
                 for (size_t j = 0; j < len1; ++j) {
-                    current += reverse_complement<true, true>(ptr1[len1 - j - 1]);
+                    current += complement_base<true, true>(ptr1[len1 - j - 1]);
                 }
             } else {
                 current.insert(current.end(), ptr1, ptr1 + len1);
@@ -112,7 +112,7 @@ public:
             auto ptr2 = barcode_pool2[i];
             if (search_reverse2) {
                 for (size_t j = 0; j < len2; ++j) {
-                    current += reverse_complement<true, true>(ptr2[len2 - j - 1]);
+                    current += complement_base<true, true>(ptr2[len2 - j - 1]);
                 }
             } else {
                 current.insert(current.end(), ptr2, ptr2 + len2);

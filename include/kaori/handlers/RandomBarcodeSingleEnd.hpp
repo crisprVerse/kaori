@@ -97,7 +97,7 @@ public:
         auto start = seq + position + range.first;
         size_t len = state.buffer.size();
         for (size_t j = 0; j < len; ++j) {
-            state.buffer[j] = reverse_complement<true>(start[len - j - 1]);
+            state.buffer[j] = complement_base<true>(start[len - j - 1]);
         }
 
         auto it = state.counts.find(state.buffer);
