@@ -97,6 +97,8 @@ If you have a configuration that is not supported here, create an issue and we'l
 
 ## Building projects 
 
+### CMake with `FetchContent`
+
 If you're using CMake, you just need to add something like this to your `CMakeLists.txt`:
 
 ```
@@ -104,7 +106,7 @@ include(FetchContent)
 
 FetchContent_Declare(
   kaori
-  GIT_REPOSITORY https://github.com/LTLA/kaori
+  GIT_REPOSITORY https://github.com/crisprVerse/kaori
   GIT_TAG master # or any version of interest 
 )
 
@@ -121,5 +123,24 @@ target_link_libraries(myexe kaori)
 target_link_libraries(mylib INTERFACE kaori)
 ```
 
+### CMake with `find_package()`
+
+You can install the library by cloning a suitable version of this repository and running the following commands:
+
+```sh
+mkdir build && cd build
+cmake .. -DKAORI_TESTS=OFF
+cmake --build . --target install
+```
+
+Then you can use `find_package()` as usual:
+
+```cmake
+find_package(crisprverse_kaori CONFIG REQUIRED)
+target_link_libraries(mylib INTERFACE crisprverse::kaori)
+```
+
+### Manual
+
 If you're not using CMake, the simple approach is to just copy the files - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's `-I`.
-If you want to read Matrix Market files, you'll also need to add the [**buffin**](https://github.com/clusterfork/byteme) header-only library to the compiler's search path.
+You'll also need to link to the [**byteme**](https://github.com/LTLA/byteme) header-only library as well as Zlib.
