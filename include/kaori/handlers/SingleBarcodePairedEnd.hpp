@@ -23,6 +23,7 @@ namespace kaori {
  */
 template<size_t max_size>
 class SingleBarcodePairedEnd {
+public:
     /**
      * @brief Optional parameters for `SingleBarcodePairedEnd`.
      */
@@ -69,7 +70,7 @@ public:
             template_length, 
             barcode_pool, 
             [&]{
-                SimpleSingleMatch<max_size>::Options ssopt;
+                typename SimpleSingleMatch<max_size>::Options ssopt;
                 ssopt.search_forward = options.search_forward;
                 ssopt.search_reverse = options.search_reverse;
                 ssopt.max_mismatches = options.max_mismatches;

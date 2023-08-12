@@ -22,13 +22,13 @@ add_executable(
     src/BarcodeSearch.cpp
     src/SimpleSingleMatch.cpp
     src/process_data.cpp
-#    src/handlers/SingleBarcodeSingleEnd.cpp
-#    src/handlers/SingleBarcodePairedEnd.cpp
+    src/handlers/SingleBarcodeSingleEnd.cpp
+    src/handlers/SingleBarcodePairedEnd.cpp
 #    src/handlers/CombinatorialBarcodesSingleEnd.cpp
 #    src/handlers/CombinatorialBarcodesPairedEnd.cpp
 #    src/handlers/DualBarcodes.cpp
 #    src/handlers/DualBarcodesWithDiagnostics.cpp
-#    src/handlers/RandomBarcodeSingleEnd.cpp
+    src/handlers/RandomBarcodeSingleEnd.cpp
 )
 
 target_link_libraries(

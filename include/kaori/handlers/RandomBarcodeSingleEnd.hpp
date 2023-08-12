@@ -59,46 +59,24 @@ public:
      * This should contain exactly one variable region.
      * @param template_length Length of the template.
      * This should be less than or equal to `max_size`.
-     *
      * @param options Optional parameters.
      */
     RandomBarcodeSingleEnd(const char* template_seq, size_t template_length, const Options& options) :
         forward(options.search_forward),
         reverse(options.search_reverse),
-        constant(
-            template_seq, 
-            template_length,
-            [&]{
-                ScanTemplate<max_size>::Options sopt;
-                sopt.search_forward = options.search_forward;
-                sopt.search_reverse = options.search_reverse;
-                return sopt;
-            }()
-        ),
+        constant(template_seq, template_length, forward, reverse),
         max_mm(options.max_mismatches),
         use_first(options.use_first)
     {}
 
-    /**
-     * @param[in] template_seq Template sequence for the first barcode.
-     * This should contain exactly one variable region.
-     * @param template_length Length of the template.
-     * This should be less than or equal to `max_size`.
-     *
-     * This overload delegates to the other constructor with default `Options`.
-     */
-    RandomBarcodeSingleEnd(const char* template_seq, size_t template_length) :
-        RandomBarcodeSingleEnd(template_seq, template_length, Options()) {}
-
 private:
-    bool use_first = true;
-
     std::unordered_map<std::string, int> counts;
     int total = 0;
 
     bool forward, reverse;
     ScanTemplate<max_size> constant;
     int max_mm;
+    bool use_first;
 
     bool has_match(int obs_mismatches) const {
         return (obs_mismatches >= 0 && obs_mismatches <= max_mm);

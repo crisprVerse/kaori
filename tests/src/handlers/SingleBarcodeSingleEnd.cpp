@@ -5,7 +5,13 @@
 #include "../utils.h"
 #include <string>
 
-TEST(SingleBarcodeSingleEnd, ForwardOnly) {
+class SingleBarcodeSingleEndTest : public ::testing::Test {
+protected:
+    template<size_t max_size>
+    using Options = typename kaori::SingleBarcodeSingleEnd<max_size>::Options;
+};
+
+TEST_F(SingleBarcodeSingleEndTest, ForwardOnly) {
     std::string thing = "ACGT----TTTT";
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
 
@@ -19,7 +25,7 @@ TEST(SingleBarcodeSingleEnd, ForwardOnly) {
 
     // No mismatches allowed.
     {
-        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), 0, kaori::BarcodePool(variables));
+        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), Options<16>());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -34,7 +40,11 @@ TEST(SingleBarcodeSingleEnd, ForwardOnly) {
 
     // Okay, 2 mismatches.
     {
-        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), 0, kaori::BarcodePool(variables), 2);
+        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
+            Options<16> opt;
+            opt.max_mismatches = 2;
+            return opt;
+        }());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -48,7 +58,7 @@ TEST(SingleBarcodeSingleEnd, ForwardOnly) {
     }
 }
 
-TEST(SingleBarcodeSingleEnd, Stranded) {
+TEST_F(SingleBarcodeSingleEndTest, Stranded) {
     std::string thing = "ACGT----TTTT";
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
 
@@ -62,7 +72,7 @@ TEST(SingleBarcodeSingleEnd, Stranded) {
 
     // Forward only.
     {
-        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), 0, kaori::BarcodePool(variables));
+        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), Options<16>());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -75,7 +85,12 @@ TEST(SingleBarcodeSingleEnd, Stranded) {
 
     // Reverse only.
     {
-        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), 1, kaori::BarcodePool(variables));
+        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
+            Options<16> opt;
+            opt.search_forward = false;
+            opt.search_reverse = true;
+            return opt;
+        }());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -88,7 +103,12 @@ TEST(SingleBarcodeSingleEnd, Stranded) {
 
     // Both.
     {
-        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), 2, kaori::BarcodePool(variables));
+        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
+            Options<16> opt;
+            opt.search_forward = true;
+            opt.search_reverse = true;
+            return opt;
+        }());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -101,7 +121,13 @@ TEST(SingleBarcodeSingleEnd, Stranded) {
 
     // Both plus mismatches.
     {
-        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), 2, kaori::BarcodePool(variables), 2);
+        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
+            Options<16> opt;
+            opt.search_forward = true;
+            opt.search_reverse = true;
+            opt.max_mismatches = 2;
+            return opt;
+        }());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -113,7 +139,7 @@ TEST(SingleBarcodeSingleEnd, Stranded) {
     }
 }
 
-TEST(SingleBarcodeSingleEnd, Best) {
+TEST_F(SingleBarcodeSingleEndTest, Best) {
     std::string thing = "ACGT----TTTT";
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
 
@@ -125,7 +151,13 @@ TEST(SingleBarcodeSingleEnd, Best) {
 
     // First only.
     {
-        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), 2, kaori::BarcodePool(variables), 1);
+        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
+            Options<16> opt;
+            opt.search_forward = true;
+            opt.search_reverse = true;
+            opt.max_mismatches = 1;
+            return opt;
+        }());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -138,8 +170,14 @@ TEST(SingleBarcodeSingleEnd, Best) {
 
     // Best.
     {
-        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), 2, kaori::BarcodePool(variables), 1);
-        handler.set_first(false);
+        kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
+            Options<16> opt;
+            opt.search_forward = true;
+            opt.search_reverse = true;
+            opt.max_mismatches = 1;
+            opt.use_first = false;
+            return opt;
+        }());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, handler);
 
@@ -151,7 +189,7 @@ TEST(SingleBarcodeSingleEnd, Best) {
     }
 }
 
-TEST(SingleBarcodeSingleEnd, Iupac) {
+TEST_F(SingleBarcodeSingleEndTest, Iupac) {
     std::string thing = "ACGT----TTTT";
     std::vector<std::string> variables { "ARRA", "CSSC", "GKKG", "TNNT" };
 
@@ -164,7 +202,12 @@ TEST(SingleBarcodeSingleEnd, Iupac) {
     };
     std::string fq = convert_to_fastq(seq);
 
-    kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), 2, kaori::BarcodePool(variables));
+    kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
+        Options<16> opt;
+        opt.search_forward = true;
+        opt.search_reverse = true;
+        return opt;
+    }());
     byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
     kaori::process_single_end_data(&reader, handler);
 

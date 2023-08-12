@@ -73,16 +73,7 @@ public:
         forward(options.search_forward),
         reverse(options.search_reverse),
         max_mm(options.max_mismatches),
-        constant_matcher(
-            template_seq, 
-            template_length, 
-            [&]{
-                ScanTemplate<max_size>::Options sopt;
-                sopt.search_forward = options.search_forward;
-                sopt.search_reverse = options.search_reverse;
-                return sopt;
-            }()
-        )
+        constant_matcher(template_seq, template_length, forward, reverse)
     {
         const auto& regions = constant_matcher.variable_regions();
         if (regions.size() != num_variable) { 

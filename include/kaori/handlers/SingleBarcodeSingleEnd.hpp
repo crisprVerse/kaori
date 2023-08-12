@@ -33,7 +33,8 @@ public:
          */
         int max_mismatches = 0;
 
-        /** @param Whether to search only for the first match.
+        /** 
+         * Whether to search only for the first match.
          * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
          */
         bool use_first = true;
@@ -69,7 +70,7 @@ public:
             template_length,
             barcode_pool, 
             [&]{
-                SimpleSingleMatch<max_size>::Options ssopt;
+                typename SimpleSingleMatch<max_size>::Options ssopt;
                 ssopt.search_forward = options.search_forward;
                 ssopt.search_reverse = options.search_reverse;
                 ssopt.max_mismatches = options.max_mismatches;
@@ -80,18 +81,6 @@ public:
         counts(barcode_pool.size()),
         use_first(options.use_first) 
     {}
-
-    /**
-     * @param[in] template_seq Template sequence of the target.
-     * This should contain exactly one variable region.
-     * @param template_length Length of the template.
-     * This should be less than or equal to `max_size`.
-     * @param barcode_pool Known barcode sequences for the variable region.
-     *
-     * This overload delegates to the other constructor with default `Options`.
-     */
-    SingleBarcodeSingleEnd(const char* template_seq, size_t template_length, const BarcodePool& barcode_pool, const Options& options) :
-        SingleBarcodeSingleEnd(template_seq, template_length, barcode_pool, Options()) {}
 
 public:
     /**

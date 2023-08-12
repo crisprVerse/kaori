@@ -94,26 +94,8 @@ public:
     ) :
         search_reverse1(options.search_reverse1),
         search_reverse2(options.search_reverse2),
-        constant1(
-            template_seq1, 
-            template_length1,
-            [&]{
-                ScanTemplate<max_size>::Options copt;
-                copt.search_forward = !options.search_reverse1;
-                copt.search_reverse = options.search_reverse1;
-                return copt;
-            }()
-        ),
-        constant2(
-            template_seq2, 
-            template_length2, 
-            [&]{
-                ScanTemplate<max_size>::Options copt;
-                copt.search_forward = !options.search_reverse2;
-                copt.search_reverse = options.search_reverse2;
-                return copt;
-            }()
-        ),
+        constant1(template_seq1, template_length1, !search_reverse1, search_reverse1),
+        constant2(template_seq2, template_length2, !search_reverse2, search_reverse2),
         max_mm1(options.max_mismatches1),
         max_mm2(options.max_mismatches2),
         randomized(options.random),
@@ -185,9 +167,10 @@ public:
             combined_set,
             std::array<int, 2>{ static_cast<int>(len1), static_cast<int>(len2) }, 
             [&]{
-                SegmentedBarcodeSearch<2>::Options bopt;
-                bopt.max_mismatches = std::array<int, 2>{ max_mm1, max_mm2 };
+                typename SegmentedBarcodeSearch<2>::Options bopt;
+                bopt.max_mismatches = { max_mm1, max_mm2 };
                 bopt.duplicates = options.duplicates;
+                bopt.reverse = false; // we already handle strandedness when creating 'combined_set'.
                 return bopt;
             }()
         );
