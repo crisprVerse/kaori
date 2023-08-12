@@ -4,10 +4,15 @@
 #include <vector>
 #include "utils.h"
 
-TEST(SimpleBarcodeSearch, Basic) {
+class SimpleBarcodeSearchTest : public ::testing::Test {
+protected:
+    typedef typename kaori::SimpleBarcodeSearch::Options Options;
+};
+
+TEST_F(SimpleBarcodeSearchTest, Basic) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
     kaori::BarcodePool ptrs(variables);
-    kaori::SimpleBarcodeSearch stuff(ptrs);
+    kaori::SimpleBarcodeSearch stuff(ptrs, Options());
     auto init = stuff.initialize();
 
     stuff.search("AAAA", init);
@@ -19,10 +24,14 @@ TEST(SimpleBarcodeSearch, Basic) {
     EXPECT_EQ(init.index, -1);
 }
 
-TEST(SimpleBarcodeSearch, ReverseComplement) {
+TEST_F(SimpleBarcodeSearchTest, ReverseComplement) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
     kaori::BarcodePool ptrs(variables);
-    kaori::SimpleBarcodeSearch stuff(ptrs, 0, true);
+    kaori::SimpleBarcodeSearch stuff(ptrs, [&]{ 
+        Options opt;
+        opt.reverse = true;
+        return opt;
+    }());
     auto init = stuff.initialize();
 
     stuff.search("AAAA", init);
@@ -31,12 +40,12 @@ TEST(SimpleBarcodeSearch, ReverseComplement) {
     EXPECT_EQ(init.index, 0);
 }
 
-TEST(SimpleBarcodeSearch, Iupac) {
+TEST_F(SimpleBarcodeSearchTest, Iupac) {
     std::vector<std::string> variables { "ARYA", "CSWC", "GKMG", "ABDC", "GHVT", "ANNT" };
     kaori::BarcodePool ptrs(variables);
 
     {
-        kaori::SimpleBarcodeSearch stuff(ptrs);
+        kaori::SimpleBarcodeSearch stuff(ptrs, Options());
         auto init = stuff.initialize();
 
         stuff.search("AATA", init);
@@ -57,7 +66,11 @@ TEST(SimpleBarcodeSearch, Iupac) {
     }
 
     {
-        kaori::SimpleBarcodeSearch stuff(ptrs, 0, true);
+        kaori::SimpleBarcodeSearch stuff(ptrs, [&]{
+            Options opt;
+            opt.reverse = true;
+            return opt;
+        }());
         auto init = stuff.initialize();
 
         stuff.search("TATT", init);
@@ -78,12 +91,16 @@ TEST(SimpleBarcodeSearch, Iupac) {
     }
 }
 
-TEST(SimpleBarcodeSearch, Mismatches) {
+TEST_F(SimpleBarcodeSearchTest, Mismatches) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
     kaori::BarcodePool ptrs(variables);
 
     {
-        kaori::SimpleBarcodeSearch stuff(ptrs, 1);
+        kaori::SimpleBarcodeSearch stuff(ptrs, [&]{
+            Options opt;
+            opt.max_mismatches = 1;
+            return opt;
+        }());
         auto init = stuff.initialize();
 
         stuff.search("AAAA", init);
@@ -102,7 +119,11 @@ TEST(SimpleBarcodeSearch, Mismatches) {
     }
 
     {
-        kaori::SimpleBarcodeSearch stuff(ptrs, 2);
+        kaori::SimpleBarcodeSearch stuff(ptrs, [&]{
+            Options opt;
+            opt.max_mismatches = 2;
+            return opt;
+        }());
         auto init = stuff.initialize();
 
         stuff.search("CCAC", init);
@@ -118,10 +139,14 @@ TEST(SimpleBarcodeSearch, Mismatches) {
     }
 }
 
-TEST(SimpleBarcodeSearch, Caching) {
+TEST_F(SimpleBarcodeSearchTest, Caching) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
     kaori::BarcodePool ptrs(variables);
-    kaori::SimpleBarcodeSearch stuff(ptrs, 1);
+    kaori::SimpleBarcodeSearch stuff(ptrs, [&]{
+        Options opt;
+        opt.max_mismatches = 1;
+        return opt;
+    }());
 
     auto state = stuff.initialize();
 
@@ -182,13 +207,13 @@ TEST(SimpleBarcodeSearch, Caching) {
     }
 }
 
-TEST(SimpleBarcodeSearch, Duplicates) {
+TEST_F(SimpleBarcodeSearchTest, Duplicates) {
     std::vector<std::string> things { "ACGT", "ACGT", "AGTT", "AGTT" };
     kaori::BarcodePool ptrs(things);
 
     EXPECT_ANY_THROW({
         try {
-            kaori::SimpleBarcodeSearch stuff(ptrs, 0, false, kaori::DuplicateAction::ERROR);
+            kaori::SimpleBarcodeSearch stuff(ptrs, Options());
         } catch (std::exception& e) {
             EXPECT_TRUE(std::string(e.what()).find("duplicate") != std::string::npos);
             throw e;
@@ -197,7 +222,11 @@ TEST(SimpleBarcodeSearch, Duplicates) {
 
     // Gets the first occurrence.
     {
-        kaori::SimpleBarcodeSearch stuff(ptrs, 0, false, kaori::DuplicateAction::FIRST);
+        kaori::SimpleBarcodeSearch stuff(ptrs, [&]{
+            Options opt;
+            opt.duplicates = kaori::DuplicateAction::FIRST;
+            return opt;
+        }());
         auto state = stuff.initialize();
 
         stuff.search("ACGT", state);
@@ -209,7 +238,12 @@ TEST(SimpleBarcodeSearch, Duplicates) {
 
     // ... even with a mismatch.
     {
-        kaori::SimpleBarcodeSearch stuff(ptrs, 1, false, kaori::DuplicateAction::FIRST);
+        kaori::SimpleBarcodeSearch stuff(ptrs, [&]{
+            Options opt;
+            opt.max_mismatches = 1;
+            opt.duplicates = kaori::DuplicateAction::FIRST;
+            return opt;
+        }());
         auto state = stuff.initialize();
 
         stuff.search("ACGA", state);
@@ -223,7 +257,11 @@ TEST(SimpleBarcodeSearch, Duplicates) {
 
     // Gets the last occurrence.
     {
-        kaori::SimpleBarcodeSearch stuff(ptrs, 0, false, kaori::DuplicateAction::LAST);
+        kaori::SimpleBarcodeSearch stuff(ptrs, [&]{
+            Options opt;
+            opt.duplicates = kaori::DuplicateAction::LAST;
+            return opt;
+        }());
         auto state = stuff.initialize();
 
         stuff.search("ACGT", state);
@@ -235,7 +273,11 @@ TEST(SimpleBarcodeSearch, Duplicates) {
 
     // Gets no occurrence.
     {
-        kaori::SimpleBarcodeSearch stuff(ptrs, 0, false, kaori::DuplicateAction::NONE);
+        kaori::SimpleBarcodeSearch stuff(ptrs, [&]{
+            Options opt;
+            opt.duplicates = kaori::DuplicateAction::NONE;
+            return opt;
+        }());
         auto state = stuff.initialize();
 
         stuff.search("ACGT", state);
@@ -250,7 +292,11 @@ TEST(SimpleBarcodeSearch, Duplicates) {
         std::vector<std::string> things { "ACGT", "ACGT", "AGTT", "ACGT", "AGTT", "AGTT", "ACGT" };
         kaori::BarcodePool ptrs(things);
 
-        kaori::SimpleBarcodeSearch stuff(ptrs, 0, false, kaori::DuplicateAction::NONE);
+        kaori::SimpleBarcodeSearch stuff(ptrs, [&]{
+            Options opt;
+            opt.duplicates = kaori::DuplicateAction::NONE;
+            return opt;
+        }());
         auto state = stuff.initialize();
 
         stuff.search("ACGT", state);
@@ -261,11 +307,21 @@ TEST(SimpleBarcodeSearch, Duplicates) {
     }
 }
 
-TEST(SegmentedBarcodeSearch, Basic) {
+class SegmentedBarcodeSearchTest : public ::testing::Test {
+protected:
+    template<size_t num_segments>
+    using Options = typename kaori::SegmentedBarcodeSearch<num_segments>::Options;
+};
+
+TEST_F(SegmentedBarcodeSearchTest, Basic) {
     std::vector<std::string> variables { "AAAAAA", "AACCCC", "AAGGGG", "AATTTT" };
     kaori::BarcodePool ptrs(variables);
  
-    kaori::SegmentedBarcodeSearch<2> stuff(ptrs, { 2, 4 }, { 0, 1 });
+    kaori::SegmentedBarcodeSearch<2> stuff(ptrs, { 2, 4 }, [&]{
+        Options<2> opt;
+        opt.max_mismatches = { 0, 1 };
+        return opt;
+    }());
     auto init = stuff.initialize();
 
     stuff.search("AAAAAA", init);
@@ -280,11 +336,16 @@ TEST(SegmentedBarcodeSearch, Basic) {
     EXPECT_EQ(init.index, -1);
 }
 
-TEST(SegmentedBarcodeSearch, ReverseComplement) {
+TEST_F(SegmentedBarcodeSearchTest, ReverseComplement) {
     std::vector<std::string> variables { "AAAAAA", "AACCCC", "AAGGGG", "AATTTT" };
     kaori::BarcodePool ptrs(variables);
 
-    kaori::SegmentedBarcodeSearch<2> stuff(ptrs, { 2, 4 }, { 0, 1 }, true);
+    kaori::SegmentedBarcodeSearch<2> stuff(ptrs, { 2, 4 }, [&]{
+        Options<2> opt;
+        opt.max_mismatches = { 0, 1 };
+        opt.reverse = true;
+        return opt;
+    }());
     auto init = stuff.initialize();
 
     stuff.search("AAAATT", init);
@@ -299,11 +360,14 @@ TEST(SegmentedBarcodeSearch, ReverseComplement) {
     EXPECT_EQ(init.index, -1);
 }
 
-TEST(SegmentedBarcodeSearch, Caching) {
+TEST_F(SegmentedBarcodeSearchTest, Caching) {
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
     kaori::BarcodePool ptrs(variables);
-    kaori::SegmentedBarcodeSearch<2> stuff(ptrs, {2, 2}, {1, 1});
-
+    kaori::SegmentedBarcodeSearch<2> stuff(ptrs, {2, 2}, [&]{
+        Options<2> opt;
+        opt.max_mismatches = {1, 1};
+        return opt;
+    }());
     auto state = stuff.initialize();
 
     // No cache when there is no mismatch.

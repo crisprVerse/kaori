@@ -1,12 +1,24 @@
 #include <gtest/gtest.h>
 #include "kaori/MismatchTrie.hpp"
+#include "kaori/BarcodePool.hpp"
 #include <string>
 #include "utils.h"
 
-TEST(AnyMismatches, Basic) {
+class AnyMismatchesTest : public ::testing::Test {
+protected:
+    static kaori::AnyMismatches populate(const kaori::BarcodePool& ptrs) {
+        kaori::AnyMismatches output(ptrs.length, kaori::DuplicateAction::ERROR);
+        for (auto p : ptrs.pool) {
+            output.add(p);
+        }
+        return output;
+    }
+};
+
+TEST_F(AnyMismatchesTest, Basic) {
     std::vector<std::string> things { "ACGT", "AAAA", "ACAA", "AGTT" };
     kaori::BarcodePool ptrs(things);
-    kaori::AnyMismatches stuff(ptrs);
+    auto stuff = populate(ptrs);
 
     {
         auto res = stuff.search("ACGT", 0);
@@ -33,10 +45,10 @@ TEST(AnyMismatches, Basic) {
     }
 }
 
-TEST(AnyMismatches, MoreMismatches) {
+TEST_F(AnyMismatchesTest, MoreMismatches) {
     std::vector<std::string> things { "ACGTACGTACGT", "TTTGGGCCCAAA" };
     kaori::BarcodePool ptrs(things);
-    kaori::AnyMismatches stuff(ptrs);
+    auto stuff = populate(ptrs);
 
     {
         auto res = stuff.search("ACGTACGTCCGT", 2);
@@ -63,10 +75,10 @@ TEST(AnyMismatches, MoreMismatches) {
     }
 }
 
-TEST(AnyMismatches, MismatchesWithNs) {
+TEST_F(AnyMismatchesTest, MismatchesWithNs) {
     std::vector<std::string> things { "ACGTACGTACGT", "TTTGGGCCCAAA" };
     kaori::BarcodePool ptrs(things);
-    kaori::AnyMismatches stuff(ptrs);
+    auto stuff = populate(ptrs);
 
     {
         auto res = stuff.search("ACGTACGTACGN", 0);
@@ -87,11 +99,11 @@ TEST(AnyMismatches, MismatchesWithNs) {
     }
 }
 
-TEST(AnyMismatches, CappedMismatch) {
+TEST_F(AnyMismatchesTest, CappedMismatch) {
     // Force an early return.
     std::vector<std::string> things { "ACGT", "AAAA", "ACAA", "AGTT" };
     kaori::BarcodePool ptrs(things);
-    kaori::AnyMismatches stuff(ptrs);
+    auto stuff = populate(ptrs);
 
     {
         auto res = stuff.search("AAAT", 0);
@@ -106,10 +118,10 @@ TEST(AnyMismatches, CappedMismatch) {
     }
 }
 
-TEST(AnyMismatches, Ambiguous) {
+TEST_F(AnyMismatchesTest, Ambiguous) {
     std::vector<std::string> things { "AAAAGAAAA", "AAAACAAAA", "AAAAAAAAG", "AAAAAAAAC" };
     kaori::BarcodePool ptrs(things);
-    kaori::AnyMismatches stuff(ptrs);
+    auto stuff = populate(ptrs);
 
     {
         // Positive control first.
@@ -132,13 +144,13 @@ TEST(AnyMismatches, Ambiguous) {
     }
 }
 
-TEST(AnyMismatches, Duplicates) {
+TEST_F(AnyMismatchesTest, Duplicates) {
     std::vector<std::string> things { "ACGT", "ACGT", "AGTT", "AGTT" };
     kaori::BarcodePool ptrs(things);
 
     EXPECT_ANY_THROW({
         try {
-            kaori::AnyMismatches stuff(ptrs);
+            populate(ptrs);
         } catch (std::exception& e) {
             EXPECT_TRUE(std::string(e.what()).find("duplicate") != std::string::npos);
             throw e;
@@ -169,11 +181,11 @@ TEST(AnyMismatches, Duplicates) {
 
     // Gets the first occurrence.
     {
-        kaori::AnyMismatches stuff(ptrs.length);
-        CHECK(stuff.add(ptrs.pool[0], kaori::DuplicateAction::FIRST), false, false, false);
-        CHECK(stuff.add(ptrs.pool[1], kaori::DuplicateAction::FIRST), true, false, false);
-        CHECK(stuff.add(ptrs.pool[2], kaori::DuplicateAction::FIRST), false, false, false);
-        CHECK(stuff.add(ptrs.pool[3], kaori::DuplicateAction::FIRST), true, false, false);
+        kaori::AnyMismatches stuff(ptrs.length, kaori::DuplicateAction::FIRST);
+        CHECK(stuff.add(ptrs.pool[0]), false, false, false);
+        CHECK(stuff.add(ptrs.pool[1]), true, false, false);
+        CHECK(stuff.add(ptrs.pool[2]), false, false, false);
+        CHECK(stuff.add(ptrs.pool[3]), true, false, false);
 
         auto res = stuff.search("ACGT", 0);
         EXPECT_EQ(res.first, 0);
@@ -184,11 +196,11 @@ TEST(AnyMismatches, Duplicates) {
 
     // Gets the last occurrence.
     {
-        kaori::AnyMismatches stuff(ptrs.length);
-        CHECK(stuff.add(ptrs.pool[0], kaori::DuplicateAction::LAST), false, false, false);
-        CHECK(stuff.add(ptrs.pool[1], kaori::DuplicateAction::LAST), true, true, false);
-        CHECK(stuff.add(ptrs.pool[2], kaori::DuplicateAction::LAST), false, false, false);
-        CHECK(stuff.add(ptrs.pool[3], kaori::DuplicateAction::LAST), true, true, false);
+        kaori::AnyMismatches stuff(ptrs.length, kaori::DuplicateAction::LAST);
+        CHECK(stuff.add(ptrs.pool[0]), false, false, false);
+        CHECK(stuff.add(ptrs.pool[1]), true, true, false);
+        CHECK(stuff.add(ptrs.pool[2]), false, false, false);
+        CHECK(stuff.add(ptrs.pool[3]), true, true, false);
 
         auto res = stuff.search("ACGT", 0);
         EXPECT_EQ(res.first, 1);
@@ -199,12 +211,12 @@ TEST(AnyMismatches, Duplicates) {
 
     // Gets nothing.
     {
-        kaori::AnyMismatches stuff(ptrs.length);
-        CHECK(stuff.add(ptrs.pool[0], kaori::DuplicateAction::NONE), false, false, false);
-        CHECK(stuff.add(ptrs.pool[1], kaori::DuplicateAction::NONE), true, false, true);
-        CHECK(stuff.add(ptrs.pool[2], kaori::DuplicateAction::NONE), false, false, false);
-        CHECK(stuff.add(ptrs.pool[3], kaori::DuplicateAction::NONE), true, false, true);
-        CHECK(stuff.add(ptrs.pool[3], kaori::DuplicateAction::NONE), true, false, false); // next addition sets duplicate_cleared = false as it's already cleared.
+        kaori::AnyMismatches stuff(ptrs.length, kaori::DuplicateAction::NONE);
+        CHECK(stuff.add(ptrs.pool[0]), false, false, false);
+        CHECK(stuff.add(ptrs.pool[1]), true, false, true);
+        CHECK(stuff.add(ptrs.pool[2]), false, false, false);
+        CHECK(stuff.add(ptrs.pool[3]), true, false, true);
+        CHECK(stuff.add(ptrs.pool[3]), true, false, false); // next addition sets duplicate_cleared = false as it's already cleared.
 
         auto res = stuff.search("ACGT", 0);
         EXPECT_EQ(res.first, -1);
@@ -214,11 +226,11 @@ TEST(AnyMismatches, Duplicates) {
     }
 }
 
-TEST(AnyMismatches, Iupac) {
+TEST_F(AnyMismatchesTest, Iupac) {
     {
         std::vector<std::string> things { "rACsCGk", "YacWcgM" };
         kaori::BarcodePool ptrs(things);
-        kaori::AnyMismatches stuff(ptrs);
+        auto stuff = populate(ptrs);
 
         EXPECT_EQ(stuff.search("AacGcgT", 0), std::make_pair(0, 0));
         EXPECT_EQ(stuff.search("GacCcgG", 0), std::make_pair(0, 0));
@@ -231,7 +243,7 @@ TEST(AnyMismatches, Iupac) {
     {
         std::vector<std::string> things { "Bcgt", "aDgt", "acHt", "acgV" };
         kaori::BarcodePool ptrs(things);
-        kaori::AnyMismatches stuff(ptrs);
+        auto stuff = populate(ptrs);
 
         EXPECT_EQ(stuff.search("ccgt", 0), std::make_pair(0, 0));
         EXPECT_EQ(stuff.search("aagt", 0), std::make_pair(1, 0));
@@ -244,7 +256,7 @@ TEST(AnyMismatches, Iupac) {
     {
         std::vector<std::string> things { "ANNA", "CNNC" };
         kaori::BarcodePool ptrs(things);
-        kaori::AnyMismatches stuff(ptrs);
+        auto stuff = populate(ptrs);
 
         EXPECT_EQ(stuff.search("acga", 0), std::make_pair(0, 0));
         EXPECT_EQ(stuff.search("catc", 0), std::make_pair(1, 0));
@@ -258,7 +270,7 @@ TEST(AnyMismatches, Iupac) {
 
         EXPECT_ANY_THROW({
             try {
-                kaori::AnyMismatches stuff(ptrs);
+                populate(ptrs);
             } catch (std::exception& e) {
                 EXPECT_TRUE(std::string(e.what()).find("unknown base") != std::string::npos);
                 throw e;
@@ -267,20 +279,20 @@ TEST(AnyMismatches, Iupac) {
     }
 
     {
-        kaori::AnyMismatches stuff(6);
-        EXPECT_FALSE(stuff.add("AAAAAA", kaori::DuplicateAction::ERROR).has_ambiguous);
-        EXPECT_TRUE(stuff.add("RYSWKM", kaori::DuplicateAction::ERROR).has_ambiguous);
+        kaori::AnyMismatches stuff(6, kaori::DuplicateAction::ERROR);
+        EXPECT_FALSE(stuff.add("AAAAAA").has_ambiguous);
+        EXPECT_TRUE(stuff.add("RYSWKM").has_ambiguous);
     }
 }
 
-TEST(AnyMismatches, Optimized) {
+TEST_F(AnyMismatchesTest, Optimized) {
     // Deliberately not in any order, to check whether optimization behaves
     // correctly. We try it with and without optimization.
     std::vector<std::string> things { "ACCA", "TGCC", "CAAA", "AACT", "CGCG", "GGTG" };
     kaori::BarcodePool ptrs(things);
 
     for (size_t i = 0; i < 2; ++i) {
-        kaori::AnyMismatches stuff(ptrs);
+        auto stuff = populate(ptrs);
         if (i != 0) {
             stuff.optimize();
         }
@@ -325,10 +337,23 @@ TEST(AnyMismatches, Optimized) {
     }
 }
 
-TEST(SegmentedMismatches, Segmented) {
+class SegmentedMismatchesTest : public ::testing::Test {
+protected:
+    template<size_t num_segments>
+    static kaori::SegmentedMismatches<num_segments> populate(const kaori::BarcodePool& ptrs, std::array<int, num_segments> segments) {
+        kaori::SegmentedMismatches output(segments, kaori::DuplicateAction::ERROR);
+        assert(ptrs.length == output.get_length());
+        for (auto p : ptrs.pool) {
+            output.add(p);
+        }
+        return output;
+    }
+};
+
+TEST_F(SegmentedMismatchesTest, Segmented) {
     std::vector<std::string> things { "AAAAAA", "CCCCCC", "GGGGGG", "TTTTTT" };
     kaori::BarcodePool ptrs(things);
-    kaori::SegmentedMismatches<2> stuff(ptrs, {4, 2});
+    auto stuff = populate<2>(ptrs, {4, 2});
 
     {
         auto res = stuff.search("AAAAAAA", { 0, 0 });
@@ -353,10 +378,10 @@ TEST(SegmentedMismatches, Segmented) {
     }
 }
 
-TEST(SegmentedMismatches, Mismatches) {
+TEST_F(SegmentedMismatchesTest, Mismatches) {
     std::vector<std::string> things { "AAAAAA", "CCCCCC", "GGGGGG", "TTTTTT" };
     kaori::BarcodePool ptrs(things);
-    kaori::SegmentedMismatches<2> stuff(ptrs, {4, 2});
+    auto stuff = populate<2>(ptrs, {4, 2});
 
     // Handles one mismatch.
     {
@@ -414,10 +439,10 @@ TEST(SegmentedMismatches, Mismatches) {
     }
 }
 
-TEST(SegmentedMismatches, MismatchesWithNs) {
+TEST_F(SegmentedMismatchesTest, MismatchesWithNs) {
     std::vector<std::string> things { "AAAAAA", "CCCCCC", "GGGGGG", "TTTTTT" };
     kaori::BarcodePool ptrs(things);
-    kaori::SegmentedMismatches<2> stuff(ptrs, {4, 2});
+    auto stuff = populate<2>(ptrs, {4, 2});
 
     {
         auto res = stuff.search("CCCCNC", { 0, 1 });
@@ -442,11 +467,11 @@ TEST(SegmentedMismatches, MismatchesWithNs) {
     }
 }
 
-TEST(SegmentedMismatches, Ambiguity) {
+TEST_F(SegmentedMismatchesTest, Ambiguity) {
     {
         std::vector<std::string> things { "AAAAAA", "CCCCCC", "GGGGGG", "TTTTTT" };
         kaori::BarcodePool ptrs(things);
-        kaori::SegmentedMismatches<2> stuff(ptrs, {4, 2});
+        auto stuff = populate<2>(ptrs, {4, 2});
 
         // Handles ambiguity properly.
         {
@@ -470,7 +495,7 @@ TEST(SegmentedMismatches, Ambiguity) {
     {
         std::vector<std::string> things { "AAAAAA", "AAAAAT" };
         kaori::BarcodePool ptrs(things);
-        kaori::SegmentedMismatches<2> stuff(ptrs, {4, 2});
+        auto stuff = populate<2>(ptrs, {4, 2});
 
         {
             auto res = stuff.search("AAAAAC", { 0, 1 });
@@ -484,16 +509,16 @@ TEST(SegmentedMismatches, Ambiguity) {
     }
 }
 
-TEST(SegmentedMismatches, Optimized) {
+TEST_F(SegmentedMismatchesTest, Optimized) {
     // Deliberately out of order.
     std::vector<std::string> things { "CCCCCC", "AAAAAA", "TTTTTT", "GGGGGG" };
     kaori::BarcodePool ptrs(things);
 
     for (size_t i = 0; i < 2; ++i) {
-      kaori::SegmentedMismatches<2> stuff(ptrs, {3, 3});
-      if (i != 0) {
-          stuff.optimize();
-      }
+        auto stuff = populate<2>(ptrs, {3, 3});
+        if (i != 0) {
+            stuff.optimize();
+        }
 
         {
             auto res = stuff.search("GGGGGG", { 1, 1 });

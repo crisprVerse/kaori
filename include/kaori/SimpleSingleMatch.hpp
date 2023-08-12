@@ -73,16 +73,7 @@ public:
         forward(options.search_forward), 
         reverse(options.search_reverse),
         max_mm(options.max_mismatches),
-        constant(
-            template_seq, 
-            template_length,
-            [&]{
-                ScanTemplate<max_size>::Options opt;
-                opt.search_forward = options.search_forward;
-                opt.search_reverse = options.search_reverse;
-                return opt;
-            }()
-        )
+        constant(template_seq, template_length, forward, reverse)
     {
         // Exact strandedness doesn't matter here, just need the number and length.
         const auto& regions = constant.variable_regions();
