@@ -11,7 +11,7 @@ add_library(kaori INTERFACE)
 add_library(crisprverse::kaori ALIAS kaori)
 
 include(GNUInstallDirs)
-target_include_directories(byteme INTERFACE 
+target_include_directories(kaori INTERFACE 
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/crisprverse_kaori>")
 
@@ -58,14 +58,3 @@ configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/crisprverse_kaoriConfig.cmake"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/crisprverse_kaori)
-
-add_subdirectory(extern)
-
-target_link_libraries(kaori INTERFACE kaori)
-
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    include(CTest)
-    if(BUILD_TESTING)
-        add_subdirectory(tests)
-    endif()
-endif()
