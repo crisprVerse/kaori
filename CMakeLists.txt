@@ -8,7 +8,7 @@ project(kaori
 set(CMAKE_CXX_STANDARD 17)
 
 add_library(kaori INTERFACE)
-add_library(crisprverse::kaori INTERFACE kaori)
+add_library(crisprverse::kaori ALIAS kaori)
 
 include(GNUInstallDirs)
 target_include_directories(byteme INTERFACE 
