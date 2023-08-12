@@ -55,7 +55,7 @@ public:
         dual_handler(template_seq1, template_length1, reverse1, barcode_pool1, max_mismatches1, template_seq2, template_length2, reverse2, barcode_pool2, max_mismatches2, random),
 
         // we allow duplicates in the trie.
-        combo_handler(template_seq1, template_length1, reverse1, barcode_pool1, max_mismatches1, template_seq2, template_length2, reverse2, barcode_pool2, max_mismatches2, random, true) 
+        combo_handler(template_seq1, template_length1, reverse1, barcode_pool1, max_mismatches1, template_seq2, template_length2, reverse2, barcode_pool2, max_mismatches2, random, DuplicateAction::FIRST) 
     {}
 
     /**

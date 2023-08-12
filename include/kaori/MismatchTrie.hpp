@@ -24,24 +24,54 @@ namespace kaori {
  * Any number of mismatches are supported; subclasses will decide how the mismatches can be distributed throughout the length of the sequence.
  */
 class MismatchTrie {
+protected:
+    static constexpr int status_not_present = -1;
+
+    static constexpr int status_ambiguous = -2;
+
 public:
     /**
      * @param barcode_length Length of the barcodes in the pool.
      */
-    MismatchTrie(size_t barcode_length = 0) : length(barcode_length), pointers(4, -1), counter(0) {}
+    MismatchTrie(size_t barcode_length = 0) : length(barcode_length), pointers(4, status_not_present), counter(0) {}
 
     /**
      * @param barcode_pool Pool of known barcode sequences.
-     * @param duplicates Whether duplicated sequences in `barcode_pool` should be supported, see `add()`.
+     * @param duplicates How duplicated sequences in `barcode_pool` should be handled.
      */
-    MismatchTrie(const BarcodePool& barcode_pool, bool duplicates = false) : MismatchTrie(barcode_pool.length) {
+    MismatchTrie(const BarcodePool& barcode_pool, DuplicateAction duplicates = DuplicateAction::ERROR) : MismatchTrie(barcode_pool.length) {
         for (auto s : barcode_pool.pool) {
             add(s, duplicates);
         }
     }
 
-protected:
-    static constexpr int error_none = -1;
+public:
+    /** 
+     * @brief Status of the barcode sequence addition.
+     */
+    struct AddStatus {
+        /**
+         * Whether the newly added sequence contains ambiguous IUPAC codes.
+         */
+        bool has_ambiguous = false;
+
+        /**
+         * Whether the newly added sequence is a duplicate of an existing sequence in the trie.
+         */
+        bool is_duplicate = false;
+
+        /**
+         * Whether the newly added sequence replaced a duplicate in the trie.
+         * Only set when `is_duplicate = true` and `duplicates` is set to `DuplicateAction::LAST` in `add()`.
+         */
+        bool duplicate_replaced = false;
+
+        /**
+         * Whether the newly added sequence caused an existing duplicate to be cleared from the trie.
+         * Only set when `is_duplicate = true` and `duplicates` is set to `DuplicateAction::NONE` in `add()`.
+         */
+        bool duplicate_cleared = false;
+    };
 
 private:
     void next(int shift, int& position) {
@@ -49,24 +79,40 @@ private:
         if (current < 0) {
             current = pointers.size();
             position = current;
-            pointers.resize(position + 4, error_none);
+            pointers.resize(position + 4, status_not_present);
         } else {
             position = current;
         }
     }
 
-    void end(int shift, int position, bool duplicates) {
+    void end(int shift, int position, DuplicateAction duplicates, AddStatus& status) {
         auto& current = pointers[position + shift];
         if (current >= 0) {
-            if (!duplicates) {
-                throw std::runtime_error("duplicate sequences detected when constructing the trie");
+            status.is_duplicate = true;
+            switch(duplicates) {
+                case DuplicateAction::FIRST:
+                    break;
+                case DuplicateAction::LAST:
+                    status.duplicate_replaced = true;
+                    current = counter;
+                    break;
+                case DuplicateAction::NONE:
+                    status.duplicate_cleared = true;
+                    current = status_ambiguous;
+                    break;
+                case DuplicateAction::ERROR:
+                    throw std::runtime_error("duplicate sequences detected (" + 
+                        std::to_string(current + 1) + ", " + 
+                        std::to_string(counter + 1) + ") when constructing the trie");
             }
-        } else {
+        } else if (current == status_not_present) {
             current = counter;
+        } else if (current == status_ambiguous) {
+            status.is_duplicate = true;
         }
     }
 
-    bool add_recursive_iupac(size_t i, int position, const char* barcode_seq, bool duplicates) {
+    void recursive_add(size_t i, int position, const char* barcode_seq, DuplicateAction duplicates, AddStatus& status) {
         // Processing a stretch of non-ambiguous codes, where possible.
         // This reduces the recursion depth among the (hopefully fewer) ambiguous codes.
         while (1) {
@@ -76,22 +122,24 @@ private:
             }
 
             if ((++i) == length) {
-                end(shift, position, duplicates);
-                return false;
+                end(shift, position, duplicates, status);
+                return;
             } else {
                 next(shift, position);
             }
         } 
 
         // Processing the ambiguous codes.
+        status.has_ambiguous = true;
+
         auto process = [&](char base) -> void {
             auto shift = base_shift(base);
             if (i + 1 == length) {
-                end(shift, position, duplicates);
+                end(shift, position, duplicates, status);
             } else {
                 auto curpos = position;
                 next(shift, curpos);
-                add_recursive_iupac(i + 1, curpos, barcode_seq, duplicates);
+                recursive_add(i + 1, curpos, barcode_seq, duplicates, status);
             }
         };
 
@@ -121,26 +169,23 @@ private:
             default:
                 throw std::runtime_error("unknown base '" + std::string(1, barcode_seq[i]) + "' detected when constructing the trie");
         }
-
-        return true;
     }
 
 public:
     /**
      * @param[in] barcode_seq Pointer to a character array containing a barcode sequence.
      * The array should have length equal to `get_length()` and should only contain IUPAC nucleotides or their lower-case equivalents (excepting U or gap characters).
-     * @param duplicates Whether duplicate sequences are allowed.
-     * If `false`, an error is raised if `seq` is a duplicate of a previously `add()`ed sequence.
-     * If `true`, only the first instance of the duplicates will be reported in searches.
+     * @param duplicates How duplicate sequences across `add()` calls should be handled.
      *
      * @return The barcode sequence is added to the trie.
      * The index of the newly added sequence is defined as the number of sequences that were previously added. 
-     * A boolean is returned indicating whether any ambiguous IUPAC characters were present.
+     * The status of the addition is returned.
      */
-    bool add(const char* barcode_seq, bool duplicates) {
-        auto has_iupac = add_recursive_iupac(0, 0, barcode_seq, duplicates);
+    AddStatus add(const char* barcode_seq, DuplicateAction duplicates) {
+        AddStatus status;
+        recursive_add(0, 0, barcode_seq, duplicates, status);
         ++counter;
-        return has_iupac;
+        return status;
     }
 
 public:
@@ -273,9 +318,10 @@ public:
 
     /**
      * @param barcode_pool Pool of known barcode sequences.
-     * @param duplicates Whether duplicated sequences in `barcode_pool` should be supported, see `add()`.
+     * @param duplicates How duplicate sequences in `barcode_pool` should be handled.
      */
-    AnyMismatches(const BarcodePool& barcode_pool, bool duplicates = false) : MismatchTrie(barcode_pool, duplicates) {}
+    AnyMismatches(const BarcodePool& barcode_pool, DuplicateAction duplicates = DuplicateAction::ERROR) : 
+        MismatchTrie(barcode_pool, duplicates) {}
 
 public:
     /**
@@ -395,9 +441,11 @@ public:
      * @param barcode_pool Possible set of known sequences for the variable region.
      * @param segments Length of each segment of the sequence.
      * Each entry should be positive and the sum should be equal to the total length of the barcode sequence.
-     * @param duplicates Whether duplicated sequences in `barcode_pool` should be supported, see `add()`.
+     * @param duplicates How duplicated sequences in `barcode_pool` should be handled.
      */
-    SegmentedMismatches(const BarcodePool& barcode_pool, std::array<int, num_segments> segments, bool duplicates = false) : SegmentedMismatches(segments) {
+    SegmentedMismatches(const BarcodePool& barcode_pool, std::array<int, num_segments> segments, DuplicateAction duplicates = DuplicateAction::ERROR) : 
+        SegmentedMismatches(segments) 
+    {
         if (length != barcode_pool.length) {
             throw std::runtime_error("length of barcode sequences should equal the sum of segment lengths");
         }

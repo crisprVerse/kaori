@@ -38,9 +38,17 @@ public:
      * @param search_reverse Should the search be performed on the reverse strand of the read sequence?
      * @param barcode_pool Known sequences for the single variable region in `template_seq`.
      * @param max_mismatches Maximum number of mismatches to consider across the entire template sequence.
-     * @param duplicates Whether duplicate sequences are allowed in `barcode_pool`, see `MismatchTrie`.
+     * @param duplicates How duplicate sequences in `barcode_pool` should be handled.
      */
-    SimpleSingleMatch(const char* template_seq, size_t template_length, bool search_forward, bool search_reverse, const BarcodePool& barcode_pool, int max_mismatches = 0, bool duplicates = false) : 
+    SimpleSingleMatch(
+        const char* template_seq, 
+        size_t template_length, 
+        bool search_forward, 
+        bool search_reverse, 
+        const BarcodePool& barcode_pool, 
+        int max_mismatches = 0, 
+        DuplicateAction duplicates = DuplicateAction::ERROR
+    ) : 
         num_options(barcode_pool.pool.size()),
         forward(search_forward), 
         reverse(search_reverse),

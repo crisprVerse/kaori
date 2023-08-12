@@ -188,7 +188,7 @@ TEST(SimpleBarcodeSearch, Duplicates) {
 
     EXPECT_ANY_THROW({
         try {
-            kaori::SimpleBarcodeSearch stuff(ptrs, 0, false, false);
+            kaori::SimpleBarcodeSearch stuff(ptrs, 0, false, kaori::DuplicateAction::ERROR);
         } catch (std::exception& e) {
             EXPECT_TRUE(std::string(e.what()).find("duplicate") != std::string::npos);
             throw e;
@@ -197,7 +197,7 @@ TEST(SimpleBarcodeSearch, Duplicates) {
 
     // Gets the first occurrence.
     {
-        kaori::SimpleBarcodeSearch stuff(ptrs, 0, false, true);
+        kaori::SimpleBarcodeSearch stuff(ptrs, 0, false, kaori::DuplicateAction::FIRST);
         auto state = stuff.initialize();
 
         stuff.search("ACGT", state);
@@ -209,7 +209,7 @@ TEST(SimpleBarcodeSearch, Duplicates) {
 
     // ... even with a mismatch.
     {
-        kaori::SimpleBarcodeSearch stuff(ptrs, 1, false, true);
+        kaori::SimpleBarcodeSearch stuff(ptrs, 1, false, kaori::DuplicateAction::FIRST);
         auto state = stuff.initialize();
 
         stuff.search("ACGA", state);
@@ -219,6 +219,45 @@ TEST(SimpleBarcodeSearch, Duplicates) {
         stuff.search("AGTA", state);
         EXPECT_EQ(state.index, 2);
         EXPECT_EQ(state.mismatches, 1);
+    }
+
+    // Gets the last occurrence.
+    {
+        kaori::SimpleBarcodeSearch stuff(ptrs, 0, false, kaori::DuplicateAction::LAST);
+        auto state = stuff.initialize();
+
+        stuff.search("ACGT", state);
+        EXPECT_EQ(state.index, 1);
+
+        stuff.search("AGTT", state);
+        EXPECT_EQ(state.index, 3);
+    }
+
+    // Gets no occurrence.
+    {
+        kaori::SimpleBarcodeSearch stuff(ptrs, 0, false, kaori::DuplicateAction::NONE);
+        auto state = stuff.initialize();
+
+        stuff.search("ACGT", state);
+        EXPECT_EQ(state.index, -1);
+
+        stuff.search("AGTT", state);
+        EXPECT_EQ(state.index, -1);
+    }
+
+    // Continues getting no occurrences, even with > 2 occurrences of the duplicates.
+    {
+        std::vector<std::string> things { "ACGT", "ACGT", "AGTT", "ACGT", "AGTT", "AGTT", "ACGT" };
+        kaori::BarcodePool ptrs(things);
+
+        kaori::SimpleBarcodeSearch stuff(ptrs, 0, false, kaori::DuplicateAction::NONE);
+        auto state = stuff.initialize();
+
+        stuff.search("ACGT", state);
+        EXPECT_EQ(state.index, -1);
+
+        stuff.search("AGTT", state);
+        EXPECT_EQ(state.index, -1);
     }
 }
 

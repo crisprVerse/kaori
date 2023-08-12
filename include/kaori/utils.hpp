@@ -5,8 +5,26 @@
 #include <vector>
 #include <array>
 
-namespace {
+/**
+ * @file utils.hpp
+ * @brief Utilites for sequence matching.
+ */
 
+namespace kaori {
+
+/**
+ * How to deal with duplicated sequences in the pool of known barcodes.
+ *
+ * - `FIRST`: keep the first encountered instance of a set of duplicates.
+ * - `LAST`: keep the last encountered instance of a set of duplicates.
+ * - `NONE`: do not keep any duplicate sequences.
+ * - `ERROR`: throw an error upon observing a duplicate sequence.
+ */
+enum class DuplicateAction : char { FIRST, LAST, NONE, ERROR };
+
+/**
+ * @cond
+ */
 template<bool allow_n_ = false, bool allow_iupac_ = false>
 char complement_base(char b) {
     char output;
@@ -165,6 +183,9 @@ void sort_combinations(std::vector<std::array<int, V> >& combinations, const std
         combinations.swap(copy);
     }
 }
+/**
+ * @endcond
+ */
 
 }
 
