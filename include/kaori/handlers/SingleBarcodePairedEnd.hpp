@@ -23,29 +23,73 @@ namespace kaori {
  */
 template<size_t max_size>
 class SingleBarcodePairedEnd {
+    /**
+     * @brief Optional parameters for `SingleBarcodePairedEnd`.
+     */
+    struct Options {
+        /** 
+         * Whether to search only for the first match.
+         * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
+         */
+        bool use_first = true;
+
+        /** 
+         * Maximum number of mismatches allowed across the target sequence.
+         */
+        int max_mismatches = 0;
+
+        /**
+         * Should the search be performed on the forward strand of each read sequence?
+         */
+        bool search_forward = true;
+
+        /**
+         * Should the search be performed on the reverse strand of each read sequence?
+         */
+        bool search_reverse = false;
+
+        /** 
+         * How duplicated barcode sequences should be handled.
+         */
+        DuplicateAction duplicates = DuplicateAction::ERROR;
+    };
+
 public:
     /**
-     * @param[in] template_seq Template sequence for the first barcode.
+     * @param[in] template_seq Template sequence for the target.
      * This should contain exactly one variable region.
      * @param template_length Length of the template.
      * This should be less than or equal to `max_size`.
-     * @param reverse Whether to search the reverse strand of each read.
      * @param barcode_pool Known barcode sequences for the variable region.
-     * @param max_mismatches Maximum number of mismatches allowed across the target sequence.
+     * @param options Optional parameters.
      */
-    SingleBarcodePairedEnd(const char* template_seq, size_t template_length, bool reverse, const BarcodePool& barcode_pool, int max_mismatches = 0) : 
-        matcher(template_seq, template_length, !reverse, reverse, barcode_pool, max_mismatches), counts(barcode_pool.size()) {}
-        
+    SingleBarcodePairedEnd(const char* template_seq, size_t template_length, const BarcodePool& barcode_pool, const Options& options) :
+        matcher(
+            template_seq, 
+            template_length, 
+            barcode_pool, 
+            [&]{
+                SimpleSingleMatch<max_size>::Options ssopt;
+                ssopt.search_forward = options.search_forward;
+                ssopt.search_reverse = options.search_reverse;
+                ssopt.max_mismatches = options.max_mismatches;
+                ssopt.duplicates = options.duplicates;
+                return ssopt;
+            }()
+        ),
+        counts(barcode_pool.size()),
+        use_first(options.use_first)
+    {}
+
     /**
-     * @param t Whether to search only for the first match.
-     * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
-     *
-     * @return A reference to this `SingleBarcodePairedEnd` instance.
+     * @param[in] template_seq Template sequence for the target.
+     * This should contain exactly one variable region.
+     * @param template_length Length of the template.
+     * This should be less than or equal to `max_size`.
+     * @param barcode_pool Known barcode sequences for the variable region.
      */
-    SingleBarcodePairedEnd& set_first(bool t = true) {
-        use_first = t;
-        return *this;
-    }
+    SingleBarcodePairedEnd(const char* template_seq, size_t template_length, const BarcodePool& barcode_pool) :
+        SingleBarcodePairedEnd(template_seq, template_length, barcode_pool, Options()) {}
 
 public:
     /**

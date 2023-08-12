@@ -28,29 +28,67 @@ template<size_t max_size>
 class RandomBarcodeSingleEnd {
 public:
     /**
+     * @brief Optional parameters for `SingleBarcodeSingleEnd`.
+     */
+    struct Options {
+        /** 
+         * Maximum number of mismatches allowed across the target sequence.
+         */
+        int max_mismatches = 0;
+
+        /** 
+         * Whether to search only for the first match.
+         * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
+         */
+        bool use_first = true;
+
+        /** 
+         * Should the search be performed on the forward strand of the read sequence?
+         */
+        bool search_forward = true; 
+
+        /**
+         * Should the search be performed on the reverse strand of the read sequence?
+         */
+        bool search_reverse = false;
+    };
+
+public:
+    /**
      * @param[in] template_seq Template sequence for the first barcode.
      * This should contain exactly one variable region.
      * @param template_length Length of the template.
      * This should be less than or equal to `max_size`.
-     * @param strand Strand to use for searching the read sequence - forward (0), reverse (1) or both (2).
-     * @param max_mismatches Maximum number of mismatches allowed across the target sequence.
+     *
+     * @param options Optional parameters.
      */
-    RandomBarcodeSingleEnd(const char* template_seq, size_t template_length, int strand, int max_mismatches = 0) : 
-        forward(strand != 1), 
-        reverse(strand != 0),
-        constant(template_seq, template_length, forward, reverse),
-        max_mm(max_mismatches) {}
+    RandomBarcodeSingleEnd(const char* template_seq, size_t template_length, const Options& options) :
+        forward(options.search_forward),
+        reverse(options.search_reverse),
+        constant(
+            template_seq, 
+            template_length,
+            [&]{
+                ScanTemplate<max_size>::Options sopt;
+                sopt.search_forward = options.search_forward;
+                sopt.search_reverse = options.search_reverse;
+                return sopt;
+            }()
+        ),
+        max_mm(options.max_mismatches),
+        use_first(options.use_first)
+    {}
 
     /**
-     * @param t Whether to search only for the first match.
-     * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
+     * @param[in] template_seq Template sequence for the first barcode.
+     * This should contain exactly one variable region.
+     * @param template_length Length of the template.
+     * This should be less than or equal to `max_size`.
      *
-     * @return A reference to this `RandomBarcodeSingleEnd` instance.
+     * This overload delegates to the other constructor with default `Options`.
      */
-    RandomBarcodeSingleEnd& set_first(bool t = true) {
-        use_first = t;
-        return *this;
-    }
+    RandomBarcodeSingleEnd(const char* template_seq, size_t template_length) :
+        RandomBarcodeSingleEnd(template_seq, template_length, Options()) {}
 
 private:
     bool use_first = true;

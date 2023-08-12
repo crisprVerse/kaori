@@ -31,19 +31,58 @@ template<size_t max_size, size_t num_variable>
 class CombinatorialBarcodesSingleEnd {
 public:
     /**
+     * @brief Optional parameters for `SingleBarcodeSingleEnd`.
+     */
+    struct Options {
+        /**
+         * Maximum number of mismatches allowed across the target sequence.
+         */
+        int max_mismatches = 0;
+
+        /** @param Whether to search only for the first match.
+         * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
+         */
+        bool use_first = true;
+
+        /**
+         * Should the search be performed on the forward strand of the read sequence?
+         */
+        bool search_forward = true;
+
+        /**
+         * Should the search be performed on the reverse strand of the read sequence?
+         */
+        bool search_reverse = false;
+
+        /**
+         * How duplicated barcode sequences should be handled.
+         */
+        DuplicateAction duplicates = DuplicateAction::ERROR;
+    };
+
+public:
+    /**
      * @param[in] template_seq Template sequence for the first barcode.
      * This should contain exactly `num_variable` variable regions.
      * @param template_length Length of the template.
      * This should be less than or equal to `max_size`.
-     * @param strand Strand to use when searching the read sequence - forward (0), reverse (1) or both (2).
      * @param barcode_pools Array containing the known barcode sequences for each of the variable regions, in the order of their appearance in the template sequence.
-     * @param max_mismatches Maximum number of mismatches across the entire target sequence.
+     * @param Optional parameters.
      */
-    CombinatorialBarcodesSingleEnd(const char* template_seq, size_t template_length, int strand, const std::array<BarcodePool, num_variable>& barcode_pools, int max_mismatches = 0) : 
-        forward(strand != 1),
-        reverse(strand != 0),
-        max_mm(max_mismatches),
-        constant_matcher(template_seq, template_length, forward, reverse)
+    CombinatorialBarcodesSingleEnd(const char* template_seq, size_t template_length, const std::array<BarcodePool, num_variable>& barcode_pools, const Options& options) :
+        forward(options.search_forward),
+        reverse(options.search_reverse),
+        max_mm(options.max_mismatches),
+        constant_matcher(
+            template_seq, 
+            template_length, 
+            [&]{
+                ScanTemplate<max_size>::Options sopt;
+                sopt.search_forward = options.search_forward;
+                sopt.search_reverse = options.search_reverse;
+                return sopt;
+            }()
+        )
     {
         const auto& regions = constant_matcher.variable_regions();
         if (regions.size() != num_variable) { 
@@ -63,15 +102,21 @@ public:
             num_options[i] = barcode_pools[i].pool.size();
         }
 
+        SimpleBarcodeSearch::Options bopt;
+        bopt.max_mismatches = options.max_mismatches;
+        bopt.duplicates = options.duplicates;
+
         if (forward) {
+            bopt.reverse = false;
             for (size_t i = 0; i < num_variable; ++i) {
-                forward_lib[i] = SimpleBarcodeSearch(barcode_pools[i], max_mm);
+                forward_lib[i] = SimpleBarcodeSearch(barcode_pools[i], bopt);
             }
         }
 
         if (reverse) {
+            bopt.reverse = true;
             for (size_t i = 0; i < num_variable; ++i) {
-                reverse_lib[i] = SimpleBarcodeSearch(barcode_pools[num_variable - i - 1], max_mm, true);
+                reverse_lib[i] = SimpleBarcodeSearch(barcode_pools[num_variable - i - 1], bopt);
             }
         }
     }

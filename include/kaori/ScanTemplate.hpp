@@ -37,6 +37,22 @@ private:
 
 public:
     /**
+     * @brief Optional parameters for `ScanTemplate`.
+     */
+    struct Options {
+        /** 
+         * Should the search be performed on the forward strand of the read sequence?
+         */
+        bool search_forward = true; 
+
+        /**
+         * Should the search be performed on the reverse strand of the read sequence?
+         */
+        bool search_reverse = false;
+    };
+
+public:
+    /**
      * Default constructor.
      * This is only provided to enable composition, the resulting object should not be used until it is copy-assigned to a properly constructed instance.
      */
@@ -48,11 +64,10 @@ public:
      * Variable regions should be marked with `-`.
      * @param template_length Length of the array pointed to by `template_seq`.
      * This should be less than or equal to `max_size`.
-     * @param search_forward Should the search be performed on the forward strand of the read sequence?
-     * @param search_reverse Should the search be performed on the reverse strand of the read sequence?
+     * @param options Optional parameters.
      */
-    ScanTemplate(const char* template_seq, size_t template_length, bool search_forward, bool search_reverse) : 
-        length(template_length), forward(search_forward), reverse(search_reverse)
+    ScanTemplate(const char* template_seq, size_t template_length, const Options& options) : 
+        length(template_length), forward(options.search_forward), reverse(options.search_reverse)
     {
         if (length > max_size) {
             throw std::runtime_error("maximum template size should be " + std::to_string(max_size) + " bp");
@@ -94,6 +109,18 @@ public:
             }
         }
     }
+
+    /**
+     * @param[in] template_seq Pointer to a character array containing the template sequence.
+     * Constant sequences should only contain `A`, `C`, `G` or `T` (or their lower-case equivalents).
+     * Variable regions should be marked with `-`.
+     * @param template_length Length of the array pointed to by `template_seq`.
+     * This should be less than or equal to `max_size`.
+     *
+     * This overload delegates to the other constructor with default `Options`.
+     */
+    ScanTemplate(const char* template_seq, size_t template_length, const Options& options) :
+        ScanTemplate(template_seq, template_length, Options()) {}
 
 public:
     /**

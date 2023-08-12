@@ -25,41 +25,99 @@ namespace kaori {
  */
 template<size_t max_size>
 class DualBarcodes { 
+    /**
+     * @brief Optional parameters for `SingleBarcodeSingleEnd`.
+     */
+    struct Options {
+        /** 
+         * Whether to search only for the first match.
+         * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
+         */
+        bool use_first = true;
+
+        /** 
+         * Maximum number of mismatches allowed across the first target sequence.
+         */
+        int max_mismatches1 = 0;
+
+        /**
+         * Should the search for the first target be performed on the reverse strand of the read sequence?
+         * If `true`, no search is performed on the forward strand.
+         */
+        bool search_reverse1 = false;
+
+        /** 
+         * Maximum number of mismatches allowed across the second target sequence.
+         */
+        int max_mismatches2 = 0;
+
+        /**
+         * Should the search for the second target be performed on the reverse strand of the read sequence?
+         * If `true`, no search is performed on the forward strand.
+         */
+        bool search_reverse2 = false;
+
+        /**
+         * How duplicated barcode sequences should be handled.
+         */
+        DuplicateAction duplicates = DuplicateAction::ERROR;
+
+        /**
+         * Whether the reads are randomized with respect to the first/second target sequences.
+         * If `false`, the first read is searched for the first target sequence only, and the second read is searched for the second target sequence only.
+         * If `true`, an additional search will be performed in the opposite orientation.
+         */
+        bool random = false;
+    };
+
 public:
     /**
      * @param[in] template_seq1 Pointer to a character array containing the first template sequence. 
      * This should contain exactly one variable region.
      * @param template_length1 Length of the first template.
      * This should be less than or equal to `max_size`.
-     * @param reverse1 Whether to search the reverse strand of the read for the first template.
      * @param barcode_pool1 Pool of known barcode sequences for the variable region in the first template.
-     * @param max_mismatches1 Maximum number of mismatches across the target sequence corresponding to the first template.
      * @param[in] template_seq2 Pointer to a character array containing the second template sequence. 
      * This should contain exactly one variable region.
      * @param template_length2 Length of the second template.
      * This should be less than or equal to `max_size`.
-     * @param reverse2 Whether to search the reverse strand of the read for the second template.
      * @param barcode_pool2 Pool of known barcode sequences for the variable region in the second template.
-     * @param max_mismatches2 Maximum number of mismatches across the target sequence corresponding to the second template.
-     * @param random Whether the reads are randomized with respect to the first/second target sequences.
-     * If `false`, the first read is searched for the first target sequence only, and the second read is searched for the second target sequence only.
-     * If `true`, an additional search will be performed in the opposite orientation.
+     * @param Optional parameters.
      *
      * `barcode_pool1` and `barcode_pool2` are expected to have the same number of barcodes (possibly duplicated).
      * Corresponding values across the two pools define a particular combination of dual barcodes. 
      */
     DualBarcodes(
-        const char* template_seq1, size_t template_length1, bool reverse1, const BarcodePool& barcode_pool1, int max_mismatches1, 
-        const char* template_seq2, size_t template_length2, bool reverse2, const BarcodePool& barcode_pool2, int max_mismatches2,
-        bool random = false
+        const char* template_seq1, size_t template_length1, const BarcodePool& barcode_pool1, 
+        const char* template_seq2, size_t template_length2, const BarcodePool& barcode_pool2,
+        const Options& options
     ) :
-        search_reverse1(reverse1),
-        search_reverse2(reverse2),
-        constant1(template_seq1, template_length1, !search_reverse1, search_reverse1),
-        constant2(template_seq2, template_length2, !search_reverse2, search_reverse2),
-        max_mm1(max_mismatches1),
-        max_mm2(max_mismatches2),
-        randomized(random)
+        search_reverse1(options.search_reverse1),
+        search_reverse2(options.search_reverse2),
+        constant1(
+            template_seq1, 
+            template_length1,
+            [&]{
+                ScanTemplate<max_size>::Options copt;
+                copt.search_forward = !options.search_reverse1;
+                copt.search_reverse = options.search_reverse1;
+                return copt;
+            }()
+        ),
+        constant2(
+            template_seq2, 
+            template_length2, 
+            [&]{
+                ScanTemplate<max_size>::Options copt;
+                copt.search_forward = !options.search_reverse2;
+                copt.search_reverse = options.search_reverse2;
+                return copt;
+            }()
+        ),
+        max_mm1(options.max_mismatches1),
+        max_mm2(options.max_mismatches2),
+        randomized(options.random),
+        use_first(options.use_first)
     {
         auto num_options = barcode_pool1.size();
         if (num_options != barcode_pool2.size()) {
@@ -126,19 +184,13 @@ public:
         varlib = SegmentedBarcodeSearch(
             combined_set,
             std::array<int, 2>{ static_cast<int>(len1), static_cast<int>(len2) }, 
-            std::array<int, 2>{ max_mm1, max_mm2 }
+            [&]{
+                SegmentedBarcodeSearch<2>::Options bopt;
+                bopt.max_mismatches = std::array<int, 2>{ max_mm1, max_mm2 };
+                bopt.duplicates = options.duplicates;
+                return bopt;
+            }()
         );
-    }
-
-    /**
-     * @param t Whether to search only for the first match to valid target sequence(s) across both reads.
-     * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
-     *
-     * @return A reference to this `DualBarcodes` instance.
-     */
-    DualBarcodes& set_first(bool t = true) {
-        use_first = t;
-        return *this;
     }
 
 public:

@@ -6,7 +6,6 @@
 #include <stdexcept>
 #include <numeric>
 #include "utils.hpp"
-#include "BarcodePool.hpp"
 
 /**
  * @file MismatchTrie.hpp
@@ -34,16 +33,6 @@ public:
      * @param barcode_length Length of the barcodes in the pool.
      */
     MismatchTrie(size_t barcode_length = 0) : length(barcode_length), pointers(4, status_not_present), counter(0) {}
-
-    /**
-     * @param barcode_pool Pool of known barcode sequences.
-     * @param duplicates How duplicated sequences in `barcode_pool` should be handled.
-     */
-    MismatchTrie(const BarcodePool& barcode_pool, DuplicateAction duplicates = DuplicateAction::ERROR) : MismatchTrie(barcode_pool.length) {
-        for (auto s : barcode_pool.pool) {
-            add(s, duplicates);
-        }
-    }
 
 public:
     /** 
@@ -316,13 +305,6 @@ public:
      */
     AnyMismatches(size_t barcode_length = 0) : MismatchTrie(barcode_length) {}
 
-    /**
-     * @param barcode_pool Pool of known barcode sequences.
-     * @param duplicates How duplicate sequences in `barcode_pool` should be handled.
-     */
-    AnyMismatches(const BarcodePool& barcode_pool, DuplicateAction duplicates = DuplicateAction::ERROR) : 
-        MismatchTrie(barcode_pool, duplicates) {}
-
 public:
     /**
      * @param[in] search_seq Pointer to a character array containing a sequence to use for searching the barcode pool.
@@ -434,23 +416,6 @@ public:
     SegmentedMismatches(std::array<int, num_segments> segments) : MismatchTrie(std::accumulate(segments.begin(), segments.end(), 0)), boundaries(segments) {
         for (size_t i = 1; i < num_segments; ++i) {
             boundaries[i] += boundaries[i-1];
-        }
-    }
-
-    /**
-     * @param barcode_pool Possible set of known sequences for the variable region.
-     * @param segments Length of each segment of the sequence.
-     * Each entry should be positive and the sum should be equal to the total length of the barcode sequence.
-     * @param duplicates How duplicated sequences in `barcode_pool` should be handled.
-     */
-    SegmentedMismatches(const BarcodePool& barcode_pool, std::array<int, num_segments> segments, DuplicateAction duplicates = DuplicateAction::ERROR) : 
-        SegmentedMismatches(segments) 
-    {
-        if (length != barcode_pool.length) {
-            throw std::runtime_error("length of barcode sequences should equal the sum of segment lengths");
-        }
-        for (auto s : barcode_pool.pool) {
-            add(s, duplicates);
         }
     }
 

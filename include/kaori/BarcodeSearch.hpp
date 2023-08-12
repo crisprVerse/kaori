@@ -106,21 +106,45 @@ void matcher_in_the_rye(const std::string& x, const Cache& cache, const Trie& tr
 class SimpleBarcodeSearch {
 public:
     /**
+     * @brief Optional parameters for `SimpleBarcodeSearch`.
+     */
+    struct Options {
+        /**
+         * Maximum number of mismatches for any search performed by `SimpleBarcodeSearch::search`.
+         */
+        int max_mismatches = 0;
+
+        /** 
+         * Whether to reverse-complement the barcode sequences before indexing them.
+         */
+        bool reverse = false;
+
+        /** 
+         * How duplicated barcode sequences should be handled.
+         */
+        DuplicateAction duplicates = DuplicateAction::ERROR;
+    };
+
+public:
+    /**
      * Default constructor.
+     * This is only provided for composition purposes; methods of this class should only be called on properly constructed instance.
      */
     SimpleBarcodeSearch() {}
 
     /**
      * @param barcode_pool Pool of barcode sequences.
-     * @param max_mismatches Maximum number of mismatches for any search performed by this class.
-     * @param reverse Whether to reverse-complement the barcode sequences.
-     * @param duplicates How duplicated `sequences` in `barcode_pool` should be handled.
+     *
+     * This is an overload that delegates to the other constructor with default `Options`.
      */
-    SimpleBarcodeSearch(const BarcodePool& barcode_pool, int max_mismatches = 0, bool reverse = false, DuplicateAction duplicates = DuplicateAction::ERROR) : 
-        trie(barcode_pool.length), 
-        max_mm(max_mismatches) 
-    {
-        fill_library(barcode_pool.pool, exact, trie, reverse, duplicates);
+    SimpleBarcodeSearch(const BarcodePool& barcode_pool) : SimpleBarcodeSeach(barcode_pool, Options()) {}
+
+    /**
+     * @param barcode_pool Pool of barcode sequences.
+     * @param options Optional parameters for the search.
+     */
+    SimpleBarcodeSearch(const BarcodePool& barcode_pool, const Options& options) : trie(barcode_pool.length), max_mm(options.max_mismatches) {
+        fill_library(barcode_pool.pool, exact, trie, options.reverse, options.duplicates);
         return;
     }
 
@@ -274,6 +298,37 @@ template<size_t num_segments>
 class SegmentedBarcodeSearch {
 public:
     /**
+     * @brief Optional parameters for a `SegmentedBarcodeSearch`.
+     */
+    struct Options {
+        /**
+         * @param max_mismatch_per_segment Maximum number of mismatches per segment.
+         * This is used to fill `max_mismatches`.
+         */
+        Options(int max_mismatch_per_segment = 0) {
+            max_mismatches.fill(mismatch_per_segment);
+        }
+        
+        /**
+         * Maximum number of mismatches in each segment for `SegmentedBarcodeSearch::search()`.
+         * All values should be non-negative.
+         * Defaults to an all-zero array in the `Options()` constructor.
+         */
+        std::array<int, num_segments> max_mismatches;
+
+        /** 
+         * Whether to reverse-complement the barcode sequences before indexing them.
+         */
+        bool reverse = false;
+
+        /** 
+         * How duplicated barcode sequences should be handled.
+         */
+        DuplicateAction duplicates = DuplicateAction::ERROR;
+    };
+
+public:
+    /**
      * Default constructor.
      */
     SegmentedBarcodeSearch() {}
@@ -282,25 +337,30 @@ public:
      * @param barcode_pool Pool of barcode sequences.
      * @param segments Size of each segment.
      * All values should be positive and their sum should be equal to the barcode length.
-     * @param max_mismatches Maximum number of mismatches in each segment.
-     * All values should be non-negative.
-     * @param reverse Whether to reverse-complement the barcode sequences.
-     * @param duplicates How duplicated `sequences` in `barcode_pool` should be handled.
+     *
+     * This is an overload that delegates to the other constructor with default `Options`.
+     */
+    SegmentedBarcodeSearch(const BarcodePool& barcode_pool, std::array<int, num_segments> segments) :
+        SegmentedBarcodeSearch(barcode_pool, segments, Options()) {}
+
+    /**
+     * @param barcode_pool Pool of barcode sequences.
+     * @param segments Size of each segment.
+     * All values should be positive and their sum should be equal to the barcode length.
+     * @param options Optional parameters.
      */
     SegmentedBarcodeSearch(
         const BarcodePool& barcode_pool, 
         std::array<int, num_segments> segments, 
-        std::array<int, num_segments> max_mismatches, 
-        bool reverse = false, 
-        DuplicateAction duplicates = DuplicateAction::ERROR
+        const Options& options
     ) : 
         trie(segments), 
-        max_mm(max_mismatches) 
+        max_mm(options.max_mismatches) 
     {
         if (barcode_pool.length != trie.get_length()) {
             throw std::runtime_error("variable sequences should have the same length as the sum of segment lengths");
         }
-        fill_library(barcode_pool.pool, exact, trie, reverse, duplicates);
+        fill_library(barcode_pool.pool, exact, trie, options.reverse, options.duplicates);
         return;
     }
 

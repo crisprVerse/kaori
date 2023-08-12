@@ -31,29 +31,58 @@ template<size_t max_size>
 class SimpleSingleMatch {
 public:
     /**
+     * @brief Optional parameters for `SimpleSingleMatch`.
+     */
+    struct Options {
+        /**
+         * Maximum number of mismatches for any search performed by `SimpleBarcodeSearch::search`.
+         */
+        int max_mismatches = 0;
+
+        /** 
+         * How duplicated barcode sequences should be handled.
+         */
+        DuplicateAction duplicates = DuplicateAction::ERROR;
+
+        /** 
+         * Should the search be performed on the forward strand of the read sequence?
+         */
+        bool search_forward = true; 
+
+        /**
+         * Should the search be performed on the reverse strand of the read sequence?
+         */
+        bool search_reverse = false;
+    };
+
+public:
+    /**
      * @param[in] template_seq Pointer to a character array containing the template sequence, see `ScanTemplate`.
      * @param template_length Length of the array pointed to by `barcode_length`.
      * This should be less than or equal to `max_size`.
-     * @param search_forward Should the search be performed on the forward strand of the read sequence?
-     * @param search_reverse Should the search be performed on the reverse strand of the read sequence?
      * @param barcode_pool Known sequences for the single variable region in `template_seq`.
-     * @param max_mismatches Maximum number of mismatches to consider across the entire template sequence.
-     * @param duplicates How duplicate sequences in `barcode_pool` should be handled.
+     * @param options Optional parameters.
      */
     SimpleSingleMatch(
         const char* template_seq, 
         size_t template_length, 
-        bool search_forward, 
-        bool search_reverse, 
         const BarcodePool& barcode_pool, 
-        int max_mismatches = 0, 
-        DuplicateAction duplicates = DuplicateAction::ERROR
+        const Options& options
     ) : 
         num_options(barcode_pool.pool.size()),
-        forward(search_forward), 
-        reverse(search_reverse),
-        max_mm(max_mismatches),
-        constant(template_seq, template_length, forward, reverse)
+        forward(options.search_forward), 
+        reverse(options.search_reverse),
+        max_mm(options.max_mismatches),
+        constant(
+            template_seq, 
+            template_length,
+            [&]{
+                ScanTemplate<max_size>::Options opt;
+                opt.search_forward = options.search_forward;
+                opt.search_reverse = options.search_reverse;
+                return opt;
+            }()
+        )
     {
         // Exact strandedness doesn't matter here, just need the number and length.
         const auto& regions = constant.variable_regions();
@@ -67,11 +96,17 @@ public:
                 ") should be the same as the barcode_pool region (" + std::to_string(var_length) + ")");
         }
 
+        SimpleBarcodeSearch::Options bs_opt;
+        bs_opt.duplicates = options.duplicates;
+        bs_opt.max_mismatches = max_mm;
+
         if (forward) {
-            forward_lib = SimpleBarcodeSearch(barcode_pool, max_mm, false, duplicates);
+            bs_opt.reverse = false;
+            forward_lib = SimpleBarcodeSearch(barcode_pool, bs_opt);
         }
         if (reverse) {
-            reverse_lib = SimpleBarcodeSearch(barcode_pool, max_mm, true, duplicates);
+            bs_opt.reverse = true;
+            reverse_lib = SimpleBarcodeSearch(barcode_pool, bs_opt);
         }
     }
 
