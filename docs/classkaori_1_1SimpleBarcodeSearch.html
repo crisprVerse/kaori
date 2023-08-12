@@ -98,8 +98,8 @@ Classes</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a9cd99d9aec1bb9686a75aa128e70f077"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html#a9cd99d9aec1bb9686a75aa128e70f077">SimpleBarcodeSearch</a> ()</td></tr>
 <tr class="separator:a9cd99d9aec1bb9686a75aa128e70f077"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59fa55379464fd1ffc9fb22d54b7b86b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html#a59fa55379464fd1ffc9fb22d54b7b86b">SimpleBarcodeSearch</a> (const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, int max_mismatches=0, bool reverse=false, bool duplicates=false)</td></tr>
-<tr class="separator:a59fa55379464fd1ffc9fb22d54b7b86b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44c77e24d0579c364ceb1c4bee99b943"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html#a44c77e24d0579c364ceb1c4bee99b943">SimpleBarcodeSearch</a> (const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, int max_mismatches=0, bool reverse=false, DuplicateAction duplicates=DuplicateAction::ERROR)</td></tr>
+<tr class="separator:a44c77e24d0579c364ceb1c4bee99b943"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac71e5409f61bf03009046b208de7677c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html#ac71e5409f61bf03009046b208de7677c">initialize</a> () const</td></tr>
 <tr class="separator:ac71e5409f61bf03009046b208de7677c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac80ba1b9394963f2befe4154da98ef1e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html#ac80ba1b9394963f2befe4154da98ef1e">reduce</a> (<a class="el" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a> &amp;state)</td></tr>
@@ -139,8 +139,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a59fa55379464fd1ffc9fb22d54b7b86b" name="a59fa55379464fd1ffc9fb22d54b7b86b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a59fa55379464fd1ffc9fb22d54b7b86b">&#9670;&#160;</a></span>SimpleBarcodeSearch() <span class="overload">[2/2]</span></h2>
+<a id="a44c77e24d0579c364ceb1c4bee99b943" name="a44c77e24d0579c364ceb1c4bee99b943"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44c77e24d0579c364ceb1c4bee99b943">&#9670;&#160;</a></span>SimpleBarcodeSearch() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -169,8 +169,8 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>duplicates</em> = <code>false</code>&#160;</td>
+          <td class="paramtype">DuplicateAction&#160;</td>
+          <td class="paramname"><em>duplicates</em> = <code>DuplicateAction::ERROR</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -189,7 +189,7 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">barcode_pool</td><td>Pool of barcode sequences. </td></tr>
     <tr><td class="paramname">max_mismatches</td><td>Maximum number of mismatches for any search performed by this class. </td></tr>
     <tr><td class="paramname">reverse</td><td>Whether to reverse-complement the barcode sequences. </td></tr>
-    <tr><td class="paramname">duplicates</td><td>Whether duplicated <code>sequences</code> in <code>barcode_pool</code> are supported, see <code><a class="el" href="classkaori_1_1MismatchTrie.html" title="Base class for the mismatch search.">MismatchTrie</a></code>. </td></tr>
+    <tr><td class="paramname">duplicates</td><td>How duplicated <code>sequences</code> in <code>barcode_pool</code> should be handled. </td></tr>
   </table>
   </dd>
 </dl>

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['finished_0',['finished',['../structkaori_1_1ScanTemplate_1_1State.html#a98965775bac0016d1d8e9123fef407df',1,'kaori::ScanTemplate::State']]],
-  ['forward_5fmismatches_1',['forward_mismatches',['../structkaori_1_1ScanTemplate_1_1State.html#a8b5f01955049b24e53978e418454f2f6',1,'kaori::ScanTemplate::State']]]
+  ['duplicate_5fcleared_0',['duplicate_cleared',['../structkaori_1_1MismatchTrie_1_1AddStatus.html#a297aacc1470e3973715970bcb58ed038',1,'kaori::MismatchTrie::AddStatus']]],
+  ['duplicate_5freplaced_1',['duplicate_replaced',['../structkaori_1_1MismatchTrie_1_1AddStatus.html#a331be1a6918a267bb6d3a109c4249da9',1,'kaori::MismatchTrie::AddStatus']]]
 ];

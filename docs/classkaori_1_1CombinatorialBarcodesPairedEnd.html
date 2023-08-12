@@ -89,8 +89,8 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6970f2be6e5245fa398122c0513bd650"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#a6970f2be6e5245fa398122c0513bd650">CombinatorialBarcodesPairedEnd</a> (const char *template_seq1, size_t template_length1, bool reverse1, const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool1, int max_mismatches1, const char *template_seq2, size_t template_length2, bool reverse2, const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool2, int max_mismatches2, bool random=false, bool duplicates=false)</td></tr>
-<tr class="separator:a6970f2be6e5245fa398122c0513bd650"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ba4fde7539c786552703879041c451f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#a8ba4fde7539c786552703879041c451f">CombinatorialBarcodesPairedEnd</a> (const char *template_seq1, size_t template_length1, bool reverse1, const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool1, int max_mismatches1, const char *template_seq2, size_t template_length2, bool reverse2, const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool2, int max_mismatches2, bool random=false, DuplicateAction duplicates=DuplicateAction::ERROR)</td></tr>
+<tr class="separator:a8ba4fde7539c786552703879041c451f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad878be86789b3b2158fb58a9f7a5fcb4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html">CombinatorialBarcodesPairedEnd</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#ad878be86789b3b2158fb58a9f7a5fcb4">set_first</a> (bool t=true)</td></tr>
 <tr class="separator:ad878be86789b3b2158fb58a9f7a5fcb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea0444a01a0433516fc5ec55a46c2caa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#aea0444a01a0433516fc5ec55a46c2caa">sort</a> ()</td></tr>
@@ -115,8 +115,8 @@ class kaori::CombinatorialBarcodesPairedEnd&lt; max_size &gt;</div><p >Handler f
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a6970f2be6e5245fa398122c0513bd650" name="a6970f2be6e5245fa398122c0513bd650"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6970f2be6e5245fa398122c0513bd650">&#9670;&#160;</a></span>CombinatorialBarcodesPairedEnd()</h2>
+<a id="a8ba4fde7539c786552703879041c451f" name="a8ba4fde7539c786552703879041c451f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ba4fde7539c786552703879041c451f">&#9670;&#160;</a></span>CombinatorialBarcodesPairedEnd()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -195,8 +195,8 @@ template&lt;size_t max_size&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>duplicates</em> = <code>false</code>&#160;</td>
+          <td class="paramtype">DuplicateAction&#160;</td>
+          <td class="paramname"><em>duplicates</em> = <code>DuplicateAction::ERROR</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -223,7 +223,7 @@ template&lt;size_t max_size&gt; </div>
     <tr><td class="paramdir"></td><td class="paramname">barcode_pool2</td><td>Pool of known barcode sequences for the variable region in the second template. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">max_mismatches2</td><td>Maximum number of mismatches across the target sequence corresponding to the second template. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">random</td><td>Whether the reads are randomized with respect to the first/second target sequences. If <code>false</code>, the first read is searched for the first template only, and the second read is searched for the second template only. If <code>true</code>, an additional search will be performed in the opposite orientation. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">duplicates</td><td>Whether to allow duplicates in <code>barcode_pool1</code> and <code>barcode_pool2</code>, see <code><a class="el" href="classkaori_1_1MismatchTrie.html" title="Base class for the mismatch search.">MismatchTrie</a></code> for details. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">duplicates</td><td>How duplicates in <code>barcode_pool1</code> and <code>barcode_pool2</code> should be handled. </td></tr>
   </table>
   </dd>
 </dl>

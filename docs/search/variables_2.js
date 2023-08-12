@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['length_0',['length',['../structkaori_1_1BarcodePool.html#a5e5c62ef4f8c94e5be302b4c23d89eb5',1,'kaori::BarcodePool']]]
+  ['has_5fambiguous_0',['has_ambiguous',['../structkaori_1_1MismatchTrie_1_1AddStatus.html#a42224ebed07302774e03ebe323548e7d',1,'kaori::MismatchTrie::AddStatus']]]
 ];

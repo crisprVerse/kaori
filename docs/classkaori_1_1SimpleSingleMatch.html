@@ -96,8 +96,8 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ace7df8dcf101ecc34146a234083522b9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleSingleMatch.html#ace7df8dcf101ecc34146a234083522b9">SimpleSingleMatch</a> (const char *template_seq, size_t template_length, bool search_forward, bool search_reverse, const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, int max_mismatches=0, bool duplicates=false)</td></tr>
-<tr class="separator:ace7df8dcf101ecc34146a234083522b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac50430c8afc4c1c85d6249bfb2568ae4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleSingleMatch.html#ac50430c8afc4c1c85d6249bfb2568ae4">SimpleSingleMatch</a> (const char *template_seq, size_t template_length, bool search_forward, bool search_reverse, const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, int max_mismatches=0, DuplicateAction duplicates=DuplicateAction::ERROR)</td></tr>
+<tr class="separator:ac50430c8afc4c1c85d6249bfb2568ae4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2fc13e79badc66026c483e52616d0a7f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structkaori_1_1SimpleSingleMatch_1_1State.html">State</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleSingleMatch.html#a2fc13e79badc66026c483e52616d0a7f">initialize</a> () const</td></tr>
 <tr class="separator:a2fc13e79badc66026c483e52616d0a7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43789bbf0d5b23c8b6d6613d353e2813"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleSingleMatch.html#a43789bbf0d5b23c8b6d6613d353e2813">reduce</a> (<a class="el" href="structkaori_1_1SimpleSingleMatch_1_1State.html">State</a> &amp;state)</td></tr>
@@ -118,8 +118,8 @@ class kaori::SimpleSingleMatch&lt; max_size &gt;</div><p >Search for a template 
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ace7df8dcf101ecc34146a234083522b9" name="ace7df8dcf101ecc34146a234083522b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace7df8dcf101ecc34146a234083522b9">&#9670;&#160;</a></span>SimpleSingleMatch()</h2>
+<a id="ac50430c8afc4c1c85d6249bfb2568ae4" name="ac50430c8afc4c1c85d6249bfb2568ae4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac50430c8afc4c1c85d6249bfb2568ae4">&#9670;&#160;</a></span>SimpleSingleMatch()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -168,8 +168,8 @@ template&lt;size_t max_size&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>duplicates</em> = <code>false</code>&#160;</td>
+          <td class="paramtype">DuplicateAction&#160;</td>
+          <td class="paramname"><em>duplicates</em> = <code>DuplicateAction::ERROR</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -191,7 +191,7 @@ template&lt;size_t max_size&gt; </div>
     <tr><td class="paramdir"></td><td class="paramname">search_reverse</td><td>Should the search be performed on the reverse strand of the read sequence? </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">barcode_pool</td><td>Known sequences for the single variable region in <code>template_seq</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">max_mismatches</td><td>Maximum number of mismatches to consider across the entire template sequence. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">duplicates</td><td>Whether duplicate sequences are allowed in <code>barcode_pool</code>, see <code><a class="el" href="classkaori_1_1MismatchTrie.html" title="Base class for the mismatch search.">MismatchTrie</a></code>. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">duplicates</td><td>How duplicate sequences in <code>barcode_pool</code> should be handled. </td></tr>
   </table>
   </dd>
 </dl>

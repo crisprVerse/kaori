@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['reverse_0',['reverse',['../structkaori_1_1SimpleSingleMatch_1_1State.html#a8743bad035f3eb0ac58af3e4443ba063',1,'kaori::SimpleSingleMatch::State']]],
-  ['reverse_5fmismatches_1',['reverse_mismatches',['../structkaori_1_1ScanTemplate_1_1State.html#a31589bfc8a004fbc5472b6b5b47eef7d',1,'kaori::ScanTemplate::State']]]
+  ['mismatches_0',['mismatches',['../structkaori_1_1SimpleBarcodeSearch_1_1State.html#aedd1d05b0ab22edbb8df1c792d17d5d7',1,'kaori::SimpleBarcodeSearch::State::mismatches()'],['../structkaori_1_1SegmentedBarcodeSearch_1_1State.html#af44eaa2a5d16f1587d85f2135ce947ea',1,'kaori::SegmentedBarcodeSearch::State::mismatches()'],['../structkaori_1_1SimpleSingleMatch_1_1State.html#abd5685abec77017d7075454126725cc8',1,'kaori::SimpleSingleMatch::State::mismatches()']]]
 ];
