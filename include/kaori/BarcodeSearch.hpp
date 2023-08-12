@@ -39,7 +39,7 @@ void fill_library(
         } else {
             current.reserve(len);
             for (size_t j = 0; j < len; ++j) {
-                current += reverse_complement<true, true>(ptr[len - j - 1]);
+                current += complement_base<true, true>(ptr[len - j - 1]);
             }
         }
 

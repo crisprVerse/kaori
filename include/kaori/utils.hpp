@@ -8,7 +8,7 @@
 namespace {
 
 template<bool allow_n_ = false, bool allow_iupac_ = false>
-char reverse_complement(char b) {
+char complement_base(char b) {
     char output;
     switch (b) {
         case 'A': case 'a':
@@ -88,12 +88,7 @@ char reverse_complement(char b) {
     return output;
 }
 
-template<size_t N>
-void shift(std::bitset<N>& x) {
-    x <<= 4;
-}
-
-inline bool is_good(char b) {
+inline bool is_standard_base(char b) {
     bool okay = false;
     switch (b) {
         case 'A': case 'a': 
@@ -107,8 +102,13 @@ inline bool is_good(char b) {
 }
 
 template<size_t N>
-void add_base(std::bitset<N>& x, char b) {
-    shift(x);
+void shift_hash(std::bitset<N>& x) {
+    x <<= 4;
+}
+
+template<size_t N>
+void add_base_to_hash(std::bitset<N>& x, char b) {
+    shift_hash(x);
     switch (b) {
         case 'A': case 'a':
             x.set(0);
@@ -130,8 +130,8 @@ void add_base(std::bitset<N>& x, char b) {
 }
 
 template<size_t N>
-void add_other(std::bitset<N>& x) {
-    shift(x);
+void add_other_to_hash(std::bitset<N>& x) {
+    shift_hash(x);
     x.set(0);
     x.set(1);
     x.set(2);
