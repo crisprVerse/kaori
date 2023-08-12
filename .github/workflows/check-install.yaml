@@ -30,7 +30,7 @@ jobs:
         cmake_minimum_required(VERSION 3.24)
         project(test_install)
         add_executable(whee source.cpp)
-        find_package(crispverse_kaori)
+        find_package(crisprverse_kaori)
         target_link_libraries(whee crisprverse::kaori)
         EOF
         cd _downstream && cmake -S . -B build
