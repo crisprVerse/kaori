@@ -145,13 +145,73 @@ TEST(AnyMismatches, Duplicates) {
         }
     });
 
-    // Gets the first occurrence.
-    kaori::AnyMismatches stuff(ptrs, true);
-    auto res = stuff.search("ACGT", 0);
-    EXPECT_EQ(res.first, 0);
+    auto CHECK = [&](auto status, bool isdup, bool replaced, bool cleared) {
+        EXPECT_FALSE(status.has_ambiguous);
 
-    auto res2= stuff.search("AGTT", 0);
-    EXPECT_EQ(res2.first, 2);
+        if (isdup) {
+            EXPECT_TRUE(status.is_duplicate);
+        } else {
+            EXPECT_FALSE(status.is_duplicate);
+        }
+
+        if (replaced) {
+            EXPECT_TRUE(status.duplicate_replaced);
+        } else {
+            EXPECT_FALSE(status.duplicate_replaced);
+        }
+
+        if (cleared) {
+            EXPECT_TRUE(status.duplicate_cleared);
+        } else {
+            EXPECT_FALSE(status.duplicate_cleared);
+        }
+    };
+
+    // Gets the first occurrence.
+    {
+        kaori::AnyMismatches stuff(ptrs.length);
+        CHECK(stuff.add(ptrs.pool[0], kaori::DuplicateAction::FIRST), false, false, false);
+        CHECK(stuff.add(ptrs.pool[1], kaori::DuplicateAction::FIRST), true, false, false);
+        CHECK(stuff.add(ptrs.pool[2], kaori::DuplicateAction::FIRST), false, false, false);
+        CHECK(stuff.add(ptrs.pool[3], kaori::DuplicateAction::FIRST), true, false, false);
+
+        auto res = stuff.search("ACGT", 0);
+        EXPECT_EQ(res.first, 0);
+
+        auto res2 = stuff.search("AGTT", 0);
+        EXPECT_EQ(res2.first, 2);
+    }
+
+    // Gets the last occurrence.
+    {
+        kaori::AnyMismatches stuff(ptrs.length);
+        CHECK(stuff.add(ptrs.pool[0], kaori::DuplicateAction::LAST), false, false, false);
+        CHECK(stuff.add(ptrs.pool[1], kaori::DuplicateAction::LAST), true, true, false);
+        CHECK(stuff.add(ptrs.pool[2], kaori::DuplicateAction::LAST), false, false, false);
+        CHECK(stuff.add(ptrs.pool[3], kaori::DuplicateAction::LAST), true, true, false);
+
+        auto res = stuff.search("ACGT", 0);
+        EXPECT_EQ(res.first, 1);
+
+        auto res2 = stuff.search("AGTT", 0);
+        EXPECT_EQ(res2.first, 3);
+    }
+
+    // Gets nothing.
+    {
+        kaori::AnyMismatches stuff(ptrs.length);
+        CHECK(stuff.add(ptrs.pool[0], kaori::DuplicateAction::NONE), false, false, false);
+        CHECK(stuff.add(ptrs.pool[1], kaori::DuplicateAction::NONE), true, false, true);
+        CHECK(stuff.add(ptrs.pool[2], kaori::DuplicateAction::NONE), false, false, false);
+        CHECK(stuff.add(ptrs.pool[3], kaori::DuplicateAction::NONE), true, false, true);
+        CHECK(stuff.add(ptrs.pool[3], kaori::DuplicateAction::NONE), true, false, false); // next addition sets duplicate_cleared = false as it's already cleared.
+
+        auto res = stuff.search("ACGT", 0);
+        EXPECT_EQ(res.first, -1);
+
+        auto res2 = stuff.search("AGTT", 0);
+        EXPECT_EQ(res2.first, -1);
+    }
 }
 
 TEST(AnyMismatches, Iupac) {
@@ -208,8 +268,8 @@ TEST(AnyMismatches, Iupac) {
 
     {
         kaori::AnyMismatches stuff(6);
-        EXPECT_FALSE(stuff.add("AAAAAA", false));
-        EXPECT_TRUE(stuff.add("RYSWKM", false));
+        EXPECT_FALSE(stuff.add("AAAAAA", kaori::DuplicateAction::ERROR).has_ambiguous);
+        EXPECT_TRUE(stuff.add("RYSWKM", kaori::DuplicateAction::ERROR).has_ambiguous);
     }
 }
 

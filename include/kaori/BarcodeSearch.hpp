@@ -26,7 +26,7 @@ void fill_library(
     std::unordered_map<std::string, int>& exact,
     Trie& trie,
     bool reverse,
-    bool duplicates
+    DuplicateAction duplicates
 ) {
     size_t len = trie.get_length();
 
@@ -45,15 +45,13 @@ void fill_library(
 
         // Note that this must be called, even if the sequence is duplicated;
         // otherwise the trie's internal counter will not be properly incremented.
-        bool has_iupac = trie.add(current.c_str(), duplicates);
+        auto status = trie.add(current.c_str(), duplicates);
 
-        if (!has_iupac) {
-            if (exact.find(current) != exact.end()) {
-                if (!duplicates) {
-                    throw std::runtime_error("duplicate variable sequence '" + current + "'");
-                }
-            } else {
+        if (!status.has_ambiguous) {
+            if (!status.is_duplicate || status.duplicate_replaced) {
                 exact[current] = i;
+            } else if (status.duplicate_cleared) {
+                exact[current] = -1;
             }
         }
     }
@@ -116,9 +114,9 @@ public:
      * @param barcode_pool Pool of barcode sequences.
      * @param max_mismatches Maximum number of mismatches for any search performed by this class.
      * @param reverse Whether to reverse-complement the barcode sequences.
-     * @param duplicates Whether duplicated `sequences` in `barcode_pool` are supported, see `MismatchTrie`.
+     * @param duplicates How duplicated `sequences` in `barcode_pool` should be handled.
      */
-    SimpleBarcodeSearch(const BarcodePool& barcode_pool, int max_mismatches = 0, bool reverse = false, bool duplicates = false) : 
+    SimpleBarcodeSearch(const BarcodePool& barcode_pool, int max_mismatches = 0, bool reverse = false, DuplicateAction duplicates = DuplicateAction::ERROR) : 
         trie(barcode_pool.length), 
         max_mm(max_mismatches) 
     {
@@ -287,9 +285,15 @@ public:
      * @param max_mismatches Maximum number of mismatches in each segment.
      * All values should be non-negative.
      * @param reverse Whether to reverse-complement the barcode sequences.
-     * @param duplicates Whether duplicated `sequences` in `barcode_pool` are supported, see `MismatchTrie`.
+     * @param duplicates How duplicated `sequences` in `barcode_pool` should be handled.
      */
-    SegmentedBarcodeSearch(const BarcodePool& barcode_pool, std::array<int, num_segments> segments, std::array<int, num_segments> max_mismatches, bool reverse = false, bool duplicates = false) : 
+    SegmentedBarcodeSearch(
+        const BarcodePool& barcode_pool, 
+        std::array<int, num_segments> segments, 
+        std::array<int, num_segments> max_mismatches, 
+        bool reverse = false, 
+        DuplicateAction duplicates = DuplicateAction::ERROR
+    ) : 
         trie(segments), 
         max_mm(max_mismatches) 
     {

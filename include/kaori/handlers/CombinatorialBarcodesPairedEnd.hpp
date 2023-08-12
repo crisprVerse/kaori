@@ -46,13 +46,13 @@ public:
      * @param random Whether the reads are randomized with respect to the first/second target sequences.
      * If `false`, the first read is searched for the first template only, and the second read is searched for the second template only.
      * If `true`, an additional search will be performed in the opposite orientation.
-     * @param duplicates Whether to allow duplicates in `barcode_pool1` and `barcode_pool2`, see `MismatchTrie` for details.
+     * @param duplicates How duplicates in `barcode_pool1` and `barcode_pool2` should be handled.
      */
     CombinatorialBarcodesPairedEnd(
         const char* template_seq1, size_t template_length1, bool reverse1, const BarcodePool& barcode_pool1, int max_mismatches1, 
         const char* template_seq2, size_t template_length2, bool reverse2, const BarcodePool& barcode_pool2, int max_mismatches2,
         bool random = false,
-        bool duplicates = false
+        DuplicateAction duplicates = DuplicateAction::ERROR
     ) :
         matcher1(template_seq1, template_length1, !reverse1, reverse1, barcode_pool1, max_mismatches1, duplicates),
         matcher2(template_seq2, template_length2, !reverse2, reverse2, barcode_pool2, max_mismatches2, duplicates),
