@@ -145,7 +145,7 @@ $(function() {
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>            <span class="keyword">auto</span> ptr1 = barcode_pool1[i];</div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>            <span class="keywordflow">if</span> (search_reverse1) {</div>
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; len1; ++j) {</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>                    current += reverse_complement&lt;true, true&gt;(ptr1[len1 - j - 1]);</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>                    current += complement_base&lt;true, true&gt;(ptr1[len1 - j - 1]);</div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>                }</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>            } <span class="keywordflow">else</span> {</div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>                current.insert(current.end(), ptr1, ptr1 + len1);</div>
@@ -154,7 +154,7 @@ $(function() {
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>            <span class="keyword">auto</span> ptr2 = barcode_pool2[i];</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>            <span class="keywordflow">if</span> (search_reverse2) {</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; len2; ++j) {</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>                    current += reverse_complement&lt;true, true&gt;(ptr2[len2 - j - 1]);</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>                    current += complement_base&lt;true, true&gt;(ptr2[len2 - j - 1]);</div>
 <div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>                }</div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>            } <span class="keywordflow">else</span> {</div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>                current.insert(current.end(), ptr2, ptr2 + len2);</div>

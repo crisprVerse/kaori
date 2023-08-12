@@ -106,11 +106,11 @@ $(function() {
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; length; ++i) {</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>                <span class="keywordtype">char</span> b = template_seq[i];</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>                <span class="keywordflow">if</span> (b != <span class="charliteral">&#39;-&#39;</span>) {</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>                    add_base(forward_ref, b);</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>                    add_mask(forward_mask);</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>                    add_base_to_hash(forward_ref, b);</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>                    add_mask_to_hash(forward_mask);</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                    shift(forward_ref);</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                    shift(forward_mask);</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                    shift_hash(forward_ref);</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                    shift_hash(forward_mask);</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                    add_variable_base(forward_variables, i);</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                }</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>            }</div>
@@ -128,11 +128,11 @@ $(function() {
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; length; ++i) {</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>                <span class="keywordtype">char</span> b = template_seq[length - i - 1];</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>                <span class="keywordflow">if</span> (b != <span class="charliteral">&#39;-&#39;</span>) {</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>                    add_base(reverse_ref, reverse_complement(b));</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                    add_mask(reverse_mask);</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>                    add_base_to_hash(reverse_ref, complement_base(b));</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                    add_mask_to_hash(reverse_mask);</div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>                    shift(reverse_ref);</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>                    shift(reverse_mask);</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>                    shift_hash(reverse_ref);</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>                    shift_hash(reverse_mask);</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>                    add_variable_base(reverse_variables, i);</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>                }</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>            }</div>
@@ -164,14 +164,14 @@ $(function() {
 <div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; length - 1; ++i) {</div>
 <div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>                <span class="keywordtype">char</span> base = read_seq[i];</div>
 <div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span> </div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>                <span class="keywordflow">if</span> (is_good(base)) {</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>                    add_base(out.state, base);</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>                <span class="keywordflow">if</span> (is_standard_base(base)) {</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>                    add_base_to_hash(out.state, base);</div>
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>                    <span class="keywordflow">if</span> (!out.bad.empty()) {</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>                        shift(out.ambiguous);</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>                        shift_hash(out.ambiguous);</div>
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>                    }</div>
 <div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>                    add_other(out.state);</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>                    add_other(out.ambiguous);</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>                    add_other_to_hash(out.state);</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>                    add_other_to_hash(out.ambiguous);</div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>                    out.bad.push_back(i);</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>                }</div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>            }</div>
@@ -190,20 +190,20 @@ $(function() {
 <div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>                <span class="comment">// us to skip its shifting if there are no more ambiguous</span></div>
 <div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>                <span class="comment">// bases. We do it here because we won&#39;t get an opportunity to</span></div>
 <div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>                <span class="comment">// do it later; as &#39;bad&#39; is empty, the shift below is skipped.</span></div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>                shift(state.ambiguous); </div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>                shift_hash(state.ambiguous); </div>
 <div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>            }</div>
 <div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        }</div>
 <div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span> </div>
 <div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        <span class="keywordtype">size_t</span> right = state.<a class="code hl_variable" href="structkaori_1_1ScanTemplate_1_1State.html#a19b13dcf4ac7a097b4bc26319f5a57d8">position</a> + length;</div>
 <div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        <span class="keywordtype">char</span> base = state.seq[right];</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        <span class="keywordflow">if</span> (is_good(base)) {</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>            add_base(state.state, base); <span class="comment">// no need to trim off the end, the mask will handle that.</span></div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        <span class="keywordflow">if</span> (is_standard_base(base)) {</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>            add_base_to_hash(state.state, base); <span class="comment">// no need to trim off the end, the mask will handle that.</span></div>
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>            <span class="keywordflow">if</span> (!state.bad.empty()) {</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                shift(state.ambiguous);</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                shift_hash(state.ambiguous);</div>
 <div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>            }</div>
 <div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>            add_other(state.state);</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>            add_other(state.ambiguous);</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>            add_other_to_hash(state.state);</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>            add_other_to_hash(state.ambiguous);</div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>            state.bad.push_back(right);</div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>        }</div>
 <div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span> </div>
@@ -223,8 +223,8 @@ $(function() {
 <div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>    <span class="keywordtype">int</span> mismatches;</div>
 <div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>    <span class="keywordtype">bool</span> forward, reverse;</div>
 <div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span> </div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>    <span class="keyword">static</span> <span class="keywordtype">void</span> add_mask(std::bitset&lt;N&gt;&amp; current) {</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>        shift(current);</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>    <span class="keyword">static</span> <span class="keywordtype">void</span> add_mask_to_hash(std::bitset&lt;N&gt;&amp; current) {</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>        shift_hash(current);</div>
 <div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>        current.set(0);</div>
 <div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>        current.set(1);</div>
 <div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        current.set(2);</div>
