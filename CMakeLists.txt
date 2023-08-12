@@ -22,7 +22,7 @@ else()
     find_package(ltla_byteme CONFIG REQUIRED)
 endif()
 
-target_link_libraries(kaori INTERFACE ltla_byteme)
+target_link_libraries(kaori INTERFACE ltla::byteme)
 
 # Building the test-related machinery, if we are compiling this library directly.
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)

@@ -101,7 +101,7 @@ If you have a configuration that is not supported here, create an issue and we'l
 
 If you're using CMake, you just need to add something like this to your `CMakeLists.txt`:
 
-```
+```cmake
 include(FetchContent)
 
 FetchContent_Declare(
@@ -115,7 +115,7 @@ FetchContent_MakeAvailable(kaori)
 
 Then you can link to **kaori** to make the headers available during compilation:
 
-```
+```cmake
 # For executables:
 target_link_libraries(myexe kaori)
 
