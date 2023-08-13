@@ -44,7 +44,7 @@ public:
     DualBarcodesWithDiagnostics(
         const char* template_seq1, size_t template_length1, const BarcodePool& barcode_pool1,
         const char* template_seq2, size_t template_length2, const BarcodePool& barcode_pool2, 
-        const DualBarcodes<max_size>::Options& options
+        const typename DualBarcodes<max_size>::Options& options
     ) :
         dual_handler(template_seq1, template_length1, barcode_pool1, template_seq2, template_length2, barcode_pool2, options),
 
@@ -56,7 +56,7 @@ public:
             template_length2, 
             barcode_pool2, 
             [&]{
-                CombinatorialBarcodesPairedEnd<max_size>::Options combopt;
+                typename CombinatorialBarcodesPairedEnd<max_size>::Options combopt;
                 combopt.use_first = options.use_first;
 
                 combopt.max_mismatches1 = options.max_mismatches1;
@@ -65,7 +65,7 @@ public:
 
                 combopt.max_mismatches2 = options.max_mismatches2;
                 combopt.search_forward2 = !options.search_reverse2;
-                combopt.search_forward2 = options.search_reverse2;
+                combopt.search_reverse2 = options.search_reverse2;
 
                 // we allow duplicates in the trie for each individual barcode, as only the pairs are unique in the dual barcode setup.
                 combopt.duplicates = DuplicateAction::FIRST; 

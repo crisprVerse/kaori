@@ -25,6 +25,7 @@ namespace kaori {
  */
 template<size_t max_size>
 class DualBarcodes { 
+public:
     /**
      * @brief Optional parameters for `SingleBarcodeSingleEnd`.
      */
