@@ -17,6 +17,9 @@ protected:
     std::string constant1, constant2;
     std::vector<std::string> variables1;
     std::vector<std::string> variables2;
+
+    template<size_t max_size>
+    using Options = typename kaori::DualBarcodes<max_size>::Options;
 };
 
 TEST_F(DualBarcodesWithDiagnosticsTest, BasicFirst) {
@@ -42,8 +45,9 @@ TEST_F(DualBarcodesWithDiagnosticsTest, BasicFirst) {
     byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
 
     kaori::DualBarcodesWithDiagnostics<32> stuff(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+        Options<32>()
     );
     kaori::process_paired_end_data(&reader1, &reader2, stuff);
 
@@ -88,8 +92,9 @@ TEST_F(DualBarcodesWithDiagnosticsTest, WithDuplicates) {
     byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
 
     kaori::DualBarcodesWithDiagnostics<32> stuff(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+        Options<32>()
     );
     kaori::process_paired_end_data(&reader1, &reader2, stuff);
 

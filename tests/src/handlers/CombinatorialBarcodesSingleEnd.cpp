@@ -7,6 +7,9 @@
 
 class CombinatorialBarcodesSingleEndTest : public testing::Test {
 protected:
+    template<size_t max_size, size_t num_variable>
+    using Options = typename kaori::CombinatorialBarcodesSingleEnd<max_size, num_variable>::Options;
+
     CombinatorialBarcodesSingleEndTest() : 
         constant("AAAA----CGGC------TTTT"),
         variables1(std::vector<std::string>{ "AAAA", "CCCC", "GGGG", "TTTT" }),
@@ -23,7 +26,7 @@ protected:
 };
 
 TEST_F(CombinatorialBarcodesSingleEndTest, BasicFirst) {
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> stuff(constant.c_str(), constant.size(), 0, make_pointers());
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> stuff(constant.c_str(), constant.size(), make_pointers(), Options<128, 2>());
 
     // Perfect match.
     {
@@ -65,9 +68,17 @@ TEST_F(CombinatorialBarcodesSingleEndTest, BasicFirst) {
 
 TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementFirst) {
     auto ptrs = make_pointers();
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> forward(constant.c_str(), constant.size(), 0, ptrs);
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> reverse(constant.c_str(), constant.size(), 1, ptrs);
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> both(constant.c_str(), constant.size(), 2, ptrs);
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> forward(constant.c_str(), constant.size(), ptrs, Options<128, 2>());
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> reverse(constant.c_str(), constant.size(), ptrs, [&]{
+        Options<128, 2> opt;
+        opt.strand = kaori::SearchStrand::REVERSE;
+        return opt;
+    }());
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> both(constant.c_str(), constant.size(), ptrs, [&]{
+        Options<128, 2> opt;
+        opt.strand = kaori::SearchStrand::BOTH;
+        return opt;
+    }());
 
     std::vector<std::string> seq{ 
         "AAAACACACAGCCGCCCCTTTTccccc", // (GGGG = 2, TGTGTG = 1), and then reverse complemented.
@@ -110,9 +121,17 @@ TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementFirst) {
 
 TEST_F(CombinatorialBarcodesSingleEndTest, MismatchFirst) {
     auto ptrs = make_pointers();
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm0(constant.c_str(), constant.size(), 0, ptrs, 0);
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm1(constant.c_str(), constant.size(), 0, ptrs, 1);
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm2(constant.c_str(), constant.size(), 0, ptrs, 2); 
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm0(constant.c_str(), constant.size(), ptrs, Options<128, 2>());
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm1(constant.c_str(), constant.size(), ptrs, [&]{
+        Options<128, 2> opt;
+        opt.max_mismatches = 1;
+        return opt;
+    }());
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm2(constant.c_str(), constant.size(), ptrs, [&]{
+        Options<128, 2> opt;
+        opt.max_mismatches = 2;
+        return opt;
+    }());
 
     // One mismatch.
     {
@@ -199,9 +218,23 @@ TEST_F(CombinatorialBarcodesSingleEndTest, MismatchFirst) {
 
 TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementMismatchFirst) {
     auto ptrs = make_pointers();
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm0(constant.c_str(), constant.size(), 1, ptrs, 0);
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm1(constant.c_str(), constant.size(), 1, ptrs, 1);
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm2(constant.c_str(), constant.size(), 1, ptrs, 2);
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm0(constant.c_str(), constant.size(), ptrs, [&]{
+        Options<128, 2> opt;
+        opt.strand = kaori::SearchStrand::REVERSE;
+        return opt;
+    }());
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm1(constant.c_str(), constant.size(), ptrs, [&]{
+        Options<128, 2> opt;
+        opt.strand = kaori::SearchStrand::REVERSE;
+        opt.max_mismatches = 1;
+        return opt;
+    }());
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm2(constant.c_str(), constant.size(), ptrs, [&]{
+        Options<128, 2> opt;
+        opt.strand = kaori::SearchStrand::REVERSE;
+        opt.max_mismatches = 2;
+        return opt;
+    }());
 
     // One mismatch.
     {
@@ -235,10 +268,18 @@ TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementMismatchFirst) {
 }
 
 TEST_F(CombinatorialBarcodesSingleEndTest, Best) {
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> bst(constant.c_str(), constant.size(), 0, make_pointers());
-    bst.set_first(false);
-    
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm1(constant.c_str(), constant.size(), 0, make_pointers(), 1);
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> bst(constant.c_str(), constant.size(), make_pointers(), [&]{
+        Options<128, 2> opt;
+        opt.use_first = false;
+        opt.max_mismatches = 1;
+        return opt;
+    }());
+
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> mm1(constant.c_str(), constant.size(), make_pointers(), [&]{
+        Options<128, 2> opt;
+        opt.max_mismatches = 1;
+        return opt;
+    }());
 
     // Overrides the first mismatch.
     {
@@ -281,11 +322,19 @@ TEST_F(CombinatorialBarcodesSingleEndTest, Best) {
 
     // Works across strands.
     {
-        kaori::CombinatorialBarcodesSingleEnd<128, 2> reverse(constant.c_str(), constant.size(), 1, make_pointers());
-        reverse.set_first(false);
+        kaori::CombinatorialBarcodesSingleEnd<128, 2> reverse(constant.c_str(), constant.size(), make_pointers(), [&]{
+            Options<128, 2> opt;
+            opt.use_first = false;
+            opt.strand = kaori::SearchStrand::REVERSE;
+            return opt;
+        }());
 
-        kaori::CombinatorialBarcodesSingleEnd<128, 2> both(constant.c_str(), constant.size(), 2, make_pointers());
-        both.set_first(false);
+        kaori::CombinatorialBarcodesSingleEnd<128, 2> both(constant.c_str(), constant.size(), make_pointers(), [&]{
+            Options<128, 2> opt;
+            opt.use_first = false;
+            opt.strand = kaori::SearchStrand::BOTH;
+            return opt;
+        }());
 
         std::string seq = "cagAAAAAAAACGGCTGTGTGTTTTacacAAAAGTGTGTGCCGGGGGTTTT"; // second one is (CCCC = 1, ACACAC = 0)
 
@@ -308,7 +357,7 @@ TEST_F(CombinatorialBarcodesSingleEndTest, Best) {
 }
 
 TEST_F(CombinatorialBarcodesSingleEndTest, Sorting) {
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> x(constant.c_str(), constant.size(), 0, make_pointers());
+    kaori::CombinatorialBarcodesSingleEnd<128, 2> x(constant.c_str(), constant.size(), make_pointers(), Options<128, 2>());
 
     auto state = x.initialize(); 
     state.collected.push_back(std::array<int, 2>{ 3, 1 });
@@ -338,7 +387,7 @@ TEST_F(CombinatorialBarcodesSingleEndTest, Error) {
     EXPECT_ANY_THROW({
         try {
             std::string constant2 = "AAAA----CGGC----TTTT";
-            Thing stuff(constant2.c_str(), constant2.size(), 0, make_pointers());
+            Thing stuff(constant2.c_str(), constant2.size(), make_pointers(), Options<128, 2>());
         } catch (std::exception& e) {
             EXPECT_TRUE(std::string(e.what()).find("should be the same") != std::string::npos);
             throw e;
@@ -348,7 +397,7 @@ TEST_F(CombinatorialBarcodesSingleEndTest, Error) {
     EXPECT_ANY_THROW({
         try {
             std::string constant2 = "AAAA----CGGCTTTT";
-            Thing stuff(constant2.c_str(), constant2.size(), 0, make_pointers());
+            Thing stuff(constant2.c_str(), constant2.size(), make_pointers(), Options<128, 2>());
         } catch (std::exception& e) {
             EXPECT_TRUE(std::string(e.what()).find("expected 2 variable regions") != std::string::npos);
             throw e;

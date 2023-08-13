@@ -5,7 +5,13 @@
 #include "../utils.h"
 #include <string>
 
-TEST(SingleBarcodePairedEnd, Forward) {
+class SingleBarcodePairedEndTest : public ::testing::Test {
+protected:
+    template<size_t max_size>
+    using Options = typename kaori::SingleBarcodePairedEnd<max_size>::Options;
+};
+
+TEST_F(SingleBarcodePairedEndTest, Forward) {
     std::string thing = "ACGT----TTTT";
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
 
@@ -25,7 +31,7 @@ TEST(SingleBarcodePairedEnd, Forward) {
 
     // No mismatches allowed.
     {
-        kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), 0, kaori::BarcodePool(variables));
+        kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), Options<16>());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
         kaori::process_paired_end_data(&reader1, &reader2, handler);
@@ -41,7 +47,11 @@ TEST(SingleBarcodePairedEnd, Forward) {
 
     // Okay, 2 mismatches, in which case the search on the first read is always favored.
     {
-        kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), 0, kaori::BarcodePool(variables), 2);
+        kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
+            Options<16> opt;
+            opt.max_mismatches = 2;
+            return opt;
+        }());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
         kaori::process_paired_end_data(&reader1, &reader2, handler);
@@ -56,7 +66,7 @@ TEST(SingleBarcodePairedEnd, Forward) {
     }
 }
 
-TEST(SingleBarcodePairedEnd, Reverse) {
+TEST_F(SingleBarcodePairedEndTest, Reverse) {
     std::string thing = "ACGT----TTTT";
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
 
@@ -76,7 +86,11 @@ TEST(SingleBarcodePairedEnd, Reverse) {
 
     // No mismatches allowed.
     {
-        kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), 1, kaori::BarcodePool(variables));
+        kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
+            Options<16> opt;
+            opt.strand = kaori::SearchStrand::REVERSE;
+            return opt;
+        }());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
         kaori::process_paired_end_data(&reader1, &reader2, handler);
@@ -90,7 +104,12 @@ TEST(SingleBarcodePairedEnd, Reverse) {
 
     // Okay, 2 mismatches, in which case the search on the first read is always favored.
     {
-        kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), 1, kaori::BarcodePool(variables), 2);
+        kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
+            Options<16> opt;
+            opt.max_mismatches = 2;
+            opt.strand = kaori::SearchStrand::REVERSE;
+            return opt;
+        }());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
         kaori::process_paired_end_data(&reader1, &reader2, handler);
@@ -103,7 +122,7 @@ TEST(SingleBarcodePairedEnd, Reverse) {
     }
 }
 
-TEST(SingleBarcodePairedEnd, Best) {
+TEST_F(SingleBarcodePairedEndTest, Best) {
     std::string thing = "ACGT----TTTT";
     std::vector<std::string> variables { "AAAA", "CCCC", "GGGG", "TTTT" };
 
@@ -124,7 +143,7 @@ TEST(SingleBarcodePairedEnd, Best) {
     std::string fq2 = convert_to_fastq(seq2);
 
     {
-        kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), 0, kaori::BarcodePool(variables));
+        kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), Options<16>());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
         kaori::process_paired_end_data(&reader1, &reader2, handler);
@@ -142,8 +161,35 @@ TEST(SingleBarcodePairedEnd, Best) {
     }
 
     {
-        kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), 0, kaori::BarcodePool(variables));
-        handler.set_first(false);
+        // Just checking that max_mismatches works as expected for this set of sequences.
+        kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
+            Options<16> opt;
+            opt.max_mismatches = 1;
+            return opt;
+        }());
+        byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
+        byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
+        kaori::process_paired_end_data(&reader1, &reader2, handler);
+
+        /*
+         * 1a, 1b, 2 = first read, AAAA
+         * 3 = first read wins, GGGG.
+         */
+        const auto& counts = handler.get_counts();
+        EXPECT_EQ(counts[0], 3);
+        EXPECT_EQ(counts[1], 0);
+        EXPECT_EQ(counts[2], 1);
+        EXPECT_EQ(counts[3], 0);
+    }
+
+    {
+        // Now actually checking for the best.
+        kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
+            Options<16> opt;
+            opt.use_first = false;
+            opt.max_mismatches = 1;
+            return opt;
+        }());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
         kaori::process_paired_end_data(&reader1, &reader2, handler);

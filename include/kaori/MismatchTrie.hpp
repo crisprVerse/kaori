@@ -6,7 +6,6 @@
 #include <stdexcept>
 #include <numeric>
 #include "utils.hpp"
-#include "BarcodePool.hpp"
 
 /**
  * @file MismatchTrie.hpp
@@ -31,19 +30,21 @@ protected:
 
 public:
     /**
-     * @param barcode_length Length of the barcodes in the pool.
+     * Default constructor.
+     * This is only provided to enable composition, the resulting object should not be used until it is copy-assigned to a properly constructed instance.
      */
-    MismatchTrie(size_t barcode_length = 0) : length(barcode_length), pointers(4, status_not_present), counter(0) {}
+    MismatchTrie() {}
 
     /**
-     * @param barcode_pool Pool of known barcode sequences.
-     * @param duplicates How duplicated sequences in `barcode_pool` should be handled.
+     * @param barcode_length Length of the barcodes in the pool.
+     * @param duplicates How duplicate sequences across `add()` calls should be handled.
      */
-    MismatchTrie(const BarcodePool& barcode_pool, DuplicateAction duplicates = DuplicateAction::ERROR) : MismatchTrie(barcode_pool.length) {
-        for (auto s : barcode_pool.pool) {
-            add(s, duplicates);
-        }
-    }
+    MismatchTrie(size_t barcode_length, DuplicateAction duplicates) : 
+        length(barcode_length), 
+        pointers(4, status_not_present), 
+        duplicates(duplicates), 
+        counter(0) 
+    {}
 
 public:
     /** 
@@ -85,7 +86,7 @@ private:
         }
     }
 
-    void end(int shift, int position, DuplicateAction duplicates, AddStatus& status) {
+    void end(int shift, int position, AddStatus& status) {
         auto& current = pointers[position + shift];
         if (current >= 0) {
             status.is_duplicate = true;
@@ -112,7 +113,7 @@ private:
         }
     }
 
-    void recursive_add(size_t i, int position, const char* barcode_seq, DuplicateAction duplicates, AddStatus& status) {
+    void recursive_add(size_t i, int position, const char* barcode_seq, AddStatus& status) {
         // Processing a stretch of non-ambiguous codes, where possible.
         // This reduces the recursion depth among the (hopefully fewer) ambiguous codes.
         while (1) {
@@ -122,7 +123,7 @@ private:
             }
 
             if ((++i) == length) {
-                end(shift, position, duplicates, status);
+                end(shift, position, status);
                 return;
             } else {
                 next(shift, position);
@@ -135,11 +136,11 @@ private:
         auto process = [&](char base) -> void {
             auto shift = base_shift(base);
             if (i + 1 == length) {
-                end(shift, position, duplicates, status);
+                end(shift, position, status);
             } else {
                 auto curpos = position;
                 next(shift, curpos);
-                recursive_add(i + 1, curpos, barcode_seq, duplicates, status);
+                recursive_add(i + 1, curpos, barcode_seq, status);
             }
         };
 
@@ -175,15 +176,14 @@ public:
     /**
      * @param[in] barcode_seq Pointer to a character array containing a barcode sequence.
      * The array should have length equal to `get_length()` and should only contain IUPAC nucleotides or their lower-case equivalents (excepting U or gap characters).
-     * @param duplicates How duplicate sequences across `add()` calls should be handled.
      *
      * @return The barcode sequence is added to the trie.
      * The index of the newly added sequence is defined as the number of sequences that were previously added. 
      * The status of the addition is returned.
      */
-    AddStatus add(const char* barcode_seq, DuplicateAction duplicates) {
+    AddStatus add(const char* barcode_seq) {
         AddStatus status;
-        recursive_add(0, 0, barcode_seq, duplicates, status);
+        recursive_add(0, 0, barcode_seq, status);
         ++counter;
         return status;
     }
@@ -239,6 +239,7 @@ protected:
      */
 
 private:
+    DuplicateAction duplicates;
     int counter;
 
 public:
@@ -312,16 +313,16 @@ private:
 class AnyMismatches : public MismatchTrie {
 public:
     /**
-     * @param barcode_length Length of the barcode sequences.
+     * Default constructor.
+     * This is only provided to enable composition, the resulting object should not be used until it is copy-assigned to a properly constructed instance.
      */
-    AnyMismatches(size_t barcode_length = 0) : MismatchTrie(barcode_length) {}
+    AnyMismatches() {}
 
     /**
-     * @param barcode_pool Pool of known barcode sequences.
-     * @param duplicates How duplicate sequences in `barcode_pool` should be handled.
+     * @param barcode_length Length of the barcode sequences.
+     * @param duplicates How duplicate sequences across `add()` calls should be handled.
      */
-    AnyMismatches(const BarcodePool& barcode_pool, DuplicateAction duplicates = DuplicateAction::ERROR) : 
-        MismatchTrie(barcode_pool, duplicates) {}
+    AnyMismatches(size_t barcode_length, DuplicateAction duplicates) : MismatchTrie(barcode_length, duplicates) {}
 
 public:
     /**
@@ -424,33 +425,21 @@ class SegmentedMismatches : public MismatchTrie {
 public:
     /**
      * Default constructor.
+     * This is only provided to enable composition, the resulting object should not be used until it is copy-assigned to a properly constructed instance.
      */
     SegmentedMismatches() {}
 
     /**
      * @param segments Length of each segment of the sequence.
      * Each entry should be positive and the sum should be equal to the total length of the barcode sequence.
+     * @param duplicates How duplicate sequences across `add()` calls should be handled.
      */
-    SegmentedMismatches(std::array<int, num_segments> segments) : MismatchTrie(std::accumulate(segments.begin(), segments.end(), 0)), boundaries(segments) {
+    SegmentedMismatches(std::array<int, num_segments> segments, DuplicateAction duplicates) : 
+        MismatchTrie(std::accumulate(segments.begin(), segments.end(), 0), duplicates), 
+        boundaries(segments)
+    {
         for (size_t i = 1; i < num_segments; ++i) {
             boundaries[i] += boundaries[i-1];
-        }
-    }
-
-    /**
-     * @param barcode_pool Possible set of known sequences for the variable region.
-     * @param segments Length of each segment of the sequence.
-     * Each entry should be positive and the sum should be equal to the total length of the barcode sequence.
-     * @param duplicates How duplicated sequences in `barcode_pool` should be handled.
-     */
-    SegmentedMismatches(const BarcodePool& barcode_pool, std::array<int, num_segments> segments, DuplicateAction duplicates = DuplicateAction::ERROR) : 
-        SegmentedMismatches(segments) 
-    {
-        if (length != barcode_pool.length) {
-            throw std::runtime_error("length of barcode sequences should equal the sum of segment lengths");
-        }
-        for (auto s : barcode_pool.pool) {
-            add(s, duplicates);
         }
     }
 
