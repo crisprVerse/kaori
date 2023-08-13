@@ -166,7 +166,7 @@ public:
 
         // Constructing the combined varlib.
         BarcodePool combined_set(combined);
-        varlib = SegmentedBarcodeSearch(
+        varlib = SegmentedBarcodeSearch<2>(
             combined_set,
             std::array<int, 2>{ static_cast<int>(len1), static_cast<int>(len2) }, 
             [&]{
