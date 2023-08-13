@@ -17,12 +17,16 @@ protected:
     std::string constant1, constant2;
     std::vector<std::string> variables1;
     std::vector<std::string> variables2;
+
+    template<size_t max_size>
+    using Options = typename kaori::CombinatorialBarcodesPairedEnd<max_size>::Options;
 };
 
 TEST_F(CombinatorialBarcodesPairedEndTest, BasicFirst) {
     kaori::CombinatorialBarcodesPairedEnd<32> stuff(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+        Options<32>()
     );
 
     // Works in the simple case.
@@ -81,8 +85,14 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicFirst) {
 TEST_F(CombinatorialBarcodesPairedEndTest, ReverseComplementFirst) {
     {
         kaori::CombinatorialBarcodesPairedEnd<32> stuff(
-            constant1.c_str(), constant1.size(), true, kaori::BarcodePool(variables1), 0,
-            constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
+            constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+            constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+            [&]{
+                Options<32> opt;
+                opt.search_forward1 = false;
+                opt.search_reverse1 = true;
+                return opt;
+            }()
         );
 
         auto state = stuff.initialize();
@@ -96,8 +106,14 @@ TEST_F(CombinatorialBarcodesPairedEndTest, ReverseComplementFirst) {
     // Just some due diligence here...
     {
         kaori::CombinatorialBarcodesPairedEnd<32> stuff(
-            constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
-            constant2.c_str(), constant2.size(), true, kaori::BarcodePool(variables2), 0
+            constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+            constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+            [&]{
+                Options<32> opt;
+                opt.search_forward2 = false;
+                opt.search_reverse2 = true;
+                return opt;
+            }()
         );
 
         auto state = stuff.initialize();
@@ -111,18 +127,29 @@ TEST_F(CombinatorialBarcodesPairedEndTest, ReverseComplementFirst) {
 
 TEST_F(CombinatorialBarcodesPairedEndTest, MismatchesFirst) {
     kaori::CombinatorialBarcodesPairedEnd<32> stuff(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1), 
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2), 
+        Options<32>()        
     );
 
     kaori::CombinatorialBarcodesPairedEnd<32> stuff10(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 1,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+        [&]{
+            Options<32> opt;
+            opt.max_mismatches1 = 1;
+            return opt;
+        }()
     );
 
     kaori::CombinatorialBarcodesPairedEnd<32> stuff20(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 2,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1), 
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+        [&]{
+            Options<32> opt;
+            opt.max_mismatches1 = 2;
+            return opt;
+        }()
     );
 
     // Works in the simple case.
@@ -158,14 +185,19 @@ TEST_F(CombinatorialBarcodesPairedEndTest, MismatchesFirst) {
 
 TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedFirst) {
     kaori::CombinatorialBarcodesPairedEnd<32> nonrandom(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+        Options<32>()
     );
 
     kaori::CombinatorialBarcodesPairedEnd<32> randomized(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0,
-        true
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+        [&]{
+            Options<32> opt;
+            opt.random = true;
+            return opt;
+        }()
     );
 
     std::string seq1 = "ctagcgaAGCTTGTGTGTTTTagaga", seq2 = "acacAAAAGGGGCGGCacac";
@@ -200,14 +232,19 @@ TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedFirst) {
 
 TEST_F(CombinatorialBarcodesPairedEndTest, DiagnosticsFirst) {
     kaori::CombinatorialBarcodesPairedEnd<32> nonrandom(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+        Options<32>()
     );
 
     kaori::CombinatorialBarcodesPairedEnd<32> randomized(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0,
-        true
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1), 
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2), 
+        [&]{
+            Options<32> opt;
+            opt.random = true;
+            return opt;
+        }()
     );
 
     // Only read 1.
@@ -243,14 +280,26 @@ TEST_F(CombinatorialBarcodesPairedEndTest, DiagnosticsFirst) {
 
 TEST_F(CombinatorialBarcodesPairedEndTest, BasicBest) {
     kaori::CombinatorialBarcodesPairedEnd<32> best(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 1,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 1
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2), 
+        [&]{
+            Options<32> opt;
+            opt.max_mismatches1 = 1;
+            opt.max_mismatches2 = 1;
+            opt.use_first = false;
+            return opt;
+        }()
     );
-    best.set_first(false);
 
     kaori::CombinatorialBarcodesPairedEnd<32> first(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 1,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 1
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+        [&]{
+            Options<32> opt;
+            opt.max_mismatches1 = 1;
+            opt.max_mismatches2 = 1;
+            return opt;
+        }()
     );
 
     {
@@ -288,22 +337,40 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicBest) {
 
 TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedBest) {
     kaori::CombinatorialBarcodesPairedEnd<32> best(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 1,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 1,
-        true
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+        [&]{
+            Options<32> opt;
+            opt.max_mismatches1 = 1;
+            opt.max_mismatches2 = 1;
+            opt.use_first = false;
+            opt.random = true;
+            return opt;
+        }()
     );
-    best.set_first(false);
 
     kaori::CombinatorialBarcodesPairedEnd<32> nonrandom(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 1,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 1
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+        [&]{
+            Options<32> opt;
+            opt.max_mismatches1 = 1;
+            opt.max_mismatches2 = 1;
+            opt.use_first = false;
+            return opt;
+        }()
     );
-    nonrandom.set_first(false);
 
     kaori::CombinatorialBarcodesPairedEnd<32> first(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 1,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 1,
-        true
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1), 
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+        [&]{
+            Options<32> opt;
+            opt.max_mismatches1 = 1;
+            opt.max_mismatches2 = 1;
+            opt.random = true;
+            return opt;
+        }()
     );
 
     // Favors the other orientation.
@@ -374,17 +441,25 @@ TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedBest) {
 
 TEST_F(CombinatorialBarcodesPairedEndTest, DiagnosticsBest) {
     kaori::CombinatorialBarcodesPairedEnd<32> nonrandom(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+        [&]{
+            Options<32> opt;
+            opt.use_first = false;
+            return opt;
+        }()
     );
-    nonrandom.set_first(false);
 
     kaori::CombinatorialBarcodesPairedEnd<32> randomized(
-        constant1.c_str(), constant1.size(), false, kaori::BarcodePool(variables1), 0,
-        constant2.c_str(), constant2.size(), false, kaori::BarcodePool(variables2), 0,
-        true
+        constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
+        constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
+        [&]{
+            Options<32> opt;
+            opt.use_first = false;
+            opt.random = true;
+            return opt;
+        }()
     );
-    randomized.set_first(false);
 
     // Only read 1.
     {

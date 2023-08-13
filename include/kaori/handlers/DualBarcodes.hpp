@@ -42,7 +42,8 @@ class DualBarcodes {
 
         /**
          * Should the search for the first target be performed on the reverse strand of the read sequence?
-         * If `true`, no search is performed on the forward strand.
+         * 
+         * If `true`, no search is performed on the forward strand... sorry, I'll get around to adding it at some point.
          */
         bool search_reverse1 = false;
 
@@ -53,7 +54,8 @@ class DualBarcodes {
 
         /**
          * Should the search for the second target be performed on the reverse strand of the read sequence?
-         * If `true`, no search is performed on the forward strand.
+         *
+         * If `true`, no search is performed on the forward strand... sorry, I'll get around to adding it at some point.
          */
         bool search_reverse2 = false;
 

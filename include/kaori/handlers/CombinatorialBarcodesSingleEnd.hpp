@@ -31,7 +31,7 @@ template<size_t max_size, size_t num_variable>
 class CombinatorialBarcodesSingleEnd {
 public:
     /**
-     * @brief Optional parameters for `SingleBarcodeSingleEnd`.
+     * @brief Optional parameters for `CombinatorialBarcodeSingleEnd`.
      */
     struct Options {
         /**
@@ -73,6 +73,7 @@ public:
         forward(options.search_forward),
         reverse(options.search_reverse),
         max_mm(options.max_mismatches),
+        use_first(options.use_first),
         constant_matcher(template_seq, template_length, forward, reverse)
     {
         const auto& regions = constant_matcher.variable_regions();
@@ -313,8 +314,8 @@ public:
 private:
     bool forward;
     bool reverse;
-    bool use_first = true;
     int max_mm;
+    bool use_first;
     size_t nregions;
 
     ScanTemplate<max_size> constant_matcher;

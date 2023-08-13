@@ -102,7 +102,7 @@ public:
             template_length1, 
             barcode_pool1,
             [&]{
-                SimpleSingleMatch<max_size>::Options opt;
+                typename SimpleSingleMatch<max_size>::Options opt;
                 opt.search_forward = options.search_forward1;
                 opt.search_reverse = options.search_reverse1;
                 opt.max_mismatches = options.max_mismatches1;
@@ -115,7 +115,7 @@ public:
             template_length2, 
             barcode_pool2, 
             [&]{
-                SimpleSingleMatch<max_size>::Options opt;
+                typename SimpleSingleMatch<max_size>::Options opt;
                 opt.search_forward = options.search_forward2;
                 opt.search_reverse = options.search_reverse2;
                 opt.max_mismatches = options.max_mismatches2;

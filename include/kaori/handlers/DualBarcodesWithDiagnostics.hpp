@@ -67,24 +67,13 @@ public:
                 combopt.search_forward2 = !options.search_reverse2;
                 combopt.search_forward2 = options.search_reverse2;
 
-                combopt.duplicates = DuplicateAction::FIRST; // we allow duplicates in the trie.
+                // we allow duplicates in the trie for each individual barcode, as only the pairs are unique in the dual barcode setup.
+                combopt.duplicates = DuplicateAction::FIRST; 
                 combopt.random = options.random;
                 return combopt;
             }()
         )
     {}
-
-    /**
-     * @param t Whether to search only for the first match across reads (for valid combinations) or in each read (for invalid combinations).
-     * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
-     *
-     * @return A reference to this `DualBarcodesWithDiagnostics` instance.
-     */
-    DualBarcodesWithDiagnostics& set_first(bool t = true) {
-        dual_handler.set_first(t);
-        combo_handler.set_first(t);
-        return *this;
-    }
 
 private:
     DualBarcodes<max_size> dual_handler;
