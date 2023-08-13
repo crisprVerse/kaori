@@ -285,6 +285,63 @@ TEST_F(AnyMismatchesTest, Iupac) {
     }
 }
 
+TEST_F(AnyMismatchesTest, IupacAmbiguity) {
+    // Avoids detecting ambiguity for IUPAC-induced mismatches to the same sequence.
+    {
+        std::vector<std::string> things { "AAAAAAB", "TTTVTTT" };
+        kaori::BarcodePool ptrs(things);
+        auto stuff = populate(ptrs);
+        EXPECT_EQ(stuff.search("AAAAAAA", 1), std::make_pair(0, 1));
+        EXPECT_EQ(stuff.search("AAAAAAC", 1), std::make_pair(0, 0)); // control
+        EXPECT_EQ(stuff.search("TTTTTTT", 1), std::make_pair(1, 1));
+        EXPECT_EQ(stuff.search("TTTGTTT", 1), std::make_pair(1, 0)); // control
+    }
+
+    // Respects ambiguity from mismatches.
+    {
+        std::vector<std::string> things { "AAAAAAB", "AAAAAAY", "TTTVTTT", "TTTRTTT" };
+        kaori::BarcodePool ptrs(things);
+        kaori::AnyMismatches stuff(ptrs.length, kaori::DuplicateAction::NONE);
+        for (auto p : ptrs.pool) {
+            stuff.add(p);
+        }
+
+        EXPECT_EQ(stuff.search("AAAAAAA", 1), std::make_pair(-1, 1)); // ambiguous
+        EXPECT_EQ(stuff.search("AAAAAAC", 1), std::make_pair(-1, 0)); // still ambiguous, even with no mismatch
+        EXPECT_EQ(stuff.search("AAAAAAG", 1), std::make_pair(0, 0)); // okay
+
+        EXPECT_EQ(stuff.search("TTTTTTT", 1), std::make_pair(-1, 1)); // ambiguous
+        EXPECT_EQ(stuff.search("TTTATTT", 1), std::make_pair(-1, 0)); // still ambiguous, even with no mismatch
+        EXPECT_EQ(stuff.search("TTTCTTT", 1), std::make_pair(2, 0)); // okay
+
+        // Unless we want to report duplicates.
+        for (int i = 0; i < 2; ++i) {
+            kaori::AnyMismatches stuff2(ptrs.length, (i == 0 ? kaori::DuplicateAction::FIRST : kaori::DuplicateAction::LAST));
+            for (auto p : ptrs.pool) {
+                stuff2.add(p);
+            }
+
+            if (i == 0) {
+                EXPECT_EQ(stuff2.search("AAAAAAA", 1), std::make_pair(0, 1)); 
+                EXPECT_EQ(stuff2.search("AAAAAAC", 1), std::make_pair(0, 0));
+            } else {
+                EXPECT_EQ(stuff2.search("AAAAAAA", 1), std::make_pair(1, 1)); 
+                EXPECT_EQ(stuff2.search("AAAAAAC", 1), std::make_pair(1, 0)); 
+            }
+            EXPECT_EQ(stuff2.search("AAAAAAG", 1), std::make_pair(0, 0));
+
+            if (i == 0) {
+                EXPECT_EQ(stuff2.search("TTTTTTT", 1), std::make_pair(2, 1)); 
+                EXPECT_EQ(stuff2.search("TTTATTT", 1), std::make_pair(2, 0));
+            } else {
+                EXPECT_EQ(stuff2.search("TTTTTTT", 1), std::make_pair(3, 1)); 
+                EXPECT_EQ(stuff2.search("TTTATTT", 1), std::make_pair(3, 0));
+            }
+            EXPECT_EQ(stuff2.search("TTTCTTT", 1), std::make_pair(2, 0));
+        }
+    }
+}
+
 TEST_F(AnyMismatchesTest, Optimized) {
     // Deliberately not in any order, to check whether optimization behaves
     // correctly. We try it with and without optimization.
@@ -580,6 +637,113 @@ TEST_F(SegmentedMismatchesTest, Optimized) {
             auto res = stuff.search("CCAAAC", { 2, 2 });
             EXPECT_EQ(res.index, -1);
             EXPECT_EQ(res.total, 3);
+        }
+    }
+}
+
+TEST_F(SegmentedMismatchesTest, Iupac) {
+    // Avoids detecting ambiguity for IUPAC-induced mismatches to the same sequence.
+    {
+        std::vector<std::string> things { "AAAAAAB", "TTTVTTT" };
+        kaori::BarcodePool ptrs(things);
+        auto stuff = populate<2>(ptrs, { 3, 4 });
+
+        auto res = stuff.search("AAAAAAA", {0, 1});
+        EXPECT_EQ(res.index, 0);
+        EXPECT_EQ(res.total, 1);
+
+        res = stuff.search("AAAAAAC", {0, 1}); // control
+        EXPECT_EQ(res.index, 0);
+        EXPECT_EQ(res.total, 0);
+
+        res = stuff.search("TTTTTTT", {0, 1});
+        EXPECT_EQ(res.index, 1);
+        EXPECT_EQ(res.total, 1);
+
+        res = stuff.search("TTTGTTT", {0, 1}); // control
+        EXPECT_EQ(res.index, 1);
+        EXPECT_EQ(res.total, 0);
+    }
+
+    // Respects ambiguity from mismatches.
+    {
+        std::vector<std::string> things { "AAAAAAB", "AAAAAAY", "TTTVTTT", "TTTRTTT" };
+        kaori::BarcodePool ptrs(things);
+        kaori::SegmentedMismatches<2> stuff({ 4, 3 }, kaori::DuplicateAction::NONE);
+        for (auto p : ptrs.pool) {
+            stuff.add(p);
+        }
+
+        auto res = stuff.search("AAAAAAA", {0, 1}); // ambiguous.
+        EXPECT_EQ(res.index, -1);
+        EXPECT_EQ(res.total, 1);
+
+        res = stuff.search("AAAAAAC", {0, 1}); // still ambiguous.
+        EXPECT_EQ(res.index, -1);
+        EXPECT_EQ(res.total, 0);
+
+        res = stuff.search("AAAAAAG", {0, 1}); // okay
+        EXPECT_EQ(res.index, 0);
+        EXPECT_EQ(res.total, 0);
+
+        res = stuff.search("TTTTTTT", {1, 0}); // ambiguous
+        EXPECT_EQ(res.index, -1);
+        EXPECT_EQ(res.total, 1);
+
+        res = stuff.search("TTTATTT", {1, 0}); // still ambiguous
+        EXPECT_EQ(res.index, -1);
+        EXPECT_EQ(res.total, 0);
+
+        res = stuff.search("TTTCTTT", {1, 0}); // okay
+        EXPECT_EQ(res.index, 2);
+        EXPECT_EQ(res.total, 0);
+
+        // Unless we want to report duplicates.
+        for (int i = 0; i < 2; ++i) {
+            kaori::SegmentedMismatches<2> stuff2({ 4, 3 }, (i == 0 ? kaori::DuplicateAction::FIRST : kaori::DuplicateAction::LAST));
+            for (auto p : ptrs.pool) {
+                stuff2.add(p);
+            }
+
+            auto res = stuff2.search("AAAAAAA", {0, 1});
+            if (i == 0) {
+                EXPECT_EQ(res.index, 0);
+            } else {
+                EXPECT_EQ(res.index, 1);
+            }
+            EXPECT_EQ(res.total, 1);
+
+            res = stuff2.search("AAAAAAC", {0, 1});
+            if (i == 0) {
+                EXPECT_EQ(res.index, 0);
+            } else {
+                EXPECT_EQ(res.index, 1);
+            }
+            EXPECT_EQ(res.total, 0);
+
+            res = stuff2.search("AAAAAAG", {0, 1});
+            EXPECT_EQ(res.index, 0);
+            EXPECT_EQ(res.total, 0);
+
+            res = stuff2.search("TTTTTTT", {1, 0});
+            if (i == 0) {
+                EXPECT_EQ(res.index, 2);
+            } else {
+                EXPECT_EQ(res.index, 3);
+            }
+            EXPECT_EQ(res.total, 1);
+
+            res = stuff2.search("TTTATTT", {1, 0});
+            if (i == 0) {
+                EXPECT_EQ(res.index, 2);
+            } else {
+                EXPECT_EQ(res.index, 3);
+            }
+            EXPECT_EQ(res.total, 0);
+
+            res = stuff2.search("TTTCTTT", {1, 0});
+            EXPECT_EQ(res.index, 2);
+            EXPECT_EQ(res.total, 0);
         }
     }
 }

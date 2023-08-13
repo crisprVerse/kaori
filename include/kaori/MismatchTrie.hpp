@@ -24,9 +24,19 @@ namespace kaori {
  */
 class MismatchTrie {
 protected:
-    static constexpr int status_not_present = -1;
+    /**
+     * @cond
+     */
+    static constexpr int NUM_BASES = 4;
 
-    static constexpr int status_ambiguous = -2;
+    static constexpr int STATUS_MISSING = -1;
+
+    static constexpr int STATUS_AMBIGUOUS = -2;
+
+    static constexpr int MATCH_FAILED = -1;
+    /**
+     * @endcond
+     */
 
 public:
     /**
@@ -41,7 +51,7 @@ public:
      */
     MismatchTrie(size_t barcode_length, DuplicateAction duplicates) : 
         length(barcode_length), 
-        pointers(4, status_not_present), 
+        pointers(NUM_BASES, STATUS_MISSING), 
         duplicates(duplicates), 
         counter(0) 
     {}
@@ -80,7 +90,7 @@ private:
         if (current < 0) {
             current = pointers.size();
             position = current;
-            pointers.resize(position + 4, status_not_present);
+            pointers.resize(position + NUM_BASES, STATUS_MISSING);
         } else {
             position = current;
         }
@@ -99,16 +109,17 @@ private:
                     break;
                 case DuplicateAction::NONE:
                     status.duplicate_cleared = true;
-                    current = status_ambiguous;
+                    current = STATUS_AMBIGUOUS;
                     break;
                 case DuplicateAction::ERROR:
                     throw std::runtime_error("duplicate sequences detected (" + 
                         std::to_string(current + 1) + ", " + 
                         std::to_string(counter + 1) + ") when constructing the trie");
             }
-        } else if (current == status_not_present) {
+
+        } else if (current == STATUS_MISSING) {
             current = counter;
-        } else if (current == status_ambiguous) {
+        } else if (current == STATUS_AMBIGUOUS) {
             status.is_duplicate = true;
         }
     }
@@ -118,7 +129,7 @@ private:
         // This reduces the recursion depth among the (hopefully fewer) ambiguous codes.
         while (1) {
             auto shift = base_shift<true>(barcode_seq[i]);
-            if (shift == -1) {
+            if (shift == NON_STANDARD_BASE) {
                break;
             }
 
@@ -210,6 +221,8 @@ protected:
     size_t length;
     std::vector<int> pointers;
 
+    static constexpr int NON_STANDARD_BASE = -1;
+
     template<bool allow_unknown = false>
     static int base_shift(char base) {
         int shift = 0;
@@ -227,7 +240,7 @@ protected:
                 break;
             default:
                 if constexpr(allow_unknown) {
-                    shift = -1; 
+                    shift = NON_STANDARD_BASE; 
                 } else {
                     throw std::runtime_error("unknown base '" + std::string(1, base) + "' detected when constructing the trie");
                 }
@@ -238,8 +251,96 @@ protected:
      * @endcond
      */
 
-private:
+protected:
+    /**
+     * @cond
+     */
     DuplicateAction duplicates;
+
+    // To be called in the middle steps of the recursive search (i.e., for all but the last position).
+    template<class SearchResult_>
+    void replace_best_with_chosen(SearchResult_& best, int& best_index, int best_score, const SearchResult_& chosen, int chosen_index, int chosen_score) const {
+        if (chosen_index >= 0) {
+            if (chosen_score < best_score) {
+                best = chosen;
+            } else if (chosen_score == best_score) { 
+                if (chosen_index != best_index) { // protect against multiple occurrences of IUPAC code-containing barcodes.
+                    if (duplicates == DuplicateAction::FIRST) {
+                        if (chosen_index < best_index) {
+                            best_index = chosen_index;
+                        }
+                    } else if (duplicates == DuplicateAction::LAST) {
+                        if (chosen_index > best_index) {
+                            best_index = chosen_index;
+                        }
+                    } else {
+                        best_index = STATUS_AMBIGUOUS; 
+                    }
+                }
+            }
+
+        } else if (chosen_index == STATUS_AMBIGUOUS) {
+            if (chosen_score < best_score) {
+                best = chosen;
+            } else if (chosen_score == best_score) {
+                // Ambiguity is infectious. Each ambiguous status indicates that there
+                // are already 2+ barcodes on this score, so it doesn't matter how
+                // many other unambiguous barcodes are here; we're already ambiguous.
+                best_index = STATUS_AMBIGUOUS;
+            }
+        }
+    }
+
+    // To be called in the last step of the recursive search.
+    void scan_final_position_with_mismatch(int node, int refshift, int& current_index, int current_mismatches, int& mismatch_cap) const {
+        bool found = false;
+        for (int s = 0; s < NUM_BASES; ++s) {
+            if (s == refshift) { 
+                continue;
+            }
+
+            int candidate = pointers[node + s];
+            if (candidate >= 0) {
+                if (found) { 
+                    if (candidate != current_index) { // protect against multiple occurrences of IUPAC-containg barcodes.
+                        if (duplicates == DuplicateAction::FIRST) {
+                            if (current_index > candidate) {
+                                current_index = candidate;
+                            }
+                        } else if (duplicates == DuplicateAction::LAST) {
+                            if (current_index < candidate) {
+                                current_index = candidate;
+                            }
+                        } else {
+                            current_index = STATUS_AMBIGUOUS; // ambiguous, so we quit early.
+                            break;
+                        }
+                    }
+                } else {
+                    current_index = candidate;
+                    mismatch_cap = current_mismatches;
+                    found = true;
+                }
+
+            } else if (candidate == STATUS_AMBIGUOUS) {
+                // If an ambiguity is present on a base at the last position, 
+                // and we're accepting a mismatch on the last position, then 
+                // we already have at least two known barcodes that match the 
+                // input sequence. The behavior of the other bases is irrelevant;
+                // even if they refer to non-ambiguous barcodes, that just adds to the
+                // set of 2+ barcodes that the input sequence already matches.
+                // So, we have no choice but to fail the match due to ambiguity.
+                current_index = STATUS_AMBIGUOUS;
+                mismatch_cap = current_mismatches;
+                break;
+            }
+        }
+    }
+    /**
+     * @endcond
+     */
+
+private:
     int counter;
 
 public:
@@ -264,7 +365,7 @@ private:
     bool is_optimal(int node, size_t pos, int& maxed) const {
         ++pos;
         if (pos < length) {
-            for (int s = 0; s < 4; ++s) {
+            for (int s = 0; s < NUM_BASES; ++s) {
                 auto v = pointers[node + s];
                 if (v < 0) {
                     continue;
@@ -286,11 +387,11 @@ private:
     void optimize(int node, size_t pos, std::vector<int>& trie) const {
         auto it = pointers.begin() + node;
         size_t new_node = trie.size();
-        trie.insert(trie.end(), it, it + 4);
+        trie.insert(trie.end(), it, it + NUM_BASES);
 
         ++pos;
         if (pos < length) {
-            for (int s = 0; s < 4; ++s) {
+            for (int s = 0; s < NUM_BASES; ++s) {
                 auto& v = trie[new_node + s];
                 if (v < 0) {
                     continue;
@@ -337,71 +438,58 @@ public:
      * 2. The number of mismatches.
      */
     std::pair<int, int> search(const char* search_seq, int max_mismatches) const {
-        return search(search_seq, 0, 0, 0, max_mismatches);
+        auto out = search(search_seq, 0, 0, 0, max_mismatches);
+        if (out.first < 0) {
+            out.first = MATCH_FAILED;
+        }
+        return out;
     }
 
 private:
     std::pair<int, int> search(const char* seq, size_t pos, int node, int mismatches, int& max_mismatches) const {
         int shift = base_shift<true>(seq[pos]);
-        int current = (shift >= 0 ? pointers[node + shift] : -1);
+        int current = (shift >= 0 ? pointers[node + shift] : STATUS_MISSING);
 
         // At the end: we prepare to return the actual values. We also refine
         // the max number of mismatches so that we don't search for things with
         // more mismatches than the best hit that was already encountered.
         if (pos + 1 == length) {
-            if (current >= 0) {
-                max_mismatches = mismatches;
+            if (current >= 0 || current == STATUS_AMBIGUOUS) {
+                max_mismatches = mismatches; // this assignment should always decrease max_mismatches, otherwise the search would have terminated earlier.
                 return std::make_pair(current, mismatches);
             }
 
-            int alt = -1;
+            int alt = STATUS_MISSING;
             ++mismatches;
             if (mismatches <= max_mismatches) {
-                bool found = false;
-                for (int s = 0; s < 4; ++s) {
-                    if (shift == s) { 
-                        continue;
-                    }
-
-                    int candidate = pointers[node + s];
-                    if (candidate >= 0) {
-                        if (found) { // ambiguous, so we quit early.
-                            alt = -1;
-                            break;
-                        }
-                        alt = candidate;
-                        max_mismatches = mismatches;
-                        found = true;
-                    }
-                }
+                scan_final_position_with_mismatch(node, shift, alt, mismatches, max_mismatches);
             }
+
             return std::make_pair(alt, mismatches);
 
         } else {
             ++pos;
 
-            std::pair<int, int> best(-1, max_mismatches + 1);
+            std::pair<int, int> best(STATUS_MISSING, max_mismatches + 1);
             if (current >= 0) {
                 best = search(seq, pos, current, mismatches, max_mismatches);
             }
 
             ++mismatches;
             if (mismatches <= max_mismatches) {
-                for (int s = 0; s < 4; ++s) {
+                for (int s = 0; s < NUM_BASES; ++s) {
                     if (shift == s) { 
                         continue;
                     } 
-                    
+
                     int alt = pointers[node + s];
                     if (alt < 0) {
                         continue;
                     }
 
-                    auto chosen = search(seq, pos, alt, mismatches, max_mismatches);
-                    if (chosen.second < best.second) {
-                        best = chosen;
-                    } else if (chosen.second == best.second) {
-                        best.first = -1;
+                    if (mismatches <= max_mismatches) { // check again, just in case max_mismatches changed.
+                        auto chosen = search(seq, pos, alt, mismatches, max_mismatches);
+                        replace_best_with_chosen(best, best.first, best.second, chosen, chosen.first, chosen.second);
                     }
                 }
             }
@@ -486,7 +574,11 @@ public:
      */
     Result search(const char* search_seq, const std::array<int, num_segments>& max_mismatches) const {
         int total_mismatches = std::accumulate(max_mismatches.begin(), max_mismatches.end(), 0);
-        return search(search_seq, 0, 0, Result(), max_mismatches, total_mismatches);
+        auto out = search(search_seq, 0, 0, Result(), max_mismatches, total_mismatches);
+        if (out.index < 0) {
+            out.index = MATCH_FAILED;
+        }
+        return out;
     }
 
 private:
@@ -503,42 +595,27 @@ private:
         int node = state.index;
 
         int shift = base_shift<true>(seq[pos]);
-        int current = (shift >= 0 ? pointers[node + shift] : -1);
+        int current = (shift >= 0 ? pointers[node + shift] : STATUS_MISSING);
 
         // At the end: we prepare to return the actual values. We also refine
         // the max number of mismatches so that we don't search for things with
         // more mismatches than the best hit that was already encountered.
         if (pos + 1 == length) {
-            if (current >= 0) {
+            if (current >= 0 || current == STATUS_AMBIGUOUS) {
                 total_mismatches = state.total;
                 state.index = current;
                 return state;
             }
 
-            state.index = -1;
+            state.index = STATUS_MISSING;
             ++state.total;
             auto& current_segment_mm = state.per_segment[segment_id];
             ++current_segment_mm;
 
             if (state.total <= total_mismatches && current_segment_mm <= segment_mismatches[segment_id]) {
-                bool found = false;
-                for (int s = 0; s < 4; ++s) {
-                    if (shift == s) { 
-                        continue;
-                    }
-
-                    int candidate = pointers[node + s];
-                    if (candidate >= 0) {
-                        if (found) { // ambiguous, so we quit early.
-                            state.index = -1;
-                            break;
-                        }
-                        state.index = candidate;
-                        total_mismatches = state.total;
-                        found = true;
-                    }
-                }
+                scan_final_position_with_mismatch(node, shift, state.index, state.total, total_mismatches);
             }
+
             return state;
 
         } else {
@@ -549,7 +626,7 @@ private:
             }
 
             Result best;
-            best.index = -1;
+            best.index = STATUS_MISSING;
             best.total = total_mismatches + 1;
 
             if (current >= 0) {
@@ -562,7 +639,7 @@ private:
             ++current_segment_mm;
 
             if (state.total <= total_mismatches && current_segment_mm <= segment_mismatches[segment_id]) {
-                for (int s = 0; s < 4; ++s) {
+                for (int s = 0; s < NUM_BASES; ++s) {
                     if (shift == s) { 
                         continue;
                     } 
@@ -572,12 +649,10 @@ private:
                         continue;
                     }
 
-                    state.index = alt;
-                    auto chosen = search(seq, next_pos, next_segment_id, state, segment_mismatches, total_mismatches);
-                    if (chosen.total < best.total) {
-                        best = chosen;
-                    } else if (chosen.total == best.total) { // ambiguous
-                        best.index = -1;
+                    if (state.total <= total_mismatches) { // check again, just in case total_mismatches changed.
+                        state.index = alt;
+                        auto chosen = search(seq, next_pos, next_segment_id, state, segment_mismatches, total_mismatches);
+                        replace_best_with_chosen(best, best.index, best.total, chosen, chosen.index, chosen.total);
                     }
                 }
             }
