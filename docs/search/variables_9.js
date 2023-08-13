@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['variable_5fmismatches_0',['variable_mismatches',['../structkaori_1_1SimpleSingleMatch_1_1State.html#a0f40c40db41c97e10ccec371544fd0c7',1,'kaori::SimpleSingleMatch::State']]]
+  ['total_0',['total',['../structkaori_1_1SegmentedMismatches_1_1Result.html#ab703f72c71b1e78b30345669aa793059',1,'kaori::SegmentedMismatches::Result']]]
 ];

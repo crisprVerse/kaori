@@ -90,6 +90,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structkaori_1_1SimpleBarcodeSearch_1_1Options.html">Options</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional parameters for <code><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html" title="Search for known barcode sequences.">SimpleBarcodeSearch</a></code>.  <a href="structkaori_1_1SimpleBarcodeSearch_1_1Options.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html" title="State of the search.">State</a> of the search.  <a href="structkaori_1_1SimpleBarcodeSearch_1_1State.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -98,8 +101,8 @@ Classes</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a9cd99d9aec1bb9686a75aa128e70f077"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html#a9cd99d9aec1bb9686a75aa128e70f077">SimpleBarcodeSearch</a> ()</td></tr>
 <tr class="separator:a9cd99d9aec1bb9686a75aa128e70f077"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a44c77e24d0579c364ceb1c4bee99b943"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html#a44c77e24d0579c364ceb1c4bee99b943">SimpleBarcodeSearch</a> (const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, int max_mismatches=0, bool reverse=false, DuplicateAction duplicates=DuplicateAction::ERROR)</td></tr>
-<tr class="separator:a44c77e24d0579c364ceb1c4bee99b943"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ada3f4f53ee2ffb9043f4a4e42ced7f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html#a0ada3f4f53ee2ffb9043f4a4e42ced7f">SimpleBarcodeSearch</a> (const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, const <a class="el" href="structkaori_1_1SimpleBarcodeSearch_1_1Options.html">Options</a> &amp;options)</td></tr>
+<tr class="separator:a0ada3f4f53ee2ffb9043f4a4e42ced7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac71e5409f61bf03009046b208de7677c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html#ac71e5409f61bf03009046b208de7677c">initialize</a> () const</td></tr>
 <tr class="separator:ac71e5409f61bf03009046b208de7677c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac80ba1b9394963f2befe4154da98ef1e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html#ac80ba1b9394963f2befe4154da98ef1e">reduce</a> (<a class="el" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a> &amp;state)</td></tr>
@@ -135,12 +138,12 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p >Default constructor. </p>
+<p >Default constructor. This is only provided for composition purposes; methods of this class should only be called on properly constructed instance. </p>
 
 </div>
 </div>
-<a id="a44c77e24d0579c364ceb1c4bee99b943" name="a44c77e24d0579c364ceb1c4bee99b943"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a44c77e24d0579c364ceb1c4bee99b943">&#9670;&#160;</a></span>SimpleBarcodeSearch() <span class="overload">[2/2]</span></h2>
+<a id="a0ada3f4f53ee2ffb9043f4a4e42ced7f" name="a0ada3f4f53ee2ffb9043f4a4e42ced7f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ada3f4f53ee2ffb9043f4a4e42ced7f">&#9670;&#160;</a></span>SimpleBarcodeSearch() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -157,20 +160,8 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>max_mismatches</em> = <code>0</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>reverse</em> = <code>false</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">DuplicateAction&#160;</td>
-          <td class="paramname"><em>duplicates</em> = <code>DuplicateAction::ERROR</code>&#160;</td>
+          <td class="paramtype">const <a class="el" href="structkaori_1_1SimpleBarcodeSearch_1_1Options.html">Options</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -187,9 +178,7 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">barcode_pool</td><td>Pool of barcode sequences. </td></tr>
-    <tr><td class="paramname">max_mismatches</td><td>Maximum number of mismatches for any search performed by this class. </td></tr>
-    <tr><td class="paramname">reverse</td><td>Whether to reverse-complement the barcode sequences. </td></tr>
-    <tr><td class="paramname">duplicates</td><td>How duplicated <code>sequences</code> in <code>barcode_pool</code> should be handled. </td></tr>
+    <tr><td class="paramname">options</td><td>Optional parameters for the search. </td></tr>
   </table>
   </dd>
 </dl>

@@ -107,12 +107,12 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5691b3e7196a5613a064a47fb320c861"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#a5691b3e7196a5613a064a47fb320c861">MismatchTrie</a> (size_t barcode_length=0)</td></tr>
-<tr class="separator:a5691b3e7196a5613a064a47fb320c861"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15eace41e2e24534714d2cd4b3ac5ede"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#a15eace41e2e24534714d2cd4b3ac5ede">MismatchTrie</a> (const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, DuplicateAction duplicates=DuplicateAction::ERROR)</td></tr>
-<tr class="separator:a15eace41e2e24534714d2cd4b3ac5ede"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8717833037f03bc3f21815574b8782e9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structkaori_1_1MismatchTrie_1_1AddStatus.html">AddStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#a8717833037f03bc3f21815574b8782e9">add</a> (const char *barcode_seq, DuplicateAction duplicates)</td></tr>
-<tr class="separator:a8717833037f03bc3f21815574b8782e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc5bde33dc88b246f5376c78c60999d0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#abc5bde33dc88b246f5376c78c60999d0">MismatchTrie</a> ()</td></tr>
+<tr class="separator:abc5bde33dc88b246f5376c78c60999d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9f2e529bf881ba7439f736a248faf00"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#ad9f2e529bf881ba7439f736a248faf00">MismatchTrie</a> (size_t barcode_length, DuplicateAction duplicates)</td></tr>
+<tr class="separator:ad9f2e529bf881ba7439f736a248faf00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac917c202eab4a62382112ea46ced7d53"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structkaori_1_1MismatchTrie_1_1AddStatus.html">AddStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#ac917c202eab4a62382112ea46ced7d53">add</a> (const char *barcode_seq)</td></tr>
+<tr class="separator:ac917c202eab4a62382112ea46ced7d53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab59fa53197bedc1a0b5be0d1b64c6392"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#ab59fa53197bedc1a0b5be0d1b64c6392">get_length</a> () const</td></tr>
 <tr class="separator:ab59fa53197bedc1a0b5be0d1b64c6392"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a1333d03728504b6620ca27e34b4152"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#a4a1333d03728504b6620ca27e34b4152">size</a> () const</td></tr>
@@ -133,8 +133,34 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>statu
 <div class="textblock"><p >Base class for the mismatch search. </p>
 <p >Given a (typically read-derived) sequence, this class will perform a mismatch-aware search to a pool of known barcode sequences. It will then return the barcode with the fewest mismatches to the input sequence. Any number of mismatches are supported; subclasses will decide how the mismatches can be distributed throughout the length of the sequence. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a5691b3e7196a5613a064a47fb320c861" name="a5691b3e7196a5613a064a47fb320c861"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5691b3e7196a5613a064a47fb320c861">&#9670;&#160;</a></span>MismatchTrie() <span class="overload">[1/2]</span></h2>
+<a id="abc5bde33dc88b246f5376c78c60999d0" name="abc5bde33dc88b246f5376c78c60999d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc5bde33dc88b246f5376c78c60999d0">&#9670;&#160;</a></span>MismatchTrie() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">kaori::MismatchTrie::MismatchTrie </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p >Default constructor. This is only provided to enable composition, the resulting object should not be used until it is copy-assigned to a properly constructed instance. </p>
+
+</div>
+</div>
+<a id="ad9f2e529bf881ba7439f736a248faf00" name="ad9f2e529bf881ba7439f736a248faf00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9f2e529bf881ba7439f736a248faf00">&#9670;&#160;</a></span>MismatchTrie() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -146,83 +172,7 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>statu
           <td class="memname">kaori::MismatchTrie::MismatchTrie </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>barcode_length</em> = <code>0</code></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">barcode_length</td><td>Length of the barcodes in the pool. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a15eace41e2e24534714d2cd4b3ac5ede" name="a15eace41e2e24534714d2cd4b3ac5ede"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a15eace41e2e24534714d2cd4b3ac5ede">&#9670;&#160;</a></span>MismatchTrie() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">kaori::MismatchTrie::MismatchTrie </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;&#160;</td>
-          <td class="paramname"><em>barcode_pool</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">DuplicateAction&#160;</td>
-          <td class="paramname"><em>duplicates</em> = <code>DuplicateAction::ERROR</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">barcode_pool</td><td>Pool of known barcode sequences. </td></tr>
-    <tr><td class="paramname">duplicates</td><td>How duplicated sequences in <code>barcode_pool</code> should be handled. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a8717833037f03bc3f21815574b8782e9" name="a8717833037f03bc3f21815574b8782e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8717833037f03bc3f21815574b8782e9">&#9670;&#160;</a></span>add()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structkaori_1_1MismatchTrie_1_1AddStatus.html">AddStatus</a> kaori::MismatchTrie::add </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>barcode_seq</em>, </td>
+          <td class="paramname"><em>barcode_length</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -244,8 +194,41 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>statu
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">barcode_seq</td><td>Pointer to a character array containing a barcode sequence. The array should have length equal to <code><a class="el" href="classkaori_1_1MismatchTrie.html#ab59fa53197bedc1a0b5be0d1b64c6392">get_length()</a></code> and should only contain IUPAC nucleotides or their lower-case equivalents (excepting U or gap characters). </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">duplicates</td><td>How duplicate sequences across <code><a class="el" href="classkaori_1_1MismatchTrie.html#a8717833037f03bc3f21815574b8782e9">add()</a></code> calls should be handled.</td></tr>
+    <tr><td class="paramname">barcode_length</td><td>Length of the barcodes in the pool. </td></tr>
+    <tr><td class="paramname">duplicates</td><td>How duplicate sequences across <code><a class="el" href="classkaori_1_1MismatchTrie.html#ac917c202eab4a62382112ea46ced7d53">add()</a></code> calls should be handled. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ac917c202eab4a62382112ea46ced7d53" name="ac917c202eab4a62382112ea46ced7d53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac917c202eab4a62382112ea46ced7d53">&#9670;&#160;</a></span>add()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structkaori_1_1MismatchTrie_1_1AddStatus.html">AddStatus</a> kaori::MismatchTrie::add </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>barcode_seq</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">barcode_seq</td><td>Pointer to a character array containing a barcode sequence. The array should have length equal to <code><a class="el" href="classkaori_1_1MismatchTrie.html#ab59fa53197bedc1a0b5be0d1b64c6392">get_length()</a></code> and should only contain IUPAC nucleotides or their lower-case equivalents (excepting U or gap characters).</td></tr>
   </table>
   </dd>
 </dl>
@@ -301,7 +284,7 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>statu
   </tr>
 </table>
 </div><div class="memdoc">
-<p >Attempt to optimize the trie for more cache-friendly look-ups. This is not necessary if sorted sequences are supplied in <code><a class="el" href="classkaori_1_1MismatchTrie.html#a8717833037f03bc3f21815574b8782e9">add()</a></code>. </p>
+<p >Attempt to optimize the trie for more cache-friendly look-ups. This is not necessary if sorted sequences are supplied in <code><a class="el" href="classkaori_1_1MismatchTrie.html#ac917c202eab4a62382112ea46ced7d53">add()</a></code>. </p>
 
 </div>
 </div>

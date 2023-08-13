@@ -90,14 +90,17 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structkaori_1_1SimpleSingleMatch_1_1Options.html">Options</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional parameters for <code><a class="el" href="classkaori_1_1SimpleSingleMatch.html" title="Search for a template with a single variable region.">SimpleSingleMatch</a></code>.  <a href="structkaori_1_1SimpleSingleMatch_1_1Options.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structkaori_1_1SimpleSingleMatch_1_1State.html">State</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structkaori_1_1SimpleSingleMatch_1_1State.html" title="State of the search on a read sequence.">State</a> of the search on a read sequence.  <a href="structkaori_1_1SimpleSingleMatch_1_1State.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac50430c8afc4c1c85d6249bfb2568ae4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleSingleMatch.html#ac50430c8afc4c1c85d6249bfb2568ae4">SimpleSingleMatch</a> (const char *template_seq, size_t template_length, bool search_forward, bool search_reverse, const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, int max_mismatches=0, DuplicateAction duplicates=DuplicateAction::ERROR)</td></tr>
-<tr class="separator:ac50430c8afc4c1c85d6249bfb2568ae4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad952314ae053d7eb13177973152d1117"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleSingleMatch.html#ad952314ae053d7eb13177973152d1117">SimpleSingleMatch</a> (const char *template_seq, size_t template_length, const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, const <a class="el" href="structkaori_1_1SimpleSingleMatch_1_1Options.html">Options</a> &amp;options)</td></tr>
+<tr class="separator:ad952314ae053d7eb13177973152d1117"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2fc13e79badc66026c483e52616d0a7f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structkaori_1_1SimpleSingleMatch_1_1State.html">State</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleSingleMatch.html#a2fc13e79badc66026c483e52616d0a7f">initialize</a> () const</td></tr>
 <tr class="separator:a2fc13e79badc66026c483e52616d0a7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43789bbf0d5b23c8b6d6613d353e2813"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleSingleMatch.html#a43789bbf0d5b23c8b6d6613d353e2813">reduce</a> (<a class="el" href="structkaori_1_1SimpleSingleMatch_1_1State.html">State</a> &amp;state)</td></tr>
@@ -118,8 +121,8 @@ class kaori::SimpleSingleMatch&lt; max_size &gt;</div><p >Search for a template 
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac50430c8afc4c1c85d6249bfb2568ae4" name="ac50430c8afc4c1c85d6249bfb2568ae4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac50430c8afc4c1c85d6249bfb2568ae4">&#9670;&#160;</a></span>SimpleSingleMatch()</h2>
+<a id="ad952314ae053d7eb13177973152d1117" name="ad952314ae053d7eb13177973152d1117"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad952314ae053d7eb13177973152d1117">&#9670;&#160;</a></span>SimpleSingleMatch()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -144,32 +147,14 @@ template&lt;size_t max_size&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>search_forward</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>search_reverse</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">const <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a> &amp;&#160;</td>
           <td class="paramname"><em>barcode_pool</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>max_mismatches</em> = <code>0</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">DuplicateAction&#160;</td>
-          <td class="paramname"><em>duplicates</em> = <code>DuplicateAction::ERROR</code>&#160;</td>
+          <td class="paramtype">const <a class="el" href="structkaori_1_1SimpleSingleMatch_1_1Options.html">Options</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -187,11 +172,8 @@ template&lt;size_t max_size&gt; </div>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">template_seq</td><td>Pointer to a character array containing the template sequence, see <code><a class="el" href="classkaori_1_1ScanTemplate.html" title="Scan a read sequence for the template sequence.">ScanTemplate</a></code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">template_length</td><td>Length of the array pointed to by <code>barcode_length</code>. This should be less than or equal to <code>max_size</code>. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">search_forward</td><td>Should the search be performed on the forward strand of the read sequence? </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">search_reverse</td><td>Should the search be performed on the reverse strand of the read sequence? </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">barcode_pool</td><td>Known sequences for the single variable region in <code>template_seq</code>. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">max_mismatches</td><td>Maximum number of mismatches to consider across the entire template sequence. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">duplicates</td><td>How duplicate sequences in <code>barcode_pool</code> should be handled. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">options</td><td>Optional parameters. </td></tr>
   </table>
   </dd>
 </dl>
