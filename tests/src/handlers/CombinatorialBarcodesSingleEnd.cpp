@@ -71,14 +71,12 @@ TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementFirst) {
     kaori::CombinatorialBarcodesSingleEnd<128, 2> forward(constant.c_str(), constant.size(), ptrs, Options<128, 2>());
     kaori::CombinatorialBarcodesSingleEnd<128, 2> reverse(constant.c_str(), constant.size(), ptrs, [&]{
         Options<128, 2> opt;
-        opt.search_forward = false;
-        opt.search_reverse = true;
+        opt.strand = kaori::SearchStrand::REVERSE;
         return opt;
     }());
     kaori::CombinatorialBarcodesSingleEnd<128, 2> both(constant.c_str(), constant.size(), ptrs, [&]{
         Options<128, 2> opt;
-        opt.search_forward = true;
-        opt.search_reverse = true;
+        opt.strand = kaori::SearchStrand::BOTH;
         return opt;
     }());
 
@@ -222,21 +220,18 @@ TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementMismatchFirst) {
     auto ptrs = make_pointers();
     kaori::CombinatorialBarcodesSingleEnd<128, 2> mm0(constant.c_str(), constant.size(), ptrs, [&]{
         Options<128, 2> opt;
-        opt.search_forward = false;
-        opt.search_reverse = true;
+        opt.strand = kaori::SearchStrand::REVERSE;
         return opt;
     }());
     kaori::CombinatorialBarcodesSingleEnd<128, 2> mm1(constant.c_str(), constant.size(), ptrs, [&]{
         Options<128, 2> opt;
-        opt.search_forward = false;
-        opt.search_reverse = true;
+        opt.strand = kaori::SearchStrand::REVERSE;
         opt.max_mismatches = 1;
         return opt;
     }());
     kaori::CombinatorialBarcodesSingleEnd<128, 2> mm2(constant.c_str(), constant.size(), ptrs, [&]{
         Options<128, 2> opt;
-        opt.search_forward = false;
-        opt.search_reverse = true;
+        opt.strand = kaori::SearchStrand::REVERSE;
         opt.max_mismatches = 2;
         return opt;
     }());
@@ -330,16 +325,14 @@ TEST_F(CombinatorialBarcodesSingleEndTest, Best) {
         kaori::CombinatorialBarcodesSingleEnd<128, 2> reverse(constant.c_str(), constant.size(), make_pointers(), [&]{
             Options<128, 2> opt;
             opt.use_first = false;
-            opt.search_forward = false;
-            opt.search_reverse = true;
+            opt.strand = kaori::SearchStrand::REVERSE;
             return opt;
         }());
 
         kaori::CombinatorialBarcodesSingleEnd<128, 2> both(constant.c_str(), constant.size(), make_pointers(), [&]{
             Options<128, 2> opt;
             opt.use_first = false;
-            opt.search_forward = true;
-            opt.search_reverse = true;
+            opt.strand = kaori::SearchStrand::BOTH;
             return opt;
         }());
 

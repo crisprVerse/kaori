@@ -4,7 +4,7 @@
 
 TEST(ScanTemplate, Basic) {
     std::string thing = "ACGT----TTTT"; 
-    kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), true, false);
+    kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), kaori::SearchStrand::FORWARD);
 
     auto fvar = stuff.variable_regions();
     ASSERT_EQ(fvar.size(), 1);
@@ -42,7 +42,7 @@ TEST(ScanTemplate, Basic) {
 
 TEST(ScanTemplate, TooShort) {
     std::string thing = "ACGT----TTTT"; 
-    kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), true, false);
+    kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), kaori::SearchStrand::FORWARD);
 
     std::string seq = "ACGT";
     auto out = stuff.initialize(seq.c_str(), seq.size());
@@ -56,7 +56,7 @@ TEST(ScanTemplate, ReverseComplement) {
     std::string thing = "ACGT----TTTT"; 
 
     {
-        kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), true, true);
+        kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), kaori::SearchStrand::BOTH);
         std::string seq = "AAAATTTTACGT";
         auto out = stuff.initialize(seq.c_str(), seq.size());
 
@@ -67,7 +67,7 @@ TEST(ScanTemplate, ReverseComplement) {
     }
 
     {
-        kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), false, true);
+        kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), kaori::SearchStrand::REVERSE);
         std::string seq = "AAAATTTTACGT";
         auto out = stuff.initialize(seq.c_str(), seq.size());
 
@@ -83,7 +83,7 @@ TEST(ScanTemplate, ReverseComplement) {
     }
 
     {
-        kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), true, false);
+        kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), kaori::SearchStrand::FORWARD);
         std::string seq = "AAAATTTTACGT";
         auto out = stuff.initialize(seq.c_str(), seq.size());
 
@@ -96,7 +96,7 @@ TEST(ScanTemplate, ReverseComplement) {
 
 TEST(ScanTemplate, Multiple) {
     std::string thing = "ACGT----TT-----GG"; 
-    kaori::ScanTemplate<32> stuff(thing.c_str(), thing.size(), true, true);
+    kaori::ScanTemplate<32> stuff(thing.c_str(), thing.size(), kaori::SearchStrand::BOTH);
 
     auto fvar = stuff.variable_regions();
     ASSERT_EQ(fvar.size(), 2);
@@ -136,7 +136,7 @@ TEST(ScanTemplate, Multiple) {
 
 TEST(ScanTemplate, Mismatches) {
     std::string thing = "ACGT----TTTT"; 
-    kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), true, false);
+    kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), kaori::SearchStrand::FORWARD);
 
     auto fvar = stuff.variable_regions();
     ASSERT_EQ(fvar.size(), 1);
@@ -179,7 +179,7 @@ TEST(ScanTemplate, Mismatches) {
 
 TEST(ScanTemplate, BadBases) {
     std::string thing = "ACGT----TTTT"; 
-    kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), true, false);
+    kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), kaori::SearchStrand::FORWARD);
 
     {
         std::string seq = "aACGTNNNNTTTTa";

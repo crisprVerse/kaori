@@ -40,14 +40,9 @@ public:
         bool use_first = true;
 
         /** 
-         * Should the search be performed on the forward strand of the read sequence?
+         * Strand(s) of the read sequence to search.
          */
-        bool search_forward = true; 
-
-        /**
-         * Should the search be performed on the reverse strand of the read sequence?
-         */
-        bool search_reverse = false;
+        SearchStrand strand = SearchStrand::FORWARD;
 
         /** 
          * How duplicated barcode sequences should be handled.
@@ -71,8 +66,7 @@ public:
             barcode_pool, 
             [&]{
                 typename SimpleSingleMatch<max_size>::Options ssopt;
-                ssopt.search_forward = options.search_forward;
-                ssopt.search_reverse = options.search_reverse;
+                ssopt.strand = options.strand;
                 ssopt.max_mismatches = options.max_mismatches;
                 ssopt.duplicates = options.duplicates;
                 return ssopt;

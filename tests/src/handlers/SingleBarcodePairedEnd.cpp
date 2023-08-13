@@ -88,8 +88,7 @@ TEST_F(SingleBarcodePairedEndTest, Reverse) {
     {
         kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
             Options<16> opt;
-            opt.search_forward = false;
-            opt.search_reverse = true;
+            opt.strand = kaori::SearchStrand::REVERSE;
             return opt;
         }());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
@@ -108,8 +107,7 @@ TEST_F(SingleBarcodePairedEndTest, Reverse) {
         kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
             Options<16> opt;
             opt.max_mismatches = 2;
-            opt.search_forward = false;
-            opt.search_reverse = true;
+            opt.strand = kaori::SearchStrand::REVERSE;
             return opt;
         }());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());

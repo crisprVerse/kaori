@@ -144,14 +144,12 @@ TEST_F(SimpleSingleMatchTest, ReverseComplementFirst) {
     kaori::SimpleSingleMatch<16> forward_only(constant.c_str(), constant.size(), ptrs, Options<16>());
     kaori::SimpleSingleMatch<16> reverse_only(constant.c_str(), constant.size(), ptrs, [&]{
         Options<16> opt;
-        opt.search_forward = false;
-        opt.search_reverse = true;
+        opt.strand = kaori::SearchStrand::REVERSE;
         return opt;
     }());
     kaori::SimpleSingleMatch<16> both(constant.c_str(), constant.size(), ptrs, [&]{
         Options<16> opt;
-        opt.search_forward = true;
-        opt.search_reverse = true;
+        opt.strand = kaori::SearchStrand::BOTH;
         return opt;
     }());
 
@@ -321,14 +319,12 @@ TEST_F(SimpleSingleMatchTest, ReverseComplementBest) {
     kaori::SimpleSingleMatch<16> stuff(constant.c_str(), constant.size(), ptrs, Options<16>());
     kaori::SimpleSingleMatch<16> reverse_only(constant.c_str(), constant.size(), ptrs, [&]{
         Options<16> opt;
-        opt.search_forward = false;
-        opt.search_reverse = true;
+        opt.strand = kaori::SearchStrand::REVERSE;
         return opt;
     }());
     kaori::SimpleSingleMatch<16> both(constant.c_str(), constant.size(), ptrs, [&]{
         Options<16> opt;
-        opt.search_forward = true;
-        opt.search_reverse = true;
+        opt.strand = kaori::SearchStrand::BOTH;
         return opt;
     }());
 
@@ -360,8 +356,7 @@ TEST_F(SimpleSingleMatchTest, Caching) {
 
     kaori::SimpleSingleMatch<16> stuff(constant.c_str(), constant.size(), ptrs, [&]{
         Options<16> opt;
-        opt.search_forward = true;
-        opt.search_reverse = true;
+        opt.strand = kaori::SearchStrand::BOTH;
         opt.max_mismatches = 1;
         return opt;
     }());

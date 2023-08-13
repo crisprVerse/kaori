@@ -45,14 +45,9 @@ public:
         bool use_first = true;
 
         /**
-         * Should the search be performed on the forward strand of the read sequence?
+         * Strand(s) of the read sequence to search for the target.
          */
-        bool search_forward = true;
-
-        /**
-         * Should the search be performed on the reverse strand of the read sequence?
-         */
-        bool search_reverse = false;
+        SearchStrand strand = SearchStrand::FORWARD;
 
         /**
          * How duplicated barcode sequences should be handled.
@@ -70,11 +65,11 @@ public:
      * @param Optional parameters.
      */
     CombinatorialBarcodesSingleEnd(const char* template_seq, size_t template_length, const std::array<BarcodePool, num_variable>& barcode_pools, const Options& options) :
-        forward(options.search_forward),
-        reverse(options.search_reverse),
+        forward(search_forward(options.strand)),
+        reverse(search_reverse(options.strand)),
         max_mm(options.max_mismatches),
         use_first(options.use_first),
-        constant_matcher(template_seq, template_length, forward, reverse)
+        constant_matcher(template_seq, template_length, options.strand)
     {
         const auto& regions = constant_matcher.variable_regions();
         if (regions.size() != num_variable) { 

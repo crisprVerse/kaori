@@ -23,8 +23,21 @@ namespace kaori {
 enum class DuplicateAction : char { FIRST, LAST, NONE, ERROR };
 
 /**
+ * Strands of the read sequence to search.
+ */
+enum class SearchStrand : char { FORWARD, REVERSE, BOTH };
+
+/**
  * @cond
  */
+inline bool search_forward(SearchStrand x) {
+    return x == SearchStrand::FORWARD || x == SearchStrand::BOTH;
+}
+
+inline bool search_reverse(SearchStrand x) {
+    return x == SearchStrand::REVERSE || x == SearchStrand::BOTH;
+}
+
 template<bool allow_n_ = false, bool allow_iupac_ = false>
 char complement_base(char b) {
     char output;

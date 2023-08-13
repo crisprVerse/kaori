@@ -60,12 +60,9 @@ public:
                 combopt.use_first = options.use_first;
 
                 combopt.max_mismatches1 = options.max_mismatches1;
-                combopt.search_forward1 = !options.search_reverse1;
-                combopt.search_reverse1 = options.search_reverse1;
-
+                combopt.strand1 = options.strand1;
                 combopt.max_mismatches2 = options.max_mismatches2;
-                combopt.search_forward2 = !options.search_reverse2;
-                combopt.search_reverse2 = options.search_reverse2;
+                combopt.strand2 = options.strand2;
 
                 // we allow duplicates in the trie for each individual barcode, as only the pairs are unique in the dual barcode setup.
                 combopt.duplicates = DuplicateAction::FIRST; 

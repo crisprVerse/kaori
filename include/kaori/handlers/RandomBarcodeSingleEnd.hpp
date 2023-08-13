@@ -43,14 +43,9 @@ public:
         bool use_first = true;
 
         /** 
-         * Should the search be performed on the forward strand of the read sequence?
+         * Strand(s) of the read sequence to search.
          */
-        bool search_forward = true; 
-
-        /**
-         * Should the search be performed on the reverse strand of the read sequence?
-         */
-        bool search_reverse = false;
+        SearchStrand strand = SearchStrand::FORWARD;
     };
 
 public:
@@ -62,9 +57,9 @@ public:
      * @param options Optional parameters.
      */
     RandomBarcodeSingleEnd(const char* template_seq, size_t template_length, const Options& options) :
-        forward(options.search_forward),
-        reverse(options.search_reverse),
-        constant(template_seq, template_length, forward, reverse),
+        forward(search_forward(options.strand)),
+        reverse(search_reverse(options.strand)),
+        constant(template_seq, template_length, options.strand),
         max_mm(options.max_mismatches),
         use_first(options.use_first)
     {}

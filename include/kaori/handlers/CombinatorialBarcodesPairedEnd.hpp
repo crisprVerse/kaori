@@ -41,14 +41,9 @@ public:
         int max_mismatches1 = 0;
 
         /**
-         * Should the search for the first target be performed on the forward strand of the read sequence?
+         * Strand(s) of the read sequence to search for the first target.
          */
-        bool search_forward1 = true;
-
-        /**
-         * Should the search for the first target be performed on the reverse strand of the read sequence?
-         */
-        bool search_reverse1 = false;
+        SearchStrand strand1 = SearchStrand::FORWARD;
 
         /** 
          * Maximum number of mismatches allowed across the second target sequence.
@@ -56,14 +51,9 @@ public:
         int max_mismatches2 = 0;
 
         /**
-         * Should the search for the second target be performed on the forward strand of the read sequence?
+         * Strand(s) of the read sequence to search for the second target.
          */
-        bool search_forward2 = true;
-
-        /**
-         * Should the search for the second target be performed on the reverse strand of the read sequence?
-         */
-        bool search_reverse2 = false;
+        SearchStrand strand2 = SearchStrand::FORWARD;
 
         /** 
          * How duplicated barcode sequences should be handled.
@@ -103,8 +93,7 @@ public:
             barcode_pool1,
             [&]{
                 typename SimpleSingleMatch<max_size>::Options opt;
-                opt.search_forward = options.search_forward1;
-                opt.search_reverse = options.search_reverse1;
+                opt.strand = options.strand1;
                 opt.max_mismatches = options.max_mismatches1;
                 opt.duplicates = options.duplicates;
                 return opt;
@@ -116,8 +105,7 @@ public:
             barcode_pool2, 
             [&]{
                 typename SimpleSingleMatch<max_size>::Options opt;
-                opt.search_forward = options.search_forward2;
-                opt.search_reverse = options.search_reverse2;
+                opt.strand = options.strand2;
                 opt.max_mismatches = options.max_mismatches2;
                 opt.duplicates = options.duplicates;
                 return opt;

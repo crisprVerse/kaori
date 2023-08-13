@@ -42,11 +42,10 @@ public:
         int max_mismatches1 = 0;
 
         /**
-         * Should the search for the first target be performed on the reverse strand of the read sequence?
-         * 
-         * If `true`, no search is performed on the forward strand... sorry, I'll get around to adding it at some point.
+         * Strand of the read sequence to search for the first target.
+         * `BOTH` is not supported right now... sorry.
          */
-        bool search_reverse1 = false;
+        SearchStrand strand1 = SearchStrand::FORWARD;
 
         /** 
          * Maximum number of mismatches allowed across the second target sequence.
@@ -54,11 +53,10 @@ public:
         int max_mismatches2 = 0;
 
         /**
-         * Should the search for the second target be performed on the reverse strand of the read sequence?
-         *
-         * If `true`, no search is performed on the forward strand... sorry, I'll get around to adding it at some point.
+         * Strand of the read sequence to search for the second target.
+         * `BOTH` is not supported right now... sorry.
          */
-        bool search_reverse2 = false;
+        SearchStrand strand2 = SearchStrand::FORWARD;
 
         /**
          * How duplicated barcode sequences should be handled.
@@ -95,10 +93,10 @@ public:
         const char* template_seq2, size_t template_length2, const BarcodePool& barcode_pool2,
         const Options& options
     ) :
-        search_reverse1(options.search_reverse1),
-        search_reverse2(options.search_reverse2),
-        constant1(template_seq1, template_length1, !search_reverse1, search_reverse1),
-        constant2(template_seq2, template_length2, !search_reverse2, search_reverse2),
+        search_reverse1(search_reverse(options.strand1)),
+        search_reverse2(search_reverse(options.strand2)),
+        constant1(template_seq1, template_length1, options.strand1),
+        constant2(template_seq2, template_length2, options.strand2),
         max_mm1(options.max_mismatches1),
         max_mm2(options.max_mismatches2),
         randomized(options.random),

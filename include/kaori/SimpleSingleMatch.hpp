@@ -45,14 +45,9 @@ public:
         DuplicateAction duplicates = DuplicateAction::ERROR;
 
         /** 
-         * Should the search be performed on the forward strand of the read sequence?
+         * Strand(s) of the read sequence to search.
          */
-        bool search_forward = true; 
-
-        /**
-         * Should the search be performed on the reverse strand of the read sequence?
-         */
-        bool search_reverse = false;
+        SearchStrand strand = SearchStrand::FORWARD;
     };
 
 public:
@@ -70,10 +65,10 @@ public:
         const Options& options
     ) : 
         num_options(barcode_pool.pool.size()),
-        forward(options.search_forward), 
-        reverse(options.search_reverse),
+        forward(search_forward(options.strand)), 
+        reverse(search_reverse(options.strand)),
         max_mm(options.max_mismatches),
-        constant(template_seq, template_length, forward, reverse)
+        constant(template_seq, template_length, options.strand)
     {
         // Exact strandedness doesn't matter here, just need the number and length.
         const auto& regions = constant.variable_regions();

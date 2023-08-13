@@ -89,8 +89,7 @@ TEST_F(CombinatorialBarcodesPairedEndTest, ReverseComplementFirst) {
             constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
             [&]{
                 Options<32> opt;
-                opt.search_forward1 = false;
-                opt.search_reverse1 = true;
+                opt.strand1 = kaori::SearchStrand::REVERSE;
                 return opt;
             }()
         );
@@ -110,8 +109,7 @@ TEST_F(CombinatorialBarcodesPairedEndTest, ReverseComplementFirst) {
             constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
             [&]{
                 Options<32> opt;
-                opt.search_forward2 = false;
-                opt.search_reverse2 = true;
+                opt.strand2 = kaori::SearchStrand::REVERSE;
                 return opt;
             }()
         );

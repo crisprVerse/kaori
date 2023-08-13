@@ -87,8 +87,7 @@ TEST_F(SingleBarcodeSingleEndTest, Stranded) {
     {
         kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
             Options<16> opt;
-            opt.search_forward = false;
-            opt.search_reverse = true;
+            opt.strand = kaori::SearchStrand::REVERSE;
             return opt;
         }());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
@@ -105,8 +104,7 @@ TEST_F(SingleBarcodeSingleEndTest, Stranded) {
     {
         kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
             Options<16> opt;
-            opt.search_forward = true;
-            opt.search_reverse = true;
+            opt.strand = kaori::SearchStrand::BOTH;
             return opt;
         }());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
@@ -123,8 +121,7 @@ TEST_F(SingleBarcodeSingleEndTest, Stranded) {
     {
         kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
             Options<16> opt;
-            opt.search_forward = true;
-            opt.search_reverse = true;
+            opt.strand = kaori::SearchStrand::BOTH;
             opt.max_mismatches = 2;
             return opt;
         }());
@@ -153,8 +150,7 @@ TEST_F(SingleBarcodeSingleEndTest, Best) {
     {
         kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
             Options<16> opt;
-            opt.search_forward = true;
-            opt.search_reverse = true;
+            opt.strand = kaori::SearchStrand::BOTH;
             opt.max_mismatches = 1;
             return opt;
         }());
@@ -172,8 +168,7 @@ TEST_F(SingleBarcodeSingleEndTest, Best) {
     {
         kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
             Options<16> opt;
-            opt.search_forward = true;
-            opt.search_reverse = true;
+            opt.strand = kaori::SearchStrand::BOTH;
             opt.max_mismatches = 1;
             opt.use_first = false;
             return opt;
@@ -204,8 +199,7 @@ TEST_F(SingleBarcodeSingleEndTest, Iupac) {
 
     kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), [&]{
         Options<16> opt;
-        opt.search_forward = true;
-        opt.search_reverse = true;
+        opt.strand = kaori::SearchStrand::BOTH;
         return opt;
     }());
     byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());

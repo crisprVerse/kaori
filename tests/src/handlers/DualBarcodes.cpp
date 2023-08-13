@@ -87,7 +87,7 @@ TEST_F(DualBarcodesTest, ReverseComplementFirst) {
             constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2), 
             [&]{
                 Options<32> opt;
-                opt.search_reverse1 = true;
+                opt.strand1 = kaori::SearchStrand::REVERSE;
                 return opt;
             }()
         );
@@ -109,7 +109,7 @@ TEST_F(DualBarcodesTest, ReverseComplementFirst) {
             constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
             [&]{
                 Options<32> opt;
-                opt.search_reverse2 = true;
+                opt.strand2 = kaori::SearchStrand::REVERSE;
                 return opt;
             }()
         );
@@ -154,8 +154,8 @@ TEST_F(DualBarcodesTest, Iupac) {
             constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
             [&]{
                 Options<32> opt;
-                opt.search_reverse1 = true;
-                opt.search_reverse2 = true;
+                opt.strand1 = kaori::SearchStrand::REVERSE;
+                opt.strand2 = kaori::SearchStrand::REVERSE;
                 return opt;
             }()
         );
@@ -391,8 +391,8 @@ TEST_F(DualBarcodesTest, ReverseComplementBest) {
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         [&]{
             Options<32> opt;
-            opt.search_reverse1 = true;
-            opt.search_reverse2 = true;
+            opt.strand1 = kaori::SearchStrand::REVERSE;
+            opt.strand2 = kaori::SearchStrand::REVERSE;
             opt.max_mismatches1 = 1;
             opt.max_mismatches2 = 1;
             opt.use_first = false;
@@ -405,8 +405,8 @@ TEST_F(DualBarcodesTest, ReverseComplementBest) {
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         [&]{
             Options<32> opt;
-            opt.search_reverse1 = true;
-            opt.search_reverse2 = true;
+            opt.strand1 = kaori::SearchStrand::REVERSE;
+            opt.strand2 = kaori::SearchStrand::REVERSE;
             opt.max_mismatches1 = 1;
             opt.max_mismatches2 = 1;
             return opt;

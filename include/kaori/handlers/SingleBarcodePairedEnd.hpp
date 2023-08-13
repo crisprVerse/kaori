@@ -40,14 +40,9 @@ public:
         int max_mismatches = 0;
 
         /**
-         * Should the search be performed on the forward strand of each read sequence?
+         * Strand(s) of each read sequence to search.
          */
-        bool search_forward = true;
-
-        /**
-         * Should the search be performed on the reverse strand of each read sequence?
-         */
-        bool search_reverse = false;
+        SearchStrand strand = SearchStrand::FORWARD;
 
         /** 
          * How duplicated barcode sequences should be handled.
@@ -71,8 +66,7 @@ public:
             barcode_pool, 
             [&]{
                 typename SimpleSingleMatch<max_size>::Options ssopt;
-                ssopt.search_forward = options.search_forward;
-                ssopt.search_reverse = options.search_reverse;
+                ssopt.strand = options.strand;
                 ssopt.max_mismatches = options.max_mismatches;
                 ssopt.duplicates = options.duplicates;
                 return ssopt;
@@ -81,16 +75,6 @@ public:
         counts(barcode_pool.size()),
         use_first(options.use_first)
     {}
-
-    /**
-     * @param[in] template_seq Template sequence for the target.
-     * This should contain exactly one variable region.
-     * @param template_length Length of the template.
-     * This should be less than or equal to `max_size`.
-     * @param barcode_pool Known barcode sequences for the variable region.
-     */
-    SingleBarcodePairedEnd(const char* template_seq, size_t template_length, const BarcodePool& barcode_pool) :
-        SingleBarcodePairedEnd(template_seq, template_length, barcode_pool, Options()) {}
 
 public:
     /**
