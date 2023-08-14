@@ -89,10 +89,13 @@ $(function() {
 <div class="line"><a class="code hl_struct" href="structkaori_1_1BarcodePool.html">kaori::BarcodePool</a> pool(choices);</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Configure the handler:</span></div>
-<div class="line"><span class="comment">// - Compile-time maximum length of 32 bp for the template.</span></div>
-<div class="line"><span class="comment">// - Only search the forward strand (0).</span></div>
+<div class="line"><span class="comment">// - Maximum length of 32 bp for the template.</span></div>
+<div class="line"><span class="comment">// - Search both the forward and reverse strands.</span></div>
 <div class="line"><span class="comment">// - Maximum mismatch of 1.</span></div>
-<div class="line"><a class="code hl_class" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd&lt;32&gt;</a> handler(tmpl.c_str(), tmpl.size(), 0, pool, 1);</div>
+<div class="line"><a class="code hl_struct" href="structkaori_1_1SingleBarcodeSingleEnd_1_1Options.html">kaori::SingleBarcodeSingleEnd&lt;32&gt;::Options</a> opt;</div>
+<div class="line">opt.max_mismatch = 1;</div>
+<div class="line">opt.<a class="code hl_variable" href="structkaori_1_1SingleBarcodeSingleEnd_1_1Options.html#a3772722958364643cbbb9f8ca785f419">strand</a> = kaori::SearchStrand::BOTH;</div>
+<div class="line"><a class="code hl_class" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd&lt;32&gt;</a> handler(tmpl.c_str(), tmpl.size(), pool, opt);</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Process a FASTQ file with 4 threads.</span></div>
 <div class="line">byteme::SomeFileReader input(path_to_fastq);</div>
@@ -102,8 +105,17 @@ $(function() {
 <div class="line">handler.get_counts();</div>
 <div class="ttc" id="aclasskaori_1_1SingleBarcodeSingleEnd_html"><div class="ttname"><a href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd</a></div><div class="ttdoc">Handler for single-end single barcodes.</div><div class="ttdef"><b>Definition:</b> SingleBarcodeSingleEnd.hpp:25</div></div>
 <div class="ttc" id="aprocess__data_8hpp_html"><div class="ttname"><a href="process__data_8hpp.html">process_data.hpp</a></div><div class="ttdoc">Process single- or paired-end data.</div></div>
-<div class="ttc" id="astructkaori_1_1BarcodePool_html"><div class="ttname"><a href="structkaori_1_1BarcodePool.html">kaori::BarcodePool</a></div><div class="ttdoc">Pool of barcode sequences for a variable region.</div><div class="ttdef"><b>Definition:</b> BarcodePool.hpp:22</div></div>
-</div><!-- fragment --><p >The same general approach is used for:</p>
+<div class="ttc" id="astructkaori_1_1BarcodePool_html"><div class="ttname"><a href="structkaori_1_1BarcodePool.html">kaori::BarcodePool</a></div><div class="ttdoc">Pool of barcode sequences for a variable region.</div><div class="ttdef"><b>Definition:</b> BarcodePool.hpp:21</div></div>
+<div class="ttc" id="astructkaori_1_1SingleBarcodeSingleEnd_1_1Options_html"><div class="ttname"><a href="structkaori_1_1SingleBarcodeSingleEnd_1_1Options.html">kaori::SingleBarcodeSingleEnd::Options</a></div><div class="ttdoc">Optional parameters for SingleBarcodeSingleEnd.</div><div class="ttdef"><b>Definition:</b> SingleBarcodeSingleEnd.hpp:30</div></div>
+<div class="ttc" id="astructkaori_1_1SingleBarcodeSingleEnd_1_1Options_html_a3772722958364643cbbb9f8ca785f419"><div class="ttname"><a href="structkaori_1_1SingleBarcodeSingleEnd_1_1Options.html#a3772722958364643cbbb9f8ca785f419">kaori::SingleBarcodeSingleEnd::Options::strand</a></div><div class="ttdeci">SearchStrand strand</div><div class="ttdef"><b>Definition:</b> SingleBarcodeSingleEnd.hpp:45</div></div>
+</div><!-- fragment --><p >Check out the <a href="https://crisprverse.github.io/kaori">reference documentation</a> for more details.</p>
+<h1>Method description</h1>
+<h2>Algorithm</h2>
+<p >We define the "barcoding element" as the full sequence to be matched by <b>kaori</b>. The set of barcoding element sequences is parametrized as a template that consists of constant and variable regions. Each variable region is associated with a pool of possible barcode sequences; the template can be realized into a specific instance of a barcoding element by replacing its variable regions with valid barcode sequences.</p>
+<p >Given a template sequence and the associated barcode pools, <b>kaori</b> will scan each read for the template using bitwise comparisons. If a suitable match to the template is found, the sequence of the read at each variable region is extracted and searched against the pool of known barcodes. Imperfect barcode matches are identified through a trie-based search; the total number of mismatches is summed across the constant and variable regions. <b>kaori</b> also caches information about imperfect matches to avoid a redundant look-up when the same sequence is encountered in later reads.</p>
+<p >Our approach is fast and relatively easy to implement compared to full-blown sequence aligners. Any number of mismatches are supported and the framework can be easily adapted to new barcoding configurations. However, the downside is that indels are not supported in the search process. We consider this limitation to be acceptable as indels are quite rare in (Illumina) sequencing data.</p>
+<h2>Defining handlers</h2>
+<p >Each barcoding configuration is processed by a different <b>kaori</b> handler. The code shown above for <code>SingleBarcodeSingleEnd</code> can be re-used for different handlers:</p>
 <ul>
 <li><a href="https://crisprverse.github.io/kaori/classkaori_1_1SingleBarcodeSingleEnd.html">Single barcodes in single-end data</a></li>
 <li><a href="https://crisprverse.github.io/kaori/classkaori_1_1SingleBarcodePairedEnd.html">Single barcodes in paired-end data</a></li>
@@ -112,10 +124,8 @@ $(function() {
 <li><a href="https://crisprverse.github.io/kaori/classkaori_1_1DualBarcodes.html">Dual barcodes</a>, with <a href="https://crisprverse.github.io/kaori/classkaori_1_1DualBarcodesWithDiagnostics.html">diagnostics</a></li>
 <li><a href="https://crisprverse.github.io/kaori/classkaori_1_1RandomBarcodeSingleEnd.html">Random barcodes in single-end data</a></li>
 </ul>
-<p >Check out the <a href="https://crisprverse.github.io/kaori">reference documentation</a> for more details.</p>
-<h1>Library description</h1>
-<p >All <b>kaori</b> handlers will first scan each read for the constant template sequence using bitwise comparisons. If a suitable match to the template is found, the sequence of the read at each variable region is extracted and searched against the pool of known barcodes. Imperfect barcode matches are identified through a trie-based search; the total number of mismatches is summed across the constant and variable regions. <b>kaori</b> also caches information about imperfect matches to avoid a redundant look-up when the same sequence is encountered in later reads.</p>
-<p >Our approach is fast and relatively easy to implement compared to full-blown sequence aligners. Any number of mismatches are supported and the framework can be easily adapted to new barcode configurations. However, the downside is that indels are not supported in the search process. We consider this limitation to be acceptable as indels are quite rare in (Illumina) sequencing data.</p>
+<p >The library exports a number of utilities to easily construct a new handler - see the <a href="https://crisprverse.github.io/kaori/process__data_8hpp.html"><code>process_data.hpp</code></a> documentation for the handler expectations. This can be used to quickly extend <b>kaori</b> to handle other configurations. If you have a configuration that is not supported here, create an issue and we'll see what we can do. (Or even better, a pull request.)</p>
+<h2>Setting maximum template lengths</h2>
 <p >The bitwise comparison for the constant template requires a compile-time specification of the maximum template length. In our applications, we use templating to dispatch across a set of possible template lengths. This improves efficiency for shorter templates while still retaining support for larger templates. For example:</p>
 <div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> max_size&gt;</div>
 <div class="line">std::vector&lt;int&gt; process(byteme::Reader* input, <span class="keyword">const</span> std::string&amp; tmpl, <span class="keyword">const</span> <a class="code hl_struct" href="structkaori_1_1BarcodePool.html">kaori::BarcodePool</a>&amp; pool) {</div>
@@ -136,8 +146,7 @@ $(function() {
 <div class="line">} <span class="keywordflow">else</span> {</div>
 <div class="line">    <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;template sequence is too large&quot;</span>);</div>
 <div class="line">}</div>
-</div><!-- fragment --><p >The library exports a number of utilities to easily construct a new handler - see the <a href="https://crisprverse.github.io/kaori/process__data_8hpp.html"><code>process_data.hpp</code></a> documentation for the handler expectations. This can be used to quickly extend <b>kaori</b> to handle other barcode configurations. If you have a configuration that is not supported here, create an issue and we'll see what we can do. (Or even better, a pull request.)</p>
-<h1>Building projects</h1>
+</div><!-- fragment --><h1>Building projects</h1>
 <h2>CMake with <code>FetchContent</code></h2>
 <p >If you're using CMake, you just need to add something like this to your <code>CMakeLists.txt</code>:</p>
 <div class="fragment"><div class="line">include(FetchContent)</div>

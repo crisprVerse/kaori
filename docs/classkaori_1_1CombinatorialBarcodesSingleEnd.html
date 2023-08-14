@@ -110,7 +110,7 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;size_t max_size, size_t num_variable&gt;<br />
 class kaori::CombinatorialBarcodesSingleEnd&lt; max_size, num_variable &gt;</div><p >Handler for single-end combinatorial barcodes. </p>
-<p >In this design, the target sequence is created from a template with multiple variable regions. Each region contains a barcode from a different pool of options, where combinations are assembled randomly by library construction. The idea is to use the large number of combinations to provide many unique identifiers, e.g., for cell-tracing applications. This handler will capture the frequencies of each barcode combination.</p>
+<p >In this design, the barcoding element is created from a template with multiple variable regions. Each region contains a barcode from a different pool of options, where combinations are assembled randomly by library construction. The idea is to use the large number of combinations to provide many unique identifiers, e.g., for cell-tracing applications. This handler will capture the frequencies of each barcode combination.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">max_size</td><td>Maximum length of the template sequences on both reads. </td></tr>
@@ -171,7 +171,7 @@ template&lt;size_t max_size, size_t num_variable&gt; </div>
     <tr><td class="paramdir">[in]</td><td class="paramname">template_seq</td><td>Template sequence for the first barcode. This should contain exactly <code>num_variable</code> variable regions. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">template_length</td><td>Length of the template. This should be less than or equal to <code>max_size</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">barcode_pools</td><td>Array containing the known barcode sequences for each of the variable regions, in the order of their appearance in the template sequence. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">Optional</td><td>parameters. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">options</td><td>Optional parameters. </td></tr>
   </table>
   </dd>
 </dl>
@@ -294,7 +294,7 @@ template&lt;size_t max_size, size_t num_variable&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Sort the combinations for easier frequency counting. </dd></dl>
+<p >Sort the combinations for easier frequency counting. </p>
 
 </div>
 </div>

@@ -143,7 +143,7 @@ template&lt;class Handler &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Perform a handler for each read in paired-end data.</p>
+<p >Run a handler for each read in paired-end data, by calling <code>handler.process()</code> on each read pair. It is expected that the results are stored in <code>handler</code> for retrieval by the caller.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Handler</td><td>A class that implements a handler for paired-end data. </td></tr>
@@ -160,7 +160,6 @@ template&lt;class Handler &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><code>handler.process()</code> is called on each read pair. It is expected that the results are stored in <code>handler</code> for retrieval by the caller.</dd></dl>
 <h1><a class="anchor" id="paired-handler-req"></a>
 Handler requirements</h1>
 <p >The <code>Handler</code> class is expected to implement the following methods:</p><ul>
@@ -216,7 +215,7 @@ template&lt;class Handler &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Perform a handler for each read in single-end data.</p>
+<p >Run a handler for each read in single-end data. This is done by calling <code>handler.process()</code> on each read. It is expected that the results are stored in <code>handler</code> for retrieval by the caller.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Handler</td><td>A class that implements a handler for single-end data.</td></tr>
@@ -232,7 +231,6 @@ template&lt;class Handler &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><code>handler.process()</code> is called on each read. It is expected that the results are stored in <code>handler</code> for retrieval by the caller.</dd></dl>
 <h1><a class="anchor" id="single-handler-req"></a>
 Handler requirements</h1>
 <p >The <code>Handler</code> class is expected to implement the following methods:</p><ul>

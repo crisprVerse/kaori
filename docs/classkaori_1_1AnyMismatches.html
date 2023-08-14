@@ -126,6 +126,14 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4a1333d03728504b6620ca27e34b4152 inherit pub_methods_classkaori_1_1MismatchTrie"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f5928901d4dca9e72c18cbfc8c0aec3 inherit pub_methods_classkaori_1_1MismatchTrie"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#a1f5928901d4dca9e72c18cbfc8c0aec3">optimize</a> ()</td></tr>
 <tr class="separator:a1f5928901d4dca9e72c18cbfc8c0aec3 inherit pub_methods_classkaori_1_1MismatchTrie"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_static_attribs_classkaori_1_1MismatchTrie"><td colspan="2" onclick="javascript:toggleInherit('pub_static_attribs_classkaori_1_1MismatchTrie')"><img src="closed.png" alt="-"/>&#160;Static Public Attributes inherited from <a class="el" href="classkaori_1_1MismatchTrie.html">kaori::MismatchTrie</a></td></tr>
+<tr class="memitem:ac62d8f42f328d8fc1bcc68da2e69d665 inherit pub_static_attribs_classkaori_1_1MismatchTrie"><td class="memItemLeft" align="right" valign="top">static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#ac62d8f42f328d8fc1bcc68da2e69d665">STATUS_MISSING</a> = -1</td></tr>
+<tr class="separator:ac62d8f42f328d8fc1bcc68da2e69d665 inherit pub_static_attribs_classkaori_1_1MismatchTrie"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3cc873a71e6c9914cf087f9f6681159 inherit pub_static_attribs_classkaori_1_1MismatchTrie"><td class="memItemLeft" align="right" valign="top">static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1MismatchTrie.html#ae3cc873a71e6c9914cf087f9f6681159">STATUS_AMBIGUOUS</a> = -2</td></tr>
+<tr class="separator:ae3cc873a71e6c9914cf087f9f6681159 inherit pub_static_attribs_classkaori_1_1MismatchTrie"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Search for barcodes with mismatches anywhere. </p>
@@ -242,7 +250,7 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Pair containing:<ol type="1">
-<li>The index of the barcode sequence with the lowest number of mismatches to <code>search_seq</code>. If multiple sequences have the same lowest number of mismatches, the match is ambiguous and -1 is returned. If all sequences have more mismatches than <code>max_mismatches</code>, -1 is returned.</li>
+<li>The index of the barcode sequence with the lowest number of mismatches to <code>search_seq</code>. This is only non-negative if a barcode was unambiguously matched with no more mismatches than <code>max_mismatches</code>. If multiple sequences have the same lowest number of mismatches, the match is ambiguous and <code><a class="el" href="classkaori_1_1MismatchTrie.html#ae3cc873a71e6c9914cf087f9f6681159">MismatchTrie::STATUS_AMBIGUOUS</a></code> is returned. If all sequences have more mismatches than <code>max_mismatches</code>, <code><a class="el" href="classkaori_1_1MismatchTrie.html#ac62d8f42f328d8fc1bcc68da2e69d665">MismatchTrie::STATUS_MISSING</a></code> is returned.</li>
 <li>The number of mismatches. </li>
 </ol>
 </dd></dl>

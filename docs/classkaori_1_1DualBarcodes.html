@@ -106,7 +106,7 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;size_t max_size&gt;<br />
 class kaori::DualBarcodes&lt; max_size &gt;</div><p >Handler for dual barcodes. </p>
-<p >In this design, each read contains a target sequence created from a template with a single variable region. For one read, the barcode is drawn from one pool of options, while the other read contains a barcode from another pool. However, unlike <code><a class="el" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html" title="Handler for paired-end combinatorial barcodes.">CombinatorialBarcodesPairedEnd</a></code>, the combinations are not random but are specifically assembled, typically corresponding to specific pairs of genes. This handler will capture the frequencies of each barcode combination.</p>
+<p >In this design, each read contains a barcoding element created from a template with a single variable region. For one read, the barcode is drawn from one pool of options, while the other read contains a barcode from another pool. However, unlike <code><a class="el" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html" title="Handler for paired-end combinatorial barcodes.">CombinatorialBarcodesPairedEnd</a></code>, the combinations are not random but are specifically assembled, typically corresponding to specific pairs of genes. This handler will capture the frequencies of each barcode combination.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">max_size</td><td>Maximum length of the template sequences on both reads. </td></tr>
@@ -187,11 +187,11 @@ template&lt;size_t max_size&gt; </div>
     <tr><td class="paramdir">[in]</td><td class="paramname">template_seq2</td><td>Pointer to a character array containing the second template sequence. This should contain exactly one variable region. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">template_length2</td><td>Length of the second template. This should be less than or equal to <code>max_size</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">barcode_pool2</td><td>Pool of known barcode sequences for the variable region in the second template. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">Optional</td><td>parameters.</td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">options</td><td>Optional parameters.</td></tr>
   </table>
   </dd>
 </dl>
-<p><code>barcode_pool1</code> and <code>barcode_pool2</code> are expected to have the same number of barcodes (possibly duplicated). Corresponding values across the two pools define a particular combination of dual barcodes. </p>
+<p><code>barcode_pool1</code> and <code>barcode_pool2</code> are expected to have the same number of barcodes. Corresponding values across the two pools define a particular combination of dual barcodes. Duplication of sequences within each pool is allowed; only pairs of the same barcodes are considered to be duplicates with respect to <code><a class="el" href="structkaori_1_1DualBarcodes_1_1Options.html#acb55440786ea46a6ff7876ccdb937173">Options::duplicates</a></code>. </p>
 
 </div>
 </div>
