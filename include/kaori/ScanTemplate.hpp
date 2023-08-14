@@ -18,7 +18,7 @@ namespace kaori {
  *
  * When searching for barcodes, **kaori** first searches for a "template sequence" in the read sequence.
  * The template sequence contains constant regions interspersed with one or more variable regions.
- * The template is realized into a target sequence by replacing each variable region with one sequence from the corresponding pool of barcodes.
+ * The template is realized into the full barcoding element by replacing each variable region with one sequence from the corresponding pool of barcodes.
  *
  * This class will scan read sequence to find a location that matches the constant regions of the template, give or take any number of substitutions.
  * Multiple locations on the read may match the template, provided `next()` is called repeatedly.
@@ -26,7 +26,7 @@ namespace kaori {
  * The maximum size of this encoding is determined at compile-time by the `max_length` template parameter.
  *
  * Once a match is found, the sequence of the read at each variable region can be matched against a pool of known barcode sequences.
- * See the `VariableLibrary` class for details.
+ * See the `BarcodePool` class for details.
  *
  * @tparam max_size Maximum length of the template sequence.
  */
@@ -178,8 +178,7 @@ public:
      * this can be repeatedly called until `match.finished` is `true`.
      *
      * @param state A `State` object produced by `initialize()`.
-     *
-     * @return `state` is updated with the details of the current match at a particular position on the read sequence.
+     * On return, `state` is updated with the details of the current match at a particular position on the read sequence.
      */
     void next(State& state) const {
         if (!state.bad.empty() && state.bad.front() == state.position) {

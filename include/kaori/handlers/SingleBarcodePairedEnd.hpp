@@ -15,9 +15,9 @@ namespace kaori {
 /**
  * @brief Handler for paired-end single barcodes.
  *
- * In this design, the target sequence is created from a template with a single variable region drawn from a pool of barcode sequences.
- * The construct containing the target sequence is then subjected to paired-end sequencing, where either end could contain the target sequence.
- * This handler will search both reads for the target sequence and count the frequency of each barcode.
+ * In this design, the barcoding element is created from a template with a single variable region drawn from a pool of barcode sequences.
+ * The construct containing the barcoding element is then subjected to paired-end sequencing, where either end could contain the barcoding element.
+ * This handler will search both reads for the barcoding element and count the frequency of each barcode.
  *
  * @tparam max_size Maximum length of the template sequence.
  */
@@ -35,7 +35,7 @@ public:
         bool use_first = true;
 
         /** 
-         * Maximum number of mismatches allowed across the target sequence.
+         * Maximum number of mismatches allowed across the barcoding element.
          */
         int max_mismatches = 0;
 
@@ -52,7 +52,7 @@ public:
 
 public:
     /**
-     * @param[in] template_seq Template sequence for the target.
+     * @param[in] template_seq Template sequence of the barcoding element.
      * This should contain exactly one variable region.
      * @param template_length Length of the template.
      * This should be less than or equal to `max_size`.

@@ -16,9 +16,8 @@ Gzipped FASTQ files can be processed, provided Zlib is available.
 **kaori** is a header-only library, so it can be easily used by just `#include`ing the relevant source files:
 
 ```cpp
-#include "kaori/SingleBarcodeSingleEnd.hpp"
-#include "kaori/process_data.hpp"
-#include "byteme/SomeFileReader.hpp"
+#include "kaori/kaori.hpp"
+#include "byteme/byteme.hpp"
 
 // Defining a template and the possible choices for barcodes.
 std::string tmpl = "ACGT----TGCA";
@@ -26,10 +25,13 @@ std::vector<std::string> choices { "AAAA", "CCCC", "GGGG", "TTTT" };
 kaori::BarcodePool pool(choices);
 
 // Configure the handler:
-// - Compile-time maximum length of 32 bp for the template.
-// - Only search the forward strand (0).
+// - Maximum length of 32 bp for the template.
+// - Search both the forward and reverse strands.
 // - Maximum mismatch of 1.
-kaori::SingleBarcodeSingleEnd<32> handler(tmpl.c_str(), tmpl.size(), 0, pool, 1);
+kaori::SingleBarcodeSingleEnd<32>::Options opt;
+opt.max_mismatch = 1;
+opt.strand = kaori::SearchStrand::BOTH;
+kaori::SingleBarcodeSingleEnd<32> handler(tmpl.c_str(), tmpl.size(), pool, opt);
 
 // Process a FASTQ file with 4 threads.
 byteme::SomeFileReader input(path_to_fastq);
@@ -39,7 +41,31 @@ kaori::process_single_end(&input, handler, 4);
 handler.get_counts();
 ```
 
-The same general approach is used for:
+Check out the [reference documentation](https://crisprverse.github.io/kaori) for more details.
+
+## Method description
+
+### Algorithm
+
+We define the "barcoding element" as the full sequence to be matched by **kaori**.
+The barcoding element is parametrized as a template that consists of constant and variable regions.
+Each variable region is associated with a pool of possible barcode sequences;
+the template can be realized into a specific sequence of a barcoding element by replacing its variable regions with valid barcode sequences.
+
+Given a template sequence and the associated barcode pools, **kaori** will scan each read for the template using bitwise comparisons.
+If a suitable match to the template is found, the sequence of the read at each variable region is extracted and searched against the pool of known barcodes.
+Imperfect barcode matches are identified through a trie-based search; the total number of mismatches is summed across the constant and variable regions.
+**kaori** also caches information about imperfect matches to avoid a redundant look-up when the same sequence is encountered in later reads.
+
+Our approach is fast and relatively easy to implement compared to full-blown sequence aligners.
+Any number of mismatches are supported and the framework can be easily adapted to new barcoding configurations.
+However, the downside is that indels are not supported in the search process.
+We consider this limitation to be acceptable as indels are quite rare in (Illumina) sequencing data.
+
+### Defining handlers
+
+Each barcoding configuration is processed by a different **kaori** handler.
+The code shown above for `SingleBarcodeSingleEnd` can be re-used for different handlers:
 
 - [Single barcodes in single-end data](https://crisprverse.github.io/kaori/classkaori_1_1SingleBarcodeSingleEnd.html)
 - [Single barcodes in paired-end data](https://crisprverse.github.io/kaori/classkaori_1_1SingleBarcodePairedEnd.html)
@@ -48,19 +74,13 @@ The same general approach is used for:
 - [Dual barcodes](https://crisprverse.github.io/kaori/classkaori_1_1DualBarcodes.html), with [diagnostics](https://crisprverse.github.io/kaori/classkaori_1_1DualBarcodesWithDiagnostics.html)
 - [Random barcodes in single-end data](https://crisprverse.github.io/kaori/classkaori_1_1RandomBarcodeSingleEnd.html)
 
-Check out the [reference documentation](https://crisprverse.github.io/kaori) for more details.
+The library exports a number of utilities to easily construct a new handler - 
+see the [`process_data.hpp`](https://crisprverse.github.io/kaori/process__data_8hpp.html) documentation for the handler expectations.
+This can be used to quickly extend **kaori** to handle other configurations.
+If you have a configuration that is not supported here, create an issue and we'll see what we can do. 
+(Or even better, a pull request.)
 
-## Library description
-
-All **kaori** handlers will first scan each read for the constant template sequence using bitwise comparisons.
-If a suitable match to the template is found, the sequence of the read at each variable region is extracted and searched against the pool of known barcodes.
-Imperfect barcode matches are identified through a trie-based search; the total number of mismatches is summed across the constant and variable regions.
-**kaori** also caches information about imperfect matches to avoid a redundant look-up when the same sequence is encountered in later reads.
-
-Our approach is fast and relatively easy to implement compared to full-blown sequence aligners.
-Any number of mismatches are supported and the framework can be easily adapted to new barcode configurations.
-However, the downside is that indels are not supported in the search process.
-We consider this limitation to be acceptable as indels are quite rare in (Illumina) sequencing data.
+### Setting maximum template lengths
 
 The bitwise comparison for the constant template requires a compile-time specification of the maximum template length.
 In our applications, we use templating to dispatch across a set of possible template lengths.
@@ -88,12 +108,6 @@ if (tmpl.size() <= 32) {
     throw std::runtime_error("template sequence is too large");
 }
 ```
-
-The library exports a number of utilities to easily construct a new handler - 
-see the [`process_data.hpp`](https://crisprverse.github.io/kaori/process__data_8hpp.html) documentation for the handler expectations.
-This can be used to quickly extend **kaori** to handle other barcode configurations.
-If you have a configuration that is not supported here, create an issue and we'll see what we can do. 
-(Or even better, a pull request.)
 
 ## Building projects 
 

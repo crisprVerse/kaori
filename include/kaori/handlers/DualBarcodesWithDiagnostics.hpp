@@ -124,7 +124,7 @@ public:
 
 public:
     /**
-     * @return Sort the invalid combinations for easier frequency counting.
+     * Sort the invalid combinations for easier frequency counting.
      * Combinations are sorted by the first index, and then the second index.
      */
     void sort() {

@@ -16,7 +16,7 @@ namespace kaori {
 /**
  * @brief Handler for dual barcodes.
  *
- * In this design, each read contains a target sequence created from a template with a single variable region.
+ * In this design, each read contains a barcoding element created from a template with a single variable region.
  * For one read, the barcode is drawn from one pool of options, while the other read contains a barcode from another pool.
  * However, unlike `CombinatorialBarcodesPairedEnd`, the combinations are not random but are specifically assembled, typically corresponding to specific pairs of genes.
  * This handler will capture the frequencies of each barcode combination. 
@@ -37,35 +37,35 @@ public:
         bool use_first = true;
 
         /** 
-         * Maximum number of mismatches allowed across the first target sequence.
+         * Maximum number of mismatches allowed across the first barcoding element.
          */
         int max_mismatches1 = 0;
 
         /**
-         * Strand of the read sequence to search for the first target.
+         * Strand of the read sequence to search for the first barcoding element.
          * `BOTH` is not supported right now... sorry.
          */
         SearchStrand strand1 = SearchStrand::FORWARD;
 
         /** 
-         * Maximum number of mismatches allowed across the second target sequence.
+         * Maximum number of mismatches allowed across the second barcoding element.
          */
         int max_mismatches2 = 0;
 
         /**
-         * Strand of the read sequence to search for the second target.
+         * Strand of the read sequence to search for the second barcoding element.
          * `BOTH` is not supported right now... sorry.
          */
         SearchStrand strand2 = SearchStrand::FORWARD;
 
         /**
-         * How duplicated barcode sequences should be handled.
+         * How duplicated pairs of barcode sequences should be handled.
          */
         DuplicateAction duplicates = DuplicateAction::ERROR;
 
         /**
-         * Whether the reads are randomized with respect to the first/second target sequences.
-         * If `false`, the first read is searched for the first target sequence only, and the second read is searched for the second target sequence only.
+         * Whether the reads are randomized with respect to the first/second barcoding elements.
+         * If `false`, the first read is searched for the first barcoding element only, and the second read is searched for the second barcoding element only.
          * If `true`, an additional search will be performed in the opposite orientation.
          */
         bool random = false;
@@ -83,10 +83,11 @@ public:
      * @param template_length2 Length of the second template.
      * This should be less than or equal to `max_size`.
      * @param barcode_pool2 Pool of known barcode sequences for the variable region in the second template.
-     * @param Optional parameters.
+     * @param options Optional parameters.
      *
-     * `barcode_pool1` and `barcode_pool2` are expected to have the same number of barcodes (possibly duplicated).
+     * `barcode_pool1` and `barcode_pool2` are expected to have the same number of barcodes.
      * Corresponding values across the two pools define a particular combination of dual barcodes. 
+     * Duplication of sequences within each pool is allowed; only pairs of the same barcodes are considered to be duplicates with respect to `Options::duplicates`.
      */
     DualBarcodes(
         const char* template_seq1, size_t template_length1, const BarcodePool& barcode_pool1, 

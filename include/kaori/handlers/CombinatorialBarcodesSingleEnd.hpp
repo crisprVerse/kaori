@@ -19,7 +19,7 @@ namespace kaori {
 /**
  * @brief Handler for single-end combinatorial barcodes.
  *
- * In this design, the target sequence is created from a template with multiple variable regions.
+ * In this design, the barcoding element is created from a template with multiple variable regions.
  * Each region contains a barcode from a different pool of options, where combinations are assembled randomly by library construction.
  * The idea is to use the large number of combinations to provide many unique identifiers, e.g., for cell-tracing applications.
  * This handler will capture the frequencies of each barcode combination. 
@@ -35,7 +35,7 @@ public:
      */
     struct Options {
         /**
-         * Maximum number of mismatches allowed across the target sequence.
+         * Maximum number of mismatches allowed across the barcoding element.
          */
         int max_mismatches = 0;
 
@@ -45,7 +45,7 @@ public:
         bool use_first = true;
 
         /**
-         * Strand(s) of the read sequence to search for the target.
+         * Strand(s) of the read sequence to search for the barcoding element.
          */
         SearchStrand strand = SearchStrand::FORWARD;
 
@@ -62,7 +62,7 @@ public:
      * @param template_length Length of the template.
      * This should be less than or equal to `max_size`.
      * @param barcode_pools Array containing the known barcode sequences for each of the variable regions, in the order of their appearance in the template sequence.
-     * @param Optional parameters.
+     * @param options Optional parameters.
      */
     CombinatorialBarcodesSingleEnd(const char* template_seq, size_t template_length, const std::array<BarcodePool, num_variable>& barcode_pools, const Options& options) :
         forward(search_forward(options.strand)),
@@ -287,7 +287,7 @@ public:
 
 public:
     /**
-     * @return Sort the combinations for easier frequency counting.
+     * Sort the combinations for easier frequency counting.
      */
     void sort() {
         sort_combinations(combinations, num_options);
