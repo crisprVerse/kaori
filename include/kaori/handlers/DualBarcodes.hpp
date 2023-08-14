@@ -263,7 +263,7 @@ private:
             auto combined = match1.first + current2.first;
             varlib.search(combined, state.details, std::array<int, 2>{ max_mm1 - match1.second, max_mm2 - current2.second });
 
-            if (state.details.index != -1) {
+            if (state.details.index >= 0) {
                 ++state.counts[state.details.index];
                 return true;
             } else {

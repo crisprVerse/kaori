@@ -23,17 +23,22 @@ namespace kaori {
  * Any number of mismatches are supported; subclasses will decide how the mismatches can be distributed throughout the length of the sequence.
  */
 class MismatchTrie {
+public:
+    /**
+     * No match to a known barcode.
+     */
+    static constexpr int STATUS_MISSING = -1;
+
+    /**
+     * Ambiguous match to two or more known barcodes.
+     */
+    static constexpr int STATUS_AMBIGUOUS = -2;
+
 protected:
     /**
      * @cond
      */
     static constexpr int NUM_BASES = 4;
-
-    static constexpr int STATUS_MISSING = -1;
-
-    static constexpr int STATUS_AMBIGUOUS = -2;
-
-    static constexpr int MATCH_FAILED = -1;
     /**
      * @endcond
      */
@@ -433,16 +438,13 @@ public:
      *
      * @return Pair containing:
      * 1. The index of the barcode sequence with the lowest number of mismatches to `search_seq`.
-     *    If multiple sequences have the same lowest number of mismatches, the match is ambiguous and -1 is returned.
-     *    If all sequences have more mismatches than `max_mismatches`, -1 is returned.
+     *    This is only non-negative if a barcode was unambiguously matched with no more mismatches than `max_mismatches`.
+     *    If multiple sequences have the same lowest number of mismatches, the match is ambiguous and `MismatchTrie::STATUS_AMBIGUOUS` is returned.
+     *    If all sequences have more mismatches than `max_mismatches`, `MismatchTrie::STATUS_MISSING` is returned.
      * 2. The number of mismatches.
      */
     std::pair<int, int> search(const char* search_seq, int max_mismatches) const {
-        auto out = search(search_seq, 0, 0, 0, max_mismatches);
-        if (out.first < 0) {
-            out.first = MATCH_FAILED;
-        }
-        return out;
+        return search(search_seq, 0, 0, 0, max_mismatches);
     }
 
 private:
@@ -546,7 +548,7 @@ public:
 
         /**
          * Index of the known barcode sequence matching the input sequence in `search()`.
-         * If no unambiguous match is found, -1 is reported.
+         * This is guaranteed to be non-negative only if an unambiguous match is found.
          */
         int index = 0;
 
@@ -568,17 +570,13 @@ public:
      * Each entry should be non-negative.
      *
      * @return A `Result` containing the index of the barcode sequence where the number of mismatches in each segment is less than or equal to `max_mismatches`.
-     * - If multiple barcode sequences satisfy this condition, the barcode sequence with the lowest total number of mismatches is reported.
-     * - If multiple barcode sequences share the same lowest total, the match is ambiguous and -1 is reported.
-     * - If no barcode sequences satisfy the `max_mismatches` condition, -1 is reported.
+     * - If multiple barcode sequences satisfy this condition, the barcode sequence with the lowest total number of mismatches is reported in the form of a non-negative `Result::index`.
+     * - If multiple barcode sequences share the same lowest total, the match is ambiguous and `MismatchTrie::STATUS_AMBIGUOUS` is reported.
+     * - If no barcode sequences satisfy the `max_mismatches` condition, `MismatchTrie::STATUS_MISSING` is reported.
      */
     Result search(const char* search_seq, const std::array<int, num_segments>& max_mismatches) const {
         int total_mismatches = std::accumulate(max_mismatches.begin(), max_mismatches.end(), 0);
-        auto out = search(search_seq, 0, 0, Result(), max_mismatches, total_mismatches);
-        if (out.index < 0) {
-            out.index = MATCH_FAILED;
-        }
-        return out;
+        return search(search_seq, 0, 0, Result(), max_mismatches, total_mismatches);
     }
 
 private:
@@ -602,7 +600,7 @@ private:
         // more mismatches than the best hit that was already encountered.
         if (pos + 1 == length) {
             if (current >= 0 || current == STATUS_AMBIGUOUS) {
-                total_mismatches = state.total;
+                total_mismatches = state.total; // this assignment should always decrease total_mismatches, otherwise the search would have terminated earlier.
                 state.index = current;
                 return state;
             }

@@ -135,7 +135,7 @@ TEST_F(SimpleBarcodeSearchTest, Mismatches) {
         EXPECT_EQ(init.mismatches, 2);
 
         stuff.search("CGGC", init); // ambiguous.
-        EXPECT_EQ(init.index, -1);
+        EXPECT_EQ(init.index, -2);
     }
 }
 
@@ -400,10 +400,10 @@ TEST_F(SegmentedBarcodeSearchTest, Caching) {
 
     {
         stuff.search("ACCA", state);
-        EXPECT_EQ(state.index, -1);
+        EXPECT_EQ(state.index, -2);
         auto it = state.cache.find("ACCA");
         EXPECT_TRUE(it != state.cache.end());
-        EXPECT_EQ((it->second).index, -1);
+        EXPECT_EQ((it->second).index, -2);
     }
 
     // Retrieval from cache respects a lower mismatch threshold.  This uses the

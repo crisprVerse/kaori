@@ -132,14 +132,14 @@ TEST_F(AnyMismatchesTest, Ambiguous) {
 
     {
         auto res = stuff.search("AAAATAAAA", 1);
-        EXPECT_EQ(res.first, -1);
+        EXPECT_EQ(res.first, -2);
         EXPECT_EQ(res.second, 1);
     }
 
     {
         // Handles ambiguity at the end of the sequence.
         auto res = stuff.search("AAAAAAAAT", 1);
-        EXPECT_EQ(res.first, -1);
+        EXPECT_EQ(res.first, -2);
         EXPECT_EQ(res.second, 1);
     }
 }
@@ -219,10 +219,10 @@ TEST_F(AnyMismatchesTest, Duplicates) {
         CHECK(stuff.add(ptrs.pool[3]), true, false, false); // next addition sets duplicate_cleared = false as it's already cleared.
 
         auto res = stuff.search("ACGT", 0);
-        EXPECT_EQ(res.first, -1);
+        EXPECT_EQ(res.first, -2);
 
         auto res2 = stuff.search("AGTT", 0);
-        EXPECT_EQ(res2.first, -1);
+        EXPECT_EQ(res2.first, -2);
     }
 }
 
@@ -306,12 +306,12 @@ TEST_F(AnyMismatchesTest, IupacAmbiguity) {
             stuff.add(p);
         }
 
-        EXPECT_EQ(stuff.search("AAAAAAA", 1), std::make_pair(-1, 1)); // ambiguous
-        EXPECT_EQ(stuff.search("AAAAAAC", 1), std::make_pair(-1, 0)); // still ambiguous, even with no mismatch
+        EXPECT_EQ(stuff.search("AAAAAAA", 1), std::make_pair(-2, 1)); // ambiguous
+        EXPECT_EQ(stuff.search("AAAAAAC", 1), std::make_pair(-2, 0)); // still ambiguous, even with no mismatch
         EXPECT_EQ(stuff.search("AAAAAAG", 1), std::make_pair(0, 0)); // okay
 
-        EXPECT_EQ(stuff.search("TTTTTTT", 1), std::make_pair(-1, 1)); // ambiguous
-        EXPECT_EQ(stuff.search("TTTATTT", 1), std::make_pair(-1, 0)); // still ambiguous, even with no mismatch
+        EXPECT_EQ(stuff.search("TTTTTTT", 1), std::make_pair(-2, 1)); // ambiguous
+        EXPECT_EQ(stuff.search("TTTATTT", 1), std::make_pair(-2, 0)); // still ambiguous, even with no mismatch
         EXPECT_EQ(stuff.search("TTTCTTT", 1), std::make_pair(2, 0)); // okay
 
         // Unless we want to report duplicates.
@@ -388,7 +388,7 @@ TEST_F(AnyMismatchesTest, Optimized) {
         // Ambiguous.
         {
             auto res = stuff.search("TTTT", 3);
-            EXPECT_EQ(res.first, -1);
+            EXPECT_EQ(res.first, -2);
             EXPECT_EQ(res.second, 3);
         }
     }
@@ -533,12 +533,12 @@ TEST_F(SegmentedMismatchesTest, Ambiguity) {
         // Handles ambiguity properly.
         {
             auto res = stuff.search("TTGGTG", { 2, 1 });
-            EXPECT_EQ(res.index, -1);
+            EXPECT_EQ(res.index, -2);
         }
 
         {
             auto res = stuff.search("TTTGGG", { 3, 2 });
-            EXPECT_EQ(res.index, -1);
+            EXPECT_EQ(res.index, -2);
         }
 
         // Not ambiguous due to mismatch restrictions.
@@ -556,12 +556,12 @@ TEST_F(SegmentedMismatchesTest, Ambiguity) {
 
         {
             auto res = stuff.search("AAAAAC", { 0, 1 });
-            EXPECT_EQ(res.index, -1);
+            EXPECT_EQ(res.index, -2);
         }
 
         {
             auto res = stuff.search("CAAAAG", { 1, 1 });
-            EXPECT_EQ(res.index, -1);
+            EXPECT_EQ(res.index, -2);
         }
     }
 }
@@ -635,7 +635,7 @@ TEST_F(SegmentedMismatchesTest, Optimized) {
         // Ambiguous.
         {
             auto res = stuff.search("CCAAAC", { 2, 2 });
-            EXPECT_EQ(res.index, -1);
+            EXPECT_EQ(res.index, -2);
             EXPECT_EQ(res.total, 3);
         }
     }
@@ -675,11 +675,11 @@ TEST_F(SegmentedMismatchesTest, Iupac) {
         }
 
         auto res = stuff.search("AAAAAAA", {0, 1}); // ambiguous.
-        EXPECT_EQ(res.index, -1);
+        EXPECT_EQ(res.index, -2);
         EXPECT_EQ(res.total, 1);
 
         res = stuff.search("AAAAAAC", {0, 1}); // still ambiguous.
-        EXPECT_EQ(res.index, -1);
+        EXPECT_EQ(res.index, -2);
         EXPECT_EQ(res.total, 0);
 
         res = stuff.search("AAAAAAG", {0, 1}); // okay
@@ -687,11 +687,11 @@ TEST_F(SegmentedMismatchesTest, Iupac) {
         EXPECT_EQ(res.total, 0);
 
         res = stuff.search("TTTTTTT", {1, 0}); // ambiguous
-        EXPECT_EQ(res.index, -1);
+        EXPECT_EQ(res.index, -2);
         EXPECT_EQ(res.total, 1);
 
         res = stuff.search("TTTATTT", {1, 0}); // still ambiguous
-        EXPECT_EQ(res.index, -1);
+        EXPECT_EQ(res.index, -2);
         EXPECT_EQ(res.total, 0);
 
         res = stuff.search("TTTCTTT", {1, 0}); // okay
