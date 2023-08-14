@@ -313,6 +313,7 @@ public:
 
         /** 
          * Whether to reverse-complement the barcode sequences before indexing them.
+         * Note that, even if `reverse = true`, the segment lengths in the `SegmentedBarcodeSearch()` constructor and `max_mismatches` are still reported in their order on the forward strand.
          */
         bool reverse = false;
 
@@ -339,8 +340,27 @@ public:
         std::array<int, num_segments> segments, 
         const Options& options
     ) : 
-        trie(segments, options.duplicates), 
-        max_mm(options.max_mismatches) 
+        trie(
+            (!options.reverse ? 
+                segments :
+                [&]{
+                    auto copy = segments;
+                    std::reverse(copy.begin(), copy.end());
+                    return copy;
+                }()
+            ),
+            options.duplicates
+        ), 
+        max_mm(
+            (!options.reverse ?
+                options.max_mismatches :
+                [&]{
+                    auto copy = options.max_mismatches;
+                    std::reverse(copy.begin(), copy.end());
+                    return copy;
+                }()
+            )
+        )
     {
         if (barcode_pool.length != trie.get_length()) {
             throw std::runtime_error("variable sequences should have the same length as the sum of segment lengths");

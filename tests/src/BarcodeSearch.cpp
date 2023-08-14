@@ -319,7 +319,7 @@ TEST_F(SegmentedBarcodeSearchTest, Basic) {
  
     kaori::SegmentedBarcodeSearch<2> stuff(ptrs, { 2, 4 }, [&]{
         Options<2> opt;
-        opt.max_mismatches = { 0, 1 };
+        opt.max_mismatches = { 0, 2 };
         return opt;
     }());
     auto init = stuff.initialize();
@@ -332,8 +332,11 @@ TEST_F(SegmentedBarcodeSearchTest, Basic) {
     stuff.search("AACCAC", init); // 1 mismatch
     EXPECT_EQ(init.index, 1);
 
-    stuff.search("AAccgg", init); // ambiguous.
+    stuff.search("ACCCCC", init); // 1 mismatch in the wrong place.
     EXPECT_EQ(init.index, -1);
+
+    stuff.search("AAccgg", init); // ambiguous.
+    EXPECT_EQ(init.index, -2);
 }
 
 TEST_F(SegmentedBarcodeSearchTest, ReverseComplement) {
@@ -342,7 +345,7 @@ TEST_F(SegmentedBarcodeSearchTest, ReverseComplement) {
 
     kaori::SegmentedBarcodeSearch<2> stuff(ptrs, { 2, 4 }, [&]{
         Options<2> opt;
-        opt.max_mismatches = { 0, 1 };
+        opt.max_mismatches = { 0, 2 };
         opt.reverse = true;
         return opt;
     }());
@@ -356,8 +359,14 @@ TEST_F(SegmentedBarcodeSearchTest, ReverseComplement) {
     stuff.search("CCACTT", init);
     EXPECT_EQ(init.index, 2);
 
-    stuff.search("GGCCTT", init); // ambiguous.
+    stuff.search("AGGCTT", init); // two mismatches.
+    EXPECT_EQ(init.index, 1);
+
+    stuff.search("GGGGGG", init); // two mismatches in the wrong place.
     EXPECT_EQ(init.index, -1);
+
+    stuff.search("GGCCTT", init); // ambiguous.
+    EXPECT_EQ(init.index, -2);
 }
 
 TEST_F(SegmentedBarcodeSearchTest, Caching) {
