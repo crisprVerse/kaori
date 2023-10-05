@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['dualbarcodes_0',['DualBarcodes',['../classkaori_1_1DualBarcodes.html#a16ba0b35ae25ee2792e32a5979d1f2fa',1,'kaori::DualBarcodes']]],
-  ['dualbarcodeswithdiagnostics_1',['DualBarcodesWithDiagnostics',['../classkaori_1_1DualBarcodesWithDiagnostics.html#aa861c55572684eeac2263542da0fcb5b',1,'kaori::DualBarcodesWithDiagnostics']]]
+  ['dualbarcodespairedend_0',['DualBarcodesPairedEnd',['../classkaori_1_1DualBarcodesPairedEnd.html#ab165cd8240c72dfde0814746fd5bb6b6',1,'kaori::DualBarcodesPairedEnd']]],
+  ['dualbarcodespairedendwithdiagnostics_1',['DualBarcodesPairedEndWithDiagnostics',['../classkaori_1_1DualBarcodesPairedEndWithDiagnostics.html#a4c503c19d768fe5b5fbfa57981eab261',1,'kaori::DualBarcodesPairedEndWithDiagnostics']]]
 ];

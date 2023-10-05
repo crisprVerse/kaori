@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['random_0',['random',['../structkaori_1_1DualBarcodes_1_1Options.html#a35211fe26749637ee2bfafff71569722',1,'kaori::DualBarcodes::Options']]],
+  ['random_0',['random',['../structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a0c074d82e6ac2eeee13e05e8b18b0f83',1,'kaori::DualBarcodesPairedEnd::Options']]],
   ['randombarcodesingleend_1',['RandomBarcodeSingleEnd',['../classkaori_1_1RandomBarcodeSingleEnd.html',1,'kaori::RandomBarcodeSingleEnd&lt; max_size &gt;'],['../classkaori_1_1RandomBarcodeSingleEnd.html#a44cef67fe97156ce3c5bb02b7dfaa230',1,'kaori::RandomBarcodeSingleEnd::RandomBarcodeSingleEnd()']]],
   ['randombarcodesingleend_2ehpp_2',['RandomBarcodeSingleEnd.hpp',['../RandomBarcodeSingleEnd_8hpp.html',1,'']]],
   ['reduce_3',['reduce',['../classkaori_1_1SimpleBarcodeSearch.html#ac80ba1b9394963f2befe4154da98ef1e',1,'kaori::SimpleBarcodeSearch::reduce()'],['../classkaori_1_1SegmentedBarcodeSearch.html#a1494ea1af5173c48d52313ed278ba7f6',1,'kaori::SegmentedBarcodeSearch::reduce()'],['../classkaori_1_1SimpleSingleMatch.html#a43789bbf0d5b23c8b6d6613d353e2813',1,'kaori::SimpleSingleMatch::reduce()']]],

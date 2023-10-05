@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['dualbarcodes_0',['DualBarcodes',['../classkaori_1_1DualBarcodes.html',1,'kaori']]],
-  ['dualbarcodeswithdiagnostics_1',['DualBarcodesWithDiagnostics',['../classkaori_1_1DualBarcodesWithDiagnostics.html',1,'kaori']]]
+  ['dualbarcodespairedend_0',['DualBarcodesPairedEnd',['../classkaori_1_1DualBarcodesPairedEnd.html',1,'kaori']]],
+  ['dualbarcodespairedendwithdiagnostics_1',['DualBarcodesPairedEndWithDiagnostics',['../classkaori_1_1DualBarcodesPairedEndWithDiagnostics.html',1,'kaori']]]
 ];
