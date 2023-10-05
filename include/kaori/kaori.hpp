@@ -6,6 +6,7 @@
 #include "handlers/DualBarcodesPairedEnd.hpp"
 #include "handlers/DualBarcodesPairedEndWithDiagnostics.hpp"
 #include "handlers/DualBarcodesSingleEnd.hpp"
+#include "handlers/DualBarcodesSingleEndWithDiagnostics.hpp"
 #include "handlers/RandomBarcodeSingleEnd.hpp"
 #include "handlers/SingleBarcodePairedEnd.hpp"
 #include "handlers/SingleBarcodeSingleEnd.hpp"

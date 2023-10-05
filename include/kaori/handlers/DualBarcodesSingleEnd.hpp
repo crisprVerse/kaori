@@ -171,7 +171,7 @@ private:
     }
 
 private:
-    void process_first(State& state, const std::pair<const char*, const char*>& x) const {
+    bool process_first(State& state, const std::pair<const char*, const char*>& x) const {
         auto deets = constant_matcher.initialize(x.first, x.second - x.first);
 
         while (!deets.finished) {
@@ -181,7 +181,7 @@ private:
                 auto id = forward_match(x.first, deets, state).first;
                 if (id >= 0) {
                     ++state.counts[id];
-                    return;
+                    return true;
                 }
             }
 
@@ -189,13 +189,14 @@ private:
                 auto id = reverse_match(x.first, deets, state).first;
                 if (id >= 0) {
                     ++state.counts[id];
-                    return;
+                    return true;
                 }
             }
         }
+        return false;
     }
 
-    void process_best(State& state, const std::pair<const char*, const char*>& x) const {
+    bool process_best(State& state, const std::pair<const char*, const char*>& x) const {
         auto deets = constant_matcher.initialize(x.first, x.second - x.first);
         bool found = false;
         int best_mismatches = max_mm + 1;
@@ -235,6 +236,7 @@ private:
         if (found) {
             ++state.counts[best_id];
         }
+        return found;
     }
 
 public:
@@ -262,13 +264,13 @@ public:
         return;
     }
 
-    void process(State& state, const std::pair<const char*, const char*>& x) const {
-        if (use_first) {
-            process_first(state, x);
-        } else {
-            process_best(state, x);
-        }
+    bool process(State& state, const std::pair<const char*, const char*>& x) const {
         ++state.total;
+        if (use_first) {
+            return process_first(state, x);
+        } else {
+            return process_best(state, x);
+        }
     }
 
     static constexpr bool use_names = false;
