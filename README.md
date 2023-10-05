@@ -71,7 +71,10 @@ The code shown above for `SingleBarcodeSingleEnd` can be re-used for different h
 - [Single barcodes in paired-end data](https://crisprverse.github.io/kaori/classkaori_1_1SingleBarcodePairedEnd.html)
 - [Combinatorial barcodes in single-end data](https://crisprverse.github.io/kaori/classkaori_1_1CombinatorialBarcodesSingleEnd.html)
 - [Combinatorial barcodes in paired-end data](https://crisprverse.github.io/kaori/classkaori_1_1CombinatorialBarcodesPairedEnd.html)
-- [Dual barcodes](https://crisprverse.github.io/kaori/classkaori_1_1DualBarcodes.html), with [diagnostics](https://crisprverse.github.io/kaori/classkaori_1_1DualBarcodesWithDiagnostics.html)
+- [Dual barcodes in paired-end data](https://crisprverse.github.io/kaori/classkaori_1_1DualBarcodesPairedEnd.html), 
+  with [diagnostics](https://crisprverse.github.io/kaori/classkaori_1_1DualBarcodesPairedEndWithDiagnostics.html)
+- [Dual barcodes in single-end data](https://crisprverse.github.io/kaori/classkaori_1_1DualBarcodesSingleEnd.html), 
+  with [diagnostics](https://crisprverse.github.io/kaori/classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html)
 - [Random barcodes in single-end data](https://crisprverse.github.io/kaori/classkaori_1_1RandomBarcodeSingleEnd.html)
 
 The library exports a number of utilities to easily construct a new handler - 

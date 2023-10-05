@@ -63,8 +63,12 @@ public:
      * This should be less than or equal to `max_size`.
      * @param barcode_pools Array containing the known barcode sequences for each of the variable regions, in the order of their appearance in the template sequence.
      * @param options Optional parameters.
+     *
+     * @tparam BarcodePoolContainer Some iterable container of `BarcodePool` instances,
+     * usually either a `std::vector` or a `std::array`.
      */
-    CombinatorialBarcodesSingleEnd(const char* template_seq, size_t template_length, const std::array<BarcodePool, num_variable>& barcode_pools, const Options& options) :
+    template<class BarcodePoolContainer>
+    CombinatorialBarcodesSingleEnd(const char* template_seq, size_t template_length, const BarcodePoolContainer& barcode_pools, const Options& options) :
         forward(search_forward(options.strand)),
         reverse(search_reverse(options.strand)),
         max_mm(options.max_mismatches),
@@ -75,6 +79,10 @@ public:
         if (regions.size() != num_variable) { 
             throw std::runtime_error("expected " + std::to_string(num_variable) + " variable regions in the constant template");
         }
+        if (barcode_pools.size() != num_variable) { 
+            throw std::runtime_error("length of 'barcode_pools' should be equal to the number of variable regions");
+        }
+
         for (size_t i = 0; i < num_variable; ++i) {
             size_t rlen = regions[i].second - regions[i].first;
             size_t vlen = barcode_pools[i].length;
