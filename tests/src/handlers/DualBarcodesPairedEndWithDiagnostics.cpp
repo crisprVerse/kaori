@@ -1,13 +1,13 @@
 #include <gtest/gtest.h>
-#include "kaori/handlers/DualBarcodesWithDiagnostics.hpp"
+#include "kaori/handlers/DualBarcodesPairedEndWithDiagnostics.hpp"
 #include "kaori/process_data.hpp"
 #include "byteme/RawBufferReader.hpp"
 #include "../utils.h"
 #include <string>
 
-class DualBarcodesWithDiagnosticsTest : public testing::Test {
+class DualBarcodesPairedEndWithDiagnosticsTest : public testing::Test {
 protected:
-    DualBarcodesWithDiagnosticsTest() : 
+    DualBarcodesPairedEndWithDiagnosticsTest() : 
         constant1("AAAA----CGGC"),
         constant2("AGCT------TTTT"),
         variables1(std::vector<std::string>{ "AAAA", "CCCC", "GGGG", "TTTT" }),
@@ -19,10 +19,10 @@ protected:
     std::vector<std::string> variables2;
 
     template<size_t max_size>
-    using Options = typename kaori::DualBarcodes<max_size>::Options;
+    using Options = typename kaori::DualBarcodesPairedEnd<max_size>::Options;
 };
 
-TEST_F(DualBarcodesWithDiagnosticsTest, BasicFirst) {
+TEST_F(DualBarcodesPairedEndWithDiagnosticsTest, BasicFirst) {
     std::vector<std::string> seq1{ 
         "cagcatcgatcgtgaAAAACCCCCGGCacggaggaga",  // index 1
         "AAAAGGGGCGGCaaaaccccggg", // index 2
@@ -44,7 +44,7 @@ TEST_F(DualBarcodesWithDiagnosticsTest, BasicFirst) {
     byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
     byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
 
-    kaori::DualBarcodesWithDiagnostics<32> stuff(
+    kaori::DualBarcodesPairedEndWithDiagnostics<32> stuff(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         Options<32>()
@@ -67,7 +67,7 @@ TEST_F(DualBarcodesWithDiagnosticsTest, BasicFirst) {
     EXPECT_EQ(stuff.get_barcode2_only(), 1);
 }
 
-TEST_F(DualBarcodesWithDiagnosticsTest, WithDuplicates) {
+TEST_F(DualBarcodesPairedEndWithDiagnosticsTest, WithDuplicates) {
     // Inserting duplicate entries, even though the combinations are unique.
     variables1.push_back("AAAA");
     EXPECT_EQ(variables1.front(), variables1.back());
@@ -91,7 +91,7 @@ TEST_F(DualBarcodesWithDiagnosticsTest, WithDuplicates) {
     byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
     byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
 
-    kaori::DualBarcodesWithDiagnostics<32> stuff(
+    kaori::DualBarcodesPairedEndWithDiagnostics<32> stuff(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         Options<32>()

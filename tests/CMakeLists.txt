@@ -26,8 +26,8 @@ add_executable(
     src/handlers/SingleBarcodePairedEnd.cpp
     src/handlers/CombinatorialBarcodesSingleEnd.cpp
     src/handlers/CombinatorialBarcodesPairedEnd.cpp
-    src/handlers/DualBarcodes.cpp
-    src/handlers/DualBarcodesWithDiagnostics.cpp
+    src/handlers/DualBarcodesPairedEnd.cpp
+    src/handlers/DualBarcodesPairedEndWithDiagnostics.cpp
     src/handlers/RandomBarcodeSingleEnd.cpp
 )
 

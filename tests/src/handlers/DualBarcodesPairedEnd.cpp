@@ -1,13 +1,13 @@
 #include <gtest/gtest.h>
-#include "kaori/handlers/DualBarcodes.hpp"
+#include "kaori/handlers/DualBarcodesPairedEnd.hpp"
 #include "kaori/process_data.hpp"
 #include "byteme/RawBufferReader.hpp"
 #include "../utils.h"
 #include <string>
 
-class DualBarcodesTest : public testing::Test {
+class DualBarcodesPairedEndTest : public testing::Test {
 protected:
-    DualBarcodesTest() : 
+    DualBarcodesPairedEndTest() : 
         constant1("AAAA----CGGC"),
         constant2("AGCT------TTTT"),
         variables1(std::vector<std::string>{ "AAAA", "CCCC", "GGGG", "TTTT" }),
@@ -19,11 +19,11 @@ protected:
     std::vector<std::string> variables2;
 
     template<size_t max_size>
-    using Options = typename kaori::DualBarcodes<max_size>::Options;
+    using Options = typename kaori::DualBarcodesPairedEnd<max_size>::Options;
 };
 
-TEST_F(DualBarcodesTest, BasicFirst) {
-    kaori::DualBarcodes<32> stuff(
+TEST_F(DualBarcodesPairedEndTest, BasicFirst) {
+    kaori::DualBarcodesPairedEnd<32> stuff(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         Options<32>()
@@ -79,10 +79,10 @@ TEST_F(DualBarcodesTest, BasicFirst) {
     }
 }
 
-TEST_F(DualBarcodesTest, ReverseComplementFirst) {
+TEST_F(DualBarcodesPairedEndTest, ReverseComplementFirst) {
     // Works in the simple case.
     {
-        kaori::DualBarcodes<32> stuff(
+        kaori::DualBarcodesPairedEnd<32> stuff(
             constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
             constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2), 
             [&]{
@@ -104,7 +104,7 @@ TEST_F(DualBarcodesTest, ReverseComplementFirst) {
 
     // And now the other one.
     {
-        kaori::DualBarcodes<32> stuff(
+        kaori::DualBarcodesPairedEnd<32> stuff(
             constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
             constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
             [&]{
@@ -125,13 +125,13 @@ TEST_F(DualBarcodesTest, ReverseComplementFirst) {
     }
 }
 
-TEST_F(DualBarcodesTest, Iupac) {
+TEST_F(DualBarcodesPairedEndTest, Iupac) {
     variables1 = std::vector<std::string>{ "ARRA", "CYYC", "GSSG", "TWWT" };
     variables2 = std::vector<std::string>{ "ABACAC", "TVTGTG", "AGHGAG", "CDCTCT" };
 
     // Forward.
     {
-        kaori::DualBarcodes<32> stuff(
+        kaori::DualBarcodesPairedEnd<32> stuff(
             constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
             constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
             Options<32>()
@@ -149,7 +149,7 @@ TEST_F(DualBarcodesTest, Iupac) {
 
     // Reverse-complement.
     {
-        kaori::DualBarcodes<32> stuff(
+        kaori::DualBarcodesPairedEnd<32> stuff(
             constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
             constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
             [&]{
@@ -172,14 +172,14 @@ TEST_F(DualBarcodesTest, Iupac) {
 }
 
 
-TEST_F(DualBarcodesTest, MismatchFirst) {
-    kaori::DualBarcodes<32> stuff00(
+TEST_F(DualBarcodesPairedEndTest, MismatchFirst) {
+    kaori::DualBarcodesPairedEnd<32> stuff00(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1), 
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         Options<32>()
     );
 
-    kaori::DualBarcodes<32> stuff10(
+    kaori::DualBarcodesPairedEnd<32> stuff10(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1), 
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         [&]{
@@ -189,7 +189,7 @@ TEST_F(DualBarcodesTest, MismatchFirst) {
         }()
     );
 
-    kaori::DualBarcodes<32> stuff11(
+    kaori::DualBarcodesPairedEnd<32> stuff11(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2), 
         [&]{
@@ -200,7 +200,7 @@ TEST_F(DualBarcodesTest, MismatchFirst) {
         }()
     );
 
-    kaori::DualBarcodes<32> stuff20(
+    kaori::DualBarcodesPairedEnd<32> stuff20(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         [&]{
@@ -250,13 +250,13 @@ TEST_F(DualBarcodesTest, MismatchFirst) {
     }
 }
 
-TEST_F(DualBarcodesTest, AmbiguityFirst) {
+TEST_F(DualBarcodesPairedEndTest, AmbiguityFirst) {
     variables1.push_back("AAAA");
     variables2.push_back("AAAAAG");
     variables1.push_back("AAAA");
     variables2.push_back("AAAAAT");
 
-    kaori::DualBarcodes<32> stuff(
+    kaori::DualBarcodesPairedEnd<32> stuff(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1), 
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         [&]{
@@ -279,14 +279,14 @@ TEST_F(DualBarcodesTest, AmbiguityFirst) {
     }
 }
 
-TEST_F(DualBarcodesTest, RandomizedFirst) {
-    kaori::DualBarcodes<32> nonrandom(
+TEST_F(DualBarcodesPairedEndTest, RandomizedFirst) {
+    kaori::DualBarcodesPairedEnd<32> nonrandom(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         Options<32>()
     );
 
-    kaori::DualBarcodes<32> random(
+    kaori::DualBarcodesPairedEnd<32> random(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2), 
         [&]{
@@ -311,8 +311,8 @@ TEST_F(DualBarcodesTest, RandomizedFirst) {
     EXPECT_EQ(rstate.counts[3], 0);
 }
 
-TEST_F(DualBarcodesTest, BasicBest) {
-    kaori::DualBarcodes<32> stuff(
+TEST_F(DualBarcodesPairedEndTest, BasicBest) {
+    kaori::DualBarcodesPairedEnd<32> stuff(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2), 
         [&]{
@@ -324,7 +324,7 @@ TEST_F(DualBarcodesTest, BasicBest) {
         }()
     );
 
-    kaori::DualBarcodes<32> fstuff(
+    kaori::DualBarcodesPairedEnd<32> fstuff(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         [&]{
@@ -335,7 +335,7 @@ TEST_F(DualBarcodesTest, BasicBest) {
         }()
     );
 
-    kaori::DualBarcodes<32> fstuff0(
+    kaori::DualBarcodesPairedEnd<32> fstuff0(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1), 
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         Options<32>()
@@ -385,8 +385,8 @@ TEST_F(DualBarcodesTest, BasicBest) {
     }
 }
 
-TEST_F(DualBarcodesTest, ReverseComplementBest) {
-    kaori::DualBarcodes<32> stuff(
+TEST_F(DualBarcodesPairedEndTest, ReverseComplementBest) {
+    kaori::DualBarcodesPairedEnd<32> stuff(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         [&]{
@@ -400,7 +400,7 @@ TEST_F(DualBarcodesTest, ReverseComplementBest) {
         }()
     );
 
-    kaori::DualBarcodes<32> fstuff(
+    kaori::DualBarcodesPairedEnd<32> fstuff(
         constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         [&]{
@@ -425,10 +425,10 @@ TEST_F(DualBarcodesTest, ReverseComplementBest) {
     EXPECT_EQ(fstate.counts[2], 1);
 }
 
-TEST_F(DualBarcodesTest, RandomizedBest) {
+TEST_F(DualBarcodesPairedEndTest, RandomizedBest) {
     // No mismatches.
     {
-        kaori::DualBarcodes<32> nonrandom(
+        kaori::DualBarcodesPairedEnd<32> nonrandom(
             constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
             constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
             [&]{
@@ -438,7 +438,7 @@ TEST_F(DualBarcodesTest, RandomizedBest) {
             }()
         );
 
-        kaori::DualBarcodes<32> random(
+        kaori::DualBarcodesPairedEnd<32> random(
             constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1), 
             constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
             [&]{
@@ -463,7 +463,7 @@ TEST_F(DualBarcodesTest, RandomizedBest) {
 
     // One mismatch.
     {
-        kaori::DualBarcodes<32> nonrandom(
+        kaori::DualBarcodesPairedEnd<32> nonrandom(
             constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1), 
             constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
             [&]{
@@ -475,7 +475,7 @@ TEST_F(DualBarcodesTest, RandomizedBest) {
             }()
         );
 
-        kaori::DualBarcodes<32> random(
+        kaori::DualBarcodesPairedEnd<32> random(
             constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
             constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2), 
             [&]{
@@ -502,11 +502,11 @@ TEST_F(DualBarcodesTest, RandomizedBest) {
     }
 }
 
-TEST_F(DualBarcodesTest, Error) {
+TEST_F(DualBarcodesPairedEndTest, Error) {
     constant2 = "ACGT---TGCA";
     EXPECT_ANY_THROW({
         try {
-            kaori::DualBarcodes<32> stuff(
+            kaori::DualBarcodesPairedEnd<32> stuff(
                 constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
                 constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
                 Options<32>()
@@ -520,7 +520,7 @@ TEST_F(DualBarcodesTest, Error) {
     constant2 = "ACGTTGCA";
     EXPECT_ANY_THROW({
         try {
-            kaori::DualBarcodes<32> stuff(
+            kaori::DualBarcodesPairedEnd<32> stuff(
                 constant1.c_str(), constant1.size(), kaori::BarcodePool(variables1),
                 constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2), 
                 Options<32>()

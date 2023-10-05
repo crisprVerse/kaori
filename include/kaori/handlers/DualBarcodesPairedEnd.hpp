@@ -6,7 +6,7 @@
 #include "../utils.hpp"
 
 /**
- * @file DualBarcodes.hpp
+ * @file DualBarcodesPairedEnd.hpp
  *
  * @brief Process dual barcodes.
  */
@@ -24,10 +24,10 @@ namespace kaori {
  * @tparam max_size Maximum length of the template sequences on both reads.
  */
 template<size_t max_size>
-class DualBarcodes { 
+class DualBarcodesPairedEnd { 
 public:
     /**
-     * @brief Optional parameters for `SingleBarcodeSingleEnd`.
+     * @brief Optional parameters for `DualBarcodesPairedEnd`.
      */
     struct Options {
         /** 
@@ -89,7 +89,7 @@ public:
      * Corresponding values across the two pools define a particular combination of dual barcodes. 
      * Duplication of sequences within each pool is allowed; only pairs of the same barcodes are considered to be duplicates with respect to `Options::duplicates`.
      */
-    DualBarcodes(
+    DualBarcodesPairedEnd(
         const char* template_seq1, size_t template_length1, const BarcodePool& barcode_pool1, 
         const char* template_seq2, size_t template_length2, const BarcodePool& barcode_pool2,
         const Options& options
@@ -404,6 +404,16 @@ public:
         return total;
     }
 };
+
+/**
+ * @cond
+ */
+// Soft-deprecated back-compatible aliases.
+template<size_t max_size>
+using DualBarcodes = DualBarcodesPairedEnd<max_size>;
+/**
+ * @endcond
+ */
 
 }
 
