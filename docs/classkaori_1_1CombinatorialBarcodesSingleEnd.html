@@ -96,8 +96,9 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9fd0fcc270f68e75dc07cec8cde45b35"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1CombinatorialBarcodesSingleEnd.html#a9fd0fcc270f68e75dc07cec8cde45b35">CombinatorialBarcodesSingleEnd</a> (const char *template_seq, size_t template_length, const std::array&lt; <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a>, num_variable &gt; &amp;barcode_pools, const <a class="el" href="structkaori_1_1CombinatorialBarcodesSingleEnd_1_1Options.html">Options</a> &amp;options)</td></tr>
-<tr class="separator:a9fd0fcc270f68e75dc07cec8cde45b35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea350e1153f7a365c174d87e4353a3a1"><td class="memTemplParams" colspan="2">template&lt;class BarcodePoolContainer &gt; </td></tr>
+<tr class="memitem:aea350e1153f7a365c174d87e4353a3a1"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classkaori_1_1CombinatorialBarcodesSingleEnd.html#aea350e1153f7a365c174d87e4353a3a1">CombinatorialBarcodesSingleEnd</a> (const char *template_seq, size_t template_length, const BarcodePoolContainer &amp;barcode_pools, const <a class="el" href="structkaori_1_1CombinatorialBarcodesSingleEnd_1_1Options.html">Options</a> &amp;options)</td></tr>
+<tr class="separator:aea350e1153f7a365c174d87e4353a3a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f0e5561b1cb048207bcf882b06a4cd2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classkaori_1_1CombinatorialBarcodesSingleEnd.html">CombinatorialBarcodesSingleEnd</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1CombinatorialBarcodesSingleEnd.html#a1f0e5561b1cb048207bcf882b06a4cd2">set_first</a> (bool t=true)</td></tr>
 <tr class="separator:a1f0e5561b1cb048207bcf882b06a4cd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c0431b2b96832c204e1068b84c64e06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1CombinatorialBarcodesSingleEnd.html#a9c0431b2b96832c204e1068b84c64e06">sort</a> ()</td></tr>
@@ -119,13 +120,15 @@ class kaori::CombinatorialBarcodesSingleEnd&lt; max_size, num_variable &gt;</div
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a9fd0fcc270f68e75dc07cec8cde45b35" name="a9fd0fcc270f68e75dc07cec8cde45b35"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9fd0fcc270f68e75dc07cec8cde45b35">&#9670;&#160;</a></span>CombinatorialBarcodesSingleEnd()</h2>
+<a id="aea350e1153f7a365c174d87e4353a3a1" name="aea350e1153f7a365c174d87e4353a3a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea350e1153f7a365c174d87e4353a3a1">&#9670;&#160;</a></span>CombinatorialBarcodesSingleEnd()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;size_t max_size, size_t num_variable&gt; </div>
+<div class="memtemplate">
+template&lt;class BarcodePoolContainer &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -145,7 +148,7 @@ template&lt;size_t max_size, size_t num_variable&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::array&lt; <a class="el" href="structkaori_1_1BarcodePool.html">BarcodePool</a>, num_variable &gt; &amp;&#160;</td>
+          <td class="paramtype">const BarcodePoolContainer &amp;&#160;</td>
           <td class="paramname"><em>barcode_pools</em>, </td>
         </tr>
         <tr>
@@ -171,7 +174,13 @@ template&lt;size_t max_size, size_t num_variable&gt; </div>
     <tr><td class="paramdir">[in]</td><td class="paramname">template_seq</td><td>Template sequence for the first barcode. This should contain exactly <code>num_variable</code> variable regions. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">template_length</td><td>Length of the template. This should be less than or equal to <code>max_size</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">barcode_pools</td><td>Array containing the known barcode sequences for each of the variable regions, in the order of their appearance in the template sequence. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">options</td><td>Optional parameters. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">options</td><td>Optional parameters.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">BarcodePoolContainer</td><td>Some iterable container of <code><a class="el" href="structkaori_1_1BarcodePool.html" title="Pool of barcode sequences for a variable region.">BarcodePool</a></code> instances, usually either a <code>std::vector</code> or a <code>std::array</code>. </td></tr>
   </table>
   </dd>
 </dl>
