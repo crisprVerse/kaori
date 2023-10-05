@@ -81,19 +81,38 @@ TEST_F(DualBarcodesSingleEndTest, ReverseComplementFirst) {
         }()
     );
 
-    auto state = stuff.initialize();
-    std::string seq = "AAAAGAGAGGCCGAAAATTTTaacacac"; 
-    stuff.process(state, bounds(seq));
-    EXPECT_EQ(state.counts[0], 0);
-    EXPECT_EQ(state.counts[1], 0);
-    EXPECT_EQ(state.counts[2], 0);
-    EXPECT_EQ(state.counts[3], 1);
-    EXPECT_EQ(state.total, 1);
+    {
+        auto state = stuff.initialize();
+        std::string seq = "AAAAGAGAGGCCGAAAATTTTaacacac"; 
+        stuff.process(state, bounds(seq));
+        EXPECT_EQ(state.counts[0], 0);
+        EXPECT_EQ(state.counts[1], 0);
+        EXPECT_EQ(state.counts[2], 0);
+        EXPECT_EQ(state.counts[3], 1);
+        EXPECT_EQ(state.total, 1);
 
-    seq = "ccacacAAACTCTCTGCCGCCCCTTTTcgata";
-    stuff.process(state, bounds(seq));
-    EXPECT_EQ(state.counts[2], 1);
-    EXPECT_EQ(state.total, 2);
+        seq = "ccacacAAACTCTCTGCCGCCCCTTTTcgata";
+        stuff.process(state, bounds(seq));
+        EXPECT_EQ(state.counts[2], 1);
+        EXPECT_EQ(state.total, 2);
+    }
+
+    // Integrated.
+    {
+        std::vector<std::string> seq{ 
+            "cagcatcgatcgtAAAGTGTGTGCCGTTTTTTTTcggaggaga", 
+            "aaaaAAACACACAGCCGGGGGTTTTccggcgcgc"
+        };
+        std::string fq = convert_to_fastq(seq);
+        byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
+        kaori::process_single_end_data(&reader, stuff);
+
+        EXPECT_EQ(stuff.get_counts()[0], 1);
+        EXPECT_EQ(stuff.get_counts()[1], 1);
+        EXPECT_EQ(stuff.get_counts()[2], 0);
+        EXPECT_EQ(stuff.get_counts()[3], 0);
+        EXPECT_EQ(stuff.get_total(), 2);
+    }
 }
 
 TEST_F(DualBarcodesSingleEndTest, Iupac) {
@@ -280,6 +299,13 @@ TEST_F(DualBarcodesSingleEndTest, BasicBest) {
         auto fstate0 = fstuff0.initialize();
         fstuff0.process(fstate0, bounds(seq));
         EXPECT_EQ(fstate0.counts[1], 1);
+
+        // Check that the update ignores failed matches completely.
+        seq = "atatataAAAATATACGGCCTCTCTTTTcacacacaAAAACCCCCGGCTGTGTGTTTacacAAAAGGGGCGGCAAAAAATTTagaga";
+        state = stuff.initialize();
+        stuff.process(state, bounds(seq));
+        EXPECT_EQ(state.counts[1], 1);
+        EXPECT_EQ(state.total, 1);
     }
 
     // Handles ambiguity properly.
