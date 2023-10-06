@@ -322,106 +322,104 @@ $(function() {
 <div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>        <span class="keyword">auto</span> deets1 = constant1.initialize(against1.first, against1.second - against1.first);</div>
 <div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>        <span class="keyword">auto</span> deets2 = constant2.initialize(against2.first, against2.second - against2.first);</div>
 <div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span> </div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>        state.second_matches.clear();</div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>        <span class="keywordtype">int</span> chosen = -1;</div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>        <span class="keywordtype">int</span> best_mismatches = max_mm1 + max_mm2 + 1;</div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span> </div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>        <span class="keyword">auto</span> checker = [&amp;](<span class="keywordtype">size_t</span> idx2) -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>            <span class="keyword">const</span> <span class="keyword">auto</span>&amp; current2 = state.second_matches[idx2];</div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>            state.combined = state.first_match.first;</div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>            state.combined += current2.first; <span class="comment">// separate line is deliberate.</span></div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>            varlib.search(state.combined, state.details, std::array&lt;int, 2&gt;{ max_mm1 - state.first_match.second, max_mm2 - current2.second });</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>        <span class="comment">// Getting all hits on the second read, and then looping over that</span></div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>        <span class="comment">// vector for each hit of the first read. We have to do all pairwise</span></div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>        <span class="comment">// comparisons anyway to find the best hit.</span></div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>        state.second_matches.clear();</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>        <span class="keywordflow">while</span> (inner_process(search_reverse2, constant2, max_mm2, against2.first, deets2, state.second_matches)) {}</div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span> </div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>        <span class="keywordtype">int</span> chosen = -1;</div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>        <span class="keywordtype">int</span> best_mismatches = max_mm1 + max_mm2 + 1;</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>        <span class="keywordtype">size_t</span> num_second_matches = state.second_matches.size();</div>
 <div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span> </div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>            <span class="keywordtype">int</span> cur_mismatches = state.details.mismatches;</div>
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>            <span class="keywordflow">if</span> (cur_mismatches &lt; best_mismatches) {</div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>                chosen = state.details.index;</div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>                best_mismatches = cur_mismatches;</div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>            } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (cur_mismatches == best_mismatches &amp;&amp; chosen != state.details.index) { <span class="comment">// ambiguous.</span></div>
-<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>                chosen = -1;</div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>            }</div>
-<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>        };</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>        <span class="keywordflow">if</span> (!state.second_matches.empty()) {</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>            <span class="keywordflow">while</span> (inner_process(search_reverse1, constant1, max_mm1, against1.first, deets1, state.first_match)) {</div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; num_second_matches; ++i) {</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>                    <span class="keyword">const</span> <span class="keyword">auto</span>&amp; current2 = state.second_matches[i];</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span> </div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>                    state.combined = state.first_match.first;</div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>                    state.combined += current2.first; <span class="comment">// separate line is deliberate.</span></div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>                    varlib.search(state.combined, state.details, std::array&lt;int, 2&gt;{ max_mm1 - state.first_match.second, max_mm2 - current2.second });</div>
 <div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span> </div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>        <span class="comment">// Getting all hits on the second read, and then looping over that</span></div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>        <span class="comment">// vector for each hit of the first read. We have to do all pairwise</span></div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>        <span class="comment">// comparisons anyway to find the best hit.</span></div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>        <span class="keywordflow">while</span> (inner_process(search_reverse2, constant2, max_mm2, against2.first, deets2, state.second_matches)) {</div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>            checker(state.second_matches.size() - 1);</div>
-<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>        }</div>
-<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span> </div>
-<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>        <span class="keywordflow">if</span> (!state.second_matches.empty()) {</div>
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>            <span class="keywordflow">while</span> (inner_process(search_reverse1, constant1, max_mm1, against1.first, deets1, state.first_match)) {</div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; state.second_matches.size(); ++i) {</div>
-<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>                    checker(i);</div>
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>                }</div>
-<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>            }</div>
-<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>        }</div>
-<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span> </div>
-<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>        <span class="keywordflow">return</span> std::make_pair(chosen, best_mismatches);</div>
-<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>    }</div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span> </div>
-<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>    <span class="keywordtype">bool</span> process(State&amp; state, <span class="keyword">const</span> std::pair&lt;const char*, const char*&gt;&amp; r1, <span class="keyword">const</span> std::pair&lt;const char*, const char*&gt;&amp; r2)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>        <span class="keywordtype">bool</span> found;</div>
-<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span> </div>
-<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>        <span class="keywordflow">if</span> (use_first) {</div>
-<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>            found = process_first(state, r1, r2);</div>
-<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>            <span class="keywordflow">if</span> (!found &amp;&amp; randomized) {</div>
-<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>                found = process_first(state, r2, r1);</div>
-<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>            }</div>
-<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span> </div>
-<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>            <span class="keyword">auto</span> best = process_best(state, r1, r2);</div>
-<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>            <span class="keywordflow">if</span> (randomized) {</div>
-<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>                <span class="keyword">auto</span> best2 = process_best(state, r2, r1);</div>
-<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>                <span class="keywordflow">if</span> (best.first &lt; 0 || best.second &gt; best2.second) {</div>
-<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>                    best = best2;</div>
-<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (best.second == best2.second &amp;&amp; best.first != best2.first) {</div>
-<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>                    best.first = -1; <span class="comment">// ambiguous.</span></div>
-<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>                }</div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>            }</div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span> </div>
-<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>            found = best.first &gt;= 0;</div>
-<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>            <span class="keywordflow">if</span> (found) {</div>
-<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>                ++state.counts[best.first];</div>
-<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>            }</div>
-<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>        }</div>
-<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span> </div>
-<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>        ++state.total;</div>
-<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>        <span class="keywordflow">return</span> found;</div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>    }</div>
-<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>    <span class="keywordtype">bool</span> search_reverse1, search_reverse2;</div>
-<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span> </div>
-<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>    ScanTemplate&lt;max_size&gt; constant1, constant2;</div>
-<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>    SegmentedBarcodeSearch&lt;2&gt; varlib;</div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>    <span class="keywordtype">int</span> max_mm1, max_mm2;</div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span> </div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>    <span class="keywordtype">bool</span> randomized;</div>
-<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>    <span class="keywordtype">bool</span> use_first = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span> </div>
-<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>    std::vector&lt;int&gt; counts;</div>
-<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>    <span class="keywordtype">int</span> total = 0;</div>
-<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span> </div>
-<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00407" name="l00407"></a><span class="lineno"><a class="line" href="classkaori_1_1DualBarcodesPairedEnd.html#a826c80b5c90e276a5ff7f2551dd00608">  407</a></span>    <span class="keyword">const</span> std::vector&lt;int&gt;&amp; <a class="code hl_function" href="classkaori_1_1DualBarcodesPairedEnd.html#a826c80b5c90e276a5ff7f2551dd00608">get_counts</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>        <span class="keywordflow">return</span> counts;</div>
-<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>    }</div>
-<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span> </div>
-<div class="line"><a id="l00414" name="l00414"></a><span class="lineno"><a class="line" href="classkaori_1_1DualBarcodesPairedEnd.html#ad44565eb4f6e95b3e73e6ba236cd7dca">  414</a></span>    <span class="keywordtype">int</span> <a class="code hl_function" href="classkaori_1_1DualBarcodesPairedEnd.html#ad44565eb4f6e95b3e73e6ba236cd7dca">get_total</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>        <span class="keywordflow">return</span> total;</div>
-<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>    }</div>
-<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>};</div>
-<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span> </div>
-<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span><span class="comment">// Soft-deprecated back-compatible aliases.</span></div>
-<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span><span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> max_size&gt;</div>
-<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span><span class="keyword">using </span>DualBarcodes = DualBarcodesPairedEnd&lt;max_size&gt;;</div>
-<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>}</div>
-<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span> </div>
-<div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>                    <span class="keywordflow">if</span> (state.details.index &gt;= 0) {</div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>                        <span class="keywordtype">int</span> cur_mismatches = state.details.mismatches + state.first_match.second + current2.second;</div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>                        <span class="keywordflow">if</span> (cur_mismatches &lt; best_mismatches) {</div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>                            chosen = state.details.index;</div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>                            best_mismatches = cur_mismatches;</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>                        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (cur_mismatches == best_mismatches &amp;&amp; chosen != state.details.index) { <span class="comment">// ambiguous.</span></div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>                            chosen = -1;</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>                        }</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>                    }</div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>                }</div>
+<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>            }</div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>        }</div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span> </div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>        <span class="keywordflow">return</span> std::make_pair(chosen, best_mismatches);</div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>    }</div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span> </div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>    <span class="keywordtype">bool</span> process(State&amp; state, <span class="keyword">const</span> std::pair&lt;const char*, const char*&gt;&amp; r1, <span class="keyword">const</span> std::pair&lt;const char*, const char*&gt;&amp; r2)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>        <span class="keywordtype">bool</span> found;</div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span> </div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>        <span class="keywordflow">if</span> (use_first) {</div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>            found = process_first(state, r1, r2);</div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>            <span class="keywordflow">if</span> (!found &amp;&amp; randomized) {</div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>                found = process_first(state, r2, r1);</div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>            }</div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span> </div>
+<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>            <span class="keyword">auto</span> best = process_best(state, r1, r2);</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>            <span class="keywordflow">if</span> (randomized) {</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>                <span class="keyword">auto</span> best2 = process_best(state, r2, r1);</div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>                <span class="keywordflow">if</span> (best.first &lt; 0 || best.second &gt; best2.second) {</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>                    best = best2;</div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (best.second == best2.second &amp;&amp; best.first != best2.first) {</div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>                    best.first = -1; <span class="comment">// ambiguous.</span></div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>                }</div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>            }</div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span> </div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>            found = best.first &gt;= 0;</div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>            <span class="keywordflow">if</span> (found) {</div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>                ++state.counts[best.first];</div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>            }</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>        }</div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span> </div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>        ++state.total;</div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>        <span class="keywordflow">return</span> found;</div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>    }</div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>    <span class="keywordtype">bool</span> search_reverse1, search_reverse2;</div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span> </div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>    ScanTemplate&lt;max_size&gt; constant1, constant2;</div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>    SegmentedBarcodeSearch&lt;2&gt; varlib;</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>    <span class="keywordtype">int</span> max_mm1, max_mm2;</div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span> </div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>    <span class="keywordtype">bool</span> randomized;</div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>    <span class="keywordtype">bool</span> use_first = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span> </div>
+<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>    std::vector&lt;int&gt; counts;</div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>    <span class="keywordtype">int</span> total = 0;</div>
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span> </div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00405" name="l00405"></a><span class="lineno"><a class="line" href="classkaori_1_1DualBarcodesPairedEnd.html#a826c80b5c90e276a5ff7f2551dd00608">  405</a></span>    <span class="keyword">const</span> std::vector&lt;int&gt;&amp; <a class="code hl_function" href="classkaori_1_1DualBarcodesPairedEnd.html#a826c80b5c90e276a5ff7f2551dd00608">get_counts</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>        <span class="keywordflow">return</span> counts;</div>
+<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>    }</div>
+<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span> </div>
+<div class="line"><a id="l00412" name="l00412"></a><span class="lineno"><a class="line" href="classkaori_1_1DualBarcodesPairedEnd.html#ad44565eb4f6e95b3e73e6ba236cd7dca">  412</a></span>    <span class="keywordtype">int</span> <a class="code hl_function" href="classkaori_1_1DualBarcodesPairedEnd.html#ad44565eb4f6e95b3e73e6ba236cd7dca">get_total</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>        <span class="keywordflow">return</span> total;</div>
+<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>    }</div>
+<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>};</div>
+<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span> </div>
+<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span><span class="comment">// Soft-deprecated back-compatible aliases.</span></div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span><span class="keyword">template</span>&lt;<span class="keywordtype">size_t</span> max_size&gt;</div>
+<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span><span class="keyword">using </span>DualBarcodes = DualBarcodesPairedEnd&lt;max_size&gt;;</div>
+<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>}</div>
+<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span> </div>
+<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasskaori_1_1DualBarcodesPairedEnd_html"><div class="ttname"><a href="classkaori_1_1DualBarcodesPairedEnd.html">kaori::DualBarcodesPairedEnd</a></div><div class="ttdoc">Handler for dual barcodes.</div><div class="ttdef"><b>Definition:</b> DualBarcodesPairedEnd.hpp:27</div></div>
-<div class="ttc" id="aclasskaori_1_1DualBarcodesPairedEnd_html_a826c80b5c90e276a5ff7f2551dd00608"><div class="ttname"><a href="classkaori_1_1DualBarcodesPairedEnd.html#a826c80b5c90e276a5ff7f2551dd00608">kaori::DualBarcodesPairedEnd::get_counts</a></div><div class="ttdeci">const std::vector&lt; int &gt; &amp; get_counts() const</div><div class="ttdef"><b>Definition:</b> DualBarcodesPairedEnd.hpp:407</div></div>
+<div class="ttc" id="aclasskaori_1_1DualBarcodesPairedEnd_html_a826c80b5c90e276a5ff7f2551dd00608"><div class="ttname"><a href="classkaori_1_1DualBarcodesPairedEnd.html#a826c80b5c90e276a5ff7f2551dd00608">kaori::DualBarcodesPairedEnd::get_counts</a></div><div class="ttdeci">const std::vector&lt; int &gt; &amp; get_counts() const</div><div class="ttdef"><b>Definition:</b> DualBarcodesPairedEnd.hpp:405</div></div>
 <div class="ttc" id="aclasskaori_1_1DualBarcodesPairedEnd_html_ab165cd8240c72dfde0814746fd5bb6b6"><div class="ttname"><a href="classkaori_1_1DualBarcodesPairedEnd.html#ab165cd8240c72dfde0814746fd5bb6b6">kaori::DualBarcodesPairedEnd::DualBarcodesPairedEnd</a></div><div class="ttdeci">DualBarcodesPairedEnd(const char *template_seq1, size_t template_length1, const BarcodePool &amp;barcode_pool1, const char *template_seq2, size_t template_length2, const BarcodePool &amp;barcode_pool2, const Options &amp;options)</div><div class="ttdef"><b>Definition:</b> DualBarcodesPairedEnd.hpp:92</div></div>
-<div class="ttc" id="aclasskaori_1_1DualBarcodesPairedEnd_html_ad44565eb4f6e95b3e73e6ba236cd7dca"><div class="ttname"><a href="classkaori_1_1DualBarcodesPairedEnd.html#ad44565eb4f6e95b3e73e6ba236cd7dca">kaori::DualBarcodesPairedEnd::get_total</a></div><div class="ttdeci">int get_total() const</div><div class="ttdef"><b>Definition:</b> DualBarcodesPairedEnd.hpp:414</div></div>
+<div class="ttc" id="aclasskaori_1_1DualBarcodesPairedEnd_html_ad44565eb4f6e95b3e73e6ba236cd7dca"><div class="ttname"><a href="classkaori_1_1DualBarcodesPairedEnd.html#ad44565eb4f6e95b3e73e6ba236cd7dca">kaori::DualBarcodesPairedEnd::get_total</a></div><div class="ttdeci">int get_total() const</div><div class="ttdef"><b>Definition:</b> DualBarcodesPairedEnd.hpp:412</div></div>
 <div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html">kaori::SegmentedBarcodeSearch</a></div><div class="ttdoc">Search for known barcode sequences with segmented mismatches.</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:290</div></div>
 <div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html_a1494ea1af5173c48d52313ed278ba7f6"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html#a1494ea1af5173c48d52313ed278ba7f6">kaori::SegmentedBarcodeSearch::reduce</a></div><div class="ttdeci">void reduce(State &amp;state)</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:423</div></div>
 <div class="ttc" id="aclasskaori_1_1SegmentedBarcodeSearch_html_a38064ff8bee88d6031acb925be576bc6"><div class="ttname"><a href="classkaori_1_1SegmentedBarcodeSearch.html#a38064ff8bee88d6031acb925be576bc6">kaori::SegmentedBarcodeSearch::search</a></div><div class="ttdeci">void search(const std::string &amp;search_seq, State &amp;state) const</div><div class="ttdef"><b>Definition:</b> BarcodeSearch.hpp:461</div></div>
