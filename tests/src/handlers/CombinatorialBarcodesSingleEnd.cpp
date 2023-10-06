@@ -396,6 +396,16 @@ TEST_F(CombinatorialBarcodesSingleEndTest, Error) {
 
     EXPECT_ANY_THROW({
         try {
+            std::string constant2 = "AAAA----CGGC----TTTT";
+            Thing stuff(constant2.c_str(), constant2.size(), std::vector<kaori::BarcodePool>{ kaori::BarcodePool(variables2) }, Options<128, 2>());
+        } catch (std::exception& e) {
+            EXPECT_TRUE(std::string(e.what()).find("length of 'barcode_pools'") != std::string::npos);
+            throw e;
+        }
+    });
+
+    EXPECT_ANY_THROW({
+        try {
             std::string constant2 = "AAAA----CGGCTTTT";
             Thing stuff(constant2.c_str(), constant2.size(), make_pointers(), Options<128, 2>());
         } catch (std::exception& e) {

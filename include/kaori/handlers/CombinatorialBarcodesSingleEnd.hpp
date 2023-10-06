@@ -136,6 +136,7 @@ public:
         int total = 0;
 
         std::array<int, num_variable> temp;
+        std::string buffer;
 
         // Default constructors should be called in this case, so it should be fine.
         std::array<typename SimpleBarcodeSearch::State, num_variable> forward_details, reverse_details;
@@ -152,17 +153,19 @@ private:
         int obs_mismatches, 
         const std::array<SimpleBarcodeSearch, num_variable>& libs, 
         std::array<typename SimpleBarcodeSearch::State, num_variable>& states, 
-        std::array<int, num_variable>& temp) 
-    const {
+        std::array<int, num_variable>& temp,
+        std::string& buffer
+    ) const {
         const auto& regions = constant_matcher.template variable_regions<reverse>();
 
         for (size_t r = 0; r < num_variable; ++r) {
             auto range = regions[r];
             auto start = seq + position;
-            std::string current(start + range.first, start + range.second);
+            buffer.clear(); // clear and insert preserves buffer's existing heap allocation.
+            buffer.insert(buffer.end(), start + range.first, start + range.second);
 
             auto& curstate = states[r];
-            libs[r].search(current, curstate, max_mm - obs_mismatches);
+            libs[r].search(buffer, curstate, max_mm - obs_mismatches);
             if (curstate.index < 0) {
                 return std::make_pair(false, 0);
             }
@@ -183,11 +186,11 @@ private:
     }
 
     std::pair<bool, int> forward_match(const char* seq, const typename ScanTemplate<max_size>::State& deets, State& state) const {
-        return find_match<false>(seq, deets.position, deets.forward_mismatches, forward_lib, state.forward_details, state.temp);
+        return find_match<false>(seq, deets.position, deets.forward_mismatches, forward_lib, state.forward_details, state.temp, state.buffer);
     }
 
     std::pair<bool, int> reverse_match(const char* seq, const typename ScanTemplate<max_size>::State& deets, State& state) const {
-        return find_match<true>(seq, deets.position, deets.reverse_mismatches, reverse_lib, state.reverse_details, state.temp);
+        return find_match<true>(seq, deets.position, deets.reverse_mismatches, reverse_lib, state.reverse_details, state.temp, state.buffer);
     }
 
 private:
@@ -219,7 +222,7 @@ private:
         int best_mismatches = max_mm + 1;
         std::array<int, num_variable> best_id;
 
-        auto update = [&](std::pair<int, int> match) -> void {
+        auto update = [&](std::pair<bool, int> match) -> void {
             if (match.first && match.second <= best_mismatches) {
                 if (match.second == best_mismatches) {
                     if (best_id != state.temp) { // ambiguous.

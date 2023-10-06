@@ -236,9 +236,45 @@ TEST_F(DualBarcodesPairedEndTest, MismatchFirst) {
         EXPECT_EQ(state11.counts[3], 1);
     }
 
-    // Two mismatches, in constant and variable regions.
     {
-        std::string seq1 = "AAAATTATCGGG", seq2 = "AGCTCTCTCTTTTT";
+        std::string seq1 = "AAATAAAACGGC", seq2 = "AGCTACACACTTTA"; // both in constant regions this time.
+
+        auto state10 = stuff10.initialize();
+        stuff10.process(state10, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(state10.counts[0], 0);
+
+        auto state11 = stuff11.initialize();
+        stuff11.process(state11, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(state11.counts[0], 1);
+    }
+
+    // Two mismatches.
+    {
+        std::string seq1 = "AAAATAATCGGC", seq2 = "AGCTCTCTCTTTTT"; // both in variable regions.
+
+        auto state10 = stuff10.initialize();
+        stuff10.process(state10, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(state10.counts[3], 0);
+
+        auto state20 = stuff20.initialize();
+        stuff20.process(state20, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(state20.counts[3], 1);
+    }
+
+    {
+        std::string seq1 = "AAAATTATCGGG", seq2 = "AGCTCTCTCTTTTT"; // in constant and variable regions.
+
+        auto state10 = stuff10.initialize();
+        stuff10.process(state10, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(state10.counts[3], 0);
+
+        auto state20 = stuff20.initialize();
+        stuff20.process(state20, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(state20.counts[3], 1);
+    }
+
+    {
+        std::string seq1 = "AAACTTTTCGGG", seq2 = "AGCTCTCTCTTTTT"; // both in constant regions.
 
         auto state10 = stuff10.initialize();
         stuff10.process(state10, bounds(seq1), bounds(seq2));
