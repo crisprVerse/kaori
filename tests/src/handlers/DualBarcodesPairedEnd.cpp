@@ -379,7 +379,8 @@ TEST_F(DualBarcodesPairedEndTest, BasicBest) {
 
     // Keeps searching for the best.
     {
-        std::string seq1 = "AAAATTATCGGCcacacacaAAAACCCCCGGC", seq2 = "AGCTCTCTCTTTTTcgtacgactAGCTTGTGTGTTTT";
+        std::string seq1 = "AAAATTATCGGCcacacacaAAAACCCCCGGC", // one mismatch in first occurrence of the first read.
+            seq2 = "AGCTCTCTCTTTTTcgtacgactAGCTTGTGTGTTTT";
 
         auto state = stuff.initialize();
         stuff.process(state, bounds(seq1), bounds(seq2));
@@ -392,6 +393,18 @@ TEST_F(DualBarcodesPairedEndTest, BasicBest) {
         auto fstate0 = fstuff0.initialize();
         fstuff0.process(fstate0, bounds(seq1), bounds(seq2));
         EXPECT_EQ(fstate0.counts[1], 1);
+
+        seq1 = "AAAATTTTCGGCcacacacaAAAACCCCCGGC";
+        seq2 = "AGCTCTCTCTTATTcgtacgactAGCTTGTGTGTTTT"; // one mismatch in the first occurrence of the second read.
+
+        stuff.process(state, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(state.counts[1], 2);
+
+        fstuff.process(fstate, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(fstate.counts[3], 2);
+
+        fstuff0.process(fstate0, bounds(seq1), bounds(seq2));
+        EXPECT_EQ(fstate0.counts[1], 2);
     }
 
     // Handles ambiguity properly.
