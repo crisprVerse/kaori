@@ -51,29 +51,42 @@ TEST(BasicTests, MultipleEntries) {
 }
 
 TEST(BasicTests, MultiLineEntries) {
-    std::string buffer = "@FOO\nA\nCG\nTGCA\n+\n!!\n!!\n!!!";
-    byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(buffer.c_str()), buffer.size());
-    kaori::FastqReader fq(&reader);
+    for (size_t i = 0; i < 2; ++i) {
+        std::string buffer = "@FOO\nA\nCG\nTGCA\n+\n!!\n!!\n!!!\n@ARG\nACACGGT\nC\n+\n@@@\n@\n@@@@";
+        if (i == 2) {
+            buffer += '\n';
+        }
 
-    EXPECT_TRUE(fq());
-    const auto& name = fq.get_name();
-    EXPECT_EQ(std::string(name.begin(), name.end()), "FOO");
-    const auto& seq = fq.get_sequence();
-    EXPECT_EQ(std::string(seq.begin(), seq.end()), "ACGTGCA");
+        byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(buffer.c_str()), buffer.size());
+        kaori::FastqReader fq(&reader);
 
-    EXPECT_FALSE(fq());
+        EXPECT_TRUE(fq());
+        const auto& name = fq.get_name();
+        EXPECT_EQ(std::string(name.begin(), name.end()), "FOO");
+        const auto& seq = fq.get_sequence();
+        EXPECT_EQ(std::string(seq.begin(), seq.end()), "ACGTGCA");
+
+        EXPECT_TRUE(fq());
+        const auto& name2 = fq.get_name();
+        EXPECT_EQ(std::string(name2.begin(), name2.end()), "ARG");
+        const auto& seq2 = fq.get_sequence();
+        EXPECT_EQ(std::string(seq2.begin(), seq2.end()), "ACACGGTC");
+
+        EXPECT_FALSE(fq());
+    }
 }
 
 TEST(BasicTests, Errors) {
     {
         std::string buffer = "FOO";
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(buffer.c_str()), buffer.size());
+        kaori::FastqReader fq(&reader);
 
         EXPECT_ANY_THROW({
             try {
-                kaori::FastqReader fq(&reader);
+                fq();
             } catch (std::exception& e) {
-                EXPECT_TRUE(std::string(e.what()).find("first line") != std::string::npos);
+                EXPECT_TRUE(std::string(e.what()).find("read name should start") != std::string::npos);
                 throw e;
             }
         });
@@ -95,7 +108,7 @@ TEST(BasicTests, Errors) {
     }
 
     {
-        std::string buffer = "@FOO\nAC\n+\n!!\n@WHEE\nACGT\n+\n!!";
+        std::string buffer = "@FOO\nAC\n+\n!!\n@WHEE\nACGT\n+\n!!"; // too short.
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(buffer.c_str()), buffer.size());
         kaori::FastqReader fq(&reader);
         fq();
@@ -106,6 +119,42 @@ TEST(BasicTests, Errors) {
             } catch (std::exception& e) {
                 std::string msg(e.what());
                 EXPECT_TRUE(msg.find("non-equal lengths") != std::string::npos);
+                EXPECT_TRUE(msg.find("line 5") != std::string::npos);
+                throw e;
+            }
+        });
+    }
+
+    {
+        std::string buffer = "@FOO\nAC\n+\n!!\n@WHEE\nACGT\n+\n!!!@@!!@\n"; // too long.
+        byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(buffer.c_str()), buffer.size());
+        kaori::FastqReader fq(&reader);
+        fq();
+
+        EXPECT_ANY_THROW({
+            try {
+                fq();
+            } catch (std::exception& e) {
+                std::string msg(e.what());
+                EXPECT_TRUE(msg.find("non-equal lengths") != std::string::npos);
+                EXPECT_TRUE(msg.find("line 5") != std::string::npos);
+                throw e;
+            }
+        });
+    }
+
+    {
+        std::string buffer = "@FOO\nAC\n+\n!!\nWHEE";
+        byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(buffer.c_str()), buffer.size());
+        kaori::FastqReader fq(&reader);
+        fq();
+
+        EXPECT_ANY_THROW({
+            try {
+                fq();
+            } catch (std::exception& e) {
+                std::string msg(e.what());
+                EXPECT_TRUE(msg.find("should start") != std::string::npos);
                 EXPECT_TRUE(msg.find("line 5") != std::string::npos);
                 throw e;
             }
