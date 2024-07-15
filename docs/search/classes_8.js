@@ -8,5 +8,5 @@ var searchData=
   ['simplesinglematch_5',['SimpleSingleMatch',['../classkaori_1_1SimpleSingleMatch.html',1,'kaori']]],
   ['singlebarcodepairedend_6',['SingleBarcodePairedEnd',['../classkaori_1_1SingleBarcodePairedEnd.html',1,'kaori']]],
   ['singlebarcodesingleend_7',['SingleBarcodeSingleEnd',['../classkaori_1_1SingleBarcodeSingleEnd.html',1,'kaori']]],
-  ['state_8',['State',['../structkaori_1_1ScanTemplate_1_1State.html',1,'kaori::ScanTemplate&lt; max_size &gt;::State'],['../structkaori_1_1SegmentedBarcodeSearch_1_1State.html',1,'kaori::SegmentedBarcodeSearch&lt; num_segments &gt;::State'],['../structkaori_1_1SimpleBarcodeSearch_1_1State.html',1,'kaori::SimpleBarcodeSearch::State'],['../structkaori_1_1SimpleSingleMatch_1_1State.html',1,'kaori::SimpleSingleMatch&lt; max_size &gt;::State']]]
+  ['state_8',['state',['../structkaori_1_1ScanTemplate_1_1State.html',1,'kaori::ScanTemplate&lt; max_size &gt;::State'],['../structkaori_1_1SegmentedBarcodeSearch_1_1State.html',1,'kaori::SegmentedBarcodeSearch&lt; num_segments &gt;::State'],['../structkaori_1_1SimpleBarcodeSearch_1_1State.html',1,'kaori::SimpleBarcodeSearch::State'],['../structkaori_1_1SimpleSingleMatch_1_1State.html',1,'kaori::SimpleSingleMatch&lt; max_size &gt;::State']]]
 ];
