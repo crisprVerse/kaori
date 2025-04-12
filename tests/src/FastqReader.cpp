@@ -170,7 +170,11 @@ TEST_P(FastqReaderFileTest, LongStrings) {
         std::ofstream out(path);
         out << "@FOOcagctacgt cagtcgact acgacactgactacg\nACGATCGATACGCATCGATCGATCGATCGATTTTAT\n+actgctacgatcgatcagcta\n!#!#!###!!#!#!#!!!!#!#!#!#!#!#!#!#!!";
     }
-    byteme::RawFileReader reader(path, GetParam());
+    byteme::RawFileReader reader(path.c_str(), [&]{
+        byteme::RawFileReaderOptions ropt;
+        ropt.buffer_size = GetParam();
+        return ropt;
+    }());
     kaori::FastqReader fq(&reader);
 
     EXPECT_TRUE(fq());
@@ -198,7 +202,11 @@ TEST_P(FastqReaderFileTest, StressTest) {
             }
         }
     }
-    byteme::RawFileReader reader(path, GetParam());
+    byteme::RawFileReader reader(path.c_str(), [&]{
+        byteme::RawFileReaderOptions ropt;
+        ropt.buffer_size = GetParam();
+        return ropt;
+    }());
     kaori::FastqReader fq(&reader);
 
     std::string ref = "AAAAAAAAAAAAAAAaaaaaaaaaaaaaa";

@@ -20,13 +20,18 @@ namespace kaori {
  * Pretty much what it says on the tin.
  * Multi-line sequence and quality strings are supported.
  * The name of each read is only considered up to the first whitespace.
+ *
+ * @tparam Pointer_ Pointer to a class that serves as a source of input bytes.
+ * The pointed-to class should satisfy the `byteme::Reader` interface; it may also be a concrete `byteme::Reader` subclass to enable devirtualization. 
+ * Either a smart or raw pointer may be supplied depending on how the caller wants to manage the lifetime of the pointed-to object. 
  */
+template<typename Pointer_>
 class FastqReader {
 public:
     /**
-     * @param p Any `byteme::Reader` instance that defines a text stream.
+     * @param p Pointer to a `byteme::Reader` instance that defines a text stream.
      */
-    FastqReader(byteme::Reader* p) : pb(p) {
+    FastqReader(Pointer_ p) : pb(p) {
         sequence.reserve(200);
         name.reserve(200);
         okay = pb.valid();
@@ -110,7 +115,7 @@ public:
     }
 
 private:
-    byteme::PerByte<> pb;
+    byteme::PerByteSerial<char, Pointer_> pb;
 
     char advance_and_check() {
         if (!pb.advance()) {

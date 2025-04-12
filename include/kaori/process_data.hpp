@@ -75,9 +75,12 @@ private:
  * This is done by calling `handler.process()` on each read.
  * It is expected that the results are stored in `handler` for retrieval by the caller.
  *
- * @tparam Handler A class that implements a handler for single-end data.
+ * @tparam Pointer_ Pointer to a class that serves as a source of input bytes.
+ * The pointed-to class should satisfy the `byteme::Reader` interface; it may also be a concrete `byteme::Reader` subclass to enable devirtualization. 
+ * Either a smart or raw pointer may be supplied depending on how the caller wants to manage the lifetime of the pointed-to object. 
+ * @tparam Handler Class that implements a handler for single-end data.
  *
- * @param input A `Reader` object containing data from a single-end FASTQ file.
+ * @param input Pointer to a `byteme::Reader` object containing data from a single-end FASTQ file.
  * @param handler Instance of the `Handler` class.
  * @param num_threads Number of threads to use for processing.
  * @param block_size Number of reads in each thread.
@@ -102,9 +105,9 @@ private:
  *   `name` will contain pointers to the start and one-past-the-end of the read name.
  *   `seq` will contain pointers to the start and one-past-the-end of the read sequence.
  */
-template<class Handler>
-void process_single_end_data(byteme::Reader* input, Handler& handler, int num_threads = 1, int block_size = 100000) {
-    FastqReader fastq(input);
+template<typename Pointer_, class Handler>
+void process_single_end_data(Pointer_ input, Handler& handler, int num_threads = 1, int block_size = 100000) {
+    FastqReader<Pointer_> fastq(input);
     bool finished = false;
 
     std::vector<ChunkOfReads<Handler::use_names> > reads(num_threads);
@@ -193,9 +196,13 @@ void process_single_end_data(byteme::Reader* input, Handler& handler, int num_th
  * Run a handler for each read in paired-end data, by calling `handler.process()` on each read pair.
  * It is expected that the results are stored in `handler` for retrieval by the caller.
  *
+ * @tparam Pointer_ Pointer to a class that serves as a source of input bytes.
+ * The pointed-to class should satisfy the `byteme::Reader` interface; it may also be a concrete `byteme::Reader` subclass to enable devirtualization. 
+ * Either a smart or raw pointer may be supplied depending on how the caller wants to manage the lifetime of the pointed-to object. 
  * @tparam Handler A class that implements a handler for paired-end data.
- * @param input1 A `Reader` object containing data from the first FASTQ file in the pair.
- * @param input2 A `Reader` object containing data from the second FASTQ file in the pair.
+ *
+ * @param input1 Pointer to a `byteme::Reader` object containing data from the first FASTQ file in the pair.
+ * @param input2 Pointer to a `byteme::Reader` object containing data from the second FASTQ file in the pair.
  * @param handler Instance of the `Handler` class. 
  * @param num_threads Number of threads to use for processing.
  * @param block_size Number of reads in each thread.
@@ -221,10 +228,10 @@ void process_single_end_data(byteme::Reader* input, Handler& handler, int num_th
  *   `name1` and `name2` will contain pointers to the start and one-past-the-end of the read names.
  *   `seq1` and `seq2` will contain pointers to the start and one-past-the-end of the read sequences.
  */
-template<class Handler>
-void process_paired_end_data(byteme::Reader* input1, byteme::Reader* input2, Handler& handler, int num_threads = 1, int block_size = 100000) {
-    FastqReader fastq1(input1);
-    FastqReader fastq2(input2);
+template<class Pointer_, class Handler>
+void process_paired_end_data(Pointer_ input1, Pointer_ input2, Handler& handler, int num_threads = 1, int block_size = 100000) {
+    FastqReader<Pointer_> fastq1(input1);
+    FastqReader<Pointer_> fastq2(input2);
     bool finished = false;
 
     std::vector<ChunkOfReads<Handler::use_names> > reads1(num_threads), reads2(num_threads);
