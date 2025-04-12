@@ -1,5 +1,9 @@
 var searchData=
 [
-  ['kaori_0',['kaori',['../namespacekaori.html',1,'']]],
-  ['kaori_2ehpp_1',['kaori.hpp',['../kaori_8hpp.html',1,'']]]
+  ['index_0',['index',['../structkaori_1_1SimpleBarcodeSearch_1_1State.html#ac424ab64e2dd798903d4ef8ce5f04e5f',1,'kaori::SimpleBarcodeSearch::State::index'],['../structkaori_1_1SegmentedBarcodeSearch_1_1State.html#acf848779e11f6741617e458c484c85fe',1,'kaori::SegmentedBarcodeSearch::State::index'],['../structkaori_1_1SegmentedMismatches_1_1Result.html#a629831fff288a3221f6009da980ddee7',1,'kaori::SegmentedMismatches::Result::index'],['../structkaori_1_1SimpleSingleMatch_1_1State.html#a2bc2b8e21011cc4b5b5bcf128c8fa851',1,'kaori::SimpleSingleMatch::State::index']]],
+  ['initialize_1',['initialize',['../classkaori_1_1SimpleBarcodeSearch.html#ac71e5409f61bf03009046b208de7677c',1,'kaori::SimpleBarcodeSearch::initialize()'],['../classkaori_1_1SegmentedBarcodeSearch.html#a6a0476dc43a7ae3006fb961e2e70639a',1,'kaori::SegmentedBarcodeSearch::initialize()'],['../classkaori_1_1ScanTemplate.html#ae70e92ee7acb76157fee54b23b310be0',1,'kaori::ScanTemplate::initialize()'],['../classkaori_1_1SimpleSingleMatch.html#a2fc13e79badc66026c483e52616d0a7f',1,'kaori::SimpleSingleMatch::initialize()']]],
+  ['is_5fduplicate_2',['is_duplicate',['../structkaori_1_1MismatchTrie_1_1AddStatus.html#a6cfd8ad1f89295b61a76c0152f7fd5cf',1,'kaori::MismatchTrie::AddStatus']]],
+  ['istreamreader_3',['IstreamReader',['https://ltla.github.io/byteme/classbyteme_1_1IstreamReader.html',1,'byteme::IstreamReader&lt; class Pointer_ &gt;'],['https://ltla.github.io/byteme/classbyteme_1_1IstreamReader.html#a19247e8caa4d21b5195556a0bf776aa6',1,'byteme::IstreamReader::IstreamReader()']]],
+  ['istreamreader_2ehpp_4',['IstreamReader.hpp',['https://ltla.github.io/byteme/IstreamReader_8hpp.html',1,'']]],
+  ['istreamreaderoptions_5',['IstreamReaderOptions',['https://ltla.github.io/byteme/structbyteme_1_1IstreamReaderOptions.html',1,'byteme']]]
 ];

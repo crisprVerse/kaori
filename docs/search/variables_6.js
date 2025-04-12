@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['per_5fsegment_0',['per_segment',['../structkaori_1_1SegmentedBarcodeSearch_1_1State.html#a3f3645e45fd7d182b5bb1481894f2bf6',1,'kaori::SegmentedBarcodeSearch::State::per_segment'],['../structkaori_1_1SegmentedMismatches_1_1Result.html#a0053dc91f7fb5b28295657872192cabd',1,'kaori::SegmentedMismatches::Result::per_segment']]],
-  ['pool_1',['pool',['../structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1',1,'kaori::BarcodePool']]],
-  ['position_2',['position',['../structkaori_1_1ScanTemplate_1_1State.html#a19b13dcf4ac7a097b4bc26319f5a57d8',1,'kaori::ScanTemplate::State::position'],['../structkaori_1_1SimpleSingleMatch_1_1State.html#aba90251e62778aca6067cd2dfa33d18c',1,'kaori::SimpleSingleMatch::State::position']]]
+  ['index_0',['index',['../structkaori_1_1SimpleBarcodeSearch_1_1State.html#ac424ab64e2dd798903d4ef8ce5f04e5f',1,'kaori::SimpleBarcodeSearch::State::index'],['../structkaori_1_1SegmentedBarcodeSearch_1_1State.html#acf848779e11f6741617e458c484c85fe',1,'kaori::SegmentedBarcodeSearch::State::index'],['../structkaori_1_1SegmentedMismatches_1_1Result.html#a629831fff288a3221f6009da980ddee7',1,'kaori::SegmentedMismatches::Result::index'],['../structkaori_1_1SimpleSingleMatch_1_1State.html#a2bc2b8e21011cc4b5b5bcf128c8fa851',1,'kaori::SimpleSingleMatch::State::index']]],
+  ['is_5fduplicate_1',['is_duplicate',['../structkaori_1_1MismatchTrie_1_1AddStatus.html#a6cfd8ad1f89295b61a76c0152f7fd5cf',1,'kaori::MismatchTrie::AddStatus']]]
 ];

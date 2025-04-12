@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['has_5fambiguous_0',['has_ambiguous',['../structkaori_1_1MismatchTrie_1_1AddStatus.html#a42224ebed07302774e03ebe323548e7d',1,'kaori::MismatchTrie::AddStatus']]]
+  ['compression_5flevel_0',['compression_level',['https://ltla.github.io/byteme/structbyteme_1_1GzipFileWriterOptions.html#a9072c378aefb629c314f80ff8b77a964',1,'byteme::GzipFileWriterOptions::compression_level'],['https://ltla.github.io/byteme/structbyteme_1_1ZlibBufferWriterOptions.html#a31ad029c8bd29c6edfe6e1228ee2aab7',1,'byteme::ZlibBufferWriterOptions::compression_level']]]
 ];

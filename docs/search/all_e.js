@@ -1,11 +1,16 @@
 var searchData=
 [
-  ['random_0',['random',['../structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a0c074d82e6ac2eeee13e05e8b18b0f83',1,'kaori::DualBarcodesPairedEnd::Options']]],
-  ['randombarcodesingleend_1',['randombarcodesingleend',['../classkaori_1_1RandomBarcodeSingleEnd.html',1,'kaori::RandomBarcodeSingleEnd&lt; max_size &gt;'],['../classkaori_1_1RandomBarcodeSingleEnd.html#a44cef67fe97156ce3c5bb02b7dfaa230',1,'kaori::RandomBarcodeSingleEnd::RandomBarcodeSingleEnd()']]],
-  ['randombarcodesingleend_2ehpp_2',['RandomBarcodeSingleEnd.hpp',['../RandomBarcodeSingleEnd_8hpp.html',1,'']]],
-  ['reduce_3',['reduce',['../classkaori_1_1SimpleBarcodeSearch.html#ac80ba1b9394963f2befe4154da98ef1e',1,'kaori::SimpleBarcodeSearch::reduce()'],['../classkaori_1_1SegmentedBarcodeSearch.html#a1494ea1af5173c48d52313ed278ba7f6',1,'kaori::SegmentedBarcodeSearch::reduce()'],['../classkaori_1_1SimpleSingleMatch.html#a43789bbf0d5b23c8b6d6613d353e2813',1,'kaori::SimpleSingleMatch::reduce()']]],
-  ['requirements_4',['requirements',['../namespacekaori.html#single-handler-req',1,'Handler requirements'],['../namespacekaori.html#paired-handler-req',1,'Handler requirements']]],
-  ['result_5',['Result',['../structkaori_1_1SegmentedMismatches_1_1Result.html',1,'kaori::SegmentedMismatches']]],
-  ['reverse_6',['reverse',['../structkaori_1_1SimpleBarcodeSearch_1_1Options.html#a4528a0dbb35d8e32c1f56230bf0caf59',1,'kaori::SimpleBarcodeSearch::Options::reverse'],['../structkaori_1_1SegmentedBarcodeSearch_1_1Options.html#addf408f2694dbf571d13695532991a3d',1,'kaori::SegmentedBarcodeSearch::Options::reverse'],['../structkaori_1_1SimpleSingleMatch_1_1State.html#a8743bad035f3eb0ac58af3e4443ba063',1,'kaori::SimpleSingleMatch::State::reverse']]],
-  ['reverse_5fmismatches_7',['reverse_mismatches',['../structkaori_1_1ScanTemplate_1_1State.html#a31589bfc8a004fbc5472b6b5b47eef7d',1,'kaori::ScanTemplate::State']]]
+  ['per_5fsegment_0',['per_segment',['../structkaori_1_1SegmentedBarcodeSearch_1_1State.html#a3f3645e45fd7d182b5bb1481894f2bf6',1,'kaori::SegmentedBarcodeSearch::State::per_segment'],['../structkaori_1_1SegmentedMismatches_1_1Result.html#a0053dc91f7fb5b28295657872192cabd',1,'kaori::SegmentedMismatches::Result::per_segment']]],
+  ['perbyte_2ehpp_1',['PerByte.hpp',['https://ltla.github.io/byteme/PerByte_8hpp.html',1,'']]],
+  ['perbyteinterface_2',['PerByteInterface',['https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html',1,'byteme']]],
+  ['perbyteinterface_3c_20type_5f_20_3e_3',['PerByteInterface&lt; Type_ &gt;',['https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html',1,'byteme']]],
+  ['perbyteparallel_4',['PerByteParallel',['https://ltla.github.io/byteme/classbyteme_1_1PerByteParallel.html',1,'byteme::PerByteParallel&lt; typename Type_, class Pointer_ &gt;'],['https://ltla.github.io/byteme/classbyteme_1_1PerByteParallel.html#af8b6d8751483f0505569e0d739f4e834',1,'byteme::PerByteParallel::PerByteParallel()']]],
+  ['perbyteserial_5',['PerByteSerial',['https://ltla.github.io/byteme/classbyteme_1_1PerByteSerial.html',1,'byteme::PerByteSerial&lt; typename Type_, class Pointer_ &gt;'],['https://ltla.github.io/byteme/classbyteme_1_1PerByteSerial.html#a1eea419c3dacadb8612b360e159025d2',1,'byteme::PerByteSerial::PerByteSerial()']]],
+  ['perbyteserial_3c_20char_2c_20pointer_5f_20_3e_6',['PerByteSerial&lt; char, Pointer_ &gt;',['https://ltla.github.io/byteme/classbyteme_1_1PerByteSerial.html',1,'byteme']]],
+  ['pool_7',['pool',['../structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1',1,'kaori::BarcodePool']]],
+  ['position_8',['position',['../structkaori_1_1ScanTemplate_1_1State.html#a19b13dcf4ac7a097b4bc26319f5a57d8',1,'kaori::ScanTemplate::State::position'],['../structkaori_1_1SimpleSingleMatch_1_1State.html#aba90251e62778aca6067cd2dfa33d18c',1,'kaori::SimpleSingleMatch::State::position'],['https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a83cdbb17126f57a3fad173c5ea466803',1,'byteme::PerByteInterface::position()']]],
+  ['process_5fdata_2ehpp_9',['process_data.hpp',['../process__data_8hpp.html',1,'']]],
+  ['process_5fpaired_5fend_5fdata_10',['process_paired_end_data',['../namespacekaori.html#a1b6ec01590bb5deb37d0022158faf237',1,'kaori']]],
+  ['process_5fsingle_5fend_5fdata_11',['process_single_end_data',['../namespacekaori.html#a557e1f89be12593d3fc0eb22c974ae89',1,'kaori']]],
+  ['ptr_12',['ptr',['https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a3caa25b9f0daa42d425de8c98c70a59d',1,'byteme::PerByteInterface']]]
 ];

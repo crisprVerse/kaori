@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mismatchtrie_2ehpp_0',['MismatchTrie.hpp',['../MismatchTrie_8hpp.html',1,'']]]
+  ['istreamreader_2ehpp_0',['IstreamReader.hpp',['https://ltla.github.io/byteme/IstreamReader_8hpp.html',1,'']]]
 ];
