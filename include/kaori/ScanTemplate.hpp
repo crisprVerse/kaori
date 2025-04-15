@@ -300,6 +300,19 @@ public:
         return my_reverse_variables;
     } 
 
+    /**
+     * @param reverse Whether to return variable regions on the reverse-complemented template.
+     * @return Convenient alias for `forward_variable_regions()` or `reverse_variable_regions()` depending on `reverse`.
+     */
+    const std::vector<std::pair<int, int> >& variable_regions(bool reverse) const {
+        if (reverse) {
+            return reverse_variable_regions();
+        } else {
+            return forward_variable_regions();
+        }
+    } 
+
+
 private:
     static void add_variable_base(std::vector<std::pair<int, int> >& variables, int i) {
         if (!variables.empty()) {

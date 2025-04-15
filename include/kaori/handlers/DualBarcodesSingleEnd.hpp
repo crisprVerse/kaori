@@ -154,8 +154,8 @@ public:
      */
 
 private:
-    template<bool reverse_>
     std::pair<int, int> find_match(
+        bool reverse,
         const char* seq, 
         size_t position, 
         int obs_mismatches, 
@@ -163,13 +163,7 @@ private:
         typename SimpleBarcodeSearch::State state, 
         std::string& buffer
     ) const {
-        const auto& regions = [&]() -> const std::vector<std::pair<int, int> >& {
-            if constexpr(reverse_) {
-                return my_constant_matcher.reverse_variable_regions();
-            } else {
-                return my_constant_matcher.forward_variable_regions();
-            }
-        }();
+        const auto& regions = my_constant_matcher.variable_regions(reverse);
         buffer.clear();
 
         for (size_t r = 0; r < my_num_variable; ++r) {
@@ -182,11 +176,11 @@ private:
     }
 
     std::pair<int, int> forward_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
-        return find_match<false>(seq, deets.position, deets.forward_mismatches, my_forward_lib, state.forward_details, state.buffer);
+        return find_match(false, seq, deets.position, deets.forward_mismatches, my_forward_lib, state.forward_details, state.buffer);
     }
 
     std::pair<int, int> reverse_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
-        return find_match<true>(seq, deets.position, deets.reverse_mismatches, my_reverse_lib, state.reverse_details, state.buffer);
+        return find_match(true, seq, deets.position, deets.reverse_mismatches, my_reverse_lib, state.reverse_details, state.buffer);
     }
 
 private:

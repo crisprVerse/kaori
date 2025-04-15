@@ -160,8 +160,8 @@ public:
      */
 
 private:
-    template<bool reverse_>
     std::pair<bool, int> find_match(
+        bool reverse,
         const char* seq, 
         size_t position, 
         int obs_mismatches, 
@@ -170,13 +170,7 @@ private:
         std::array<int, num_variable_>& temp,
         std::string& buffer
     ) const {
-        const auto& regions = [&]() -> const std::vector<std::pair<int, int> >& {
-            if constexpr(reverse_) {
-                return my_constant_matcher.reverse_variable_regions();
-            } else {
-                return my_constant_matcher.forward_variable_regions();
-            }
-        }();
+        const auto& regions = my_constant_matcher.variable_regions(reverse); 
 
         for (size_t r = 0; r < num_variable_; ++r) {
             auto range = regions[r];
@@ -195,7 +189,7 @@ private:
                 return std::make_pair(false, 0);
             }
 
-            if constexpr(reverse_) {
+            if (reverse) {
                 temp[num_variable_ - r - 1] = curstate.index;
             } else {
                 temp[r] = curstate.index;
@@ -206,11 +200,11 @@ private:
     }
 
     std::pair<bool, int> forward_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
-        return find_match<false>(seq, deets.position, deets.forward_mismatches, my_forward_lib, state.forward_details, state.temp, state.buffer);
+        return find_match(false, seq, deets.position, deets.forward_mismatches, my_forward_lib, state.forward_details, state.temp, state.buffer);
     }
 
     std::pair<bool, int> reverse_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
-        return find_match<true>(seq, deets.position, deets.reverse_mismatches, my_reverse_lib, state.reverse_details, state.temp, state.buffer);
+        return find_match(true, seq, deets.position, deets.reverse_mismatches, my_reverse_lib, state.reverse_details, state.temp, state.buffer);
     }
 
 private:
