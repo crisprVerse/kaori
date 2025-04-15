@@ -23,9 +23,9 @@ namespace kaori {
  * Combinations are assembled randomly by library construction, where the large number of combinations provide many unique identifiers for cell-tracing applications.
  * This handler will capture the frequencies of each barcode combination. 
  *
- * @tparam max_size Maximum length of the template sequences on both reads.
+ * @tparam max_size_ Maximum length of the template sequences on both reads.
  */
-template<size_t max_size>
+template<size_t max_size_>
 class CombinatorialBarcodesPairedEnd {
 public:
     struct Options {
@@ -73,12 +73,12 @@ public:
      * @param[in] template_seq1 Pointer to a character array containing the first template sequence. 
      * This should contain exactly one variable region.
      * @param template_length1 Length of the first template.
-     * This should be less than or equal to `max_size`.
+     * This should be less than or equal to `max_size_`.
      * @param barcode_pool1 Pool of known barcode sequences for the variable region in the first template.
      * @param[in] template_seq2 Pointer to a character array containing the second template sequence. 
      * This should contain exactly one variable region.
      * @param template_length2 Length of the second template.
-     * This should be less than or equal to `max_size`.
+     * This should be less than or equal to `max_size_`.
      * @param barcode_pool2 Pool of known barcode sequences for the variable region in the second template.
      * @param options Optional parameters.
      */
@@ -87,36 +87,48 @@ public:
         const char* template_seq2, size_t template_length2, const BarcodePool& barcode_pool2,
         const Options& options
     ) :
-        matcher1(
+        my_matcher1(
             template_seq1, 
             template_length1, 
             barcode_pool1,
             [&]{
-                typename SimpleSingleMatch<max_size>::Options opt;
+                typename SimpleSingleMatch<max_size_>::Options opt;
                 opt.strand = options.strand1;
                 opt.max_mismatches = options.max_mismatches1;
                 opt.duplicates = options.duplicates;
                 return opt;
             }()
         ),
-        matcher2(
+        my_matcher2(
             template_seq2, 
             template_length2, 
             barcode_pool2, 
             [&]{
-                typename SimpleSingleMatch<max_size>::Options opt;
+                typename SimpleSingleMatch<max_size_>::Options opt;
                 opt.strand = options.strand2;
                 opt.max_mismatches = options.max_mismatches2;
                 opt.duplicates = options.duplicates;
                 return opt;
             }()
         ),
-        randomized(options.random),
-        use_first(options.use_first)
+        my_randomized(options.random),
+        my_use_first(options.use_first)
     {
-        num_options[0] = barcode_pool1.size();
-        num_options[1] = barcode_pool2.size();
+        my_pool_size[0] = barcode_pool1.size();
+        my_pool_size[1] = barcode_pool2.size();
     }
+
+private:
+    SimpleSingleMatch<max_size_> my_matcher1, my_matcher2;
+    std::array<size_t, 2> my_pool_size;
+
+    bool my_randomized;
+    bool my_use_first = true;
+
+    std::vector<std::array<int, 2> > my_combinations;
+    int my_total = 0;
+    int my_barcode1_only = 0;
+    int my_barcode2_only = 0;
 
 public:
     /**
@@ -125,7 +137,7 @@ public:
     struct State {
         State() {}
 
-        State(typename SimpleSingleMatch<max_size>::State s1, typename SimpleSingleMatch<max_size>::State s2) : search1(std::move(s1)), search2(std::move(s2)) {}
+        State(typename SimpleSingleMatch<max_size_>::State s1, typename SimpleSingleMatch<max_size_>::State s2) : search1(std::move(s1)), search2(std::move(s2)) {}
 
         std::vector<std::array<int, 2> >collected;
         int barcode1_only = 0;
@@ -135,24 +147,24 @@ public:
         /**
          * @cond
          */
-        typename SimpleSingleMatch<max_size>::State search1;
-        typename SimpleSingleMatch<max_size>::State search2;
+        typename SimpleSingleMatch<max_size_>::State search1;
+        typename SimpleSingleMatch<max_size_>::State search2;
         /**
          * @endcond
          */
     };
 
     State initialize() const {
-        return State(matcher1.initialize(), matcher2.initialize());
+        return State(my_matcher1.initialize(), my_matcher2.initialize());
     }
 
     void reduce(State& s) {
-        matcher1.reduce(s.search1);
-        matcher2.reduce(s.search2);
-        combinations.insert(combinations.end(), s.collected.begin(), s.collected.end());
-        total += s.total;
-        barcode1_only += s.barcode1_only;
-        barcode2_only += s.barcode2_only;
+        my_matcher1.reduce(s.search1);
+        my_matcher2.reduce(s.search2);
+        my_combinations.insert(my_combinations.end(), s.collected.begin(), s.collected.end());
+        my_total += s.total;
+        my_barcode1_only += s.barcode1_only;
+        my_barcode2_only += s.barcode2_only;
     }
 
     constexpr static bool use_names = false;
@@ -165,15 +177,15 @@ public:
      *@cond
      */
     void process(State& state, const std::pair<const char*, const char*>& r1, const std::pair<const char*, const char*>& r2) const {
-        if (use_first) {
-            bool m1 = matcher1.search_first(r1.first, r1.second - r1.first, state.search1);
-            bool m2 = matcher2.search_first(r2.first, r2.second - r2.first, state.search2);
+        if (my_use_first) {
+            bool m1 = my_matcher1.search_first(r1.first, r1.second - r1.first, state.search1);
+            bool m2 = my_matcher2.search_first(r2.first, r2.second - r2.first, state.search2);
 
             if (m1 && m2) {
                 state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
-            } else if (randomized) {
-                bool n1 = matcher1.search_first(r2.first, r2.second - r2.first, state.search1);
-                bool n2 = matcher2.search_first(r1.first, r1.second - r1.first, state.search2);
+            } else if (my_randomized) {
+                bool n1 = my_matcher1.search_first(r2.first, r2.second - r2.first, state.search1);
+                bool n2 = my_matcher2.search_first(r1.first, r1.second - r1.first, state.search2);
                 if (n1 && n2) {
                     state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
                 } else {
@@ -192,10 +204,10 @@ public:
             }
 
         } else {
-            bool m1 = matcher1.search_best(r1.first, r1.second - r1.first, state.search1);
-            bool m2 = matcher2.search_best(r2.first, r2.second - r2.first, state.search2);
+            bool m1 = my_matcher1.search_best(r1.first, r1.second - r1.first, state.search1);
+            bool m2 = my_matcher2.search_best(r2.first, r2.second - r2.first, state.search2);
 
-            if (!randomized) {
+            if (!my_randomized) {
                 if (m1 && m2) {
                     state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
                 } else if (m1) {
@@ -207,8 +219,8 @@ public:
                 std::array<int, 2> candidate{ state.search1.index, state.search2.index };
                 int mismatches = state.search1.mismatches + state.search2.mismatches;
 
-                bool n1 = matcher1.search_best(r2.first, r2.second - r2.first, state.search1);
-                bool n2 = matcher2.search_best(r1.first, r1.second - r1.first, state.search2);
+                bool n1 = my_matcher1.search_best(r2.first, r2.second - r2.first, state.search1);
+                bool n2 = my_matcher2.search_best(r1.first, r1.second - r1.first, state.search2);
 
                 if (n1 && n2) {
                     int rmismatches = state.search1.mismatches + state.search2.mismatches;
@@ -225,8 +237,8 @@ public:
                     state.collected.emplace_back(candidate);
                 }
             } else {
-                bool n1 = matcher1.search_best(r2.first, r2.second - r2.first, state.search1);
-                bool n2 = matcher2.search_best(r1.first, r1.second - r1.first, state.search2);
+                bool n1 = my_matcher1.search_best(r2.first, r2.second - r2.first, state.search1);
+                bool n2 = my_matcher2.search_best(r1.first, r1.second - r1.first, state.search2);
 
                 if (n1 && n2) {
                     state.collected.emplace_back(std::array<int, 2>{ state.search1.index, state.search2.index });
@@ -250,7 +262,7 @@ public:
      * Combinations are sorted by the first index, and then the second index.
      */
     void sort() {
-        sort_combinations(combinations, num_options);
+        sort_combinations(my_combinations, my_pool_size);
     }
 
     /**
@@ -258,40 +270,29 @@ public:
      * In each array, the first and second element contains the indices of known barcodes in the first and second pools, respectively.
      */
     const std::vector<std::array<int, 2> >& get_combinations() const {
-        return combinations;
+        return my_combinations;
     }
 
     /**
      * @return Total number of read pairs processed by the handler.
      */
     int get_total() const {
-        return total;
+        return my_total;
     }
 
     /**
      * @return Number of read pairs with a valid match to the first barcode but no valid match to the second barcode.
      */
     int get_barcode1_only() const {
-        return barcode1_only;
+        return my_barcode1_only;
     }
 
     /**
      * @return Number of read pairs with a valid match to the second barcode but no valid match to the first barcode.
      */
     int get_barcode2_only() const {
-        return barcode2_only;
+        return my_barcode2_only;
     }
-private:
-    SimpleSingleMatch<max_size> matcher1, matcher2;
-    std::array<size_t, 2> num_options;
-
-    bool randomized;
-    bool use_first = true;
-
-    std::vector<std::array<int, 2> > combinations;
-    int total = 0;
-    int barcode1_only = 0;
-    int barcode2_only = 0;
 };
 
 }

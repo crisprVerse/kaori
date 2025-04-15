@@ -19,16 +19,16 @@ namespace kaori {
  * This provides the same information as `DualBarcodesSingleEnd` but also captures the frequency of the invalid combinations.
  * These frequences can be helpful for diagnosing problems with library construction.
  *
- * @tparam max_size Maximum length of the template sequences on both reads.
- * @tparam num_variable Number of the template sequences on both reads.
+ * @tparam max_size_ Maximum length of the template sequences on both reads.
+ * @tparam num_variable_ Number of the template sequences on both reads.
  */
-template<size_t max_size, size_t num_variable>
+template<size_t max_size_, size_t num_variable_>
 class DualBarcodesSingleEndWithDiagnostics { 
 public:
     /**
      * @param[in] template_seq Pointer to a character array containing the template sequence. 
      * @param template_length Length of the template.
-     * This should be less than or equal to `max_size`.
+     * This should be less than or equal to `max_size_`.
      * @param barcode_pools Pools of known barcode sequences for each variable region in the template.
      * Each pool should have the same length, and corresponding values across pools define a specific combination of barcodes. 
      * @param options Optional parameters.
@@ -37,13 +37,20 @@ public:
         const char* template_seq, 
         size_t template_length, 
         const std::vector<BarcodePool>& barcode_pools, 
-        const typename DualBarcodesSingleEnd<max_size>::Options& options
+        const typename DualBarcodesSingleEnd<max_size_>::Options& options
     ) :
-        dual_handler(template_seq, template_length, barcode_pools, options),
-
-        combo_handler(template_seq, template_length, barcode_pools, 
+        my_dual_handler(
+            template_seq,
+            template_length,
+            barcode_pools,
+            options
+        ),
+        my_combo_handler(
+            template_seq,
+            template_length,
+            barcode_pools, 
             [&]{
-                typename CombinatorialBarcodesSingleEnd<max_size, num_variable>::Options combopt;
+                typename CombinatorialBarcodesSingleEnd<max_size_, num_variable_>::Options combopt;
                 combopt.use_first = options.use_first;
 
                 combopt.max_mismatches = options.max_mismatches;
@@ -57,8 +64,8 @@ public:
     {}
 
 private:
-    DualBarcodesSingleEnd<max_size> dual_handler;
-    CombinatorialBarcodesSingleEnd<max_size, num_variable> combo_handler;
+    DualBarcodesSingleEnd<max_size_> my_dual_handler;
+    CombinatorialBarcodesSingleEnd<max_size_, num_variable_> my_combo_handler;
 
 public:
     /**
@@ -66,25 +73,26 @@ public:
      */
     struct State {
         State() {}
-        State(typename DualBarcodesSingleEnd<max_size>::State ds, typename CombinatorialBarcodesSingleEnd<max_size, num_variable>::State cs) : dual_state(std::move(ds)), combo_state(std::move(cs)) {}
+        State(typename DualBarcodesSingleEnd<max_size_>::State ds, typename CombinatorialBarcodesSingleEnd<max_size_, num_variable_>::State cs) :
+            dual_state(std::move(ds)), combo_state(std::move(cs)) {}
 
         /**
          * @cond
          */
-        typename DualBarcodesSingleEnd<max_size>::State dual_state;
-        typename CombinatorialBarcodesSingleEnd<max_size, num_variable>::State combo_state;
+        typename DualBarcodesSingleEnd<max_size_>::State dual_state;
+        typename CombinatorialBarcodesSingleEnd<max_size_, num_variable_>::State combo_state;
         /**
          * @endcond
          */
     };
 
     State initialize() const {
-        return State(dual_handler.initialize(), combo_handler.initialize());
+        return State(my_dual_handler.initialize(), my_combo_handler.initialize());
     }
 
     void reduce(State& s) {
-        dual_handler.reduce(s.dual_state);
-        combo_handler.reduce(s.combo_state);
+        my_dual_handler.reduce(s.dual_state);
+        my_combo_handler.reduce(s.combo_state);
     }
 
     constexpr static bool use_names = false;
@@ -98,8 +106,8 @@ public:
      */
     void process(State& state, const std::pair<const char*, const char*>& x) const {
         // Only searching for combinations if we couldn't find a proper dual barcode match.
-        if (!dual_handler.process(state.dual_state, x)) {
-            combo_handler.process(state.combo_state, x);
+        if (!my_dual_handler.process(state.dual_state, x)) {
+            my_combo_handler.process(state.combo_state, x);
         }
     }
     /**
@@ -112,7 +120,7 @@ public:
      * Combinations are sorted by the first index, and then the second index.
      */
     void sort() {
-        combo_handler.sort();
+        my_combo_handler.sort();
     }
 
     /**
@@ -121,22 +129,22 @@ public:
      * Each entry contains the count for the corresponding dual barcode combination.
      */
     const std::vector<int>& get_counts() const {
-        return dual_handler.get_counts();
+        return my_dual_handler.get_counts();
     }
 
     /**
      * @return All invalid combinations encountered by the handler.
      * In each array, the first and second element contains the indices of known barcodes in the first and second pools, respectively.
      */
-    const std::vector<std::array<int, num_variable> >& get_combinations() const {
-        return combo_handler.get_combinations();
+    const std::vector<std::array<int, num_variable_> >& get_combinations() const {
+        return my_combo_handler.get_combinations();
     }
 
     /**
      * @return Total number of reads processed by the handler.
      */
     int get_total() const {
-        return dual_handler.get_total();
+        return my_dual_handler.get_total();
     }
 };
 
