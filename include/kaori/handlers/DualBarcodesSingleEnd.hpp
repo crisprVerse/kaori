@@ -71,7 +71,7 @@ public:
         use_first(options.use_first),
         constant_matcher(template_seq, template_length, options.strand)
     {
-        const auto& regions = constant_matcher.variable_regions();
+        const auto& regions = constant_matcher.forward_variable_regions();
         num_variable = regions.size();
         if (barcode_pools.size() != num_variable) {
             throw std::runtime_error("length of 'barcode_pools' should equal the number of variable regions");
@@ -79,7 +79,7 @@ public:
 
         for (size_t i = 0; i < num_variable; ++i) {
             size_t rlen = regions[i].second - regions[i].first;
-            size_t vlen = barcode_pools[i].length;
+            size_t vlen = barcode_pools[i].length();
             if (vlen != rlen) {
                 throw std::runtime_error("length of variable region " + std::to_string(i + 1) + " (" + std::to_string(rlen) + 
                     ") should be the same as its sequences (" + std::to_string(vlen) + ")");
@@ -101,7 +101,7 @@ public:
         std::vector<std::string> combined(num_choices); 
         for (size_t v = 0; v < num_variable; ++v) {
             const auto& curpool = barcode_pools[v];
-            size_t n = curpool.length;
+            size_t n = curpool.length();
             for (size_t c = 0; c < num_choices; ++c) {
                 auto ptr = curpool[c];
                 combined[c].insert(combined[c].end(), ptr, ptr + n);
@@ -141,7 +141,7 @@ public:
      */
 
 private:
-    template<bool reverse>
+    template<bool reverse_>
     std::pair<int, int> find_match(
         const char* seq, 
         size_t position, 
@@ -150,7 +150,13 @@ private:
         typename SimpleBarcodeSearch::State state, 
         std::string& buffer
     ) const {
-        const auto& regions = constant_matcher.template variable_regions<reverse>();
+        const auto& regions = [&]() -> const std::vector<std::pair<int, int> >& {
+            if constexpr(reverse_) {
+                return constant_matcher.reverse_variable_regions();
+            } else {
+                return constant_matcher.forward_variable_regions();
+            }
+        }();
         buffer.clear();
 
         for (size_t r = 0; r < num_variable; ++r) {

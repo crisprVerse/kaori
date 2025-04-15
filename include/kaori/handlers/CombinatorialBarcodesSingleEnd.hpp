@@ -75,7 +75,7 @@ public:
         use_first(options.use_first),
         constant_matcher(template_seq, template_length, options.strand)
     {
-        const auto& regions = constant_matcher.variable_regions();
+        const auto& regions = constant_matcher.forward_variable_regions();
         if (regions.size() != num_variable) { 
             throw std::runtime_error("expected " + std::to_string(num_variable) + " variable regions in the constant template");
         }
@@ -85,7 +85,7 @@ public:
 
         for (size_t i = 0; i < num_variable; ++i) {
             size_t rlen = regions[i].second - regions[i].first;
-            size_t vlen = barcode_pools[i].length;
+            size_t vlen = barcode_pools[i].length();
             if (vlen != rlen) {
                 throw std::runtime_error("length of variable region " + std::to_string(i + 1) + " (" + std::to_string(rlen) + 
                     ") should be the same as its sequences (" + std::to_string(vlen) + ")");
@@ -94,7 +94,7 @@ public:
 
         // We'll be using this later.
         for (size_t i = 0; i < num_variable; ++i) {
-            num_options[i] = barcode_pools[i].pool.size();
+            num_options[i] = barcode_pools[i].pool().size();
         }
 
         SimpleBarcodeSearch::Options bopt;
@@ -146,7 +146,7 @@ public:
      */
 
 private:
-    template<bool reverse>
+    template<bool reverse_>
     std::pair<bool, int> find_match(
         const char* seq, 
         size_t position, 
@@ -156,7 +156,13 @@ private:
         std::array<int, num_variable>& temp,
         std::string& buffer
     ) const {
-        const auto& regions = constant_matcher.template variable_regions<reverse>();
+        const auto& regions = [&]() -> const std::vector<std::pair<int, int> >& {
+            if constexpr(reverse_) {
+                return constant_matcher.reverse_variable_regions();
+            } else {
+                return constant_matcher.forward_variable_regions();
+            }
+        }();
 
         for (size_t r = 0; r < num_variable; ++r) {
             auto range = regions[r];
@@ -175,7 +181,7 @@ private:
                 return std::make_pair(false, 0);
             }
 
-            if constexpr(reverse) {
+            if constexpr(reverse_) {
                 temp[num_variable - r - 1] = curstate.index;
             } else {
                 temp[r] = curstate.index;

@@ -65,7 +65,7 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicFirst) {
 
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
-        kaori::process_paired_end_data(&reader1, &reader2, stuff);
+        kaori::process_paired_end_data(&reader1, &reader2, stuff, {});
 
         const auto& out = stuff.get_combinations();
         ASSERT_EQ(out.size(), 2);

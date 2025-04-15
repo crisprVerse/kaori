@@ -34,7 +34,7 @@ TEST_F(SingleBarcodePairedEndTest, Forward) {
         kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), Options<16>());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
-        kaori::process_paired_end_data(&reader1, &reader2, handler);
+        kaori::process_paired_end_data(&reader1, &reader2, handler, {});
 
         const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 1);
@@ -54,7 +54,7 @@ TEST_F(SingleBarcodePairedEndTest, Forward) {
         }());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
-        kaori::process_paired_end_data(&reader1, &reader2, handler);
+        kaori::process_paired_end_data(&reader1, &reader2, handler, {});
 
         const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 3);
@@ -93,7 +93,7 @@ TEST_F(SingleBarcodePairedEndTest, Reverse) {
         }());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
-        kaori::process_paired_end_data(&reader1, &reader2, handler);
+        kaori::process_paired_end_data(&reader1, &reader2, handler, {});
 
         const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 0);
@@ -112,7 +112,7 @@ TEST_F(SingleBarcodePairedEndTest, Reverse) {
         }());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
-        kaori::process_paired_end_data(&reader1, &reader2, handler);
+        kaori::process_paired_end_data(&reader1, &reader2, handler, {});
 
         const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 0);
@@ -146,7 +146,7 @@ TEST_F(SingleBarcodePairedEndTest, Best) {
         kaori::SingleBarcodePairedEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), Options<16>());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
-        kaori::process_paired_end_data(&reader1, &reader2, handler);
+        kaori::process_paired_end_data(&reader1, &reader2, handler, {});
 
         /*
          * 1a, 1b = first read, AAAA
@@ -169,7 +169,7 @@ TEST_F(SingleBarcodePairedEndTest, Best) {
         }());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
-        kaori::process_paired_end_data(&reader1, &reader2, handler);
+        kaori::process_paired_end_data(&reader1, &reader2, handler, {});
 
         /*
          * 1a, 1b, 2 = first read, AAAA
@@ -192,7 +192,7 @@ TEST_F(SingleBarcodePairedEndTest, Best) {
         }());
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
-        kaori::process_paired_end_data(&reader1, &reader2, handler);
+        kaori::process_paired_end_data(&reader1, &reader2, handler, {});
 
         /*
          * 1a = ambiguous and ignored.

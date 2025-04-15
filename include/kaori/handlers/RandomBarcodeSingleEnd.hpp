@@ -92,7 +92,7 @@ public:
 
     void forward_match(const char* seq, size_t position, State& state) const {
         auto start = seq + position;
-        const auto& range = constant.variable_regions()[0];
+        const auto& range = constant.forward_variable_regions()[0];
         std::copy(start + range.first, start + range.second, state.buffer.data());
 
         auto it = state.counts.find(state.buffer);
@@ -104,7 +104,7 @@ public:
     }
 
     void reverse_match(const char* seq, size_t position, State& state) const {
-        const auto& range = constant.variable_regions()[0];
+        const auto& range = constant.forward_variable_regions()[0];
         auto start = seq + position + range.first;
         size_t len = state.buffer.size();
         for (size_t j = 0; j < len; ++j) {
@@ -190,7 +190,7 @@ public:
      * @cond
      */
     State initialize() const {
-        const auto& range = constant.variable_regions()[0];
+        const auto& range = constant.forward_variable_regions()[0];
         return State(range.second - range.first);
     }
 

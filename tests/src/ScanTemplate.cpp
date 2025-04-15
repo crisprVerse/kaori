@@ -6,12 +6,12 @@ TEST(ScanTemplate, Basic) {
     std::string thing = "ACGT----TTTT"; 
     kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), kaori::SearchStrand::FORWARD);
 
-    auto fvar = stuff.variable_regions();
+    auto fvar = stuff.forward_variable_regions();
     ASSERT_EQ(fvar.size(), 1);
     EXPECT_EQ(fvar.front().first, 4);
     EXPECT_EQ(fvar.front().second, 8);
 
-    auto rvar = stuff.variable_regions<true>();
+    auto rvar = stuff.reverse_variable_regions();
     EXPECT_EQ(rvar.size(), 0); // not computed if reverse = false.
 
     {
@@ -76,7 +76,7 @@ TEST(ScanTemplate, ReverseComplement) {
         EXPECT_EQ(out.reverse_mismatches, 0);
         EXPECT_TRUE(out.finished);
 
-        const auto& fvar = stuff.variable_regions();
+        const auto& fvar = stuff.forward_variable_regions();
         ASSERT_EQ(fvar.size(), 1); // still reported correctly.
         EXPECT_EQ(fvar.front().first, 4);
         EXPECT_EQ(fvar.front().second, 8);
@@ -98,14 +98,14 @@ TEST(ScanTemplate, Multiple) {
     std::string thing = "ACGT----TT-----GG"; 
     kaori::ScanTemplate<32> stuff(thing.c_str(), thing.size(), kaori::SearchStrand::BOTH);
 
-    auto fvar = stuff.variable_regions();
+    auto fvar = stuff.forward_variable_regions();
     ASSERT_EQ(fvar.size(), 2);
     EXPECT_EQ(fvar.front().first, 4);
     EXPECT_EQ(fvar.front().second, 8);
     EXPECT_EQ(fvar.back().first, 10);
     EXPECT_EQ(fvar.back().second, 15);
 
-    auto rvar = stuff.variable_regions<true>();
+    auto rvar = stuff.reverse_variable_regions();
     ASSERT_EQ(rvar.size(), 2);
     EXPECT_EQ(rvar.front().first, 2);
     EXPECT_EQ(rvar.front().second, 7);
@@ -138,12 +138,12 @@ TEST(ScanTemplate, Mismatches) {
     std::string thing = "ACGT----TTTT"; 
     kaori::ScanTemplate<16> stuff(thing.c_str(), thing.size(), kaori::SearchStrand::FORWARD);
 
-    auto fvar = stuff.variable_regions();
+    auto fvar = stuff.forward_variable_regions();
     ASSERT_EQ(fvar.size(), 1);
     EXPECT_EQ(fvar.front().first, 4);
     EXPECT_EQ(fvar.front().second, 8);
 
-    auto rvar = stuff.variable_regions<true>();
+    auto rvar = stuff.reverse_variable_regions();
     EXPECT_EQ(rvar.size(), 0); // as we set reverse=false.
 
     {

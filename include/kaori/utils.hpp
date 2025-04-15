@@ -196,6 +196,8 @@ void sort_combinations(std::vector<std::array<int, V> >& combinations, const std
         combinations.swap(copy);
     }
 }
+
+inline constexpr int NUM_BASES = 4;
 /**
  * @endcond
  */

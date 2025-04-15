@@ -20,14 +20,14 @@ namespace kaori {
 /** 
  * @cond
  */
-template<class Trie>
-void fill_library(
+template<typename Trie_>
+inline void fill_library(
     const std::vector<const char*>& options, 
     std::unordered_map<std::string, int>& exact,
-    Trie& trie,
+    Trie_& trie,
     bool reverse
 ) {
-    size_t len = trie.get_length();
+    size_t len = trie.length();
 
     for (size_t i = 0; i < options.size(); ++i) {
         auto ptr = options[i];
@@ -59,14 +59,14 @@ void fill_library(
     return;
 }
 
-template<class Methods, class Cache, class Trie, class Result, class Mismatch>
-void matcher_in_the_rye(const std::string& x, const Cache& cache, const Trie& trie, Result& res, const Mismatch& mismatches, const Mismatch& max_mismatches) {
+template<class Methods_, class Cache_, class Trie_, class Result_, class Mismatch_>
+void matcher_in_the_rye(const std::string& x, const Cache_& cache, const Trie_& trie, Result_& res, const Mismatch_& mismatches, const Mismatch_& max_mismatches) {
     // Seeing if it's any of the caches; otherwise searching the trie.
     auto cit = cache.find(x);
     if (cit == cache.end()) {
         auto lit = res.cache.find(x);
         if (lit != res.cache.end()) {
-            Methods::update(res, lit->second, mismatches);
+            Methods_::update(res, lit->second, mismatches);
 
         } else {
             auto missed = trie.search(x.c_str(), mismatches);
@@ -78,16 +78,16 @@ void matcher_in_the_rye(const std::string& x, const Cache& cache, const Trie& tr
             // might actually be a hit). As such, we should only store a
             // miss in the cache when the requested number of mismatches is
             // equal to the maximum value specified in the constructor.
-            if (Methods::index(missed) >= 0 || mismatches == max_mismatches) {
+            if (Methods_::index(missed) >= 0 || mismatches == max_mismatches) {
                 res.cache[x] = missed;
             }
 
             // No need to pass the requested number of mismatches,
             // as we explicitly searched for that in the trie.
-            Methods::update(res, missed);
+            Methods_::update(res, missed);
         }
     } else {
-        Methods::update(res, cit->second, mismatches);
+        Methods_::update(res, cit->second, mismatches);
     }
     return;
 }
@@ -129,17 +129,17 @@ public:
      * Default constructor.
      * This is only provided for composition purposes; methods of this class should only be called on properly constructed instance.
      */
-    SimpleBarcodeSearch() {}
+    SimpleBarcodeSearch() = default;
 
     /**
      * @param barcode_pool Pool of barcode sequences.
      * @param options Optional parameters for the search.
      */
     SimpleBarcodeSearch(const BarcodePool& barcode_pool, const Options& options) : 
-        trie(barcode_pool.length, options.duplicates), 
-        max_mm(options.max_mismatches) 
+        my_trie(barcode_pool.length(), options.duplicates), 
+        my_max_mm(options.max_mismatches) 
     {
-        fill_library(barcode_pool.pool, exact, trie, options.reverse);
+        fill_library(barcode_pool.pool(), my_exact, my_trie, options.reverse);
         return;
     }
 
@@ -190,7 +190,7 @@ public:
      * Typically this has already been used in `search()` at least once.
      */
     void reduce(State& state) {
-        cache.merge(state.cache);
+        my_cache.merge(state.cache);
         state.cache.clear();
     }
 
@@ -224,7 +224,7 @@ public:
      * On return, `state` is filled with the details of the best-matching barcode sequence, if any exists.
      */
     void search(const std::string& search_seq, State& state) const {
-        search(search_seq, state, max_mm);
+        search(search_seq, state, my_max_mm);
         return;
     }
 
@@ -241,41 +241,21 @@ public:
      * This should not be greater than the maximum specified in the constructor.
      */
     void search(const std::string& search_seq, State& state, int allowed_mismatches) const {
-        auto it = exact.find(search_seq);
-        if (it != exact.end()) {
+        auto it = my_exact.find(search_seq);
+        if (it != my_exact.end()) {
             state.index = it->second;
             state.mismatches = 0;
         } else {
-            matcher_in_the_rye<Methods>(search_seq, cache, trie, state, allowed_mismatches, max_mm);
+            matcher_in_the_rye<Methods>(search_seq, my_cache, my_trie, state, allowed_mismatches, my_max_mm);
         }
     }
 
 private:
-    std::unordered_map<std::string, int> exact;
-    AnyMismatches trie;
-    std::unordered_map<std::string, std::pair<int, int> > cache;
-    int max_mm;
+    std::unordered_map<std::string, int> my_exact;
+    AnyMismatches my_trie;
+    std::unordered_map<std::string, std::pair<int, int> > my_cache;
+    int my_max_mm;
 };
-
-/**
- * @cond
- */
-// Using some template recursion instead of a fixed-length loop.
-// Maybe it compiles down to the same thing. 
-template<size_t total, size_t position>
-struct HasMore {
-    static bool check(const std::array<int, total>& left, const std::array<int, total>& right) {
-        return (HasMore<total, position + 1>::check(left, right) || left[position] > right[position]);
-    }
-};
-
-template<size_t total>
-struct HasMore<total, total> {
-    static bool check(const std::array<int, total>&, const std::array<int, total>&) { return false; }
-};
-/**
- * @endcond
- */
 
 /**
  * @brief Search for known barcode sequences with segmented mismatches.
@@ -284,9 +264,9 @@ struct HasMore<total, total> {
  * Mismatches are restricted by segments along the sequence, see `SegmentedMismatches` for details. 
  * Instances of this class use caching to avoid redundant work when a mismatching sequence has been previously encountered.
  *
- * @tparam num_segments Number of segments to consider.
+ * @tparam num_segments_ Number of segments to consider.
  */
-template<size_t num_segments>
+template<size_t num_segments_>
 class SegmentedBarcodeSearch {
 public:
     /**
@@ -306,7 +286,7 @@ public:
          * All values should be non-negative.
          * Defaults to an all-zero array in the `Options()` constructor.
          */
-        std::array<int, num_segments> max_mismatches;
+        std::array<int, num_segments_> max_mismatches;
 
         /** 
          * Whether to reverse-complement the barcode sequences before indexing them.
@@ -324,7 +304,7 @@ public:
     /**
      * Default constructor.
      */
-    SegmentedBarcodeSearch() {}
+    SegmentedBarcodeSearch() = default;
 
     /**
      * @param barcode_pool Pool of barcode sequences.
@@ -334,7 +314,7 @@ public:
      */
     SegmentedBarcodeSearch(
         const BarcodePool& barcode_pool, 
-        std::array<int, num_segments> segments, 
+        std::array<int, num_segments_> segments, 
         const Options& options
     ) : 
         trie(
@@ -359,10 +339,10 @@ public:
             )
         )
     {
-        if (barcode_pool.length != trie.get_length()) {
+        if (barcode_pool.length() != trie.length()) {
             throw std::runtime_error("variable sequences should have the same length as the sum of segment lengths");
         }
-        fill_library(barcode_pool.pool, exact, trie, options.reverse);
+        fill_library(barcode_pool.pool(), exact, trie, options.reverse);
         return;
     }
 
@@ -390,14 +370,14 @@ public:
          * Number of mismatches in each segment.
          * This should only be used if `index != -1`.
          */
-        std::array<int, num_segments> per_segment;
+        std::array<int, num_segments_> per_segment;
         
         /**
          * @cond
          */
         State() : per_segment() {}
 
-        std::unordered_map<std::string, typename SegmentedMismatches<num_segments>::Result> cache;
+        std::unordered_map<std::string, typename SegmentedMismatches<num_segments_>::Result> cache;
         /**
          * @endcond
          */
@@ -426,7 +406,7 @@ public:
     }
 
 private:
-    typedef typename SegmentedMismatches<num_segments>::Result SegmentedResult;
+    typedef typename SegmentedMismatches<num_segments_>::Result SegmentedResult;
 
     struct Methods {
         static int index(const SegmentedResult& val) {
@@ -440,8 +420,16 @@ private:
             return;
         }
 
-        static void update(State& state, const SegmentedResult& val, const std::array<int, num_segments>& mismatches) {
-            state.index = (HasMore<num_segments, 0>::check(val.per_segment, mismatches) ? -1 : val.index);
+        static void update(State& state, const SegmentedResult& val, const std::array<int, num_segments_>& mismatches) {
+            [&]{
+                for (size_t s = 0; s < num_segments_; ++s) {
+                    if (val.per_segment[s] > mismatches[s]) {
+                        state.index = -1;
+                        return;
+                    }
+                }
+                state.index = val.index;
+            }();
             state.mismatches = val.total;
             state.per_segment = val.per_segment;
             return;
@@ -475,12 +463,12 @@ public:
      * @param allowed_mismatches Allowed number of mismatches in each segment.
      * Each value should not be greater than the corresponding maximum specified in the constructor.
      */
-    void search(const std::string& search_seq, State& state, std::array<int, num_segments> allowed_mismatches) const {
+    void search(const std::string& search_seq, State& state, std::array<int, num_segments_> allowed_mismatches) const {
         auto it = exact.find(search_seq);
         if (it != exact.end()) {
             state.index = it->second;
             state.mismatches = 0;
-            std::fill_n(state.per_segment.begin(), num_segments, 0);
+            std::fill_n(state.per_segment.begin(), num_segments_, 0);
         } else {
             matcher_in_the_rye<Methods>(search_seq, cache, trie, state, allowed_mismatches, max_mm);
         }
@@ -488,9 +476,9 @@ public:
 
 private:
     std::unordered_map<std::string, int> exact;
-    SegmentedMismatches<num_segments> trie;
+    SegmentedMismatches<num_segments_> trie;
     std::unordered_map<std::string, SegmentedResult> cache;
-    std::array<int, num_segments> max_mm;
+    std::array<int, num_segments_> max_mm;
 };
 
 }

@@ -49,7 +49,7 @@ TEST_F(DualBarcodesPairedEndWithDiagnosticsTest, BasicFirst) {
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         Options<32>()
     );
-    kaori::process_paired_end_data(&reader1, &reader2, stuff);
+    kaori::process_paired_end_data(&reader1, &reader2, stuff, {});
 
     EXPECT_EQ(stuff.get_total(), 5);
     EXPECT_EQ(stuff.get_counts()[0], 0);
@@ -96,7 +96,7 @@ TEST_F(DualBarcodesPairedEndWithDiagnosticsTest, WithDuplicates) {
         constant2.c_str(), constant2.size(), kaori::BarcodePool(variables2),
         Options<32>()
     );
-    kaori::process_paired_end_data(&reader1, &reader2, stuff);
+    kaori::process_paired_end_data(&reader1, &reader2, stuff, {});
 
     EXPECT_EQ(stuff.get_total(), 3);
     EXPECT_EQ(stuff.get_counts()[0], 1);

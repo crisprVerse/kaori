@@ -60,7 +60,7 @@ TEST_F(DualBarcodesSingleEndTest, BasicFirst) {
         };
         std::string fq = convert_to_fastq(seq);
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-        kaori::process_single_end_data(&reader, stuff);
+        kaori::process_single_end_data(&reader, stuff, {});
 
         EXPECT_EQ(stuff.get_counts()[0], 0);
         EXPECT_EQ(stuff.get_counts()[1], 1);
@@ -105,7 +105,7 @@ TEST_F(DualBarcodesSingleEndTest, ReverseComplementFirst) {
         };
         std::string fq = convert_to_fastq(seq);
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-        kaori::process_single_end_data(&reader, stuff);
+        kaori::process_single_end_data(&reader, stuff, {});
 
         EXPECT_EQ(stuff.get_counts()[0], 1);
         EXPECT_EQ(stuff.get_counts()[1], 1);

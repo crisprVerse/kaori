@@ -111,26 +111,26 @@ public:
 
         size_t len1;
         {
-            const auto& regions = constant1.variable_regions();
+            const auto& regions = constant1.forward_variable_regions();
             if (regions.size() != 1) { 
                 throw std::runtime_error("expected one variable region in the first constant template");
             }
             len1 = regions[0].second - regions[0].first;
-            if (len1 != barcode_pool1.length) {
-                throw std::runtime_error("length of variable sequences (" + std::to_string(barcode_pool1.length) + 
+            if (len1 != barcode_pool1.length()) {
+                throw std::runtime_error("length of variable sequences (" + std::to_string(barcode_pool1.length()) + 
                     ") should be the same as the variable region (" + std::to_string(len1) + ")");
             }
         }
 
         size_t len2;
         {
-            const auto& regions = constant2.variable_regions();
+            const auto& regions = constant2.forward_variable_regions();
             if (regions.size() != 1) { 
                 throw std::runtime_error("expected one variable region in the second constant template");
             }
             len2 = regions[0].second - regions[0].first;
-            if (len2 != barcode_pool2.length) {
-                throw std::runtime_error("length of variable sequences (" + std::to_string(barcode_pool2.length) + 
+            if (len2 != barcode_pool2.length()) {
+                throw std::runtime_error("length of variable sequences (" + std::to_string(barcode_pool2.length()) + 
                     ") should be the same as the variable region (" + std::to_string(len2) + ")");
             }
         }
@@ -238,14 +238,14 @@ private:
             constant.next(deets);
             if (reverse) {
                 if (deets.reverse_mismatches <= max_mm) {
-                    const auto& reg = constant.template variable_regions<true>()[0];
+                    const auto& reg = constant.reverse_variable_regions()[0];
                     auto start = against + deets.position;
                     fill_store(store, start + reg.first, start + reg.second, deets.reverse_mismatches);
                     return true;
                 }
             } else {
                 if (deets.forward_mismatches <= max_mm) {
-                    const auto& reg = constant.variable_regions()[0];
+                    const auto& reg = constant.forward_variable_regions()[0];
                     auto start = against + deets.position;
                     fill_store(store, start + reg.first, start + reg.second, deets.forward_mismatches);
                     return true;
