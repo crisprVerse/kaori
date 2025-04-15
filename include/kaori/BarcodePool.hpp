@@ -18,17 +18,18 @@ namespace kaori {
  * The `BarcodePool` class defines the pool of possible barcode sequences for a given variable region in the template sequence.
  * All sequences in this set are assumed to have the same length.
  */
-struct BarcodePool {
+class BarcodePool {
+public:
     /**
      * Default constructor.
      */
-    BarcodePool() {}
+    BarcodePool() = default;
     
     /**
      * @param barcode_pool Vector of pointers to sequences of length `l`, containing the pool of possible barcode sequences.
      * @param barcode_length Length of each sequence.
      */
-    BarcodePool(std::vector<const char*> barcode_pool, size_t barcode_length) : pool(std::move(barcode_pool)), length(barcode_length) {}
+    BarcodePool(std::vector<const char*> barcode_pool, size_t barcode_length) : my_pool(std::move(barcode_pool)), my_length(barcode_length) {}
 
     /**
      * @param barcode_pool Vector of sequences of the same length, containing the pool of possible barcode sequences.
@@ -37,32 +38,41 @@ struct BarcodePool {
      */
     BarcodePool(const std::vector<std::string>& barcode_pool) {
         if (barcode_pool.size()) {
-            length = barcode_pool.front().size();
-            pool.reserve(barcode_pool.size());
+            my_length = barcode_pool.front().size();
+            my_pool.reserve(barcode_pool.size());
             for (const auto& x : barcode_pool) {
-                if (x.size() != length) {
+                if (x.size() != my_length) {
                     throw std::runtime_error("sequences for a given variable region should be of a constant length");
                 }
-                pool.push_back(x.c_str());
+                my_pool.push_back(x.c_str());
             }
         }
     }
 
+private:
+    std::vector<const char*> my_pool;
+    size_t my_length = 0;
+
+public:
     /**
-     * Vector containing pointers to sequences of length `len`.
+     * @return Vector containing pointers to sequences of length equal to `length()`.
      */
-    std::vector<const char*> pool;
+    const std::vector<const char*>& pool() const {
+        return my_pool;
+    }
 
     /**
-     * Length of each sequence in `pool`.
+     * @return Length of each sequence in `pool()`.
      */
-    size_t length = 0;
+    size_t length() const {
+        return my_length;
+    }
 
     /**
-     * @return Number of sequences in the pool.
+     * @return Number of sequences in `pool()`.
      */
     size_t size() const {
-        return pool.size();
+        return my_pool.size();
     }
 
     /**
@@ -70,7 +80,7 @@ struct BarcodePool {
      * @return Pointer to the `i`-th sequence in the pool.
      */
     const char* operator[](size_t i) const {
-        return pool[i];
+        return my_pool[i];
     }
 };
 

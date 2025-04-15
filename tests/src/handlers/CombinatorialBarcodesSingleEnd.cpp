@@ -51,7 +51,7 @@ TEST_F(CombinatorialBarcodesSingleEndTest, BasicFirst) {
 
     {
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-        kaori::process_single_end_data(&reader, stuff);
+        kaori::process_single_end_data(&reader, stuff, {});
 
         const auto& combos = stuff.get_combinations();
         ASSERT_EQ(combos.size(), 4); // from the previous invokation of process().
@@ -89,7 +89,7 @@ TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementFirst) {
     // Forward only
     {
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-        kaori::process_single_end_data(&reader, forward);
+        kaori::process_single_end_data(&reader, forward, {});
         EXPECT_EQ(forward.get_total(), 2);
 
         const auto& combos = forward.get_combinations();
@@ -101,7 +101,7 @@ TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementFirst) {
     // Reverse only
     {
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-        kaori::process_single_end_data(&reader, reverse);
+        kaori::process_single_end_data(&reader, reverse, {});
         EXPECT_EQ(reverse.get_total(), 2);
 
         const auto& combos = reverse.get_combinations();
@@ -113,7 +113,7 @@ TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementFirst) {
     // Both.
     {
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-        kaori::process_single_end_data(&reader, both);
+        kaori::process_single_end_data(&reader, both, {});
         const auto& combos = both.get_combinations();
         ASSERT_EQ(combos.size(), 2);
     }

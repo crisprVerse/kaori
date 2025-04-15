@@ -69,7 +69,7 @@ TEST_F(DualBarcodesPairedEndTest, BasicFirst) {
 
         byteme::RawBufferReader reader1(reinterpret_cast<const unsigned char*>(fq1.c_str()), fq1.size());
         byteme::RawBufferReader reader2(reinterpret_cast<const unsigned char*>(fq2.c_str()), fq2.size());
-        kaori::process_paired_end_data(&reader1, &reader2, stuff);
+        kaori::process_paired_end_data(&reader1, &reader2, stuff, {});
 
         EXPECT_EQ(stuff.get_counts()[0], 0);
         EXPECT_EQ(stuff.get_counts()[1], 1);

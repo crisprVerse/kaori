@@ -7,8 +7,8 @@
 class AnyMismatchesTest : public ::testing::Test {
 protected:
     static kaori::AnyMismatches populate(const kaori::BarcodePool& ptrs) {
-        kaori::AnyMismatches output(ptrs.length, kaori::DuplicateAction::ERROR);
-        for (auto p : ptrs.pool) {
+        kaori::AnyMismatches output(ptrs.length(), kaori::DuplicateAction::ERROR);
+        for (auto p : ptrs.pool()) {
             output.add(p);
         }
         return output;
@@ -181,11 +181,11 @@ TEST_F(AnyMismatchesTest, Duplicates) {
 
     // Gets the first occurrence.
     {
-        kaori::AnyMismatches stuff(ptrs.length, kaori::DuplicateAction::FIRST);
-        CHECK(stuff.add(ptrs.pool[0]), false, false, false);
-        CHECK(stuff.add(ptrs.pool[1]), true, false, false);
-        CHECK(stuff.add(ptrs.pool[2]), false, false, false);
-        CHECK(stuff.add(ptrs.pool[3]), true, false, false);
+        kaori::AnyMismatches stuff(ptrs.length(), kaori::DuplicateAction::FIRST);
+        CHECK(stuff.add(ptrs[0]), false, false, false);
+        CHECK(stuff.add(ptrs[1]), true, false, false);
+        CHECK(stuff.add(ptrs[2]), false, false, false);
+        CHECK(stuff.add(ptrs[3]), true, false, false);
 
         auto res = stuff.search("ACGT", 0);
         EXPECT_EQ(res.first, 0);
@@ -196,11 +196,11 @@ TEST_F(AnyMismatchesTest, Duplicates) {
 
     // Gets the last occurrence.
     {
-        kaori::AnyMismatches stuff(ptrs.length, kaori::DuplicateAction::LAST);
-        CHECK(stuff.add(ptrs.pool[0]), false, false, false);
-        CHECK(stuff.add(ptrs.pool[1]), true, true, false);
-        CHECK(stuff.add(ptrs.pool[2]), false, false, false);
-        CHECK(stuff.add(ptrs.pool[3]), true, true, false);
+        kaori::AnyMismatches stuff(ptrs.length(), kaori::DuplicateAction::LAST);
+        CHECK(stuff.add(ptrs[0]), false, false, false);
+        CHECK(stuff.add(ptrs[1]), true, true, false);
+        CHECK(stuff.add(ptrs[2]), false, false, false);
+        CHECK(stuff.add(ptrs[3]), true, true, false);
 
         auto res = stuff.search("ACGT", 0);
         EXPECT_EQ(res.first, 1);
@@ -211,12 +211,12 @@ TEST_F(AnyMismatchesTest, Duplicates) {
 
     // Gets nothing.
     {
-        kaori::AnyMismatches stuff(ptrs.length, kaori::DuplicateAction::NONE);
-        CHECK(stuff.add(ptrs.pool[0]), false, false, false);
-        CHECK(stuff.add(ptrs.pool[1]), true, false, true);
-        CHECK(stuff.add(ptrs.pool[2]), false, false, false);
-        CHECK(stuff.add(ptrs.pool[3]), true, false, true);
-        CHECK(stuff.add(ptrs.pool[3]), true, false, false); // next addition sets duplicate_cleared = false as it's already cleared.
+        kaori::AnyMismatches stuff(ptrs.length(), kaori::DuplicateAction::NONE);
+        CHECK(stuff.add(ptrs[0]), false, false, false);
+        CHECK(stuff.add(ptrs[1]), true, false, true);
+        CHECK(stuff.add(ptrs[2]), false, false, false);
+        CHECK(stuff.add(ptrs[3]), true, false, true);
+        CHECK(stuff.add(ptrs[3]), true, false, false); // next addition sets duplicate_cleared = false as it's already cleared.
 
         auto res = stuff.search("ACGT", 0);
         EXPECT_EQ(res.first, -2);
@@ -301,8 +301,8 @@ TEST_F(AnyMismatchesTest, IupacAmbiguity) {
     {
         std::vector<std::string> things { "AAAAAAB", "AAAAAAY", "TTTVTTT", "TTTRTTT" };
         kaori::BarcodePool ptrs(things);
-        kaori::AnyMismatches stuff(ptrs.length, kaori::DuplicateAction::NONE);
-        for (auto p : ptrs.pool) {
+        kaori::AnyMismatches stuff(ptrs.length(), kaori::DuplicateAction::NONE);
+        for (auto p : ptrs.pool()) {
             stuff.add(p);
         }
 
@@ -316,8 +316,8 @@ TEST_F(AnyMismatchesTest, IupacAmbiguity) {
 
         // Unless we want to report duplicates.
         for (int i = 0; i < 2; ++i) {
-            kaori::AnyMismatches stuff2(ptrs.length, (i == 0 ? kaori::DuplicateAction::FIRST : kaori::DuplicateAction::LAST));
-            for (auto p : ptrs.pool) {
+            kaori::AnyMismatches stuff2(ptrs.length(), (i == 0 ? kaori::DuplicateAction::FIRST : kaori::DuplicateAction::LAST));
+            for (auto p : ptrs.pool()) {
                 stuff2.add(p);
             }
 
@@ -399,8 +399,8 @@ protected:
     template<size_t num_segments>
     static kaori::SegmentedMismatches<num_segments> populate(const kaori::BarcodePool& ptrs, std::array<int, num_segments> segments) {
         kaori::SegmentedMismatches output(segments, kaori::DuplicateAction::ERROR);
-        assert(ptrs.length == output.get_length());
-        for (auto p : ptrs.pool) {
+        assert(ptrs.length() == output.length());
+        for (auto p : ptrs.pool()) {
             output.add(p);
         }
         return output;
@@ -670,7 +670,7 @@ TEST_F(SegmentedMismatchesTest, Iupac) {
         std::vector<std::string> things { "AAAAAAB", "AAAAAAY", "TTTVTTT", "TTTRTTT" };
         kaori::BarcodePool ptrs(things);
         kaori::SegmentedMismatches<2> stuff({ 4, 3 }, kaori::DuplicateAction::NONE);
-        for (auto p : ptrs.pool) {
+        for (auto p : ptrs.pool()) {
             stuff.add(p);
         }
 
@@ -701,7 +701,7 @@ TEST_F(SegmentedMismatchesTest, Iupac) {
         // Unless we want to report duplicates.
         for (int i = 0; i < 2; ++i) {
             kaori::SegmentedMismatches<2> stuff2({ 4, 3 }, (i == 0 ? kaori::DuplicateAction::FIRST : kaori::DuplicateAction::LAST));
-            for (auto p : ptrs.pool) {
+            for (auto p : ptrs.pool()) {
                 stuff2.add(p);
             }
 

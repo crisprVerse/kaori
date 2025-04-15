@@ -27,7 +27,7 @@ TEST_F(SingleBarcodeSingleEndTest, ForwardOnly) {
     {
         kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), Options<16>());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-        kaori::process_single_end_data(&reader, handler);
+        kaori::process_single_end_data(&reader, handler, {});
 
         const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 1);
@@ -46,7 +46,7 @@ TEST_F(SingleBarcodeSingleEndTest, ForwardOnly) {
             return opt;
         }());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-        kaori::process_single_end_data(&reader, handler);
+        kaori::process_single_end_data(&reader, handler, {});
 
         const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 3);
@@ -74,7 +74,7 @@ TEST_F(SingleBarcodeSingleEndTest, Stranded) {
     {
         kaori::SingleBarcodeSingleEnd<16> handler(thing.c_str(), thing.size(), kaori::BarcodePool(variables), Options<16>());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-        kaori::process_single_end_data(&reader, handler);
+        kaori::process_single_end_data(&reader, handler, {});
 
         const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 0);
@@ -91,7 +91,7 @@ TEST_F(SingleBarcodeSingleEndTest, Stranded) {
             return opt;
         }());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-        kaori::process_single_end_data(&reader, handler);
+        kaori::process_single_end_data(&reader, handler, {});
 
         const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 0);
@@ -108,7 +108,7 @@ TEST_F(SingleBarcodeSingleEndTest, Stranded) {
             return opt;
         }());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-        kaori::process_single_end_data(&reader, handler);
+        kaori::process_single_end_data(&reader, handler, {});
 
         const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 0);
@@ -126,7 +126,7 @@ TEST_F(SingleBarcodeSingleEndTest, Stranded) {
             return opt;
         }());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-        kaori::process_single_end_data(&reader, handler);
+        kaori::process_single_end_data(&reader, handler, {});
 
         const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 1);
@@ -155,7 +155,7 @@ TEST_F(SingleBarcodeSingleEndTest, Best) {
             return opt;
         }());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-        kaori::process_single_end_data(&reader, handler);
+        kaori::process_single_end_data(&reader, handler, {});
 
         const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 1);
@@ -174,7 +174,7 @@ TEST_F(SingleBarcodeSingleEndTest, Best) {
             return opt;
         }());
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-        kaori::process_single_end_data(&reader, handler);
+        kaori::process_single_end_data(&reader, handler, {});
 
         const auto& counts = handler.get_counts();
         EXPECT_EQ(counts[0], 0);
@@ -203,7 +203,7 @@ TEST_F(SingleBarcodeSingleEndTest, Iupac) {
         return opt;
     }());
     byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
-    kaori::process_single_end_data(&reader, handler);
+    kaori::process_single_end_data(&reader, handler, {});
 
     const auto& counts = handler.get_counts();
     EXPECT_EQ(counts[0], 1);

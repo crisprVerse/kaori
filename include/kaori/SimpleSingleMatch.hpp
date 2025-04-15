@@ -25,9 +25,9 @@ namespace kaori {
  * It will find a match to any valid barcoding element, i.e., the realization of the template where the variable region is replaced with one sequence from a pool of known barcodes.
  * No restrictions are placed on the distribution of mismatches throughout the barcoding element.
  * 
- * @tparam max_size Maximum length of the template sequence.
+ * @tparam max_size_ Maximum length of the template sequence.
  */
-template<size_t max_size>
+template<size_t max_size_>
 class SimpleSingleMatch {
 public:
     /**
@@ -64,35 +64,34 @@ public:
         const BarcodePool& barcode_pool, 
         const Options& options
     ) : 
-        num_options(barcode_pool.pool.size()),
-        forward(search_forward(options.strand)), 
-        reverse(search_reverse(options.strand)),
-        max_mm(options.max_mismatches),
-        constant(template_seq, template_length, options.strand)
+        my_forward(search_forward(options.strand)), 
+        my_reverse(search_reverse(options.strand)),
+        my_max_mm(options.max_mismatches),
+        my_constant(template_seq, template_length, options.strand)
     {
         // Exact strandedness doesn't matter here, just need the number and length.
-        const auto& regions = constant.variable_regions();
+        const auto& regions = my_constant.forward_variable_regions();
         if (regions.size() != 1) {
             throw std::runtime_error("expected one variable region in the constant template");
         }
 
         size_t var_length = regions[0].second - regions[0].first;
-        if (var_length != barcode_pool.length) {
-            throw std::runtime_error("length of barcode_pool sequences (" + std::to_string(barcode_pool.length) + 
+        if (var_length != barcode_pool.length()) {
+            throw std::runtime_error("length of barcode_pool sequences (" + std::to_string(barcode_pool.length()) + 
                 ") should be the same as the barcode_pool region (" + std::to_string(var_length) + ")");
         }
 
         SimpleBarcodeSearch::Options bs_opt;
         bs_opt.duplicates = options.duplicates;
-        bs_opt.max_mismatches = max_mm;
+        bs_opt.max_mismatches = my_max_mm;
 
-        if (forward) {
+        if (my_forward) {
             bs_opt.reverse = false;
-            forward_lib = SimpleBarcodeSearch(barcode_pool, bs_opt);
+            my_forward_lib = SimpleBarcodeSearch(barcode_pool, bs_opt);
         }
-        if (reverse) {
+        if (my_reverse) {
             bs_opt.reverse = true;
-            reverse_lib = SimpleBarcodeSearch(barcode_pool, bs_opt);
+            my_reverse_lib = SimpleBarcodeSearch(barcode_pool, bs_opt);
         }
     }
 
@@ -133,6 +132,7 @@ public:
         /**
          * @cond
          */
+        std::string buffer;
         typename SimpleBarcodeSearch::State forward_details, reverse_details;
         /**
          * @endcond
@@ -157,31 +157,33 @@ public:
      * Typically this has been used in `search_first()` or `search_best()` at least once.
      */
     void reduce(State& state) {
-        if (forward) {
-            forward_lib.reduce(state.forward_details);
+        if (my_forward) {
+            my_forward_lib.reduce(state.forward_details);
         }
-        if (reverse) {
-            reverse_lib.reduce(state.reverse_details);
+        if (my_reverse) {
+            my_reverse_lib.reduce(state.reverse_details);
         }
     }
 
 private:
     bool has_match(int obs_mismatches) const {
-        return (obs_mismatches >= 0 && obs_mismatches <= max_mm);
+        return (obs_mismatches >= 0 && obs_mismatches <= my_max_mm);
     }
 
-    void forward_match(const char* seq, const typename ScanTemplate<max_size>::State& details, State& state) const {
+    void forward_match(const char* seq, const typename ScanTemplate<max_size_>::State& details, State& state) const {
         auto start = seq + details.position;
-        const auto& range = constant.variable_regions()[0];
-        std::string curseq(start + range.first, start + range.second);
-        forward_lib.search(curseq, state.forward_details, max_mm - details.forward_mismatches);
+        const auto& range = my_constant.forward_variable_regions()[0];
+        state.buffer.clear();
+        state.buffer.insert(state.buffer.end(), start + range.first, start + range.second);
+        my_forward_lib.search(state.buffer, state.forward_details, my_max_mm - details.forward_mismatches);
     }
 
-    void reverse_match(const char* seq, const typename ScanTemplate<max_size>::State& details, State& state) const {
+    void reverse_match(const char* seq, const typename ScanTemplate<max_size_>::State& details, State& state) const {
         auto start = seq + details.position;
-        const auto& range = constant.template variable_regions<true>()[0];
-        std::string curseq(start + range.first, start + range.second);
-        reverse_lib.search(curseq, state.reverse_details, max_mm - details.reverse_mismatches);
+        const auto& range = my_constant.reverse_variable_regions()[0];
+        state.buffer.clear();
+        state.buffer.insert(state.buffer.end(), start + range.first, start + range.second);
+        my_reverse_lib.search(state.buffer, state.reverse_details, my_max_mm - details.reverse_mismatches);
     }
 
 public:
@@ -198,7 +200,7 @@ public:
      * If `true`, `state` is filled with the details of the first match.
      */
     bool search_first(const char* read_seq, size_t read_length, State& state) const {
-        auto deets = constant.initialize(read_seq, read_length);
+        auto deets = my_constant.initialize(read_seq, read_length);
         bool found = false;
         state.index = -1;
         state.mismatches = 0;
@@ -210,7 +212,7 @@ public:
             }
 
             int total = const_mismatches + x.mismatches;
-            if (total > max_mm) {
+            if (total > my_max_mm) {
                 return false;
             }
 
@@ -224,16 +226,16 @@ public:
         };
 
         while (!deets.finished) {
-            constant.next(deets);
+            my_constant.next(deets);
 
-            if (forward && has_match(deets.forward_mismatches)) {
+            if (my_forward && has_match(deets.forward_mismatches)) {
                 forward_match(read_seq, deets, state);
                 if (update(false, deets.forward_mismatches, state.forward_details)) {
                     break;
                 }
             }
 
-            if (reverse && has_match(deets.reverse_mismatches)) {
+            if (my_reverse && has_match(deets.reverse_mismatches)) {
                 reverse_match(read_seq, deets, state);
                 if (update(true, deets.reverse_mismatches, state.reverse_details)) {
                     break;
@@ -257,10 +259,10 @@ public:
      * If `true`, `state` is filled with the details of the best match.
      */
     bool search_best(const char* read_seq, size_t read_length, State& state) const {
-        auto deets = constant.initialize(read_seq, read_length);
+        auto deets = my_constant.initialize(read_seq, read_length);
         state.index = -1;
         bool found = false;
-        int best = max_mm + 1;
+        int best = my_max_mm + 1;
 
         auto update = [&](bool rev,  int const_mismatches, const typename SimpleBarcodeSearch::State& x) -> void {
             if (x.index < 0) {
@@ -289,14 +291,14 @@ public:
         };
 
         while (!deets.finished) {
-            constant.next(deets);
+            my_constant.next(deets);
 
-            if (forward && has_match(deets.forward_mismatches)) {
+            if (my_forward && has_match(deets.forward_mismatches)) {
                 forward_match(read_seq, deets, state);
                 update(false, deets.forward_mismatches, state.forward_details);
             }
 
-            if (reverse && has_match(deets.reverse_mismatches)) {
+            if (my_reverse && has_match(deets.reverse_mismatches)) {
                 reverse_match(read_seq, deets, state);
                 update(true, deets.reverse_mismatches, state.reverse_details);
             }
@@ -306,12 +308,10 @@ public:
     }
 
 private:
-    size_t num_options;
-    bool forward, reverse;
-    int max_mm;
-
-    ScanTemplate<max_size> constant;
-    SimpleBarcodeSearch forward_lib, reverse_lib;
+    bool my_forward, my_reverse;
+    int my_max_mm;
+    ScanTemplate<max_size_> my_constant;
+    SimpleBarcodeSearch my_forward_lib, my_reverse_lib;
 };
 
 }
