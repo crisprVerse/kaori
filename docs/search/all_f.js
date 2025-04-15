@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['random_0',['random',['../structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a0c074d82e6ac2eeee13e05e8b18b0f83',1,'kaori::DualBarcodesPairedEnd::Options']]],
-  ['randombarcodesingleend_1',['RandomBarcodeSingleEnd',['../classkaori_1_1RandomBarcodeSingleEnd.html',1,'kaori::RandomBarcodeSingleEnd&lt; max_size &gt;'],['../classkaori_1_1RandomBarcodeSingleEnd.html#a44cef67fe97156ce3c5bb02b7dfaa230',1,'kaori::RandomBarcodeSingleEnd::RandomBarcodeSingleEnd()']]],
+  ['random_0',['random',['../structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a97960474619d4d0ac8a171d83ca8796c',1,'kaori::DualBarcodesPairedEnd::Options']]],
+  ['randombarcodesingleend_1',['RandomBarcodeSingleEnd',['../classkaori_1_1RandomBarcodeSingleEnd.html',1,'kaori::RandomBarcodeSingleEnd&lt; max_size_ &gt;'],['../classkaori_1_1RandomBarcodeSingleEnd.html#ae2da929a29b34350fe862848028fd632',1,'kaori::RandomBarcodeSingleEnd::RandomBarcodeSingleEnd()']]],
   ['randombarcodesingleend_2ehpp_2',['RandomBarcodeSingleEnd.hpp',['../RandomBarcodeSingleEnd_8hpp.html',1,'']]],
-  ['rawbufferreader_3',['RawBufferReader',['https://ltla.github.io/byteme/classbyteme_1_1RawBufferReader.html',1,'byteme::RawBufferReader'],['https://ltla.github.io/byteme/classbyteme_1_1RawBufferReader.html#a52edfb966cd7ce5db47ba2cbb3cd245d',1,'byteme::RawBufferReader::RawBufferReader()']]],
+  ['rawbufferreader_3',['RawBufferReader',['https://ltla.github.io/byteme/classbyteme_1_1RawBufferReader.html',1,'byteme::RawBufferReader'],['https://ltla.github.io/byteme/classbyteme_1_1RawBufferReader.html#a80988c695311f5ebd52680bf93f92847',1,'byteme::RawBufferReader::RawBufferReader()']]],
   ['rawbufferreader_2ehpp_4',['RawBufferReader.hpp',['https://ltla.github.io/byteme/RawBufferReader_8hpp.html',1,'']]],
   ['rawbufferwriter_5',['RawBufferWriter',['https://ltla.github.io/byteme/classbyteme_1_1RawBufferWriter.html',1,'byteme::RawBufferWriter'],['https://ltla.github.io/byteme/classbyteme_1_1RawBufferWriter.html#a2536f89eb9c6a58a68269abfa907f3bd',1,'byteme::RawBufferWriter::RawBufferWriter()']]],
   ['rawbufferwriter_2ehpp_6',['RawBufferWriter.hpp',['https://ltla.github.io/byteme/RawBufferWriter_8hpp.html',1,'']]],
@@ -16,11 +16,12 @@ var searchData=
   ['rawfilewriteroptions_13',['RawFileWriterOptions',['https://ltla.github.io/byteme/structbyteme_1_1RawFileWriterOptions.html',1,'byteme']]],
   ['reader_14',['Reader',['https://ltla.github.io/byteme/classbyteme_1_1Reader.html',1,'byteme']]],
   ['reader_2ehpp_15',['Reader.hpp',['https://ltla.github.io/byteme/Reader_8hpp.html',1,'']]],
-  ['reduce_16',['reduce',['../classkaori_1_1SimpleBarcodeSearch.html#ac80ba1b9394963f2befe4154da98ef1e',1,'kaori::SimpleBarcodeSearch::reduce()'],['../classkaori_1_1SegmentedBarcodeSearch.html#a1494ea1af5173c48d52313ed278ba7f6',1,'kaori::SegmentedBarcodeSearch::reduce()'],['../classkaori_1_1SimpleSingleMatch.html#a43789bbf0d5b23c8b6d6613d353e2813',1,'kaori::SimpleSingleMatch::reduce()']]],
+  ['reduce_16',['reduce',['../classkaori_1_1SimpleBarcodeSearch.html#ac80ba1b9394963f2befe4154da98ef1e',1,'kaori::SimpleBarcodeSearch::reduce()'],['../classkaori_1_1SegmentedBarcodeSearch.html#a6a950454a3359ce37fb3df31d68360b8',1,'kaori::SegmentedBarcodeSearch::reduce()'],['../classkaori_1_1SimpleSingleMatch.html#a1ff83275c8ef6e9a2d213e867e6d4608',1,'kaori::SimpleSingleMatch::reduce()']]],
   ['refill_17',['refill',['https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a8cb67ac7c5517d17adb6fe88b803516d',1,'byteme::PerByteInterface::refill()'],['https://ltla.github.io/byteme/classbyteme_1_1PerByteParallel.html#aa7e9be70da45b85254a16e5e1c47e036',1,'byteme::PerByteParallel::refill()'],['https://ltla.github.io/byteme/classbyteme_1_1PerByteSerial.html#ae6424f8d002deb991f21f2812b103705',1,'byteme::PerByteSerial::refill()']]],
   ['requirements_18',['requirements',['../namespacekaori.html#single-handler-req',1,'Handler requirements'],['../namespacekaori.html#paired-handler-req',1,'Handler requirements']]],
-  ['reserve_19',['reserve',['https://ltla.github.io/byteme/structbyteme_1_1RawBufferWriterOptions.html#ad4302569f8c1ba99c3776c70a5f1faf0',1,'byteme::RawBufferWriterOptions']]],
+  ['reserve_19',['reserve',['https://ltla.github.io/byteme/structbyteme_1_1RawBufferWriterOptions.html#ace854857d6b1b607ff4fedca07d05e1b',1,'byteme::RawBufferWriterOptions']]],
   ['result_20',['Result',['../structkaori_1_1SegmentedMismatches_1_1Result.html',1,'kaori::SegmentedMismatches']]],
-  ['reverse_21',['reverse',['../structkaori_1_1SimpleBarcodeSearch_1_1Options.html#a4528a0dbb35d8e32c1f56230bf0caf59',1,'kaori::SimpleBarcodeSearch::Options::reverse'],['../structkaori_1_1SegmentedBarcodeSearch_1_1Options.html#addf408f2694dbf571d13695532991a3d',1,'kaori::SegmentedBarcodeSearch::Options::reverse'],['../structkaori_1_1SimpleSingleMatch_1_1State.html#a8743bad035f3eb0ac58af3e4443ba063',1,'kaori::SimpleSingleMatch::State::reverse']]],
-  ['reverse_5fmismatches_22',['reverse_mismatches',['../structkaori_1_1ScanTemplate_1_1State.html#a31589bfc8a004fbc5472b6b5b47eef7d',1,'kaori::ScanTemplate::State']]]
+  ['reverse_21',['reverse',['../structkaori_1_1SimpleBarcodeSearch_1_1Options.html#a4528a0dbb35d8e32c1f56230bf0caf59',1,'kaori::SimpleBarcodeSearch::Options::reverse'],['../structkaori_1_1SegmentedBarcodeSearch_1_1Options.html#a5bc3d770256987a43822b831b4b77434',1,'kaori::SegmentedBarcodeSearch::Options::reverse'],['../structkaori_1_1SimpleSingleMatch_1_1State.html#aaae06e8904476ac85574963ec533af95',1,'kaori::SimpleSingleMatch::State::reverse']]],
+  ['reverse_5fmismatches_22',['reverse_mismatches',['../structkaori_1_1ScanTemplate_1_1State.html#a8311607f3c8d2cebcd4b2803a6204da4',1,'kaori::ScanTemplate::State']]],
+  ['reverse_5fvariable_5fregions_23',['reverse_variable_regions',['../classkaori_1_1ScanTemplate.html#a2ac198b00a41a0efc014e4513a57e2c3',1,'kaori::ScanTemplate']]]
 ];

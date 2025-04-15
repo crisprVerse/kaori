@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['mismatchtrie_0',['MismatchTrie',['../classkaori_1_1MismatchTrie.html',1,'kaori']]]
+  ['options_0',['Options',['../structkaori_1_1CombinatorialBarcodesSingleEnd_1_1Options.html',1,'kaori::CombinatorialBarcodesSingleEnd&lt; max_size_, num_variable_ &gt;::Options'],['../structkaori_1_1DualBarcodesPairedEnd_1_1Options.html',1,'kaori::DualBarcodesPairedEnd&lt; max_size_ &gt;::Options'],['../structkaori_1_1DualBarcodesSingleEnd_1_1Options.html',1,'kaori::DualBarcodesSingleEnd&lt; max_size_ &gt;::Options'],['../structkaori_1_1RandomBarcodeSingleEnd_1_1Options.html',1,'kaori::RandomBarcodeSingleEnd&lt; max_size_ &gt;::Options'],['../structkaori_1_1SegmentedBarcodeSearch_1_1Options.html',1,'kaori::SegmentedBarcodeSearch&lt; num_segments_ &gt;::Options'],['../structkaori_1_1SimpleBarcodeSearch_1_1Options.html',1,'kaori::SimpleBarcodeSearch::Options'],['../structkaori_1_1SimpleSingleMatch_1_1Options.html',1,'kaori::SimpleSingleMatch&lt; max_size_ &gt;::Options'],['../structkaori_1_1SingleBarcodePairedEnd_1_1Options.html',1,'kaori::SingleBarcodePairedEnd&lt; max_size_ &gt;::Options'],['../structkaori_1_1SingleBarcodeSingleEnd_1_1Options.html',1,'kaori::SingleBarcodeSingleEnd&lt; max_size_ &gt;::Options']]],
+  ['ostreamwriter_1',['OstreamWriter',['https://ltla.github.io/byteme/classbyteme_1_1OstreamWriter.html',1,'byteme']]]
 ];

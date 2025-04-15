@@ -103,57 +103,71 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="namespacekaori.html">   13</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacekaori.html">kaori</a> {</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
 <div class="foldopen" id="foldopen00021" data-start="{" data-end="};">
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="structkaori_1_1BarcodePool.html">   21</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structkaori_1_1BarcodePool.html">BarcodePool</a> {</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="structkaori_1_1BarcodePool.html#a6e16e6274b7e76ad83c1087a3a2f33b0">   25</a></span>    <a class="code hl_function" href="structkaori_1_1BarcodePool.html#a6e16e6274b7e76ad83c1087a3a2f33b0">BarcodePool</a>() {}</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="structkaori_1_1BarcodePool.html#a92015fb57976df1ca7c681dd4191aca1">   31</a></span>    <a class="code hl_function" href="structkaori_1_1BarcodePool.html#a92015fb57976df1ca7c681dd4191aca1">BarcodePool</a>(std::vector&lt;const char*&gt; barcode_pool, <span class="keywordtype">size_t</span> barcode_length) : <a class="code hl_variable" href="structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1">pool</a>(std::move(barcode_pool)), <a class="code hl_variable" href="structkaori_1_1BarcodePool.html#a5e5c62ef4f8c94e5be302b4c23d89eb5">length</a>(barcode_length) {}</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="foldopen" id="foldopen00038" data-start="{" data-end="}">
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="structkaori_1_1BarcodePool.html#ab5e34b3effd35adc63324dd3c3982b3c">   38</a></span>    <a class="code hl_function" href="structkaori_1_1BarcodePool.html#ab5e34b3effd35adc63324dd3c3982b3c">BarcodePool</a>(<span class="keyword">const</span> std::vector&lt;std::string&gt;&amp; barcode_pool) {</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        <span class="keywordflow">if</span> (barcode_pool.size()) {</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            <a class="code hl_variable" href="structkaori_1_1BarcodePool.html#a5e5c62ef4f8c94e5be302b4c23d89eb5">length</a> = barcode_pool.front().size();</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>            <a class="code hl_variable" href="structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1">pool</a>.reserve(barcode_pool.size());</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; x : barcode_pool) {</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>                <span class="keywordflow">if</span> (x.size() != <a class="code hl_variable" href="structkaori_1_1BarcodePool.html#a5e5c62ef4f8c94e5be302b4c23d89eb5">length</a>) {</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>                    <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;sequences for a given variable region should be of a constant length&quot;</span>);</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                }</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>                <a class="code hl_variable" href="structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1">pool</a>.push_back(x.c_str());</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>            }</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        }</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    }</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="classkaori_1_1BarcodePool.html">   21</a></span><span class="keyword">class </span><a class="code hl_class" href="classkaori_1_1BarcodePool.html">BarcodePool</a> {</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="classkaori_1_1BarcodePool.html#a21b704e2b235927631eea9918dedba2e">   26</a></span>    <a class="code hl_function" href="classkaori_1_1BarcodePool.html#a21b704e2b235927631eea9918dedba2e">BarcodePool</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="classkaori_1_1BarcodePool.html#a92015fb57976df1ca7c681dd4191aca1">   32</a></span>    <a class="code hl_function" href="classkaori_1_1BarcodePool.html#a92015fb57976df1ca7c681dd4191aca1">BarcodePool</a>(std::vector&lt;const char*&gt; barcode_pool, <span class="keywordtype">size_t</span> barcode_length) : my_pool(std::move(barcode_pool)), my_length(barcode_length) {}</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="foldopen" id="foldopen00039" data-start="{" data-end="}">
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="classkaori_1_1BarcodePool.html#ab5e34b3effd35adc63324dd3c3982b3c">   39</a></span>    <a class="code hl_function" href="classkaori_1_1BarcodePool.html#ab5e34b3effd35adc63324dd3c3982b3c">BarcodePool</a>(<span class="keyword">const</span> std::vector&lt;std::string&gt;&amp; barcode_pool) {</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        <span class="keywordflow">if</span> (barcode_pool.size()) {</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>            my_length = barcode_pool.front().size();</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>            my_pool.reserve(barcode_pool.size());</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; x : barcode_pool) {</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>                <span class="keywordflow">if</span> (x.size() != my_length) {</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                    <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;sequences for a given variable region should be of a constant length&quot;</span>);</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>                }</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>                my_pool.push_back(x.c_str());</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            }</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        }</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    }</div>
 </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1">   54</a></span>    std::vector&lt;const char*&gt; <a class="code hl_variable" href="structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1">pool</a>;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    std::vector&lt;const char*&gt; my_pool;</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keywordtype">size_t</span> my_length = 0;</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="structkaori_1_1BarcodePool.html#a5e5c62ef4f8c94e5be302b4c23d89eb5">   59</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_variable" href="structkaori_1_1BarcodePool.html#a5e5c62ef4f8c94e5be302b4c23d89eb5">length</a> = 0;</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
-<div class="foldopen" id="foldopen00064" data-start="{" data-end="}">
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="structkaori_1_1BarcodePool.html#a9522e14eaa996361b8f84cfb649abf54">   64</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_function" href="structkaori_1_1BarcodePool.html#a9522e14eaa996361b8f84cfb649abf54">size</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        <span class="keywordflow">return</span> <a class="code hl_variable" href="structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1">pool</a>.size();</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    }</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="keyword">public</span>:</div>
+<div class="foldopen" id="foldopen00060" data-start="{" data-end="}">
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="classkaori_1_1BarcodePool.html#a48cc935990b8ecf29017f85ef9f7a420">   60</a></span>    <span class="keyword">const</span> std::vector&lt;const char*&gt;&amp; <a class="code hl_function" href="classkaori_1_1BarcodePool.html#a48cc935990b8ecf29017f85ef9f7a420">pool</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        <span class="keywordflow">return</span> my_pool;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    }</div>
 </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="foldopen" id="foldopen00072" data-start="{" data-end="}">
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno"><a class="line" href="structkaori_1_1BarcodePool.html#ace794846121b9a10c7e7479129106b4f">   72</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code hl_function" href="structkaori_1_1BarcodePool.html#ace794846121b9a10c7e7479129106b4f">operator[]</a>(<span class="keywordtype">size_t</span> i)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        <span class="keywordflow">return</span> <a class="code hl_variable" href="structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1">pool</a>[i];</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    }</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="foldopen" id="foldopen00067" data-start="{" data-end="}">
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="classkaori_1_1BarcodePool.html#a6663dead4a6b366e97953710d04df906">   67</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_function" href="classkaori_1_1BarcodePool.html#a6663dead4a6b366e97953710d04df906">length</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        <span class="keywordflow">return</span> my_length;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    }</div>
 </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>};</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
+<div class="foldopen" id="foldopen00074" data-start="{" data-end="}">
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="classkaori_1_1BarcodePool.html#a9522e14eaa996361b8f84cfb649abf54">   74</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_function" href="classkaori_1_1BarcodePool.html#a9522e14eaa996361b8f84cfb649abf54">size</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="keywordflow">return</span> my_pool.size();</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    }</div>
 </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>}</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
+<div class="foldopen" id="foldopen00082" data-start="{" data-end="}">
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno"><a class="line" href="classkaori_1_1BarcodePool.html#ace794846121b9a10c7e7479129106b4f">   82</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code hl_function" href="classkaori_1_1BarcodePool.html#ace794846121b9a10c7e7479129106b4f">operator[]</a>(<span class="keywordtype">size_t</span> i)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>        <span class="keywordflow">return</span> my_pool[i];</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    }</div>
 </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>};</div>
+</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>}</div>
+</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclasskaori_1_1BarcodePool_html"><div class="ttname"><a href="classkaori_1_1BarcodePool.html">kaori::BarcodePool</a></div><div class="ttdoc">Pool of barcode sequences for a variable region.</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:21</div></div>
+<div class="ttc" id="aclasskaori_1_1BarcodePool_html_a21b704e2b235927631eea9918dedba2e"><div class="ttname"><a href="classkaori_1_1BarcodePool.html#a21b704e2b235927631eea9918dedba2e">kaori::BarcodePool::BarcodePool</a></div><div class="ttdeci">BarcodePool()=default</div></div>
+<div class="ttc" id="aclasskaori_1_1BarcodePool_html_a48cc935990b8ecf29017f85ef9f7a420"><div class="ttname"><a href="classkaori_1_1BarcodePool.html#a48cc935990b8ecf29017f85ef9f7a420">kaori::BarcodePool::pool</a></div><div class="ttdeci">const std::vector&lt; const char * &gt; &amp; pool() const</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:60</div></div>
+<div class="ttc" id="aclasskaori_1_1BarcodePool_html_a6663dead4a6b366e97953710d04df906"><div class="ttname"><a href="classkaori_1_1BarcodePool.html#a6663dead4a6b366e97953710d04df906">kaori::BarcodePool::length</a></div><div class="ttdeci">size_t length() const</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:67</div></div>
+<div class="ttc" id="aclasskaori_1_1BarcodePool_html_a92015fb57976df1ca7c681dd4191aca1"><div class="ttname"><a href="classkaori_1_1BarcodePool.html#a92015fb57976df1ca7c681dd4191aca1">kaori::BarcodePool::BarcodePool</a></div><div class="ttdeci">BarcodePool(std::vector&lt; const char * &gt; barcode_pool, size_t barcode_length)</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:32</div></div>
+<div class="ttc" id="aclasskaori_1_1BarcodePool_html_a9522e14eaa996361b8f84cfb649abf54"><div class="ttname"><a href="classkaori_1_1BarcodePool.html#a9522e14eaa996361b8f84cfb649abf54">kaori::BarcodePool::size</a></div><div class="ttdeci">size_t size() const</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:74</div></div>
+<div class="ttc" id="aclasskaori_1_1BarcodePool_html_ab5e34b3effd35adc63324dd3c3982b3c"><div class="ttname"><a href="classkaori_1_1BarcodePool.html#ab5e34b3effd35adc63324dd3c3982b3c">kaori::BarcodePool::BarcodePool</a></div><div class="ttdeci">BarcodePool(const std::vector&lt; std::string &gt; &amp;barcode_pool)</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:39</div></div>
+<div class="ttc" id="aclasskaori_1_1BarcodePool_html_ace794846121b9a10c7e7479129106b4f"><div class="ttname"><a href="classkaori_1_1BarcodePool.html#ace794846121b9a10c7e7479129106b4f">kaori::BarcodePool::operator[]</a></div><div class="ttdeci">const char * operator[](size_t i) const</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:82</div></div>
 <div class="ttc" id="anamespacekaori_html"><div class="ttname"><a href="namespacekaori.html">kaori</a></div><div class="ttdoc">Namespace for the kaori barcode-matching library.</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:13</div></div>
-<div class="ttc" id="astructkaori_1_1BarcodePool_html"><div class="ttname"><a href="structkaori_1_1BarcodePool.html">kaori::BarcodePool</a></div><div class="ttdoc">Pool of barcode sequences for a variable region.</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:21</div></div>
-<div class="ttc" id="astructkaori_1_1BarcodePool_html_a5e5c62ef4f8c94e5be302b4c23d89eb5"><div class="ttname"><a href="structkaori_1_1BarcodePool.html#a5e5c62ef4f8c94e5be302b4c23d89eb5">kaori::BarcodePool::length</a></div><div class="ttdeci">size_t length</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:59</div></div>
-<div class="ttc" id="astructkaori_1_1BarcodePool_html_a6e16e6274b7e76ad83c1087a3a2f33b0"><div class="ttname"><a href="structkaori_1_1BarcodePool.html#a6e16e6274b7e76ad83c1087a3a2f33b0">kaori::BarcodePool::BarcodePool</a></div><div class="ttdeci">BarcodePool()</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:25</div></div>
-<div class="ttc" id="astructkaori_1_1BarcodePool_html_a92015fb57976df1ca7c681dd4191aca1"><div class="ttname"><a href="structkaori_1_1BarcodePool.html#a92015fb57976df1ca7c681dd4191aca1">kaori::BarcodePool::BarcodePool</a></div><div class="ttdeci">BarcodePool(std::vector&lt; const char * &gt; barcode_pool, size_t barcode_length)</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:31</div></div>
-<div class="ttc" id="astructkaori_1_1BarcodePool_html_a9522e14eaa996361b8f84cfb649abf54"><div class="ttname"><a href="structkaori_1_1BarcodePool.html#a9522e14eaa996361b8f84cfb649abf54">kaori::BarcodePool::size</a></div><div class="ttdeci">size_t size() const</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:64</div></div>
-<div class="ttc" id="astructkaori_1_1BarcodePool_html_ab5e34b3effd35adc63324dd3c3982b3c"><div class="ttname"><a href="structkaori_1_1BarcodePool.html#ab5e34b3effd35adc63324dd3c3982b3c">kaori::BarcodePool::BarcodePool</a></div><div class="ttdeci">BarcodePool(const std::vector&lt; std::string &gt; &amp;barcode_pool)</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:38</div></div>
-<div class="ttc" id="astructkaori_1_1BarcodePool_html_acc2f391a66b03cfe7210bc300237acf1"><div class="ttname"><a href="structkaori_1_1BarcodePool.html#acc2f391a66b03cfe7210bc300237acf1">kaori::BarcodePool::pool</a></div><div class="ttdeci">std::vector&lt; const char * &gt; pool</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:54</div></div>
-<div class="ttc" id="astructkaori_1_1BarcodePool_html_ace794846121b9a10c7e7479129106b4f"><div class="ttname"><a href="structkaori_1_1BarcodePool.html#ace794846121b9a10c7e7479129106b4f">kaori::BarcodePool::operator[]</a></div><div class="ttdeci">const char * operator[](size_t i) const</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:72</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

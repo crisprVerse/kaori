@@ -91,6 +91,7 @@ $(function(){ initResizable(false); });
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">process_data.hpp File Reference</div></div>
@@ -102,6 +103,15 @@ $(function(){ initResizable(false); });
 
 <p><a href="process__data_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structkaori_1_1ProcessSingleEndDataOptions.html">kaori::ProcessSingleEndDataOptions</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options for <code><a class="el" href="namespacekaori.html#a3a63887d9bff22a7d13fbb355aa7e2e3">process_single_end_data()</a></code>.  <a href="structkaori_1_1ProcessSingleEndDataOptions.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structkaori_1_1ProcessPairedEndDataOptions.html">kaori::ProcessPairedEndDataOptions</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options for <code><a class="el" href="namespacekaori.html#a8ec757759c7fadc20545ba3e1d62e0b2">process_paired_end_data()</a></code>.  <a href="structkaori_1_1ProcessPairedEndDataOptions.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacekaori.html">kaori</a></td></tr>
@@ -110,12 +120,12 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a557e1f89be12593d3fc0eb22c974ae89" id="r_a557e1f89be12593d3fc0eb22c974ae89"><td class="memTemplParams" colspan="2">template&lt;typename Pointer_ , class Handler &gt; </td></tr>
-<tr class="memitem:a557e1f89be12593d3fc0eb22c974ae89"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacekaori.html#a557e1f89be12593d3fc0eb22c974ae89">kaori::process_single_end_data</a> (Pointer_ input, Handler &amp;handler, int num_threads=1, int block_size=100000)</td></tr>
-<tr class="separator:a557e1f89be12593d3fc0eb22c974ae89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b6ec01590bb5deb37d0022158faf237" id="r_a1b6ec01590bb5deb37d0022158faf237"><td class="memTemplParams" colspan="2">template&lt;class Pointer_ , class Handler &gt; </td></tr>
-<tr class="memitem:a1b6ec01590bb5deb37d0022158faf237"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacekaori.html#a1b6ec01590bb5deb37d0022158faf237">kaori::process_paired_end_data</a> (Pointer_ input1, Pointer_ input2, Handler &amp;handler, int num_threads=1, int block_size=100000)</td></tr>
-<tr class="separator:a1b6ec01590bb5deb37d0022158faf237"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a63887d9bff22a7d13fbb355aa7e2e3" id="r_a3a63887d9bff22a7d13fbb355aa7e2e3"><td class="memTemplParams" colspan="2">template&lt;typename Pointer_ , class Handler_ &gt; </td></tr>
+<tr class="memitem:a3a63887d9bff22a7d13fbb355aa7e2e3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacekaori.html#a3a63887d9bff22a7d13fbb355aa7e2e3">kaori::process_single_end_data</a> (Pointer_ input, Handler_ &amp;handler, const <a class="el" href="structkaori_1_1ProcessSingleEndDataOptions.html">ProcessSingleEndDataOptions</a> &amp;options)</td></tr>
+<tr class="separator:a3a63887d9bff22a7d13fbb355aa7e2e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ec757759c7fadc20545ba3e1d62e0b2" id="r_a8ec757759c7fadc20545ba3e1d62e0b2"><td class="memTemplParams" colspan="2">template&lt;class Pointer_ , class Handler_ &gt; </td></tr>
+<tr class="memitem:a8ec757759c7fadc20545ba3e1d62e0b2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacekaori.html#a8ec757759c7fadc20545ba3e1d62e0b2">kaori::process_paired_end_data</a> (Pointer_ input1, Pointer_ input2, Handler_ &amp;handler, const <a class="el" href="structkaori_1_1ProcessPairedEndDataOptions.html">ProcessPairedEndDataOptions</a> &amp;options)</td></tr>
+<tr class="separator:a8ec757759c7fadc20545ba3e1d62e0b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Process single- or paired-end data. </p>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>kaori: kaori::SingleBarcodeSingleEnd&lt; max_size &gt;::Options Struct Reference</title>
+<title>kaori: kaori::SingleBarcodeSingleEnd&lt; max_size_ &gt;::Options Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -93,7 +93,7 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structkaori_1_1SingleBarcodeSingleEnd_1_1Options-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">kaori::SingleBarcodeSingleEnd&lt; max_size &gt;::Options Struct Reference</div></div>
+  <div class="headertitle"><div class="title">kaori::SingleBarcodeSingleEnd&lt; max_size_ &gt;::Options Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -104,29 +104,29 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:aae60cdedebf715d19228258962afa04c" id="r_aae60cdedebf715d19228258962afa04c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae60cdedebf715d19228258962afa04c">max_mismatches</a> = 0</td></tr>
-<tr class="separator:aae60cdedebf715d19228258962afa04c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e3b8716e99709e5a4fb3910b8404410" id="r_a0e3b8716e99709e5a4fb3910b8404410"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0e3b8716e99709e5a4fb3910b8404410">use_first</a> = true</td></tr>
-<tr class="separator:a0e3b8716e99709e5a4fb3910b8404410"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3772722958364643cbbb9f8ca785f419" id="r_a3772722958364643cbbb9f8ca785f419"><td class="memItemLeft" align="right" valign="top">SearchStrand&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3772722958364643cbbb9f8ca785f419">strand</a> = SearchStrand::FORWARD</td></tr>
-<tr class="separator:a3772722958364643cbbb9f8ca785f419"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ae98235f7527fa0d05a60f0eac7de71" id="r_a1ae98235f7527fa0d05a60f0eac7de71"><td class="memItemLeft" align="right" valign="top">DuplicateAction&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1ae98235f7527fa0d05a60f0eac7de71">duplicates</a> = DuplicateAction::ERROR</td></tr>
-<tr class="separator:a1ae98235f7527fa0d05a60f0eac7de71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab538d694e9547d56a6340f9b5b7a64eb" id="r_ab538d694e9547d56a6340f9b5b7a64eb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab538d694e9547d56a6340f9b5b7a64eb">max_mismatches</a> = 0</td></tr>
+<tr class="separator:ab538d694e9547d56a6340f9b5b7a64eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af525f2b943681c2e0478ff5954a05c5f" id="r_af525f2b943681c2e0478ff5954a05c5f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af525f2b943681c2e0478ff5954a05c5f">use_first</a> = true</td></tr>
+<tr class="separator:af525f2b943681c2e0478ff5954a05c5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89c41136a16ee2c40106e29aceaf01d8" id="r_a89c41136a16ee2c40106e29aceaf01d8"><td class="memItemLeft" align="right" valign="top">SearchStrand&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a89c41136a16ee2c40106e29aceaf01d8">strand</a> = SearchStrand::FORWARD</td></tr>
+<tr class="separator:a89c41136a16ee2c40106e29aceaf01d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bbbbefa2bd01447a0ccd6efbf89c0e9" id="r_a5bbbbefa2bd01447a0ccd6efbf89c0e9"><td class="memItemLeft" align="right" valign="top">DuplicateAction&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5bbbbefa2bd01447a0ccd6efbf89c0e9">duplicates</a> = DuplicateAction::ERROR</td></tr>
+<tr class="separator:a5bbbbefa2bd01447a0ccd6efbf89c0e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;size_t max_size&gt;<br />
-struct kaori::SingleBarcodeSingleEnd&lt; max_size &gt;::Options</div><p>Optional parameters for <code><a class="el" href="classkaori_1_1SingleBarcodeSingleEnd.html" title="Handler for single-end single barcodes.">SingleBarcodeSingleEnd</a></code>. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;size_t max_size_&gt;<br />
+struct kaori::SingleBarcodeSingleEnd&lt; max_size_ &gt;::Options</div><p>Optional parameters for <code><a class="el" href="classkaori_1_1SingleBarcodeSingleEnd.html" title="Handler for single-end single barcodes.">SingleBarcodeSingleEnd</a></code>. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="a1ae98235f7527fa0d05a60f0eac7de71" name="a1ae98235f7527fa0d05a60f0eac7de71"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ae98235f7527fa0d05a60f0eac7de71">&#9670;&#160;</a></span>duplicates</h2>
+<a id="a5bbbbefa2bd01447a0ccd6efbf89c0e9" name="a5bbbbefa2bd01447a0ccd6efbf89c0e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bbbbefa2bd01447a0ccd6efbf89c0e9">&#9670;&#160;</a></span>duplicates</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t max_size&gt; </div>
+template&lt;size_t max_size_&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">DuplicateAction <a class="el" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd</a>&lt; max_size &gt;::Options::duplicates = DuplicateAction::ERROR</td>
+          <td class="memname">DuplicateAction <a class="el" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd</a>&lt; max_size_ &gt;::Options::duplicates = DuplicateAction::ERROR</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -134,16 +134,16 @@ template&lt;size_t max_size&gt; </div>
 
 </div>
 </div>
-<a id="aae60cdedebf715d19228258962afa04c" name="aae60cdedebf715d19228258962afa04c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aae60cdedebf715d19228258962afa04c">&#9670;&#160;</a></span>max_mismatches</h2>
+<a id="ab538d694e9547d56a6340f9b5b7a64eb" name="ab538d694e9547d56a6340f9b5b7a64eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab538d694e9547d56a6340f9b5b7a64eb">&#9670;&#160;</a></span>max_mismatches</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t max_size&gt; </div>
+template&lt;size_t max_size_&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd</a>&lt; max_size &gt;::Options::max_mismatches = 0</td>
+          <td class="memname">int <a class="el" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd</a>&lt; max_size_ &gt;::Options::max_mismatches = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -151,16 +151,16 @@ template&lt;size_t max_size&gt; </div>
 
 </div>
 </div>
-<a id="a3772722958364643cbbb9f8ca785f419" name="a3772722958364643cbbb9f8ca785f419"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3772722958364643cbbb9f8ca785f419">&#9670;&#160;</a></span>strand</h2>
+<a id="a89c41136a16ee2c40106e29aceaf01d8" name="a89c41136a16ee2c40106e29aceaf01d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89c41136a16ee2c40106e29aceaf01d8">&#9670;&#160;</a></span>strand</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t max_size&gt; </div>
+template&lt;size_t max_size_&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">SearchStrand <a class="el" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd</a>&lt; max_size &gt;::Options::strand = SearchStrand::FORWARD</td>
+          <td class="memname">SearchStrand <a class="el" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd</a>&lt; max_size_ &gt;::Options::strand = SearchStrand::FORWARD</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -168,16 +168,16 @@ template&lt;size_t max_size&gt; </div>
 
 </div>
 </div>
-<a id="a0e3b8716e99709e5a4fb3910b8404410" name="a0e3b8716e99709e5a4fb3910b8404410"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0e3b8716e99709e5a4fb3910b8404410">&#9670;&#160;</a></span>use_first</h2>
+<a id="af525f2b943681c2e0478ff5954a05c5f" name="af525f2b943681c2e0478ff5954a05c5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af525f2b943681c2e0478ff5954a05c5f">&#9670;&#160;</a></span>use_first</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t max_size&gt; </div>
+template&lt;size_t max_size_&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd</a>&lt; max_size &gt;::Options::use_first = true</td>
+          <td class="memname">bool <a class="el" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd</a>&lt; max_size_ &gt;::Options::use_first = true</td>
         </tr>
       </table>
 </div><div class="memdoc">

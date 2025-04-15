@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['has_5fambiguous_0',['has_ambiguous',['../structkaori_1_1MismatchTrie_1_1AddStatus.html#a42224ebed07302774e03ebe323548e7d',1,'kaori::MismatchTrie::AddStatus']]]
+  ['has_5fambiguous_0',['has_ambiguous',['../structkaori_1_1TrieAddStatus.html#ad456f3960036b55998b6c9b6a05badbb',1,'kaori::TrieAddStatus']]]
 ];

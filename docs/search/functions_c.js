@@ -1,8 +1,11 @@
 var searchData=
 [
-  ['perbyteparallel_0',['PerByteParallel',['https://ltla.github.io/byteme/classbyteme_1_1PerByteParallel.html#af8b6d8751483f0505569e0d739f4e834',1,'byteme::PerByteParallel']]],
-  ['perbyteserial_1',['PerByteSerial',['https://ltla.github.io/byteme/classbyteme_1_1PerByteSerial.html#a1eea419c3dacadb8612b360e159025d2',1,'byteme::PerByteSerial']]],
-  ['position_2',['position',['https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a83cdbb17126f57a3fad173c5ea466803',1,'byteme::PerByteInterface']]],
-  ['process_5fpaired_5fend_5fdata_3',['process_paired_end_data',['../namespacekaori.html#a1b6ec01590bb5deb37d0022158faf237',1,'kaori']]],
-  ['process_5fsingle_5fend_5fdata_4',['process_single_end_data',['../namespacekaori.html#a557e1f89be12593d3fc0eb22c974ae89',1,'kaori']]]
+  ['randombarcodesingleend_0',['RandomBarcodeSingleEnd',['../classkaori_1_1RandomBarcodeSingleEnd.html#ae2da929a29b34350fe862848028fd632',1,'kaori::RandomBarcodeSingleEnd']]],
+  ['rawbufferreader_1',['RawBufferReader',['https://ltla.github.io/byteme/classbyteme_1_1RawBufferReader.html#a80988c695311f5ebd52680bf93f92847',1,'byteme::RawBufferReader']]],
+  ['rawbufferwriter_2',['RawBufferWriter',['https://ltla.github.io/byteme/classbyteme_1_1RawBufferWriter.html#a2536f89eb9c6a58a68269abfa907f3bd',1,'byteme::RawBufferWriter']]],
+  ['rawfilereader_3',['RawFileReader',['https://ltla.github.io/byteme/classbyteme_1_1RawFileReader.html#a8408ecd4c0c0d0c03d84b205f941f8d2',1,'byteme::RawFileReader']]],
+  ['rawfilewriter_4',['RawFileWriter',['https://ltla.github.io/byteme/classbyteme_1_1RawFileWriter.html#a85b813251f5ce733364d3b02914ad209',1,'byteme::RawFileWriter']]],
+  ['reduce_5',['reduce',['../classkaori_1_1SimpleBarcodeSearch.html#ac80ba1b9394963f2befe4154da98ef1e',1,'kaori::SimpleBarcodeSearch::reduce()'],['../classkaori_1_1SegmentedBarcodeSearch.html#a6a950454a3359ce37fb3df31d68360b8',1,'kaori::SegmentedBarcodeSearch::reduce()'],['../classkaori_1_1SimpleSingleMatch.html#a1ff83275c8ef6e9a2d213e867e6d4608',1,'kaori::SimpleSingleMatch::reduce()']]],
+  ['refill_6',['refill',['https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a8cb67ac7c5517d17adb6fe88b803516d',1,'byteme::PerByteInterface::refill()'],['https://ltla.github.io/byteme/classbyteme_1_1PerByteParallel.html#aa7e9be70da45b85254a16e5e1c47e036',1,'byteme::PerByteParallel::refill()'],['https://ltla.github.io/byteme/classbyteme_1_1PerByteSerial.html#ae6424f8d002deb991f21f2812b103705',1,'byteme::PerByteSerial::refill()']]],
+  ['reverse_5fvariable_5fregions_7',['reverse_variable_regions',['../classkaori_1_1ScanTemplate.html#a2ac198b00a41a0efc014e4513a57e2c3',1,'kaori::ScanTemplate']]]
 ];

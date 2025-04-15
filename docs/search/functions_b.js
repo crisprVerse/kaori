@@ -1,8 +1,9 @@
 var searchData=
 [
-  ['operator_28_29_0',['operator()',['../classkaori_1_1FastqReader.html#aa74ca5bef71514f9216bbdd7e770536a',1,'kaori::FastqReader']]],
-  ['operator_5b_5d_1',['operator[]',['../structkaori_1_1BarcodePool.html#ace794846121b9a10c7e7479129106b4f',1,'kaori::BarcodePool']]],
-  ['optimize_2',['optimize',['../classkaori_1_1MismatchTrie.html#a1f5928901d4dca9e72c18cbfc8c0aec3',1,'kaori::MismatchTrie']]],
-  ['options_3',['Options',['../structkaori_1_1SegmentedBarcodeSearch_1_1Options.html#a8b4415879c183d2dc024c99a3a0264db',1,'kaori::SegmentedBarcodeSearch::Options']]],
-  ['ostreamwriter_4',['OstreamWriter',['https://ltla.github.io/byteme/classbyteme_1_1OstreamWriter.html#a3cbc4a7eec70e40dd6a1c370f165084c',1,'byteme::OstreamWriter']]]
+  ['perbyteparallel_0',['PerByteParallel',['https://ltla.github.io/byteme/classbyteme_1_1PerByteParallel.html#af8b6d8751483f0505569e0d739f4e834',1,'byteme::PerByteParallel']]],
+  ['perbyteserial_1',['PerByteSerial',['https://ltla.github.io/byteme/classbyteme_1_1PerByteSerial.html#a1eea419c3dacadb8612b360e159025d2',1,'byteme::PerByteSerial']]],
+  ['pool_2',['pool',['../classkaori_1_1BarcodePool.html#a48cc935990b8ecf29017f85ef9f7a420',1,'kaori::BarcodePool']]],
+  ['position_3',['position',['https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a374c2a658715b357ebe9511fdf772169',1,'byteme::PerByteInterface']]],
+  ['process_5fpaired_5fend_5fdata_4',['process_paired_end_data',['../namespacekaori.html#a8ec757759c7fadc20545ba3e1d62e0b2',1,'kaori']]],
+  ['process_5fsingle_5fend_5fdata_5',['process_single_end_data',['../namespacekaori.html#a3a63887d9bff22a7d13fbb355aa7e2e3',1,'kaori']]]
 ];
