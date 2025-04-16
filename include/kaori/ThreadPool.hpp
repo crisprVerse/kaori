@@ -15,7 +15,6 @@ public:
     ThreadPool(Run_ run_fun, Finish_ finish_fun, int num_threads) : 
         my_run_fun(std::move(run_fun)),
         my_finish_fun(std::move(finish_fun)),
-        my_terminated(num_threads),
         my_threads_available(num_threads)
     {
         my_threads.reserve(num_threads);
@@ -44,6 +43,7 @@ public:
         check_rethrow();
         my_input_ready = true;
         my_input_job = job;
+        --my_threads_available; // need to do this here to ensure join_all() doesn't immediately return.
 
         lck.unlock();
         my_input_cv.notify_one();
@@ -51,7 +51,7 @@ public:
 
     void join_all() {
         std::unique_lock lck(my_lock);
-        my_output_cv.wait(lck, [&]() -> bool { return my_threads_available != my_threads.size(); });
+        my_output_cv.wait(lck, [&]() -> bool { return my_threads_available == my_threads.size(); });
         check_rethrow();
     }
 
@@ -80,7 +80,6 @@ private:
 
                 my_input_ready = false;
                 cur_job = my_input_job;
-                --my_threads_available;
             }
 
             bool okay = true;

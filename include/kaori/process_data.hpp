@@ -124,89 +124,61 @@ struct ProcessSingleEndDataOptions {
  */
 template<typename Pointer_, class Handler_>
 void process_single_end_data(Pointer_ input, Handler_& handler, const ProcessSingleEndDataOptions& options) {
-    FastqReader<Pointer_> fastq(input);
-    bool finished = false;
-
     std::vector<ChunkOfReads> reads(options.num_threads);
     std::vector<std::thread> jobs(options.num_threads);
     std::vector<decltype(handler.initialize())> states(options.num_threads);
     std::vector<std::string> errs(options.num_threads);
 
-    auto join = [&](int i) -> void {
-        if (jobs[i].joinable()) {
-            jobs[i].join();
-            if (errs[i] != "") {
-                throw std::runtime_error(errs[i]);
-            }
-            handler.reduce(states[i]);
-            reads[i].clear(Handler_::use_names);
-        }
-    };
+    const Handler_& conhandler = handler; // Safety measure to enforce const-ness within each thread.
+    ThreadPool tp(
+        [&](int job) -> void {
+            auto& state = states[job];
+            const auto& curreads = reads[job];
+            size_t nreads = curreads.size();
 
-    // Safety measure to enforce const-ness within each thread.
-    const Handler_& conhandler = handler;
-
-    try {
-        while (!finished) {
-            for (int t = 0; t < options.num_threads; ++t) {
-                join(t);
-
-                auto& curreads = reads[t];
-                for (int b = 0; b < options.block_size; ++b) {
-                    if (!fastq()) {
-                        finished = true;
-                        break;
-                    }
-
-                    curreads.add_read_sequence(fastq.get_sequence());
-                    if constexpr(Handler_::use_names) {
-                        curreads.add_read_name(fastq.get_name());
-                    }
+            if constexpr(!Handler_::use_names) {
+                for (size_t b = 0; b < nreads; ++b) {
+                    conhandler.process(state, curreads.get_sequence(b));
                 }
-
-                states[t] = conhandler.initialize();
-                jobs[t] = std::thread([&](int i) -> void {
-                    try {
-                        auto& state = states[i];
-                        const auto& curreads = reads[i];
-                        size_t nreads = curreads.size();
-
-                        if constexpr(!Handler_::use_names) {
-                            for (size_t b = 0; b < nreads; ++b) {
-                                conhandler.process(state, curreads.get_sequence(b));
-                            }
-                        } else {
-                            for (size_t b = 0; b < nreads; ++b) {
-                                conhandler.process(state, curreads.get_name(b), curreads.get_sequence(b));
-                            }
-                        }
-                    } catch (std::exception& e) {
-                        errs[i] = std::string(e.what());
-                    }
-                }, t);
-
-                if (finished) {
-                    // We won't get a future iteration to join the previous threads
-                    // that we kicked off, so we do it now.
-                    for (int u = 0; u < options.num_threads; ++u) {
-                        auto pos = (u + t + 1) % options.num_threads;
-                        join(pos);
-                    }
-                    break;
+            } else {
+                for (size_t b = 0; b < nreads; ++b) {
+                    conhandler.process(state, curreads.get_name(b), curreads.get_sequence(b));
                 }
             }
-        }
-    } catch (std::exception& e) {
-        // Mopping up any loose threads, so to speak.
-        for (int t = 0; t < options.num_threads; ++t) {
-            if (jobs[t].joinable()) {
-                jobs[t].join();
+        },
+        [&](int job) -> void {
+            handler.reduce(states[job]);
+            reads[job].clear(Handler_::use_names);
+        },
+        options.num_threads
+    );
+
+    FastqReader<Pointer_> fastq(input);
+    bool finished = false;
+
+    int job = 0;
+    while (!finished) {
+        auto& curreads = reads[job];
+        for (int b = 0; b < options.block_size; ++b) {
+            if (!fastq()) {
+                finished = true;
+                break;
+            }
+
+            curreads.add_read_sequence(fastq.get_sequence());
+            if constexpr(Handler_::use_names) {
+                curreads.add_read_name(fastq.get_name());
             }
         }
-        throw;
+
+        states[job] = conhandler.initialize();
+        tp.submit(job);
+        if ((++job) == options.num_threads) {
+            job = 0;
+        }
     }
 
-    return;
+    tp.join_all();
 }
 
 /**
@@ -261,10 +233,6 @@ struct ProcessPairedEndDataOptions {
  */
 template<class Pointer_, class Handler_>
 void process_paired_end_data(Pointer_ input1, Pointer_ input2, Handler_& handler, const ProcessPairedEndDataOptions& options) {
-    FastqReader<Pointer_> fastq1(input1);
-    FastqReader<Pointer_> fastq2(input2);
-    bool finished = false;
-
     std::vector<ChunkOfReads> reads1(options.num_threads), reads2(options.num_threads);
     std::vector<decltype(handler.initialize())> states(options.num_threads);
 
@@ -299,6 +267,10 @@ void process_paired_end_data(Pointer_ input1, Pointer_ input2, Handler_& handler
         },
         options.num_threads
     );
+
+    FastqReader<Pointer_> fastq1(input1);
+    FastqReader<Pointer_> fastq2(input2);
+    bool finished = false;
 
     int job = 0;
     while (!finished) {
@@ -341,12 +313,14 @@ void process_paired_end_data(Pointer_ input1, Pointer_ input2, Handler_& handler
         }
 
         states[job] = conhandler.initialize();
+        tp.submit(job);
         if ((++job) == options.num_threads) {
             job = 0;
         }
     }
-}
 
+    tp.join_all();
+}
 
 }
 
