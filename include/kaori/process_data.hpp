@@ -1,8 +1,11 @@
 #ifndef KAORI_PROCESS_DATA_HPP
 #define KAORI_PROCESS_DATA_HPP
 
-#include <thread>
+#include <vector>
+
 #include "FastqReader.hpp"
+#include "ThreadPool.hpp"
+
 #include "byteme/Reader.hpp"
 
 /**
@@ -263,118 +266,85 @@ void process_paired_end_data(Pointer_ input1, Pointer_ input2, Handler_& handler
     bool finished = false;
 
     std::vector<ChunkOfReads> reads1(options.num_threads), reads2(options.num_threads);
-    std::vector<std::thread> jobs(options.num_threads);
     std::vector<decltype(handler.initialize())> states(options.num_threads);
-    std::vector<std::string> errs(options.num_threads);
 
-    auto join = [&](int i) -> void {
-        if (jobs[i].joinable()) {
-            jobs[i].join();
-            if (errs[i] != "") {
-                throw std::runtime_error(errs[i]);
+    const Handler_& conhandler = handler; // Safety measure to enforce const-ness within each thread.
+    ThreadPool tp(
+        [&](int job) -> void {
+            auto& state = states[job];
+            const auto& curreads1 = reads1[job];
+            const auto& curreads2 = reads2[job];
+            size_t nreads = curreads1.size();
+
+            if constexpr(!Handler_::use_names) {
+                for (size_t b = 0; b < nreads; ++b) {
+                    conhandler.process(state, curreads1.get_sequence(b), curreads2.get_sequence(b));
+                }
+            } else {
+                for (size_t b = 0; b < nreads; ++b) {
+                    conhandler.process(
+                        state,
+                        curreads1.get_name(b), 
+                        curreads1.get_sequence(b),
+                        curreads2.get_name(b), 
+                        curreads2.get_sequence(b)
+                    );
+                }
             }
-            handler.reduce(states[i]);
-            reads1[i].clear(Handler_::use_names);
-            reads2[i].clear(Handler_::use_names);
-        }
-    };
+        },
+        [&](int job) -> void {
+            handler.reduce(states[job]);
+            reads1[job].clear(Handler_::use_names);
+            reads2[job].clear(Handler_::use_names);
+        },
+        options.num_threads
+    );
 
-    // Safety measure to enforce const-ness within each thread.
-    const Handler_& conhandler = handler;
-
-    try {
-        while (!finished) {
-            for (int t = 0; t < options.num_threads; ++t) {
-                join(t);
-
-                bool finished1 = false;
-                {
-                    auto& curreads = reads1[t];
-                    for (int b = 0; b < options.block_size; ++b) {
-                        if (!fastq1()) {
-                            finished1 = true;
-                            break;
-                        }
-
-                        curreads.add_read_sequence(fastq1.get_sequence());
-                        if constexpr(Handler_::use_names) {
-                            curreads.add_read_name(fastq1.get_name());
-                        }
-                    }
-                }
-
-                bool finished2 = false;
-                {
-                    auto& curreads = reads2[t];
-                    for (int b = 0; b < options.block_size; ++b) {
-                        if (!fastq2()) {
-                            finished2 = true;
-                            break;
-                        }
-
-                        curreads.add_read_sequence(fastq2.get_sequence());
-                        if constexpr(Handler_::use_names) {
-                            curreads.add_read_name(fastq2.get_name());
-                        }
-                    }
-                }
-
-                if (finished1 != finished2 || reads1[t].size() != reads2[t].size()) {
-                    throw std::runtime_error("different number of reads in paired FASTQ files");
-                } else if (finished1) {
-                    finished = true;
-                }
-
-                states[t] = conhandler.initialize();
-                jobs[t] = std::thread([&](int i) -> void {
-                    auto& state = states[i];
-                    const auto& curreads1 = reads1[i];
-                    const auto& curreads2 = reads2[i];
-                    size_t nreads = curreads1.size();
-
-                    try {
-                        if constexpr(!Handler_::use_names) {
-                            for (size_t b = 0; b < nreads; ++b) {
-                                handler.process(state, curreads1.get_sequence(b), curreads2.get_sequence(b));
-                            }
-                        } else {
-                            for (size_t b = 0; b < nreads; ++b) {
-                                handler.process(
-                                    state,
-                                    curreads1.get_name(b), 
-                                    curreads1.get_sequence(b),
-                                    curreads2.get_name(b), 
-                                    curreads2.get_sequence(b)
-                                );
-                            }
-                        }
-                    } catch (std::exception& e) {
-                        errs[i] = std::string(e.what());
-                    }
-                }, t);
-
-                if (finished) {
-                    // We won't get a future iteration to join the previous threads
-                    // that we kicked off, so we do it now.
-                    for (int u = 0; u < options.num_threads; ++u) {
-                        auto pos = (u + t + 1) % options.num_threads;
-                        join(pos);
-                    }
+    int job = 0;
+    while (!finished) {
+        bool finished1 = false;
+        {
+            auto& curreads = reads1[job];
+            for (int b = 0; b < options.block_size; ++b) {
+                if (!fastq1()) {
+                    finished1 = true;
                     break;
                 }
-            }
-        }
-    } catch (std::exception& e) {
-        // Mopping up any loose threads, so to speak.
-        for (int t = 0; t < options.num_threads; ++t) {
-            if (jobs[t].joinable()) {
-                jobs[t].join();
-            }
-        }
-        throw;
-    }
 
-    return;
+                curreads.add_read_sequence(fastq1.get_sequence());
+                if constexpr(Handler_::use_names) {
+                    curreads.add_read_name(fastq1.get_name());
+                }
+            }
+        }
+
+        bool finished2 = false;
+        {
+            auto& curreads = reads2[job];
+            for (int b = 0; b < options.block_size; ++b) {
+                if (!fastq2()) {
+                    finished2 = true;
+                    break;
+                }
+
+                curreads.add_read_sequence(fastq2.get_sequence());
+                if constexpr(Handler_::use_names) {
+                    curreads.add_read_name(fastq2.get_name());
+                }
+            }
+        }
+
+        if (finished1 != finished2 || reads1[job].size() != reads2[job].size()) {
+            throw std::runtime_error("different number of reads in paired FASTQ files");
+        } else if (finished1) {
+            finished = true;
+        }
+
+        states[job] = conhandler.initialize();
+        if ((++job) == options.num_threads) {
+            job = 0;
+        }
+    }
 }
 
 
