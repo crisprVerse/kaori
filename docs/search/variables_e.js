@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['variable_5fmismatches_0',['variable_mismatches',['../structkaori_1_1SimpleSingleMatch_1_1State.html#adfc2008ff94d6025b0201dbbddfd3388',1,'kaori::SimpleSingleMatch::State']]]
+  ['use_5ffirst_0',['use_first',['../structkaori_1_1CombinatorialBarcodesSingleEnd_1_1Options.html#a82b5bea9dc6734d64efa69271a08dbd6',1,'kaori::CombinatorialBarcodesSingleEnd::Options::use_first'],['../structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a12d385e6a004c71afe139c637b458d81',1,'kaori::DualBarcodesPairedEnd::Options::use_first'],['../structkaori_1_1DualBarcodesSingleEnd_1_1Options.html#a843c1883be2eb91148fb425e3bea6317',1,'kaori::DualBarcodesSingleEnd::Options::use_first'],['../structkaori_1_1RandomBarcodeSingleEnd_1_1Options.html#abb2904c56deeee70ded448463a881b4a',1,'kaori::RandomBarcodeSingleEnd::Options::use_first'],['../structkaori_1_1SingleBarcodePairedEnd_1_1Options.html#a471cd06fb3834433923d2ffa6726c37f',1,'kaori::SingleBarcodePairedEnd::Options::use_first'],['../structkaori_1_1SingleBarcodeSingleEnd_1_1Options.html#af525f2b943681c2e0478ff5954a05c5f',1,'kaori::SingleBarcodeSingleEnd::Options::use_first']]]
 ];

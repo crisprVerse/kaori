@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['random_0',['random',['../structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a97960474619d4d0ac8a171d83ca8796c',1,'kaori::DualBarcodesPairedEnd::Options']]],
-  ['reserve_1',['reserve',['https://ltla.github.io/byteme/structbyteme_1_1RawBufferWriterOptions.html#ace854857d6b1b607ff4fedca07d05e1b',1,'byteme::RawBufferWriterOptions']]],
-  ['reverse_2',['reverse',['../structkaori_1_1SimpleBarcodeSearch_1_1Options.html#a4528a0dbb35d8e32c1f56230bf0caf59',1,'kaori::SimpleBarcodeSearch::Options::reverse'],['../structkaori_1_1SegmentedBarcodeSearch_1_1Options.html#a5bc3d770256987a43822b831b4b77434',1,'kaori::SegmentedBarcodeSearch::Options::reverse'],['../structkaori_1_1SimpleSingleMatch_1_1State.html#aaae06e8904476ac85574963ec533af95',1,'kaori::SimpleSingleMatch::State::reverse']]],
-  ['reverse_5fmismatches_3',['reverse_mismatches',['../structkaori_1_1ScanTemplate_1_1State.html#a8311607f3c8d2cebcd4b2803a6204da4',1,'kaori::ScanTemplate::State']]]
+  ['per_5fsegment_0',['per_segment',['../structkaori_1_1SegmentedBarcodeSearch_1_1State.html#a63b2a627f78ba88d80c3ce7d5ac4c69c',1,'kaori::SegmentedBarcodeSearch::State::per_segment'],['../structkaori_1_1SegmentedMismatches_1_1Result.html#ad10cdc7a6aac515e3492c1f8901c82d6',1,'kaori::SegmentedMismatches::Result::per_segment']]],
+  ['position_1',['position',['../structkaori_1_1ScanTemplate_1_1State.html#a17bb86db720b182d115c97890e0ff186',1,'kaori::ScanTemplate::State::position'],['../structkaori_1_1SimpleSingleMatch_1_1State.html#a5a1d390c9776a724892b4ee6de80ae98',1,'kaori::SimpleSingleMatch::State::position']]],
+  ['ptr_2',['ptr',['https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a3caa25b9f0daa42d425de8c98c70a59d',1,'byteme::PerByteInterface']]]
 ];

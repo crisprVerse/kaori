@@ -122,7 +122,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        }</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        <span class="keywordtype">size_t</span> init_line = my_line_count;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        <span class="keyword">auto</span> init_line = my_line_count;</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        <span class="comment">// Processing the name. This should be on a single line, hopefully.</span></div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        my_name.clear();</div>
@@ -145,90 +145,98 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        <span class="comment">// Processing the sequence itself until we get to a &#39;+&#39;.</span></div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        my_sequence.clear();</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        val = advance_and_check();</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <span class="keywordflow">while</span> (val != <span class="charliteral">&#39;+&#39;</span>) {</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>            <span class="keywordflow">if</span> (val != <span class="charliteral">&#39;\n&#39;</span>) {</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>                my_sequence.push_back(val);</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>            }</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            val = advance_and_check();</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        }</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        ++my_line_count;</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        <span class="comment">// Line 3 should be a single line; starting with &#39;+&#39; is implicit from above.</span></div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        val = advance_and_check();</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        <span class="keywordflow">while</span> (val != <span class="charliteral">&#39;\n&#39;</span>) {</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>            val = advance_and_check();</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        } </div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        ++my_line_count;</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        <span class="comment">// Processing the qualities. Extraction is allowed to fail if we&#39;re at</span></div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        <span class="comment">// the end of the file. Note that we can&#39;t check for &#39;@&#39; as a</span></div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        <span class="comment">// delimitor, as this can be a valid score, so instead we check at each</span></div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        <span class="comment">// newline whether we&#39;ve reached the specified length, and quit if so.</span></div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        <span class="keywordtype">size_t</span> qual_length = 0, seq_length = my_sequence.size();</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        my_okay = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        <span class="keywordflow">while</span> (my_pb.<a class="code hl_functionRef" href="https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a6c32b7ee63b692c12a58ce1fa3173799">advance</a>()) {</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>            val = my_pb.<a class="code hl_functionRef" href="https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a647e6ee2e9c7683f162b22d0a51dc3e5">get</a>();</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>            <span class="keywordflow">if</span> (val != <span class="charliteral">&#39;\n&#39;</span>) {</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>                ++qual_length;</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>            } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (qual_length &gt;= seq_length) {</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>                my_okay = my_pb.<a class="code hl_functionRef" href="https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a6c32b7ee63b692c12a58ce1fa3173799">advance</a>(); <span class="comment">// sneak past the newline.</span></div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>                <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>            }</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        }</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>        <span class="keywordflow">if</span> (qual_length != seq_length) {</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>            <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;non-equal lengths for quality and sequence strings (starting line &quot;</span> + std::to_string(init_line + 1) + <span class="stringliteral">&quot;)&quot;</span>);</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        }</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        ++my_line_count;</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    }</div>
-</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <span class="keywordflow">while</span> (1) {</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>            <span class="keywordflow">if</span> (val == <span class="charliteral">&#39;\n&#39;</span>) {</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>                val = advance_and_check();</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>                <span class="keywordflow">if</span> (val == <span class="charliteral">&#39;+&#39;</span>) {</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>                }</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>            }</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            my_sequence.push_back(val);</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>            val = advance_and_check();</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        }</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        ++my_line_count;</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        <span class="comment">// Line 3 should be a single line; starting with &#39;+&#39; is implicit from above.</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        val = advance_and_check();</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        <span class="keywordflow">while</span> (val != <span class="charliteral">&#39;\n&#39;</span>) {</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            val = advance_and_check();</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        } </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        ++my_line_count;</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        <span class="comment">// Processing the qualities. Extraction is allowed to fail if we&#39;re at</span></div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        <span class="comment">// the end of the file. Note that we can&#39;t check for &#39;@&#39; as a</span></div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        <span class="comment">// delimitor, as this can be a valid score, so instead we check at each</span></div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        <span class="comment">// newline whether we&#39;ve reached the specified length, and quit if so.</span></div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        <span class="comment">//</span></div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        <span class="comment">// Note we use unsigned long longs to guarantee at least 64 bits. We</span></div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        <span class="comment">// can&#39;t use size_t as this might not fit size_type, and we can&#39;t use</span></div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>        <span class="comment">// size_type as this might not fit the quality string length.</span></div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> seq_length = my_sequence.size(), qual_length = 0;</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>        my_okay = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        <span class="keywordflow">while</span> (my_pb.<a class="code hl_functionRef" href="https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a6c32b7ee63b692c12a58ce1fa3173799">advance</a>()) {</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>            val = my_pb.<a class="code hl_functionRef" href="https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a647e6ee2e9c7683f162b22d0a51dc3e5">get</a>();</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>            <span class="keywordflow">if</span> (val != <span class="charliteral">&#39;\n&#39;</span>) {</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>                ++qual_length;</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>            } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (qual_length &gt;= seq_length) {</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>                my_okay = my_pb.<a class="code hl_functionRef" href="https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a6c32b7ee63b692c12a58ce1fa3173799">advance</a>(); <span class="comment">// sneak past the newline.</span></div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>            }</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        }</div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <a class="code hl_classRef" href="https://ltla.github.io/byteme/classbyteme_1_1PerByteSerial.html">byteme::PerByteSerial&lt;char, Pointer_&gt;</a> my_pb;</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    <span class="keywordtype">char</span> advance_and_check() {</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        <span class="keywordflow">if</span> (!my_pb.<a class="code hl_functionRef" href="https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a6c32b7ee63b692c12a58ce1fa3173799">advance</a>()) {</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>            <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;premature end of the file at line &quot;</span> + std::to_string(my_line_count + 1));</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        }</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        <span class="keywordflow">return</span> my_pb.<a class="code hl_functionRef" href="https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a647e6ee2e9c7683f162b22d0a51dc3e5">get</a>();</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    }</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    std::vector&lt;char&gt; my_sequence;</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    std::vector&lt;char&gt; my_name;</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    <span class="keywordtype">bool</span> my_okay;</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    <span class="keywordtype">size_t</span> my_line_count = 0;</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span> </div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span><span class="keyword">public</span>:</div>
-<div class="foldopen" id="foldopen00136" data-start="{" data-end="}">
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno"><a class="line" href="classkaori_1_1FastqReader.html#a68eb90fa07502e3a3e07a7ad57a5fddd">  136</a></span>    <span class="keyword">const</span> std::vector&lt;char&gt;&amp; <a class="code hl_function" href="classkaori_1_1FastqReader.html#a68eb90fa07502e3a3e07a7ad57a5fddd">get_sequence</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>        <span class="keywordflow">return</span> my_sequence;</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>    }</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        <span class="keywordflow">if</span> (qual_length != seq_length) {</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>            <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;non-equal lengths for quality and sequence strings (starting line &quot;</span> + std::to_string(init_line + 1) + <span class="stringliteral">&quot;)&quot;</span>);</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        }</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        ++my_line_count;</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    }</div>
 </div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span> </div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    <a class="code hl_classRef" href="https://ltla.github.io/byteme/classbyteme_1_1PerByteSerial.html">byteme::PerByteSerial&lt;char, Pointer_&gt;</a> my_pb;</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span> </div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    <span class="keywordtype">char</span> advance_and_check() {</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>        <span class="keywordflow">if</span> (!my_pb.<a class="code hl_functionRef" href="https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a6c32b7ee63b692c12a58ce1fa3173799">advance</a>()) {</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>            <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;premature end of the file at line &quot;</span> + std::to_string(my_line_count + 1));</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>        }</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>        <span class="keywordflow">return</span> my_pb.<a class="code hl_functionRef" href="https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a647e6ee2e9c7683f162b22d0a51dc3e5">get</a>();</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>    }</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span> </div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    std::vector&lt;char&gt; my_sequence;</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    std::vector&lt;char&gt; my_name;</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    <span class="keywordtype">bool</span> my_okay;</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> my_line_count = 0;</div>
 <div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span> </div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span><span class="keyword">public</span>:</div>
 <div class="foldopen" id="foldopen00144" data-start="{" data-end="}">
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno"><a class="line" href="classkaori_1_1FastqReader.html#adb3848f380f8812867a2da1177c9ba82">  144</a></span>    <span class="keyword">const</span> std::vector&lt;char&gt;&amp; <a class="code hl_function" href="classkaori_1_1FastqReader.html#adb3848f380f8812867a2da1177c9ba82">get_name</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>        <span class="keywordflow">return</span> my_name;</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno"><a class="line" href="classkaori_1_1FastqReader.html#a68eb90fa07502e3a3e07a7ad57a5fddd">  144</a></span>    <span class="keyword">const</span> std::vector&lt;char&gt;&amp; <a class="code hl_function" href="classkaori_1_1FastqReader.html#a68eb90fa07502e3a3e07a7ad57a5fddd">get_sequence</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>        <span class="keywordflow">return</span> my_sequence;</div>
 <div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    }</div>
 </div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>};</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span> </div>
+<div class="foldopen" id="foldopen00152" data-start="{" data-end="}">
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno"><a class="line" href="classkaori_1_1FastqReader.html#adb3848f380f8812867a2da1177c9ba82">  152</a></span>    <span class="keyword">const</span> std::vector&lt;char&gt;&amp; <a class="code hl_function" href="classkaori_1_1FastqReader.html#adb3848f380f8812867a2da1177c9ba82">get_name</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>        <span class="keywordflow">return</span> my_name;</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    }</div>
 </div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span> </div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>}</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span> </div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>};</div>
+</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span> </div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>}</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span> </div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aPerByte_8hpp_html"><div class="ttname"><a href="https://ltla.github.io/byteme/PerByte_8hpp.html">PerByte.hpp</a></div></div>
 <div class="ttc" id="aclassbyteme_1_1PerByteInterface_html_a4f9b6fb5ceb70240c2729a8f7bd15efc"><div class="ttname"><a href="https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a4f9b6fb5ceb70240c2729a8f7bd15efc">byteme::PerByteInterface::valid</a></div><div class="ttdeci">bool valid() const</div></div>
 <div class="ttc" id="aclassbyteme_1_1PerByteInterface_html_a647e6ee2e9c7683f162b22d0a51dc3e5"><div class="ttname"><a href="https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a647e6ee2e9c7683f162b22d0a51dc3e5">byteme::PerByteInterface::get</a></div><div class="ttdeci">Type_ get() const</div></div>
 <div class="ttc" id="aclassbyteme_1_1PerByteInterface_html_a6c32b7ee63b692c12a58ce1fa3173799"><div class="ttname"><a href="https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a6c32b7ee63b692c12a58ce1fa3173799">byteme::PerByteInterface::advance</a></div><div class="ttdeci">bool advance()</div></div>
 <div class="ttc" id="aclassbyteme_1_1PerByteSerial_html"><div class="ttname"><a href="https://ltla.github.io/byteme/classbyteme_1_1PerByteSerial.html">byteme::PerByteSerial</a></div></div>
 <div class="ttc" id="aclasskaori_1_1FastqReader_html"><div class="ttname"><a href="classkaori_1_1FastqReader.html">kaori::FastqReader</a></div><div class="ttdoc">Stream reads from a FASTQ file.</div><div class="ttdef"><b>Definition</b> FastqReader.hpp:29</div></div>
-<div class="ttc" id="aclasskaori_1_1FastqReader_html_a68eb90fa07502e3a3e07a7ad57a5fddd"><div class="ttname"><a href="classkaori_1_1FastqReader.html#a68eb90fa07502e3a3e07a7ad57a5fddd">kaori::FastqReader::get_sequence</a></div><div class="ttdeci">const std::vector&lt; char &gt; &amp; get_sequence() const</div><div class="ttdef"><b>Definition</b> FastqReader.hpp:136</div></div>
+<div class="ttc" id="aclasskaori_1_1FastqReader_html_a68eb90fa07502e3a3e07a7ad57a5fddd"><div class="ttname"><a href="classkaori_1_1FastqReader.html#a68eb90fa07502e3a3e07a7ad57a5fddd">kaori::FastqReader::get_sequence</a></div><div class="ttdeci">const std::vector&lt; char &gt; &amp; get_sequence() const</div><div class="ttdef"><b>Definition</b> FastqReader.hpp:144</div></div>
 <div class="ttc" id="aclasskaori_1_1FastqReader_html_aa74ca5bef71514f9216bbdd7e770536a"><div class="ttname"><a href="classkaori_1_1FastqReader.html#aa74ca5bef71514f9216bbdd7e770536a">kaori::FastqReader::operator()</a></div><div class="ttdeci">bool operator()()</div><div class="ttdef"><b>Definition</b> FastqReader.hpp:47</div></div>
-<div class="ttc" id="aclasskaori_1_1FastqReader_html_adb3848f380f8812867a2da1177c9ba82"><div class="ttname"><a href="classkaori_1_1FastqReader.html#adb3848f380f8812867a2da1177c9ba82">kaori::FastqReader::get_name</a></div><div class="ttdeci">const std::vector&lt; char &gt; &amp; get_name() const</div><div class="ttdef"><b>Definition</b> FastqReader.hpp:144</div></div>
+<div class="ttc" id="aclasskaori_1_1FastqReader_html_adb3848f380f8812867a2da1177c9ba82"><div class="ttname"><a href="classkaori_1_1FastqReader.html#adb3848f380f8812867a2da1177c9ba82">kaori::FastqReader::get_name</a></div><div class="ttdeci">const std::vector&lt; char &gt; &amp; get_name() const</div><div class="ttdef"><b>Definition</b> FastqReader.hpp:152</div></div>
 <div class="ttc" id="aclasskaori_1_1FastqReader_html_af1664436ac9ac92628b34d67a294bc64"><div class="ttname"><a href="classkaori_1_1FastqReader.html#af1664436ac9ac92628b34d67a294bc64">kaori::FastqReader::FastqReader</a></div><div class="ttdeci">FastqReader(Pointer_ p)</div><div class="ttdef"><b>Definition</b> FastqReader.hpp:34</div></div>
 <div class="ttc" id="anamespacekaori_html"><div class="ttname"><a href="namespacekaori.html">kaori</a></div><div class="ttdoc">Namespace for the kaori barcode-matching library.</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:13</div></div>
 </div><!-- fragment --></div><!-- contents -->
