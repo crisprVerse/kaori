@@ -50,7 +50,7 @@ public:
             return false;
         }
 
-        size_t init_line = my_line_count;
+        auto init_line = my_line_count;
 
         // Processing the name. This should be on a single line, hopefully.
         my_name.clear();
@@ -73,10 +73,14 @@ public:
         // Processing the sequence itself until we get to a '+'.
         my_sequence.clear();
         val = advance_and_check();
-        while (val != '+') {
-            if (val != '\n') {
-                my_sequence.push_back(val);
+        while (1) {
+            if (val == '\n') {
+                val = advance_and_check();
+                if (val == '+') {
+                    break;
+                }
             }
+            my_sequence.push_back(val);
             val = advance_and_check();
         }
         ++my_line_count;
@@ -92,7 +96,11 @@ public:
         // the end of the file. Note that we can't check for '@' as a
         // delimitor, as this can be a valid score, so instead we check at each
         // newline whether we've reached the specified length, and quit if so.
-        size_t qual_length = 0, seq_length = my_sequence.size();
+        //
+        // Note we use unsigned long longs to guarantee at least 64 bits. We
+        // can't use size_t as this might not fit size_type, and we can't use
+        // size_type as this might not fit the quality string length.
+        unsigned long long seq_length = my_sequence.size(), qual_length = 0;
         my_okay = false;
 
         while (my_pb.advance()) {
@@ -127,7 +135,7 @@ private:
     std::vector<char> my_sequence;
     std::vector<char> my_name;
     bool my_okay;
-    size_t my_line_count = 0;
+    unsigned long long my_line_count = 0;
 
 public:
     /**
