@@ -95,7 +95,9 @@ public:
                         run_job(env.work);
                     } catch (...) {
                         std::lock_guard elck(my_error_mut);
-                        my_error = std::current_exception();
+                        if (!my_error) {
+                            my_error = std::current_exception();
+                        }
                     }
 
                     env.has_output = true;
@@ -151,8 +153,11 @@ public:
             std::unique_lock lck(env.mut);
             env.cv.wait(lck, [&]() -> bool { return env.available; });
 
-            if (my_error) {
-                std::rethrow_exception(my_error);
+            {
+                std::lock_guard elck(my_error_mut);
+                if (my_error) {
+                    std::rethrow_exception(my_error);
+                }
             }
             env.available = false;
 
