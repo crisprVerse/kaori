@@ -173,6 +173,13 @@ public:
                     break;
                 }
             } else {
+                // 'create_job' is responsible for parsing the FASTQ file and
+                // creating a ChunkOfReads. Unfortunately I can't figure out
+                // how to parallelize the parsing as it is very hard to jump
+                // into a middle of a FASTQ file and figure out where the next
+                // entry is; this is because (i) multiline sequences are legal
+                // and (ii) +/@ are not sufficient delimiters when they can
+                // show up in the quality scores.
                 finished = create_job(env.work);
                 env.input_ready = true;
                 lck.unlock();
