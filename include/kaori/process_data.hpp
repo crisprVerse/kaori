@@ -73,110 +73,111 @@ private:
     }
 };
 
-template<class CreateWorkspace_, class CreateJob_, typename RunJob_, typename FinishJob_>
+template<typename Workspace_>
 class ThreadPool {
 public:
-    ThreadPool(CreateWorkspace_ create_workspace, CreateJob_ create_job, RunJob_ run_job, FinishJob_ finish_job, int num_threads) : my_threads_available(num_threads) {
+    template<typename RunJob_>
+    ThreadPool(RunJob_ run_job, int num_threads) : my_helpers(num_threads) {
         my_threads.reserve(num_threads);
         for (int t = 0; t < num_threads; ++t) {
-            // Copy lambdas as they will be gone once this constructor finishes.
-            my_threads.emplace_back([create_workspace,create_job,run_job,finish_job,this]() -> void { 
-                auto work = create_workspace();
+            // Copy lambda as it will be gone once this constructor finishes.
+            my_threads.emplace_back([run_job,this](int thread) -> void { 
+                auto& env = my_helpers[thread];
                 while (1) {
-                    {
-                        std::unique_lock lck(my_lock);
-                        my_input_cv.wait(lck, [&]() -> bool { return my_input_ready; });
-                        if (my_terminated) {
-                            return;
-                        }
-                        safe_run([&]() -> void {
-                            my_finished = create_job(work, true); // serial FASTQ parsing to prepare the workspace.
-                        });
-                        my_input_ready = false;
+                    std::unique_lock lck(env.mut);
+                    env.cv.wait(lck, [&]() -> bool { return env.input_ready; });
+                    if (env.terminated) {
+                        return;
+                    }
+                    env.input_ready = false;
+
+                    try {
+                        run_job(env.work);
+                    } catch (...) {
+                        std::lock_guard elck(my_error_mut);
+                        my_error = std::current_exception();
                     }
 
-                    if (!my_error) {
-                        safe_run([&]() -> void {
-                            run_job(work); // parallel processing in the workspace, outside of the lock.
-                        });
-                    }
-
-                    {
-                        std::lock_guard lck(my_lock);
-                        if (!my_error) {
-                            safe_run([&]() -> void {
-                                finish_job(work); // back to serial reduction of the completed work.
-                            });
-                        }
-                        ++my_threads_available;
-                    }
-
-                    my_output_cv.notify_one();
+                    env.has_output = true;
+                    env.available = true;
+                    env.cv.notify_one();
                 }
-            });
+            }, t);
         }
     }
 
     ~ThreadPool() {
-        {
-            std::lock_guard lck(my_lock);
-            my_terminated = true;
-            my_input_ready = true;
+        for (auto& env : my_helpers) {
+            {
+                std::lock_guard lck(env.mut);
+                env.terminated = true;
+                env.input_ready = true;
+            }
+            env.cv.notify_one();
         }
-        my_input_cv.notify_all();
         for (auto& thread : my_threads) {
             thread.join();
         }
     }
 
-public:
-    void run() {
-        while (1) {
-            std::unique_lock lck(my_lock);
-            my_output_cv.wait(lck, [&]() -> bool { return my_threads_available > 0; });
-            if (my_finished) {
-                break;
-            }
-
-            check_rethrow();
-            my_input_ready = true;
-            --my_threads_available; // need to do this here to ensure the next iteration doesn't immediately return.
-
-            lck.unlock();
-            my_input_cv.notify_one();
-        }
-
-        std::unique_lock lck(my_lock);
-        my_output_cv.wait(lck, [&]() -> bool { return my_threads_available == my_threads.size(); });
-        check_rethrow();
-    }
-
 private:
     std::vector<std::thread> my_threads;
-    bool my_finished = false;
 
-    std::condition_variable my_input_cv, my_output_cv;
-    std::mutex my_lock;
-    bool my_input_ready = false;
-    bool my_terminated = false;
-    int my_input_job = 0;
-    typename decltype(my_threads)::size_type my_threads_available;
+    struct Helper {
+        std::mutex mut;
+        std::condition_variable cv;
+        bool input_ready = false;
+        bool available = true;
+        bool has_output = false;
+        bool terminated = false;
+        Workspace_ work;
+    };
+    std::vector<Helper> my_helpers;
+
+    std::mutex my_error_mut;
     std::exception_ptr my_error;
 
-    template<typename Fun_>
-    void safe_run(Fun_ fun) {
-        try {
-            fun();
-        } catch (std::exception&) {
-            my_error = std::current_exception();
-        }
-    }
+public:
+    template<typename CreateJob_, typename MergeJob_>
+    void run(CreateJob_ create_job, MergeJob_ merge_job) {
+        auto num_threads = my_threads.size();
+        bool finished = false;
+        decltype(num_threads) thread = 0, finished_count = 0;
 
-    void check_rethrow() {
-        if (my_error) {
-            auto copy = my_error;
-            my_error = nullptr; // in case we want to continue submitting jobs.
-            std::rethrow_exception(std::move(copy));
+        // We submit jobs by cycling through all threads, then we merge their results in order of submission.
+        // This is a less efficient worksharing scheme but it guarantees the same order of merges.
+        while (1) {
+            auto& env = my_helpers[thread];
+            std::unique_lock lck(env.mut);
+            env.cv.wait(lck, [&]() -> bool { return env.available; });
+
+            if (my_error) {
+                std::rethrow_exception(my_error);
+            }
+            env.available = false;
+
+            if (env.has_output) {
+                merge_job(env.work);
+                env.has_output = false;
+            }
+
+            if (finished) {
+                // Go through all threads one last time, making sure all results are merged.
+                ++finished_count;
+                if (finished_count == num_threads) {
+                    break;
+                }
+            } else {
+                finished = create_job(env.work);
+                env.input_ready = true;
+                lck.unlock();
+                env.cv.notify_one();
+            }
+
+            ++thread;
+            if (thread == num_threads) {
+                thread = 0;
+            }
         }
     }
 };
@@ -244,24 +245,7 @@ void process_single_end_data(Pointer_ input, Handler_& handler, const ProcessSin
     FastqReader<Pointer_> fastq(input);
     const Handler_& conhandler = handler; // Safety measure to enforce const-ness within each thread.
 
-    ThreadPool tp(
-        [&]() -> SingleEndWorkspace { 
-            return SingleEndWorkspace();
-        },
-        [&](SingleEndWorkspace& work, bool) -> bool {
-            auto& curreads = work.reads;
-            for (int b = 0; b < options.block_size; ++b) {
-                if (!fastq()) {
-                    return true;
-                }
-
-                curreads.add_read_sequence(fastq.get_sequence());
-                if constexpr(Handler_::use_names) {
-                    curreads.add_read_name(fastq.get_name());
-                }
-            }
-            return false;
-        },
+    ThreadPool<SingleEndWorkspace> tp(
         [&](SingleEndWorkspace& work) -> void {
             auto& state = work.state;
             state = conhandler.initialize(); // reinitializing for simplicity and to avoid accumulation of reserved memory.
@@ -278,19 +262,29 @@ void process_single_end_data(Pointer_ input, Handler_& handler, const ProcessSin
                 }
             }
         },
-        [&](SingleEndWorkspace& work) -> void {
-            handler.reduce(work.state);
-            work.reads.clear(Handler_::use_names);
-        },
         options.num_threads
     );
 
-    std::cout << (uintptr_t)&fastq << std::endl;
-    std::cout << (uintptr_t)&handler << std::endl;
+    tp.run(
+        [&](SingleEndWorkspace& work) -> bool {
+            auto& curreads = work.reads;
+            for (int b = 0; b < options.block_size; ++b) {
+                if (!fastq()) {
+                    return true;
+                }
 
-    tp.run();
-    std::cout << (uintptr_t)&fastq << std::endl;
-    std::cout << (uintptr_t)&handler << std::endl;
+                curreads.add_read_sequence(fastq.get_sequence());
+                if constexpr(Handler_::use_names) {
+                    curreads.add_read_name(fastq.get_name());
+                }
+            }
+            return false;
+        },
+        [&](SingleEndWorkspace& work) -> void {
+            handler.reduce(work.state);
+            work.reads.clear(Handler_::use_names);
+        }
+    );
 }
 
 /**
@@ -354,11 +348,35 @@ void process_paired_end_data(Pointer_ input1, Pointer_ input2, Handler_& handler
     FastqReader<Pointer_> fastq2(input2);
     const Handler_& conhandler = handler; // Safety measure to enforce const-ness within each thread.
 
-    ThreadPool tp(
-        []() -> PairedEndWorkspace {
-            return PairedEndWorkspace();
+    ThreadPool<PairedEndWorkspace> tp(
+        [&](PairedEndWorkspace& work) -> void {
+            auto& state = work.state;
+            state = conhandler.initialize(); // reinitializing for simplicity and to avoid accumulation of reserved memory.
+            const auto& curreads1 = work.reads1;
+            const auto& curreads2 = work.reads2;
+            size_t nreads = curreads1.size();
+
+            if constexpr(!Handler_::use_names) {
+                for (size_t b = 0; b < nreads; ++b) {
+                    conhandler.process(state, curreads1.get_sequence(b), curreads2.get_sequence(b));
+                }
+            } else {
+                for (size_t b = 0; b < nreads; ++b) {
+                    conhandler.process(
+                        state,
+                        curreads1.get_name(b), 
+                        curreads1.get_sequence(b),
+                        curreads2.get_name(b), 
+                        curreads2.get_sequence(b)
+                    );
+                }
+            }
         },
-        [&](PairedEndWorkspace& work, bool) -> bool {
+        options.num_threads
+    );
+
+    tp.run(
+        [&](PairedEndWorkspace& work) -> bool {
             bool finished1 = false;
             {
                 auto& curreads = work.reads1;
@@ -397,37 +415,11 @@ void process_paired_end_data(Pointer_ input1, Pointer_ input2, Handler_& handler
             return finished1;
         },
         [&](PairedEndWorkspace& work) -> void {
-            auto& state = work.state;
-            state = conhandler.initialize(); // reinitializing for simplicity and to avoid accumulation of reserved memory.
-            const auto& curreads1 = work.reads1;
-            const auto& curreads2 = work.reads2;
-            size_t nreads = curreads1.size();
-
-            if constexpr(!Handler_::use_names) {
-                for (size_t b = 0; b < nreads; ++b) {
-                    conhandler.process(state, curreads1.get_sequence(b), curreads2.get_sequence(b));
-                }
-            } else {
-                for (size_t b = 0; b < nreads; ++b) {
-                    conhandler.process(
-                        state,
-                        curreads1.get_name(b), 
-                        curreads1.get_sequence(b),
-                        curreads2.get_name(b), 
-                        curreads2.get_sequence(b)
-                    );
-                }
-            }
-        },
-        [&](PairedEndWorkspace& work) -> void {
             handler.reduce(work.state);
             work.reads1.clear(Handler_::use_names);
             work.reads2.clear(Handler_::use_names);
-        },
-        options.num_threads
+        }
     );
-
-    tp.run();
 }
 
 }
