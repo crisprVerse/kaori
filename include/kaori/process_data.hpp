@@ -1,8 +1,14 @@
 #ifndef KAORI_PROCESS_DATA_HPP
 #define KAORI_PROCESS_DATA_HPP
 
+#include <vector>
 #include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <stdexcept>
+
 #include "FastqReader.hpp"
+
 #include "byteme/Reader.hpp"
 
 /**
@@ -66,6 +72,128 @@ private:
         return std::make_pair(base + offset[i], base + offset[i + 1]);
     }
 };
+
+template<typename Workspace_>
+class ThreadPool {
+public:
+    template<typename RunJob_>
+    ThreadPool(RunJob_ run_job, int num_threads) : my_helpers(num_threads) {
+        my_threads.reserve(num_threads);
+        for (int t = 0; t < num_threads; ++t) {
+            // Copy lambda as it will be gone once this constructor finishes.
+            my_threads.emplace_back([run_job,this](int thread) -> void { 
+                auto& env = my_helpers[thread];
+                while (1) {
+                    std::unique_lock lck(env.mut);
+                    env.cv.wait(lck, [&]() -> bool { return env.input_ready; });
+                    if (env.terminated) {
+                        return;
+                    }
+                    env.input_ready = false;
+
+                    try {
+                        run_job(env.work);
+                    } catch (...) {
+                        std::lock_guard elck(my_error_mut);
+                        if (!my_error) {
+                            my_error = std::current_exception();
+                        }
+                    }
+
+                    env.has_output = true;
+                    env.available = true;
+                    env.cv.notify_one();
+                }
+            }, t);
+        }
+    }
+
+    ~ThreadPool() {
+        for (auto& env : my_helpers) {
+            {
+                std::lock_guard lck(env.mut);
+                env.terminated = true;
+                env.input_ready = true;
+            }
+            env.cv.notify_one();
+        }
+        for (auto& thread : my_threads) {
+            thread.join();
+        }
+    }
+
+private:
+    std::vector<std::thread> my_threads;
+
+    struct Helper {
+        std::mutex mut;
+        std::condition_variable cv;
+        bool input_ready = false;
+        bool available = true;
+        bool has_output = false;
+        bool terminated = false;
+        Workspace_ work;
+    };
+    std::vector<Helper> my_helpers;
+
+    std::mutex my_error_mut;
+    std::exception_ptr my_error;
+
+public:
+    template<typename CreateJob_, typename MergeJob_>
+    void run(CreateJob_ create_job, MergeJob_ merge_job) {
+        auto num_threads = my_threads.size();
+        bool finished = false;
+        decltype(num_threads) thread = 0, finished_count = 0;
+
+        // We submit jobs by cycling through all threads, then we merge their results in order of submission.
+        // This is a less efficient worksharing scheme but it guarantees the same order of merges.
+        while (1) {
+            auto& env = my_helpers[thread];
+            std::unique_lock lck(env.mut);
+            env.cv.wait(lck, [&]() -> bool { return env.available; });
+
+            {
+                std::lock_guard elck(my_error_mut);
+                if (my_error) {
+                    std::rethrow_exception(my_error);
+                }
+            }
+            env.available = false;
+
+            if (env.has_output) {
+                merge_job(env.work);
+                env.has_output = false;
+            }
+
+            if (finished) {
+                // Go through all threads one last time, making sure all results are merged.
+                ++finished_count;
+                if (finished_count == num_threads) {
+                    break;
+                }
+            } else {
+                // 'create_job' is responsible for parsing the FASTQ file and
+                // creating a ChunkOfReads. Unfortunately I can't figure out
+                // how to parallelize the parsing as it is very hard to jump
+                // into a middle of a FASTQ file and figure out where the next
+                // entry is; this is because (i) multiline sequences are legal
+                // and (ii) +/@ are not sufficient delimiters when they can
+                // show up in the quality scores.
+                finished = create_job(env.work);
+                env.input_ready = true;
+                lck.unlock();
+                env.cv.notify_one();
+            }
+
+            ++thread;
+            if (thread == num_threads) {
+                thread = 0;
+            }
+        }
+    }
+};
+
 /**
  * @endcond
  */
@@ -121,89 +249,54 @@ struct ProcessSingleEndDataOptions {
  */
 template<typename Pointer_, class Handler_>
 void process_single_end_data(Pointer_ input, Handler_& handler, const ProcessSingleEndDataOptions& options) {
-    FastqReader<Pointer_> fastq(input);
-    bool finished = false;
-
-    std::vector<ChunkOfReads> reads(options.num_threads);
-    std::vector<std::thread> jobs(options.num_threads);
-    std::vector<decltype(handler.initialize())> states(options.num_threads);
-    std::vector<std::string> errs(options.num_threads);
-
-    auto join = [&](int i) -> void {
-        if (jobs[i].joinable()) {
-            jobs[i].join();
-            if (errs[i] != "") {
-                throw std::runtime_error(errs[i]);
-            }
-            handler.reduce(states[i]);
-            reads[i].clear(Handler_::use_names);
-        }
+    struct SingleEndWorkspace {
+        ChunkOfReads reads;
+        decltype(handler.initialize()) state;
     };
 
-    // Safety measure to enforce const-ness within each thread.
-    const Handler_& conhandler = handler;
+    FastqReader<Pointer_> fastq(input);
+    const Handler_& conhandler = handler; // Safety measure to enforce const-ness within each thread.
 
-    try {
-        while (!finished) {
-            for (int t = 0; t < options.num_threads; ++t) {
-                join(t);
+    ThreadPool<SingleEndWorkspace> tp(
+        [&](SingleEndWorkspace& work) -> void {
+            auto& state = work.state;
+            state = conhandler.initialize(); // reinitializing for simplicity and to avoid accumulation of reserved memory.
+            const auto& curreads = work.reads;
+            auto nreads = curreads.size();
 
-                auto& curreads = reads[t];
-                for (int b = 0; b < options.block_size; ++b) {
-                    if (!fastq()) {
-                        finished = true;
-                        break;
-                    }
-
-                    curreads.add_read_sequence(fastq.get_sequence());
-                    if constexpr(Handler_::use_names) {
-                        curreads.add_read_name(fastq.get_name());
-                    }
+            if constexpr(!Handler_::use_names) {
+                for (decltype(nreads) b = 0; b < nreads; ++b) {
+                    conhandler.process(state, curreads.get_sequence(b));
                 }
-
-                states[t] = conhandler.initialize();
-                jobs[t] = std::thread([&](int i) -> void {
-                    try {
-                        auto& state = states[i];
-                        const auto& curreads = reads[i];
-                        size_t nreads = curreads.size();
-
-                        if constexpr(!Handler_::use_names) {
-                            for (size_t b = 0; b < nreads; ++b) {
-                                conhandler.process(state, curreads.get_sequence(b));
-                            }
-                        } else {
-                            for (size_t b = 0; b < nreads; ++b) {
-                                conhandler.process(state, curreads.get_name(b), curreads.get_sequence(b));
-                            }
-                        }
-                    } catch (std::exception& e) {
-                        errs[i] = std::string(e.what());
-                    }
-                }, t);
-
-                if (finished) {
-                    // We won't get a future iteration to join the previous threads
-                    // that we kicked off, so we do it now.
-                    for (int u = 0; u < options.num_threads; ++u) {
-                        auto pos = (u + t + 1) % options.num_threads;
-                        join(pos);
-                    }
-                    break;
+            } else {
+                for (decltype(nreads) b = 0; b < nreads; ++b) {
+                    conhandler.process(state, curreads.get_name(b), curreads.get_sequence(b));
                 }
             }
-        }
-    } catch (std::exception& e) {
-        // Mopping up any loose threads, so to speak.
-        for (int t = 0; t < options.num_threads; ++t) {
-            if (jobs[t].joinable()) {
-                jobs[t].join();
-            }
-        }
-        throw;
-    }
+        },
+        options.num_threads
+    );
 
-    return;
+    tp.run(
+        [&](SingleEndWorkspace& work) -> bool {
+            auto& curreads = work.reads;
+            for (int b = 0; b < options.block_size; ++b) {
+                if (!fastq()) {
+                    return true;
+                }
+
+                curreads.add_read_sequence(fastq.get_sequence());
+                if constexpr(Handler_::use_names) {
+                    curreads.add_read_name(fastq.get_name());
+                }
+            }
+            return false;
+        },
+        [&](SingleEndWorkspace& work) -> void {
+            handler.reduce(work.state);
+            work.reads.clear(Handler_::use_names);
+        }
+    );
 }
 
 /**
@@ -258,125 +351,88 @@ struct ProcessPairedEndDataOptions {
  */
 template<class Pointer_, class Handler_>
 void process_paired_end_data(Pointer_ input1, Pointer_ input2, Handler_& handler, const ProcessPairedEndDataOptions& options) {
-    FastqReader<Pointer_> fastq1(input1);
-    FastqReader<Pointer_> fastq2(input2);
-    bool finished = false;
-
-    std::vector<ChunkOfReads> reads1(options.num_threads), reads2(options.num_threads);
-    std::vector<std::thread> jobs(options.num_threads);
-    std::vector<decltype(handler.initialize())> states(options.num_threads);
-    std::vector<std::string> errs(options.num_threads);
-
-    auto join = [&](int i) -> void {
-        if (jobs[i].joinable()) {
-            jobs[i].join();
-            if (errs[i] != "") {
-                throw std::runtime_error(errs[i]);
-            }
-            handler.reduce(states[i]);
-            reads1[i].clear(Handler_::use_names);
-            reads2[i].clear(Handler_::use_names);
-        }
+    struct PairedEndWorkspace {
+        ChunkOfReads reads1, reads2;
+        decltype(handler.initialize()) state;
     };
 
-    // Safety measure to enforce const-ness within each thread.
-    const Handler_& conhandler = handler;
+    FastqReader<Pointer_> fastq1(input1);
+    FastqReader<Pointer_> fastq2(input2);
+    const Handler_& conhandler = handler; // Safety measure to enforce const-ness within each thread.
 
-    try {
-        while (!finished) {
-            for (int t = 0; t < options.num_threads; ++t) {
-                join(t);
+    ThreadPool<PairedEndWorkspace> tp(
+        [&](PairedEndWorkspace& work) -> void {
+            auto& state = work.state;
+            state = conhandler.initialize(); // reinitializing for simplicity and to avoid accumulation of reserved memory.
+            const auto& curreads1 = work.reads1;
+            const auto& curreads2 = work.reads2;
+            size_t nreads = curreads1.size();
 
-                bool finished1 = false;
-                {
-                    auto& curreads = reads1[t];
-                    for (int b = 0; b < options.block_size; ++b) {
-                        if (!fastq1()) {
-                            finished1 = true;
-                            break;
-                        }
-
-                        curreads.add_read_sequence(fastq1.get_sequence());
-                        if constexpr(Handler_::use_names) {
-                            curreads.add_read_name(fastq1.get_name());
-                        }
-                    }
+            if constexpr(!Handler_::use_names) {
+                for (size_t b = 0; b < nreads; ++b) {
+                    conhandler.process(state, curreads1.get_sequence(b), curreads2.get_sequence(b));
                 }
-
-                bool finished2 = false;
-                {
-                    auto& curreads = reads2[t];
-                    for (int b = 0; b < options.block_size; ++b) {
-                        if (!fastq2()) {
-                            finished2 = true;
-                            break;
-                        }
-
-                        curreads.add_read_sequence(fastq2.get_sequence());
-                        if constexpr(Handler_::use_names) {
-                            curreads.add_read_name(fastq2.get_name());
-                        }
-                    }
-                }
-
-                if (finished1 != finished2 || reads1[t].size() != reads2[t].size()) {
-                    throw std::runtime_error("different number of reads in paired FASTQ files");
-                } else if (finished1) {
-                    finished = true;
-                }
-
-                states[t] = conhandler.initialize();
-                jobs[t] = std::thread([&](int i) -> void {
-                    auto& state = states[i];
-                    const auto& curreads1 = reads1[i];
-                    const auto& curreads2 = reads2[i];
-                    size_t nreads = curreads1.size();
-
-                    try {
-                        if constexpr(!Handler_::use_names) {
-                            for (size_t b = 0; b < nreads; ++b) {
-                                handler.process(state, curreads1.get_sequence(b), curreads2.get_sequence(b));
-                            }
-                        } else {
-                            for (size_t b = 0; b < nreads; ++b) {
-                                handler.process(
-                                    state,
-                                    curreads1.get_name(b), 
-                                    curreads1.get_sequence(b),
-                                    curreads2.get_name(b), 
-                                    curreads2.get_sequence(b)
-                                );
-                            }
-                        }
-                    } catch (std::exception& e) {
-                        errs[i] = std::string(e.what());
-                    }
-                }, t);
-
-                if (finished) {
-                    // We won't get a future iteration to join the previous threads
-                    // that we kicked off, so we do it now.
-                    for (int u = 0; u < options.num_threads; ++u) {
-                        auto pos = (u + t + 1) % options.num_threads;
-                        join(pos);
-                    }
-                    break;
+            } else {
+                for (size_t b = 0; b < nreads; ++b) {
+                    conhandler.process(
+                        state,
+                        curreads1.get_name(b), 
+                        curreads1.get_sequence(b),
+                        curreads2.get_name(b), 
+                        curreads2.get_sequence(b)
+                    );
                 }
             }
-        }
-    } catch (std::exception& e) {
-        // Mopping up any loose threads, so to speak.
-        for (int t = 0; t < options.num_threads; ++t) {
-            if (jobs[t].joinable()) {
-                jobs[t].join();
-            }
-        }
-        throw;
-    }
+        },
+        options.num_threads
+    );
 
-    return;
+    tp.run(
+        [&](PairedEndWorkspace& work) -> bool {
+            bool finished1 = false;
+            {
+                auto& curreads = work.reads1;
+                for (int b = 0; b < options.block_size; ++b) {
+                    if (!fastq1()) {
+                        finished1 = true;
+                        break;
+                    }
+
+                    curreads.add_read_sequence(fastq1.get_sequence());
+                    if constexpr(Handler_::use_names) {
+                        curreads.add_read_name(fastq1.get_name());
+                    }
+                }
+            }
+
+            bool finished2 = false;
+            {
+                auto& curreads = work.reads2;
+                for (int b = 0; b < options.block_size; ++b) {
+                    if (!fastq2()) {
+                        finished2 = true;
+                        break;
+                    }
+
+                    curreads.add_read_sequence(fastq2.get_sequence());
+                    if constexpr(Handler_::use_names) {
+                        curreads.add_read_name(fastq2.get_name());
+                    }
+                }
+            }
+
+            if (finished1 != finished2 || work.reads1.size() != work.reads2.size()) {
+                throw std::runtime_error("different number of reads in paired FASTQ files");
+            }
+            return finished1;
+        },
+        [&](PairedEndWorkspace& work) -> void {
+            handler.reduce(work.state);
+            work.reads1.clear(Handler_::use_names);
+            work.reads2.clear(Handler_::use_names);
+        }
+    );
 }
-
 
 }
 

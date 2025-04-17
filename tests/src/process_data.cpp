@@ -4,6 +4,39 @@
 #include "byteme/RawBufferReader.hpp"
 #include "utils.h"
 
+class ProcessDataTester : public testing::TestWithParam<std::tuple<int, int> > {
+protected:
+    std::vector<std::string> simulate_reads(int n, int seed) {
+        std::mt19937_64 rng(seed);
+        std::vector<std::string> output;
+        output.reserve(n);
+
+        for (int i = 1; i <= n; ++i) {
+            std::string current;
+            size_t n = rng() % 20 + 10;
+            for (size_t j = 0; j < n; ++j) {
+                switch (rng() % 4) {
+                    case 0:
+                        current += "A";
+                        break;
+                    case 1:
+                        current += "C";
+                        break;
+                    case 2:
+                        current += "G";
+                        break;
+                    case 3:
+                        current += "T";
+                        break;
+                }
+            }
+            output.push_back(current);
+        }
+
+        return output;
+    }
+};
+
 template<bool unames_, bool failtest_ = false>
 class SingleEndCollector {
 public:
@@ -49,47 +82,13 @@ public:
     }
 };
 
-class ProcessDataTester : public testing::TestWithParam<std::tuple<int, int> > {
-protected:
-    std::vector<std::string> simulate_reads(int seed) {
-        const size_t n = 1000;
-        std::mt19937_64 rng(seed);
-        std::vector<std::string> output;
-        output.reserve(n);
-
-        for (size_t i = 1; i <= n; ++i) {
-            std::string current;
-            size_t n = rng() % 20 + 10;
-            for (size_t j = 0; j < n; ++j) {
-                switch (rng() % 4) {
-                    case 0:
-                        current += "A";
-                        break;
-                    case 1:
-                        current += "C";
-                        break;
-                    case 2:
-                        current += "G";
-                        break;
-                    case 3:
-                        current += "T";
-                        break;
-                }
-            }
-            output.push_back(current);
-        }
-
-        return output;
-    }
-};
-
 TEST_P(ProcessDataTester, SingleEnd) {
     auto param = GetParam();
     kaori::ProcessSingleEndDataOptions popt;
     popt.num_threads = std::get<0>(param);
     popt.block_size = std::get<1>(param);
 
-    auto reads = simulate_reads(popt.num_threads + popt.block_size);
+    auto reads = simulate_reads(1000, popt.num_threads + popt.block_size);
     auto fastq_str = convert_to_fastq(reads);
 
     // Without names.
@@ -130,7 +129,7 @@ TEST_P(ProcessDataTester, SingleEndErrors) {
     popt.num_threads = std::get<0>(param);
     popt.block_size = std::get<1>(param);
 
-    auto reads = simulate_reads(popt.num_threads + popt.block_size);
+    auto reads = simulate_reads(1000, popt.num_threads + popt.block_size);
     auto fastq_str = convert_to_fastq(reads, "FOO");
 
     byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fastq_str.c_str()), fastq_str.size());
@@ -209,8 +208,8 @@ TEST_P(ProcessDataTester, PairedEnd) {
     popt.num_threads = std::get<0>(param);
     popt.block_size = std::get<1>(param);
 
-    auto reads1 = simulate_reads(popt.num_threads + popt.block_size);
-    auto reads2 = simulate_reads((popt.num_threads + popt.block_size) * 2);
+    auto reads1 = simulate_reads(1000, popt.num_threads + popt.block_size);
+    auto reads2 = simulate_reads(1000, (popt.num_threads + popt.block_size) * 2);
     auto fastq_str1 = convert_to_fastq(reads1, "FOO");
     auto fastq_str2 = convert_to_fastq(reads2, "BAR");
 
@@ -261,8 +260,8 @@ TEST_P(ProcessDataTester, PairedEndErrors) {
     popt.num_threads = std::get<0>(param);
     popt.block_size = std::get<1>(param);
 
-    auto reads1 = simulate_reads(popt.num_threads + popt.block_size);
-    auto reads2 = simulate_reads((popt.num_threads + popt.block_size) * 2);
+    auto reads1 = simulate_reads(1000, popt.num_threads + popt.block_size);
+    auto reads2 = simulate_reads(1000, (popt.num_threads + popt.block_size) * 2);
     auto fastq_str1 = convert_to_fastq(reads1, "FOO");
     auto fastq_str2 = convert_to_fastq(reads2, "BAR");
 
@@ -301,6 +300,34 @@ TEST_P(ProcessDataTester, PairedEndErrors) {
                 throw e;
             }
         });
+    }
+}
+
+TEST_P(ProcessDataTester, EmptyOrShort) {
+    auto param = GetParam();
+    kaori::ProcessSingleEndDataOptions popt;
+    popt.num_threads = std::get<0>(param);
+    popt.block_size = std::get<1>(param);
+
+    // Works when empty.
+    {
+        std::string fastq_str = "";
+        byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fastq_str.c_str()), fastq_str.size());
+        SingleEndCollector<false, false> task;
+        kaori::process_single_end_data(&reader, task, popt);
+        EXPECT_TRUE(task.reads().empty());
+    }
+
+    // Works when not all threads are fully engaged.
+    for (int t = 0; t < popt.num_threads; ++t) {
+        int nreads = t * popt.block_size + 1;
+        auto reads = simulate_reads(nreads, t + popt.num_threads + popt.block_size);
+        auto fastq_str = convert_to_fastq(reads, "FOO");
+
+        byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fastq_str.c_str()), fastq_str.size());
+        SingleEndCollector<false, false> task;
+        kaori::process_single_end_data(&reader, task, popt);
+        EXPECT_EQ(reads, task.reads());
     }
 }
 
