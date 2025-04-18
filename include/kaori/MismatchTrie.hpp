@@ -19,7 +19,7 @@ namespace kaori {
 
 /**
  * Integer type for the trie indices.
- * This is semantically different from `BarcodeIndex` as it can have the special values `TRIE_STATUS_MISSING` and `TRIE_STATUS_AMBIGUOUS`.
+ * This is semantically different from `SeqIndex` as it can have the special values `TRIE_STATUS_MISSING` and `TRIE_STATUS_AMBIGUOUS`.
  */
 typedef std::size_t TrieIndex;
 
@@ -76,14 +76,14 @@ class MismatchTrie {
 public:
     MismatchTrie() = default;
 
-    MismatchTrie(BarcodeLength barcode_length, DuplicateAction duplicates) : 
+    MismatchTrie(SeqLength barcode_length, DuplicateAction duplicates) : 
         my_length(barcode_length), 
         my_duplicates(duplicates),
         my_pointers(NUM_BASES, TRIE_STATUS_MISSING), 
     {}
 
 private:
-    BarcodeLength my_length;
+    SeqLength my_length;
     DuplicateAction my_duplicates;
 
     // Guarantee at least 64 bits to store node pointers. We would prefer to
@@ -143,7 +143,7 @@ private:
     }
 
     template<char base_>
-    void process_ambiguous(BarcodeLength i, TrieIndex node, const char* barcode_seq, TrieAddStatus& status) {
+    void process_ambiguous(SeqLength i, TrieIndex node, const char* barcode_seq, TrieAddStatus& status) {
         node += base_shift<base_>();
         ++i;
         if (i == my_length) {
@@ -154,7 +154,7 @@ private:
         }
     }
 
-    void recursive_add(BarcodeLength i, TrieIndex node, const char* barcode_seq, TrieAddStatus& status) {
+    void recursive_add(SeqLength i, TrieIndex node, const char* barcode_seq, TrieAddStatus& status) {
         // Processing a stretch of non-ambiguous codes, where possible.
         // This reduces the recursion depth among the (hopefully fewer) ambiguous codes.
         while (1) {
@@ -223,7 +223,7 @@ public:
         return status;
     }
 
-    BarcodeLength length() const {
+    SeqLength length() const {
         return my_length;
     }
 
@@ -238,7 +238,7 @@ public:
 public:
     // To be called in the middle steps of the recursive search (i.e., for all but the last position).
     template<class SearchResult_>
-    void replace_best_with_chosen(SearchResult_& best, TrieIndex& best_index, BarcodeLength best_score, const SearchResult_& chosen, TrieIndex chosen_index, BarcodeLength chosen_score) const {
+    void replace_best_with_chosen(SearchResult_& best, TrieIndex& best_index, SeqLength best_score, const SearchResult_& chosen, TrieIndex chosen_index, SeqLength chosen_score) const {
         if (is_trie_index_ok(chosen_index)) {
             if (chosen_score < best_score) {
                 best = chosen;
@@ -271,7 +271,7 @@ public:
     }
 
     // To be called in the last step of the recursive search.
-    void scan_final_position_with_mismatch(TrieIndex node, int refshift, TrieIndex& current_index, BarcodeLength current_mismatches, BarcodeLength& mismatch_cap) const {
+    void scan_final_position_with_mismatch(TrieIndex node, int refshift, TrieIndex& current_index, SeqLength current_mismatches, SeqLength& mismatch_cap) const {
         bool found = false;
         for (int s = 0; s < NUM_BASES; ++s) {
             if (s == refshift) { 
@@ -331,7 +331,7 @@ private:
     // Optimization involves reorganizing the nodes so that the pointers are
     // always increasing. This promotes memory locality of similar sequences
     // in a depth-first search (which is what search() does anyway).
-    bool is_optimal(BarcodeLength i, TrieIndex node, TrieIndex& maxed) const {
+    bool is_optimal(SeqLength i, TrieIndex node, TrieIndex& maxed) const {
         ++i;
         if (i < my_length) {
             for (int s = 0; s < NUM_BASES; ++s) {
@@ -353,7 +353,7 @@ private:
         return true;
     }
 
-    void optimize(BarcodeLength i, TrieIndex node, std::vector<TrieIndex>& trie) const {
+    void optimize(SeqLength i, TrieIndex node, std::vector<TrieIndex>& trie) const {
         auto it = my_pointers.begin() + node;
         TrieIndex new_node = trie.size();
         trie.insert(trie.end(), it, it + NUM_BASES);
@@ -396,7 +396,7 @@ public:
      * @param barcode_length Length of the barcode sequences.
      * @param duplicates How duplicate sequences across `add()` calls should be handled.
      */
-    AnyMismatches(BarcodeLength barcode_length, DuplicateAction duplicates) : my_core(barcode_length, duplicates) {}
+    AnyMismatches(SeqLength barcode_length, DuplicateAction duplicates) : my_core(barcode_length, duplicates) {}
 
 private:
     MismatchTrie my_core;
@@ -417,7 +417,7 @@ public:
     /**
      * @return The length of the barcode sequences.
      */
-    BarcodeLength length() const {
+    SeqLength length() const {
         return my_core.length();
     }
 
@@ -449,12 +449,12 @@ public:
      *    If all sequences have more mismatches than `max_mismatches`, `TRIE_STATUS_MISSING` is returned.
      * 2. The number of mismatches.
      */
-    std::pair<TrieIndex, BarcodeLength> search(const char* search_seq, BarcodeLength max_mismatches) const {
+    std::pair<TrieIndex, SeqLength> search(const char* search_seq, SeqLength max_mismatches) const {
         return search(search_seq, 0, 0, 0, max_mismatches);
     }
 
 private:
-    std::pair<TrieIndex, BarcodeLength> search(const char* seq, BarcodeLength i, TrieIndex node, BarcodeLength mismatches, BarcodeLength& max_mismatches) const {
+    std::pair<TrieIndex, SeqLength> search(const char* seq, SeqLength i, TrieIndex node, SeqLength mismatches, SeqLength& max_mismatches) const {
         const auto& pointers = my_core.pointers();
         TrieIndex current;
         int shift;
@@ -474,7 +474,7 @@ private:
         // At the end: we prepare to return the actual values. We also refine
         // the max number of mismatches so that we don't search for things with
         // more mismatches than the best hit that was already encountered.
-        BarcodeLength length = my_core.length();
+        SeqLength length = my_core.length();
         ++i;
 
         if (i == length) {
@@ -492,7 +492,7 @@ private:
             return std::make_pair(alt, mismatches);
 
         } else {
-            std::pair<TrieIndex, BarcodeLength> best(TRIE_STATUS_MISSING, max_mismatches + 1);
+            std::pair<TrieIndex, SeqLength> best(TRIE_STATUS_MISSING, max_mismatches + 1);
             if (is_trie_index_ok(current)) {
                 best = search(seq, pos, current, mismatches, max_mismatches);
             }
@@ -545,7 +545,7 @@ public:
      * Each entry should be positive and the sum should be equal to the total length of the barcode sequence.
      * @param duplicates How duplicate sequences across `add()` calls should be handled.
      */
-    SegmentedMismatches(std::array<BarcodeLength, num_segments_> segments, DuplicateAction duplicates) : 
+    SegmentedMismatches(std::array<SeqLength, num_segments_> segments, DuplicateAction duplicates) : 
         my_core(std::accumulate(segments.begin(), segments.end(), 0), duplicates), 
         my_boundaries(segments)
     {
@@ -556,7 +556,7 @@ public:
 
 private:
     MismatchTrie my_core;
-    std::array<BarcodeLength, num_segments_> my_boundaries;
+    std::array<SeqLength, num_segments_> my_boundaries;
 
 public:
     /**
@@ -574,7 +574,7 @@ public:
     /**
      * @return The length of the barcode sequences.
      */
-    BarcodeLength length() const {
+    SeqLength length() const {
         return my_core.length();
     }
 
@@ -615,12 +615,12 @@ public:
         /**
          * Total number of mismatches between the barcode sequence from `index` and the input sequence.
          */
-        BarcodeLength total = 0;
+        SeqLength total = 0;
 
         /**
          * Number of mismatches in each segment of the sequence.
          */
-        std::array<BarcodeLength, num_segments_> per_segment;
+        std::array<SeqLength, num_segments_> per_segment;
     };
 
     /**
@@ -634,13 +634,13 @@ public:
      * - If multiple barcode sequences share the same lowest total, the match is ambiguous and `TRIE_STATUS_AMBIGUOUS` is reported.
      * - If no barcode sequences satisfy the `max_mismatches` condition, `TRIE_STATUS_MISSING` is reported.
      */
-    Result search(const char* search_seq, const std::array<BarcodeLength, num_segments_>& max_mismatches) const {
-        BarcodeLength total_mismatches = std::accumulate(max_mismatches.begin(), max_mismatches.end(), static_cast<BarcodeLength>(0));
+    Result search(const char* search_seq, const std::array<SeqLength, num_segments_>& max_mismatches) const {
+        SeqLength total_mismatches = std::accumulate(max_mismatches.begin(), max_mismatches.end(), static_cast<SeqLength>(0));
         return search(search_seq, 0, 0, Result(), max_mismatches, total_mismatches);
     }
 
 private:
-    Result search(const char* seq, BarcodeLength i, TrieIndex segment_id, Result state, const std::array<BarcodeLength, num_segments_>& segment_mismatches, BarcodeLength& total_mismatches) const {
+    Result search(const char* seq, SeqLength i, TrieIndex segment_id, Result state, const std::array<SeqLength, num_segments_>& segment_mismatches, SeqLength& total_mismatches) const {
         // Note that, during recursion, state.index does double duty 
         // as the index of the node on the trie.
         auto node = state.index;
@@ -664,7 +664,7 @@ private:
         // At the end: we prepare to return the actual values. We also refine
         // the max number of mismatches so that we don't search for things with
         // more mismatches than the best hit that was already encountered.
-        BarcodeLength length = my_core.length();
+        SeqLength length = my_core.length();
         ++i;
 
         if (i == length) {

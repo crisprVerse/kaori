@@ -28,23 +28,24 @@ enum class DuplicateAction : char { FIRST, LAST, NONE, ERROR };
 enum class SearchStrand : char { FORWARD, REVERSE, BOTH };
 
 /**
- * Integer type for the barcode lengths.
+ * Integer type for the sequence lengths, e.g., for barcodes, templates or reads.
  */
-typedef std::size_t BarcodeLength;
+typedef std::size_t SeqLength;
 
 /**
- * Integer type for the barcode indices.
+ * Integer type for sequence indices, e.g., to identify a barcode in a `BarcodePool`.
+ * This can have the special value `UNMATCHED` to indicate that a matching sequence could not be found.
  */
-typedef std::size_t BarcodeIndex;
+typedef std::size_t SeqIndex;
 
 // We assume that size_t == vector::size_type here, which is reasonable:
 // see comments at https://stackoverflow.com/questions/36483817/how-do-i-declare-a-vector-of-vectorsize-type
-// This allows us to use BarcodeIndex to safely index into a vector.
+// This allows us to use SeqIndex to safely index into a vector.
 
 /**
  * No match to any known barcode.
  */
-inline constexpr BarcodeIndex BARCODE_UNMATCHED = static_cast<BarcodeIndex>(-1);
+inline constexpr SeqIndex UNMATCHED = static_cast<SeqIndex>(-1);
 
 /**
  * @cond

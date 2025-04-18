@@ -23,7 +23,7 @@ namespace kaori {
  * @cond
  */
 template<typename Trie_>
-inline void fill_library(const std::vector<const char*>& options, std::unordered_map<std::string, BarcodeIndex>& exact, Trie_& trie, bool reverse) {
+inline void fill_library(const std::vector<const char*>& options, std::unordered_map<std::string, SeqIndex>& exact, Trie_& trie, bool reverse) {
     std::size_t len = trie.length();
     auto nopt = options.size();
 
@@ -48,7 +48,7 @@ inline void fill_library(const std::vector<const char*>& options, std::unordered
             if (!status.is_duplicate || status.duplicate_replaced) {
                 exact[current] = i;
             } else if (status.duplicate_cleared) {
-                exact[current] = BARCODE_UNMATCHED;
+                exact[current] = UNMATCHED;
             }
         }
     }
@@ -76,7 +76,7 @@ public:
         /**
          * Maximum number of mismatches for any search performed by `SimpleBarcodeSearch::search`.
          */
-        BarcodeLength max_mismatches = 0;
+        SeqLength max_mismatches = 0;
 
         /** 
          * Whether to reverse-complement the barcode sequences before indexing them.
@@ -105,15 +105,19 @@ public:
         my_max_mm(options.max_mismatches) 
     {
         fill_library(barcode_pool.pool(), my_exact, my_trie, options.reverse);
-        return;
     }
 
 private:
+    AnyMismatches my_trie;
+    SeqLength my_max_mm;
+    std::unordered_map<std::string, SeqLength> my_exact;
+
     struct CacheEntry {
-        CacheEntry(BarcodeIndex index, BarcodeLength mismatches) : index(index), mismatches(mismatches) {}
-        BarcodeIndex index;
-        BarcodeLength mismatches;
+        CacheEntry(SeqIndex index, SeqLength mismatches) : index(index), mismatches(mismatches) {}
+        SeqIndex index;
+        SeqLength mismatches;
     };
+    std::unordered_map<std::string, CacheEntry> my_cache;
 
 public:
     /**
@@ -125,15 +129,15 @@ public:
     struct State {
         /**
          * Index of the known sequence that matches best to the input sequence in `search()` (i.e., fewest total mismatches).
-         * If no match was found or if the best match is ambiguous, this will be set to `BARCODE_UNMATCHED`.
+         * If no match was found or if the best match is ambiguous, this will be set to `UNMATCHED`.
          */
-        BarcodeIndex index = 0;
+        SeqIndex index = 0;
 
         /**
          * Number of mismatches with the matching known sequence.
          * This should only be used if `index` has a value.
          */
-        BarcodeLength mismatches = 0;
+        SeqLength mismatches = 0;
         
         /**
          * @cond
@@ -193,7 +197,7 @@ public:
      * @param allowed_mismatches Allowed number of mismatches.
      * This should not be greater than the maximum specified in the constructor.
      */
-    void search(const std::string& search_seq, State& state, BarcodeLength allowed_mismatches) const {
+    void search(const std::string& search_seq, State& state, SeqLength allowed_mismatches) const {
         auto it = my_exact.find(search_seq);
         if (it != my_exact.end()) {
             state.index = it->second;
@@ -202,7 +206,7 @@ public:
         }
 
         auto set_unmatched = [&]() -> void {
-            state.index = BARCODE_UNMATCHED;
+            state.index = UNMATCHED;
             state.mismatches = 0;
         };
 
@@ -248,17 +252,11 @@ public:
         // cache when the requested number of mismatches is equal to the
         // maximum number of mismatches that was specified in the constructor.
         if (allowed_mismatches == max_mismatches) {
-            state.cache[x] = CacheEntry(BARCODE_UNMATCHED, 0);
+            state.cache[x] = CacheEntry(UNMATCHED, 0);
         }
 
         set_unmatched();
     }
-
-private:
-    std::unordered_map<std::string, BarcodeLength> my_exact;
-    AnyMismatches my_trie;
-    std::unordered_map<std::string, CacheEntry> my_cache;
-    BarcodeLength my_max_mm;
 };
 
 /**
@@ -281,7 +279,7 @@ public:
          * @param max_mismatch_per_segment Maximum number of mismatches per segment.
          * This is used to fill `max_mismatches`.
          */
-        Options(BarcodeLength max_mismatch_per_segment = 0) {
+        Options(SeqLength max_mismatch_per_segment = 0) {
             max_mismatches.fill(max_mismatch_per_segment);
         }
         
@@ -290,7 +288,7 @@ public:
          * All values should be non-negative.
          * Defaults to an all-zero array in the `Options()` constructor.
          */
-        std::array<BarcodeLength, num_segments_> max_mismatches;
+        std::array<SeqLength, num_segments_> max_mismatches;
 
         /** 
          * Whether to reverse-complement the barcode sequences before indexing them.
@@ -318,7 +316,7 @@ public:
      */
     SegmentedBarcodeSearch(
         const BarcodePool& barcode_pool, 
-        std::array<BarcodeLength, num_segments_> segments, 
+        std::array<SeqLength, num_segments_> segments, 
         const Options& options
     ) : 
         trie(
@@ -344,7 +342,6 @@ public:
             throw std::runtime_error("variable sequences should have the same length as the sum of segment lengths");
         }
         fill_library(barcode_pool.pool(), exact, trie, options.reverse);
-        return;
     }
 
 public:
@@ -357,21 +354,21 @@ public:
     struct State {
         /**
          * Index of the known sequence that matches best to the input sequence in `search()` (i.e., fewest total mismatches).
-         * If no match was found or if the best match is ambiguous, this will be set to `BARCODE_UNMATCHED`.
+         * If no match was found or if the best match is ambiguous, this will be set to `UNMATCHED`.
          */
-        BarcodeIndex index = 0;
+        SeqIndex index = 0;
 
         /**
          * Total number of mismatches with the matching known sequence, summed across all segments.
-         * This should only be used if `index != BARCODE_UNMATCHED`.
+         * This should only be used if `index != UNMATCHED`.
          */
-        BarcodeLength mismatches = 0;
+        SeqLength mismatches = 0;
 
         /**
          * Number of mismatches in each segment.
-         * This should only be used if `index != BARCODE_UNMATCHED`.
+         * This should only be used if `index != UNMATCHED`.
          */
-        std::array<BarcodeLength, num_segments_> per_segment;
+        std::array<SeqLength, num_segments_> per_segment;
         
         /**
          * @cond
@@ -407,13 +404,18 @@ public:
     }
 
 private:
+    SegmentedMismatches<num_segments_> my_trie;
+    std::array<int, num_segments_> my_max_mm;
+    std::unordered_map<std::string, int> my_exact;
+
     struct CacheEntry {
-        CacheEntry(BarcodeIndex index, BarcodeLength total, std::array<BarcodeLength, num_segments_> per_segment) :
-            index(index), total(total), per_segment(per_segment) {}
-        BarcodeIndex index;
-        BarcodeLength total;
-        std::array<BarcodeLength, num_segments_> per_segment;
+        CacheEntry(SeqIndex index, SeqLength mismatches, std::array<SeqLength, num_segments_> per_segment) :
+            index(index), mismatches(mismatches), per_segment(per_segment) {}
+        SeqIndex index;
+        SeqLength mismatches;
+        std::array<SeqLength, num_segments_> per_segment;
     };
+    std::unordered_map<std::string, CacheEntry> cache;
 
 public:
     /**
@@ -452,15 +454,15 @@ public:
         }
 
         auto set_unmatched = [&]() -> void {
-            state.index = BARCODE_UNMATCHED;
+            state.index = UNMATCHED;
             state.mismatches = 0;
             std::fill_n(state.per_segment, num_segments_, 0);
         };
 
         auto set_matched = [&](const CacheEntry& cached) -> void {
-            state.index = cached_index;
-            state.mismatches = cached_mismatches;
-            state.per_segment = cached_per_segments;
+            state.index = cached.index;
+            state.mismatches = cached.mismatches;
+            state.per_segment = cached.per_segments;
         };
 
         auto set_from_cache = [&](const CacheEntry& cached) -> void {
@@ -502,17 +504,11 @@ public:
         // cache when the requested number of mismatches is equal to the
         // maximum number of mismatches that was specified in the constructor.
         if (allowed_mismatches == my_max_mm) {
-            state.cache[x] = CacheEntry(BARCODE_UNMATCHED, 0, {});
+            state.cache[x] = CacheEntry(UNMATCHED, 0, {});
         }
 
         set_unmatched();
     }
-
-private:
-    std::unordered_map<std::string, int> exact;
-    SegmentedMismatches<num_segments_> trie;
-    std::unordered_map<std::string, CacheEntry> cache;
-    std::array<int, num_segments_> max_mm;
 };
 
 }

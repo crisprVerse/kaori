@@ -67,14 +67,14 @@ public:
     /**
      * @return Length of each sequence in `pool()`.
      */
-    std::size_t length() const {
+    SeqLength length() const {
         return my_length;
     }
 
     /**
      * @return Number of sequences in `pool()`.
      */
-    BarcodeIndex size() const {
+    SeqIndex size() const {
         return my_pool.size();
     }
 
@@ -82,7 +82,7 @@ public:
      * @param i Index of the barcode  sequence of interest.
      * @return Pointer to the `i`-th sequence in the pool.
      */
-    const char* operator[](BarcodeIndex i) const {
+    const char* operator[](SeqIndex i) const {
         return my_pool[i];
     }
 };
