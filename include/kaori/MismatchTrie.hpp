@@ -19,9 +19,12 @@ namespace kaori {
 
 /**
  * Integer type for the trie indices.
- * This is semantically different from `SeqIndex` as it can have the special values `TRIE_STATUS_MISSING` and `TRIE_STATUS_AMBIGUOUS`.
+ * This is semantically different from `BarcodeIndex` as it can have the special values `TRIE_STATUS_MISSING` and `TRIE_STATUS_AMBIGUOUS`.
  */
 typedef std::size_t TrieIndex;
+
+// We would prefer to use size_type but then the template would be recursive,
+// i.e., std::vector<typename std::vector<[??recursion here??]>::size_type>.
 
 /**
  * No match to a known barcode in the trie.
@@ -34,7 +37,7 @@ inline constexpr TrieIndex TRIE_STATUS_MISSING = static_cast<TrieIndex>(-1);
 inline constexpr TrieIndex TRIE_STATUS_AMBIGUOUS = static_cast<TrieIndex>(-2);
 
 /**
- * @param index An index in the trie, as returned by, e.g., `AnyMismatches::search()`. 
+ * @param index An index in the trie as returned by, e.g., `AnyMismatches::search()`. 
  * @return Whether `index` corresponds to a barcode.
  * If false, `index` represents one of the error codes, i.e., `TRIE_STATUS_MISSING` or `TRIE_STATUS_AMBIGUOUS`.
  */
@@ -85,10 +88,6 @@ public:
 private:
     SeqLength my_length;
     DuplicateAction my_duplicates;
-
-    // Guarantee at least 64 bits to store node pointers. We would prefer to
-    // use size_type but then the template would be recursive, i.e.,
-    // std::vector<typename std::vector<[??recursion here??]>::size_type>.
     std::vector<TrieIndex> my_pointers;
     TrieIndex my_counter = 0;
 

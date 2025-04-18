@@ -22,7 +22,7 @@ namespace kaori {
  *
  * @tparam max_size_ Maximum length of the template sequences on both reads.
  */
-template<size_t max_size_>
+template<SeqLength max_size_>
 class DualBarcodesPairedEndWithDiagnostics { 
 public:
     /**
@@ -42,8 +42,8 @@ public:
      * Corresponding values across the two pools define a particular combination of dual barcodes. 
      */
     DualBarcodesPairedEndWithDiagnostics(
-        const char* template_seq1, size_t template_length1, const BarcodePool& barcode_pool1,
-        const char* template_seq2, size_t template_length2, const BarcodePool& barcode_pool2, 
+        const char* template_seq1, SeqLength template_length1, const BarcodePool& barcode_pool1,
+        const char* template_seq2, SeqLength template_length2, const BarcodePool& barcode_pool2, 
         const typename DualBarcodesPairedEnd<max_size_>::Options& options
     ) :
         my_dual_handler(
@@ -143,7 +143,7 @@ public:
      * This has length equal to the number of valid dual barcode combinations (i.e., the length of `barcode_pool1` and `barcode_pool2` in the constructor).
      * Each entry contains the count for the corresponding dual barcode combination.
      */
-    const std::vector<int>& get_counts() const {
+    const std::vector<Count>& get_counts() const {
         return my_dual_handler.get_counts();
     }
 
@@ -151,28 +151,28 @@ public:
      * @return All invalid combinations encountered by the handler.
      * In each array, the first and second element contains the indices of known barcodes in the first and second pools, respectively.
      */
-    const std::vector<std::array<int, 2> >& get_combinations() const {
+    const std::vector<std::array<BarcodeIndex, 2> >& get_combinations() const {
         return my_combo_handler.get_combinations();
     }
 
     /**
      * @return Total number of read pairs processed by the handler.
      */
-    int get_total() const {
+    Count get_total() const {
         return my_dual_handler.get_total();
     }
 
     /**
      * @return Number of read pairs with a valid match to the first barcode but no valid match to the second barcode.
      */
-    int get_barcode1_only() const {
+    Count get_barcode1_only() const {
         return my_combo_handler.get_barcode1_only();
     }
 
     /**
      * @return Number of read pairs with a valid match to the second barcode but no valid match to the first barcode.
      */
-    int get_barcode2_only() const {
+    Count get_barcode2_only() const {
         return my_combo_handler.get_barcode2_only();
     }
 };
@@ -181,7 +181,7 @@ public:
  * @cond
  */
 // Soft-deprecated back-compatible aliases.
-template<size_t max_size_>
+template<SeqLength max_size_>
 using DualBarcodesWithDiagnostics = DualBarcodesPairedEndWithDiagnostics<max_size_>;
 /**
  * @endcond

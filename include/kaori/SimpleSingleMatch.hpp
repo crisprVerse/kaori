@@ -110,7 +110,7 @@ public:
          * Index of the known barcode sequence that matches the variable region in the read sequence, after each call to `search()`.
          * This will be set to `UNMATCHED` if no match was found.
          */
-        SeqIndex index = UNMATCHED;
+        BarcodeIndex index = UNMATCHED;
 
         /**
          * Position of the match to the template after each call to `search()`.
@@ -174,10 +174,6 @@ public:
     }
 
 private:
-    bool has_match(SeqIndex obs_index, SeqLength obs_mismatches) const {
-        return (obs_index != UNMATCHED && obs_mismatches <= my_max_mm);
-    }
-
     void forward_match(const char* seq, const typename ScanTemplate<max_size_>::State& details, State& state) const {
         auto start = seq + details.position;
         const auto& range = my_constant.forward_variable_regions()[0];
@@ -236,14 +232,14 @@ public:
         while (!deets.finished) {
             my_constant.next(deets);
 
-            if (my_forward && has_match(deets.position, deets.forward_mismatches)) {
+            if (my_forward && deets.forward_mismatches <= my_max_mm) {
                 forward_match(read_seq, deets, state);
                 if (update(false, deets.forward_mismatches, state.forward_details)) {
                     break;
                 }
             }
 
-            if (my_reverse && has_match(deets.position, deets.reverse_mismatches)) {
+            if (my_reverse && deets.reverse_mismatches <= my_max_mm) {
                 reverse_match(read_seq, deets, state);
                 if (update(true, deets.reverse_mismatches, state.reverse_details)) {
                     break;

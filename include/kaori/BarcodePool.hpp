@@ -74,7 +74,7 @@ public:
     /**
      * @return Number of sequences in `pool()`.
      */
-    SeqIndex size() const {
+    BarcodeIndex size() const {
         return my_pool.size();
     }
 
@@ -82,7 +82,7 @@ public:
      * @param i Index of the barcode  sequence of interest.
      * @return Pointer to the `i`-th sequence in the pool.
      */
-    const char* operator[](SeqIndex i) const {
+    const char* operator[](BarcodeIndex i) const {
         return my_pool[i];
     }
 };

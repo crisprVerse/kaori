@@ -21,7 +21,7 @@ namespace kaori {
  *
  * @tparam max_size_ Maximum length of the template sequences on both reads.
  */
-template<size_t max_size_>
+template<SeqLength max_size_>
 class SingleBarcodeSingleEnd {
 public:
     /**
@@ -31,7 +31,7 @@ public:
         /** 
          * Maximum number of mismatches allowed across the barcoding element.
          */
-        int max_mismatches = 0;
+        SeqLength max_mismatches = 0;
 
         /** 
          * Whether to search only for the first match.
@@ -59,7 +59,7 @@ public:
      * @param barcode_pool Known barcode sequences for the variable region.
      * @param options Optional parameters.
      */
-    SingleBarcodeSingleEnd(const char* template_seq, size_t template_length, const BarcodePool& barcode_pool, const Options& options) :
+    SingleBarcodeSingleEnd(const char* template_seq, SeqLength template_length, const BarcodePool& barcode_pool, const Options& options) :
         my_matcher(
             template_seq, 
             template_length,
@@ -83,11 +83,11 @@ public:
     struct State {
         State() {}
 
-        State(typename SimpleSingleMatch<max_size_>::State s, size_t nvar) : search(std::move(s)), counts(nvar) {}
+        State(typename SimpleSingleMatch<max_size_>::State s, decltype(counts.size()) nvar) : search(std::move(s)), counts(nvar) {}
 
         typename SimpleSingleMatch<max_size_>::State search;
-        std::vector<int> counts;
-        int total = 0;
+        std::vector<Count> counts;
+        Count total = 0;
     };
 
     void process(State& state, const std::pair<const char*, const char*>& x) const {
@@ -118,7 +118,7 @@ public:
 
     void reduce(State& s) {
         my_matcher.reduce(s.search);
-        for (size_t i = 0, end = my_counts.size(); i < end; ++i) {
+        for (decltype(my_counts.size()) i = 0, end = my_counts.size(); i < end; ++i) {
             my_counts[i] += s.counts[i];
         }
         my_total += s.total;
@@ -129,8 +129,8 @@ public:
 
 private:
     SimpleSingleMatch<max_size_> my_matcher;
-    std::vector<int> my_counts;
-    int my_total = 0;
+    std::vector<Count> my_counts;
+    Count my_total = 0;
     bool my_use_first;
 
 public:
@@ -138,14 +138,14 @@ public:
      * @return Vector containing the frequency of each barcode.
      * This has length equal to the number of valid barcodes (i.e., the length of `barcode_pool` in the constructor).
      */
-    const std::vector<int>& get_counts() const {
+    const std::vector<Count>& get_counts() const {
         return my_counts;        
     }
 
     /**
      * @return Total number of reads processed by the handler.
      */
-    int get_total() const {
+    Count get_total() const {
         return my_total;
     }
 };

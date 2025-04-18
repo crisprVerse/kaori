@@ -107,20 +107,20 @@ public:
      */
     struct State {
         /**
-         * Position of the match to the template on the read sequence after each call to `next()`.
-         * This is set to `UNMATCHED` if no match can be found.
+         * Position of the match to the template on the read sequence.
+         * This should only be used after a call to `next()`.
          */
-        SeqLength position = UNMATCHED;
+        SeqLength position = static_cast<SeqLength>(-1); // set to -1 so that the first call to next() overflows to 0.
 
         /**
-         * Number of mismatches on the forward strand after each call to `next()`.
-         * This should only be used if `position != UNMATCHED`.
+         * Number of mismatches on the forward strand at the current position.
+         * This should only be used after a call to `next()`, and only if the forward strand is searched.
          */
         SeqLength forward_mismatches = 0;
 
         /**
-         * Number of mismatches on the reverse strand after each call to `next()`.
-         * This should only be used if `position != UNMATCHED`.
+         * Number of mismatches on the reverse strand at the current position.
+         * This should only be used after a call to `next()`, and only if the reverse strand is searched.
          */
         SeqLength reverse_mismatches = 0;
 

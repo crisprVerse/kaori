@@ -22,7 +22,7 @@ namespace kaori {
  * @tparam max_size_ Maximum length of the template sequences on both reads.
  * @tparam num_variable_ Number of the template sequences on both reads.
  */
-template<size_t max_size_, size_t num_variable_>
+template<SeqLength max_size_, int num_variable_>
 class DualBarcodesSingleEndWithDiagnostics { 
 public:
     /**
@@ -35,7 +35,7 @@ public:
      */
     DualBarcodesSingleEndWithDiagnostics(
         const char* template_seq, 
-        size_t template_length, 
+        SeqLength template_length, 
         const std::vector<BarcodePool>& barcode_pools, 
         const typename DualBarcodesSingleEnd<max_size_>::Options& options
     ) :
@@ -128,7 +128,7 @@ public:
      * This has length equal to the number of valid dual barcode combinations (i.e., the length of `barcode_pool1` and `barcode_pool2` in the constructor).
      * Each entry contains the count for the corresponding dual barcode combination.
      */
-    const std::vector<int>& get_counts() const {
+    const std::vector<Count>& get_counts() const {
         return my_dual_handler.get_counts();
     }
 
@@ -136,14 +136,14 @@ public:
      * @return All invalid combinations encountered by the handler.
      * In each array, the first and second element contains the indices of known barcodes in the first and second pools, respectively.
      */
-    const std::vector<std::array<int, num_variable_> >& get_combinations() const {
+    const std::vector<std::array<BarcodeIndex, num_variable_> >& get_combinations() const {
         return my_combo_handler.get_combinations();
     }
 
     /**
      * @return Total number of reads processed by the handler.
      */
-    int get_total() const {
+    Count get_total() const {
         return my_dual_handler.get_total();
     }
 };

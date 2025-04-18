@@ -27,7 +27,7 @@ namespace kaori {
  * @tparam max_size_ Maximum length of the template sequences on both reads.
  * @tparam num_variable_ Number of variable regions in the construct.
  */
-template<size_t max_size_, size_t num_variable_>
+template<SeqLength max_size_, int num_variable_>
 class CombinatorialBarcodesSingleEnd {
 public:
     /**
@@ -37,7 +37,7 @@ public:
         /**
          * Maximum number of mismatches allowed across the barcoding element.
          */
-        int max_mismatches = 0;
+        SeqLength max_mismatches = 0;
 
         /** @param Whether to search only for the first match.
          * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
@@ -68,7 +68,7 @@ public:
      * usually either a `std::vector` or a `std::array`.
      */
     template<class BarcodePoolContainer>
-    CombinatorialBarcodesSingleEnd(const char* template_seq, size_t template_length, const BarcodePoolContainer& barcode_pools, const Options& options) :
+    CombinatorialBarcodesSingleEnd(const char* template_seq, SeqLength template_length, const BarcodePoolContainer& barcode_pools, const Options& options) :
         my_forward(search_forward(options.strand)),
         my_reverse(search_reverse(options.strand)),
         my_max_mm(options.max_mismatches),
@@ -83,9 +83,9 @@ public:
             throw std::runtime_error("length of 'barcode_pools' should be equal to the number of variable regions");
         }
 
-        for (size_t i = 0; i < num_variable_; ++i) {
-            size_t rlen = regions[i].second - regions[i].first;
-            size_t vlen = barcode_pools[i].length();
+        for (int i = 0; i < num_variable_; ++i) {
+            SeqLength rlen = regions[i].second - regions[i].first;
+            SeqLength vlen = barcode_pools[i].length();
             if (vlen != rlen) {
                 throw std::runtime_error("length of variable region " + std::to_string(i + 1) + " (" + std::to_string(rlen) + 
                     ") should be the same as its sequences (" + std::to_string(vlen) + ")");
@@ -93,7 +93,7 @@ public:
         }
 
         // We'll be using this later.
-        for (size_t i = 0; i < num_variable_; ++i) {
+        for (int i = 0; i < num_variable_; ++i) {
             my_pool_size[i] = barcode_pools[i].pool().size();
         }
 
@@ -103,14 +103,14 @@ public:
 
         if (my_forward) {
             bopt.reverse = false;
-            for (size_t i = 0; i < num_variable_; ++i) {
+            for (int i = 0; i < num_variable_; ++i) {
                 my_forward_lib[i] = SimpleBarcodeSearch(barcode_pools[i], bopt);
             }
         }
 
         if (my_reverse) {
             bopt.reverse = true;
-            for (size_t i = 0; i < num_variable_; ++i) {
+            for (int i = 0; i < num_variable_; ++i) {
                 my_reverse_lib[i] = SimpleBarcodeSearch(barcode_pools[num_variable_ - i - 1], bopt);
             }
         }
@@ -130,26 +130,25 @@ public:
 private:
     bool my_forward;
     bool my_reverse;
-    int my_max_mm;
+    SeqLength my_max_mm;
     bool my_use_first;
-    size_t my_nregions;
 
     ScanTemplate<max_size_> my_constant_matcher;
     std::array<SimpleBarcodeSearch, num_variable_> my_forward_lib, my_reverse_lib;
-    std::array<size_t, num_variable_> my_pool_size;
+    std::array<BarcodeIndex, num_variable_> my_pool_size;
 
-    std::vector<std::array<int, num_variable_> > my_combinations;
-    int my_total = 0;
+    std::vector<std::array<BarcodeIndex, num_variable_> > my_combinations;
+    Count my_total = 0;
 
 public:
     /**
      * @cond
      */
     struct State {
-        std::vector<std::array<int, num_variable_> >collected;
-        int total = 0;
+        std::vector<std::array<BarcodeIndex, num_variable_> >collected;
+        Count total = 0;
 
-        std::array<int, num_variable_> temp;
+        std::array<BarcodeIndex, num_variable_> temp;
         std::string buffer;
 
         // Default constructors should be called in this case, so it should be fine.
@@ -160,20 +159,20 @@ public:
      */
 
 private:
-    std::pair<bool, int> find_match(
+    std::pair<bool, SeqLength> find_match(
         bool reverse,
         const char* seq, 
-        size_t position, 
-        int obs_mismatches, 
+        SeqLength position, 
+        SeqLength obs_mismatches, 
         const std::array<SimpleBarcodeSearch, num_variable_>& libs, 
         std::array<typename SimpleBarcodeSearch::State, num_variable_>& states, 
-        std::array<int, num_variable_>& temp,
+        std::array<BarcodeIndex, num_variable_>& temp,
         std::string& buffer
     ) const {
         const auto& regions = my_constant_matcher.variable_regions(reverse); 
 
-        for (size_t r = 0; r < num_variable_; ++r) {
-            auto range = regions[r];
+        for (int r = 0; r < num_variable_; ++r) {
+            const auto& range = regions[r];
             auto start = seq + position;
             buffer.clear(); // clear and insert preserves buffer's existing heap allocation.
             buffer.insert(buffer.end(), start + range.first, start + range.second);
@@ -199,11 +198,11 @@ private:
         return std::make_pair(true, obs_mismatches);
     }
 
-    std::pair<bool, int> forward_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
+    std::pair<bool, SeqLength> forward_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
         return find_match(false, seq, deets.position, deets.forward_mismatches, my_forward_lib, state.forward_details, state.temp, state.buffer);
     }
 
-    std::pair<bool, int> reverse_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
+    std::pair<bool, SeqLength> reverse_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
         return find_match(true, seq, deets.position, deets.reverse_mismatches, my_reverse_lib, state.reverse_details, state.temp, state.buffer);
     }
 
@@ -233,10 +232,10 @@ private:
     void process_best(State& state, const std::pair<const char*, const char*>& x) const {
         auto deets = my_constant_matcher.initialize(x.first, x.second - x.first);
         bool found = false;
-        int best_mismatches = my_max_mm + 1;
-        std::array<int, num_variable_> best_id;
+        SeqLength best_mismatches = my_max_mm + 1;
+        std::array<BarcodeIndex, num_variable_> best_id;
 
-        auto update = [&](std::pair<bool, int> match) -> void {
+        auto update = [&](std::pair<bool, SeqLength> match) -> void {
             if (match.first && match.second <= best_mismatches) {
                 if (match.second == best_mismatches) {
                     if (best_id != state.temp) { // ambiguous.
@@ -281,12 +280,12 @@ public:
 
     void reduce(State& s) {
         if (my_forward) {
-            for (size_t r = 0; r < num_variable_; ++r) {
+            for (int r = 0; r < num_variable_; ++r) {
                 my_forward_lib[r].reduce(s.forward_details[r]);
             }
         }
         if (my_reverse) {
-            for (size_t r = 0; r < num_variable_; ++r) {
+            for (int r = 0; r < num_variable_; ++r) {
                 my_reverse_lib[r].reduce(s.reverse_details[r]);
             }
         }
@@ -321,14 +320,14 @@ public:
     /**
      * @return All combinations encountered by the handler.
      */
-    const std::vector<std::array<int, num_variable_> >& get_combinations() const {
+    const std::vector<std::array<BarcodeIndex, num_variable_> >& get_combinations() const {
         return my_combinations;
     }
 
     /**
      * @return Total number of reads processed by the handler.
      */
-    int get_total() const {
+    Count get_total() const {
         return my_total;
     }
 };

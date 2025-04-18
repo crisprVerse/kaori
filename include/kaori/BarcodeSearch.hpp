@@ -23,7 +23,7 @@ namespace kaori {
  * @cond
  */
 template<typename Trie_>
-inline void fill_library(const std::vector<const char*>& options, std::unordered_map<std::string, SeqIndex>& exact, Trie_& trie, bool reverse) {
+inline void fill_library(const std::vector<const char*>& options, std::unordered_map<std::string, BarcodeIndex>& exact, Trie_& trie, bool reverse) {
     std::size_t len = trie.length();
     auto nopt = options.size();
 
@@ -113,8 +113,8 @@ private:
     std::unordered_map<std::string, SeqLength> my_exact;
 
     struct CacheEntry {
-        CacheEntry(SeqIndex index, SeqLength mismatches) : index(index), mismatches(mismatches) {}
-        SeqIndex index;
+        CacheEntry(BarcodeIndex index, SeqLength mismatches) : index(index), mismatches(mismatches) {}
+        BarcodeIndex index;
         SeqLength mismatches;
     };
     std::unordered_map<std::string, CacheEntry> my_cache;
@@ -131,7 +131,7 @@ public:
          * Index of the known sequence that matches best to the input sequence in `search()` (i.e., fewest total mismatches).
          * If no match was found or if the best match is ambiguous, this will be set to `UNMATCHED`.
          */
-        SeqIndex index = 0;
+        BarcodeIndex index = 0;
 
         /**
          * Number of mismatches with the matching known sequence.
@@ -356,7 +356,7 @@ public:
          * Index of the known sequence that matches best to the input sequence in `search()` (i.e., fewest total mismatches).
          * If no match was found or if the best match is ambiguous, this will be set to `UNMATCHED`.
          */
-        SeqIndex index = 0;
+        BarcodeIndex index = 0;
 
         /**
          * Total number of mismatches with the matching known sequence, summed across all segments.
@@ -409,9 +409,9 @@ private:
     std::unordered_map<std::string, int> my_exact;
 
     struct CacheEntry {
-        CacheEntry(SeqIndex index, SeqLength mismatches, std::array<SeqLength, num_segments_> per_segment) :
+        CacheEntry(BarcodeIndex index, SeqLength mismatches, std::array<SeqLength, num_segments_> per_segment) :
             index(index), mismatches(mismatches), per_segment(per_segment) {}
-        SeqIndex index;
+        BarcodeIndex index;
         SeqLength mismatches;
         std::array<SeqLength, num_segments_> per_segment;
     };
