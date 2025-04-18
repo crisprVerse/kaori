@@ -28,6 +28,25 @@ enum class DuplicateAction : char { FIRST, LAST, NONE, ERROR };
 enum class SearchStrand : char { FORWARD, REVERSE, BOTH };
 
 /**
+ * Integer type for the barcode lengths.
+ */
+typedef std::size_t BarcodeLength;
+
+/**
+ * Integer type for the barcode indices.
+ */
+typedef std::size_t BarcodeIndex;
+
+// We assume that size_t == vector::size_type here, which is reasonable:
+// see comments at https://stackoverflow.com/questions/36483817/how-do-i-declare-a-vector-of-vectorsize-type
+// This allows us to use BarcodeIndex to safely index into a vector.
+
+/**
+ * No match to any known barcode.
+ */
+inline constexpr BarcodeIndex BARCODE_UNMATCHED = static_cast<BarcodeIndex>(-1);
+
+/**
  * @cond
  */
 inline bool search_forward(SearchStrand x) {

@@ -3,6 +3,9 @@
 
 #include <vector>
 #include <string>
+#include <cstddef>
+
+#include "utils.h"
 
 /**
  * @file BarcodePool.hpp
@@ -29,7 +32,7 @@ public:
      * @param barcode_pool Vector of pointers to sequences of length `l`, containing the pool of possible barcode sequences.
      * @param barcode_length Length of each sequence.
      */
-    BarcodePool(std::vector<const char*> barcode_pool, size_t barcode_length) : my_pool(std::move(barcode_pool)), my_length(barcode_length) {}
+    BarcodePool(std::vector<const char*> barcode_pool, std::size_t barcode_length) : my_pool(std::move(barcode_pool)), my_length(barcode_length) {}
 
     /**
      * @param barcode_pool Vector of sequences of the same length, containing the pool of possible barcode sequences.
@@ -51,7 +54,7 @@ public:
 
 private:
     std::vector<const char*> my_pool;
-    size_t my_length = 0;
+    std::size_t my_length = 0;
 
 public:
     /**
@@ -64,14 +67,14 @@ public:
     /**
      * @return Length of each sequence in `pool()`.
      */
-    size_t length() const {
+    std::size_t length() const {
         return my_length;
     }
 
     /**
      * @return Number of sequences in `pool()`.
      */
-    size_t size() const {
+    BarcodeIndex size() const {
         return my_pool.size();
     }
 
@@ -79,7 +82,7 @@ public:
      * @param i Index of the barcode  sequence of interest.
      * @return Pointer to the `i`-th sequence in the pool.
      */
-    const char* operator[](size_t i) const {
+    const char* operator[](BarcodeIndex i) const {
         return my_pool[i];
     }
 };

@@ -4,6 +4,8 @@
 #include "BarcodePool.hpp"
 #include "MismatchTrie.hpp"
 #include "utils.hpp"
+
+#include <cstddef>
 #include <unordered_map>
 #include <string>
 #include <vector>
@@ -21,15 +23,11 @@ namespace kaori {
  * @cond
  */
 template<typename Trie_>
-inline void fill_library(
-    const std::vector<const char*>& options, 
-    std::unordered_map<std::string, int>& exact,
-    Trie_& trie,
-    bool reverse
-) {
-    size_t len = trie.length();
+inline void fill_library(const std::vector<const char*>& options, std::unordered_map<std::string, BarcodeIndex>& exact, Trie_& trie, bool reverse) {
+    std::size_t len = trie.length();
+    auto nopt = options.size();
 
-    for (size_t i = 0; i < options.size(); ++i) {
+    for (decltype(nopt) i = 0; i < nopt; ++i) {
         auto ptr = options[i];
 
         std::string current;
@@ -50,45 +48,12 @@ inline void fill_library(
             if (!status.is_duplicate || status.duplicate_replaced) {
                 exact[current] = i;
             } else if (status.duplicate_cleared) {
-                exact[current] = -1;
+                exact[current] = BARCODE_UNMATCHED;
             }
         }
     }
 
     trie.optimize();
-    return;
-}
-
-template<class Methods_, class Cache_, class Trie_, class Result_, class Mismatch_>
-void matcher_in_the_rye(const std::string& x, const Cache_& cache, const Trie_& trie, Result_& res, const Mismatch_& mismatches, const Mismatch_& max_mismatches) {
-    // Seeing if it's any of the caches; otherwise searching the trie.
-    auto cit = cache.find(x);
-    if (cit == cache.end()) {
-        auto lit = res.cache.find(x);
-        if (lit != res.cache.end()) {
-            Methods_::update(res, lit->second, mismatches);
-
-        } else {
-            auto missed = trie.search(x.c_str(), mismatches);
-
-            // The trie search breaks early when it hits the mismatch cap,
-            // but the cap might be different across calls. If we break
-            // early and report a miss, the miss will be cached and
-            // returned in cases where there is a higher cap (and thus
-            // might actually be a hit). As such, we should only store a
-            // miss in the cache when the requested number of mismatches is
-            // equal to the maximum value specified in the constructor.
-            if (Methods_::index(missed) >= 0 || mismatches == max_mismatches) {
-                res.cache[x] = missed;
-            }
-
-            // No need to pass the requested number of mismatches,
-            // as we explicitly searched for that in the trie.
-            Methods_::update(res, missed);
-        }
-    } else {
-        Methods_::update(res, cit->second, mismatches);
-    }
     return;
 }
 /** 
@@ -111,7 +76,7 @@ public:
         /**
          * Maximum number of mismatches for any search performed by `SimpleBarcodeSearch::search`.
          */
-        int max_mismatches = 0;
+        BarcodeLength max_mismatches = 0;
 
         /** 
          * Whether to reverse-complement the barcode sequences before indexing them.
@@ -143,30 +108,37 @@ public:
         return;
     }
 
+private:
+    struct CacheEntry {
+        CacheEntry(BarcodeIndex index, BarcodeLength mismatches) : index(index), mismatches(mismatches) {}
+        BarcodeIndex index;
+        BarcodeLength mismatches;
+    };
+
 public:
     /**
      * @brief State of the search.
      *
-     * This contains both the results of the search for any given input sequence,
+     * This contains both the results of `search()` for a given input sequence,
      * as well as cached mismatches to optimize searches for future inputs.
      */
     struct State {
         /**
          * Index of the known sequence that matches best to the input sequence in `search()` (i.e., fewest total mismatches).
-         * If no match was found or if the best match is ambiguous, this will be set to -1.
+         * If no match was found or if the best match is ambiguous, this will be set to `BARCODE_UNMATCHED`.
          */
-        int index = 0;
+        BarcodeIndex index = 0;
 
         /**
          * Number of mismatches with the matching known sequence.
-         * This should only be used if `index != -1`.
+         * This should only be used if `index` has a value.
          */
-        int mismatches = 0;
+        BarcodeLength mismatches = 0;
         
         /**
          * @cond
          */
-        std::unordered_map<std::string, std::pair<int, int> > cache;
+        std::unordered_map<std::string, CacheEntry> cache;
         /**
          * @endcond
          */
@@ -193,25 +165,6 @@ public:
         my_cache.merge(state.cache);
         state.cache.clear();
     }
-
-private:
-    struct Methods {
-        static int index(const std::pair<int, int>& val) {
-            return val.first;
-        }
-
-        static void update(State& state, const std::pair<int, int>& val) {
-            state.index = val.first;
-            state.mismatches = val.second;
-            return;
-        }
-
-        static void update(State& state, const std::pair<int, int>& val, int mismatches) {
-            state.index = (val.second > mismatches ? -1 : val.first);
-            state.mismatches = val.second;
-            return;
-        }
-    };
 
 public:
     /**
@@ -240,21 +193,72 @@ public:
      * @param allowed_mismatches Allowed number of mismatches.
      * This should not be greater than the maximum specified in the constructor.
      */
-    void search(const std::string& search_seq, State& state, int allowed_mismatches) const {
+    void search(const std::string& search_seq, State& state, BarcodeLength allowed_mismatches) const {
         auto it = my_exact.find(search_seq);
         if (it != my_exact.end()) {
             state.index = it->second;
             state.mismatches = 0;
-        } else {
-            matcher_in_the_rye<Methods>(search_seq, my_cache, my_trie, state, allowed_mismatches, my_max_mm);
+            return;
         }
+
+        auto set_unmatched = [&]() -> void {
+            state.index = BARCODE_UNMATCHED;
+            state.mismatches = 0;
+        };
+
+        auto set_matched = [&](const CacheEntry& cached) -> void {
+            state.index = cached.index;
+            state.mismatches = cached.mismatches;
+        };
+
+        auto set_from_cache = [&](const CacheEntry& cached) -> void {
+            if (cached.mismatches > allowed_mismatches) {
+                set_unmatched();
+            } else {
+                set_matched(cached);
+            }
+        };
+
+        auto cit = cache.find(x);
+        if (cit != cache.end()) {
+            set_from_cache(cIt->second);
+            return;
+        }
+
+        auto lIt = res.cache.find(x);
+        if (lIt != res.cache.end()) {
+            set_from_cache(lIt->second);
+            return;
+        }
+
+        auto missed = trie.search(x.c_str(), allowed_mismatches);
+        if (is_trie_index_ok(missed.first)) {
+            // No need to check the requested number of mismatches, as we explicitly searched for that in the trie.
+            CacheEntry cached(missed.first, missed.second);
+            set_matched(cached);
+            state.cache[x] = std::move(cached);
+            return;
+        }
+
+        // The trie search breaks early when it hits allowed_mismatches, but
+        // allowed_mismatches might be different across calls to search(). If
+        // we break early and report a miss, the miss will be cached and
+        // returned in cases where there is a higher cap (and thus might
+        // actually be a hit). As such, we should only store a miss in the
+        // cache when the requested number of mismatches is equal to the
+        // maximum number of mismatches that was specified in the constructor.
+        if (allowed_mismatches == max_mismatches) {
+            state.cache[x] = CacheEntry(BARCODE_UNMATCHED, 0);
+        }
+
+        set_unmatched();
     }
 
 private:
-    std::unordered_map<std::string, int> my_exact;
+    std::unordered_map<std::string, BarcodeLength> my_exact;
     AnyMismatches my_trie;
-    std::unordered_map<std::string, std::pair<int, int> > my_cache;
-    int my_max_mm;
+    std::unordered_map<std::string, CacheEntry> my_cache;
+    BarcodeLength my_max_mm;
 };
 
 /**
@@ -266,7 +270,7 @@ private:
  *
  * @tparam num_segments_ Number of segments to consider.
  */
-template<size_t num_segments_>
+template<int num_segments_>
 class SegmentedBarcodeSearch {
 public:
     /**
@@ -277,7 +281,7 @@ public:
          * @param max_mismatch_per_segment Maximum number of mismatches per segment.
          * This is used to fill `max_mismatches`.
          */
-        Options(int max_mismatch_per_segment = 0) {
+        Options(BarcodeLength max_mismatch_per_segment = 0) {
             max_mismatches.fill(max_mismatch_per_segment);
         }
         
@@ -286,7 +290,7 @@ public:
          * All values should be non-negative.
          * Defaults to an all-zero array in the `Options()` constructor.
          */
-        std::array<int, num_segments_> max_mismatches;
+        std::array<BarcodeLength, num_segments_> max_mismatches;
 
         /** 
          * Whether to reverse-complement the barcode sequences before indexing them.
@@ -314,29 +318,26 @@ public:
      */
     SegmentedBarcodeSearch(
         const BarcodePool& barcode_pool, 
-        std::array<int, num_segments_> segments, 
+        std::array<BarcodeLength, num_segments_> segments, 
         const Options& options
     ) : 
         trie(
-            (!options.reverse ? 
-                segments :
-                [&]{
-                    auto copy = segments;
-                    std::reverse(copy.begin(), copy.end());
-                    return copy;
-                }()
-            ),
+            [&]{
+                if (options.reverse) {
+                    std::reverse(segments.begin(), segments.end());
+                }
+                return segments;
+            }(),
             options.duplicates
         ), 
         max_mm(
-            (!options.reverse ?
-                options.max_mismatches :
-                [&]{
-                    auto copy = options.max_mismatches;
+            [&]{
+                auto copy = options.max_mismatches;
+                if (options.reverse) {
                     std::reverse(copy.begin(), copy.end());
-                    return copy;
-                }()
-            )
+                }
+                return copy;
+            }()
         )
     {
         if (barcode_pool.length() != trie.length()) {
@@ -356,28 +357,28 @@ public:
     struct State {
         /**
          * Index of the known sequence that matches best to the input sequence in `search()` (i.e., fewest total mismatches).
-         * If no match was found or if the best match is ambiguous, this will be set to -1.
+         * If no match was found or if the best match is ambiguous, this will be set to `BARCODE_UNMATCHED`.
          */
-        int index = 0;
+        BarcodeIndex index = 0;
 
         /**
          * Total number of mismatches with the matching known sequence, summed across all segments.
-         * This should only be used if `index != -1`.
+         * This should only be used if `index != BARCODE_UNMATCHED`.
          */
-        int mismatches = 0;
+        BarcodeLength mismatches = 0;
 
         /**
          * Number of mismatches in each segment.
-         * This should only be used if `index != -1`.
+         * This should only be used if `index != BARCODE_UNMATCHED`.
          */
-        std::array<int, num_segments_> per_segment;
+        std::array<BarcodeLength, num_segments_> per_segment;
         
         /**
          * @cond
          */
         State() : per_segment() {}
 
-        std::unordered_map<std::string, typename SegmentedMismatches<num_segments_>::Result> cache;
+        std::unordered_map<std::string, CacheEntry> cache;
         /**
          * @endcond
          */
@@ -406,34 +407,12 @@ public:
     }
 
 private:
-    typedef typename SegmentedMismatches<num_segments_>::Result SegmentedResult;
-
-    struct Methods {
-        static int index(const SegmentedResult& val) {
-            return val.index;
-        }
-
-        static void update(State& state, const SegmentedResult& val) {
-            state.index = val.index;
-            state.mismatches = val.total;
-            state.per_segment = val.per_segment;
-            return;
-        }
-
-        static void update(State& state, const SegmentedResult& val, const std::array<int, num_segments_>& mismatches) {
-            [&]{
-                for (size_t s = 0; s < num_segments_; ++s) {
-                    if (val.per_segment[s] > mismatches[s]) {
-                        state.index = -1;
-                        return;
-                    }
-                }
-                state.index = val.index;
-            }();
-            state.mismatches = val.total;
-            state.per_segment = val.per_segment;
-            return;
-        }
+    struct CacheEntry {
+        CacheEntry(BarcodeIndex index, BarcodeLength total, std::array<BarcodeLength, num_segments_> per_segment) :
+            index(index), total(total), per_segment(per_segment) {}
+        BarcodeIndex index;
+        BarcodeLength total;
+        std::array<BarcodeLength, num_segments_> per_segment;
     };
 
 public:
@@ -469,15 +448,70 @@ public:
             state.index = it->second;
             state.mismatches = 0;
             std::fill_n(state.per_segment.begin(), num_segments_, 0);
-        } else {
-            matcher_in_the_rye<Methods>(search_seq, cache, trie, state, allowed_mismatches, max_mm);
+            return;
         }
+
+        auto set_unmatched = [&]() -> void {
+            state.index = BARCODE_UNMATCHED;
+            state.mismatches = 0;
+            std::fill_n(state.per_segment, num_segments_, 0);
+        };
+
+        auto set_matched = [&](const CacheEntry& cached) -> void {
+            state.index = cached_index;
+            state.mismatches = cached_mismatches;
+            state.per_segment = cached_per_segments;
+        };
+
+        auto set_from_cache = [&](const CacheEntry& cached) -> void {
+            for (int s = 0; s < num_segments_; ++s) {
+                if (cached.per_segment[s] > allowed_mismatches[s]) {
+                    set_unmatched();
+                    return;
+                }
+            }
+            set_matched(cached);
+        };
+
+        auto cit = cache.find(x);
+        if (cit != cache.end()) {
+            set_from_cache(cIt->second);
+            return;
+        }
+
+        auto lIt = res.cache.find(x);
+        if (lIt != res.cache.end()) {
+            set_from_cache(lIt->second);
+            return;
+        }
+
+        auto missed = trie.search(x.c_str(), allowed_mismatches);
+        if (is_trie_index_ok(missed.first)) {
+            // No need to check the requested number of mismatches, as we explicitly searched for that in the trie.
+            CacheEntry cached(missed.index, missed.mismatches, missed.per_segment);
+            set_matched(cached);
+            state.cache[x] = std::move(cached);
+            return;
+        }
+
+        // The trie search breaks early when it hits allowed_mismatches, but
+        // the allowed_mismatches might be different across calls to search().
+        // If we break early and report a miss, the miss will be cached and
+        // returned in cases where there is a higher cap (and thus might
+        // actually be a hit). As such, we should only store a miss in the
+        // cache when the requested number of mismatches is equal to the
+        // maximum number of mismatches that was specified in the constructor.
+        if (allowed_mismatches == my_max_mm) {
+            state.cache[x] = CacheEntry(BARCODE_UNMATCHED, 0, {});
+        }
+
+        set_unmatched();
     }
 
 private:
     std::unordered_map<std::string, int> exact;
     SegmentedMismatches<num_segments_> trie;
-    std::unordered_map<std::string, SegmentedResult> cache;
+    std::unordered_map<std::string, CacheEntry> cache;
     std::array<int, num_segments_> max_mm;
 };
 
