@@ -307,7 +307,7 @@ TEST_F(DualBarcodesPairedEndTest, AmbiguityFirst) {
 
         auto state = stuff.initialize();
         stuff.process(state, bounds(seq1), bounds(seq2));
-        EXPECT_EQ(state.counts, std::vector<int>(variables1.size())); // nothing detected.
+        EXPECT_EQ(state.counts, std::vector<kaori::Count>(variables1.size())); // nothing detected.
 
         seq2 = "AGCTAAAAATTTTT"; // as a control.
         stuff.process(state, bounds(seq1), bounds(seq2));
@@ -507,7 +507,7 @@ TEST_F(DualBarcodesPairedEndTest, RandomizedBest) {
                 
         auto rstate = random.initialize();
         random.process(rstate, bounds(seq1), bounds(seq2));
-        EXPECT_EQ(rstate.counts, std::vector<int>(variables1.size())); // ambiguous.
+        EXPECT_EQ(rstate.counts, std::vector<kaori::Count>(variables1.size())); // ambiguous.
     }
 
     // One mismatch.

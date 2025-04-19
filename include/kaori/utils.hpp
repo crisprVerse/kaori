@@ -28,6 +28,42 @@ enum class DuplicateAction : char { FIRST, LAST, NONE, ERROR };
 enum class SearchStrand : char { FORWARD, REVERSE, BOTH };
 
 /**
+ * Integer type for the sequence lengths.
+ * This is used for barcodes, templates and reads.
+ */
+typedef std::size_t SeqLength;
+
+/**
+ * Integer type for barcode indices in a pool of known barcodes (specifically, inside a `BarcodePool`).
+ * This can have the special values `STATUS_UNMATCHED` and `STATUS_AMBIGUOUS`, see `is_barcode_index_ok()` to check for these error codes.
+ */
+typedef typename std::vector<const char*>::size_type BarcodeIndex; // we use the size_type from the BarcodePool's internal vector of barcodes.
+
+/**
+ * No match to a known barcode in the trie.
+ */
+inline constexpr BarcodeIndex STATUS_UNMATCHED = static_cast<BarcodeIndex>(-1);
+
+/**
+ * Ambiguous match to two or more known barcodes in the trie.
+ */
+inline constexpr BarcodeIndex STATUS_AMBIGUOUS = static_cast<BarcodeIndex>(-2);
+
+/**
+ * @param index A barcode index.
+ * @return Whether `index` corresponds to an actual barcode.
+ * If false, `index` represents one of the error codes, i.e., `STATUS_MISSING` or `STATUS_AMBIGUOUS`.
+ */
+inline bool is_barcode_index_ok(BarcodeIndex index) {
+    return index < STATUS_AMBIGUOUS;
+}
+
+/**
+ * Integer type to count the frequency of each barcode.
+ */
+typedef unsigned long long Count;
+
+/**
  * @cond
  */
 inline bool search_forward(SearchStrand x) {
@@ -171,13 +207,13 @@ void add_other_to_hash(std::bitset<N>& x) {
 }
 
 template<size_t V>
-void sort_combinations(std::vector<std::array<int, V> >& combinations, const std::array<size_t, V>& num_options) {
+void sort_combinations(std::vector<std::array<BarcodeIndex, V> >& combinations, const std::array<BarcodeIndex, V>& num_options) {
     // Going back to front as the last iteration gives the slowest changing index.
     // This ensures that we get the same results as std::sort() on the arrays.
     for (size_t i_ = 0; i_ < V; ++i_) {
         auto i = V - i_ - 1;
 
-        std::vector<size_t> counts(num_options[i] + 1);
+        std::vector<Count> counts(num_options[i] + 1);
         for (const auto& x : combinations) {
             ++(counts[x[i] + 1]);
         }
@@ -186,7 +222,7 @@ void sort_combinations(std::vector<std::array<int, V> >& combinations, const std
             counts[j] += counts[j-1];
         }
 
-        std::vector<std::array<int, V> > copy(combinations.size());
+        std::vector<std::array<BarcodeIndex, V> > copy(combinations.size());
         for (const auto& x : combinations) {
             auto& pos = counts[x[i]];
             copy[pos] = x;

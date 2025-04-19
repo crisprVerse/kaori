@@ -23,7 +23,7 @@ namespace kaori {
  * The template sequence contains constant regions interspersed with one or more variable regions.
  * The template is realized into the full barcoding element by replacing each variable region with one sequence from the corresponding pool of barcodes.
  *
- * This class will scan read sequence to find a location that matches the constant regions of the template, give or take any number of substitutions.
+ * This class will scan the read sequence to find a location that matches the constant regions of the template, give or take any number of substitutions.
  * Multiple locations on the read may match the template, provided `next()` is called repeatedly.
  * For efficiency, the search itself is done after converting all base sequences into a bit encoding.
  * The maximum size of this encoding is determined at compile-time by the `max_length` template parameter.
@@ -33,10 +33,10 @@ namespace kaori {
  *
  * @tparam max_size_ Maximum length of the template sequence.
  */
-template<size_t max_size_>
+template<SeqLength max_size_>
 class ScanTemplate { 
 private:
-    static constexpr size_t N = max_size_ * 4;
+    static constexpr SeqLength N = max_size_ * 4;
 
 public:
     /**
@@ -53,7 +53,7 @@ public:
      * This should be positive and less than or equal to `max_size_`.
      * @param strand Strand(s) of the read sequence to search.
      */
-    ScanTemplate(const char* template_seq, size_t template_length, SearchStrand strand) :
+    ScanTemplate(const char* template_seq, SeqLength template_length, SearchStrand strand) :
         my_length(template_length),
         my_forward(search_forward(strand)),
         my_reverse(search_reverse(strand))
@@ -63,7 +63,7 @@ public:
         }
 
         if (my_forward) {
-            for (size_t i = 0; i < my_length; ++i) {
+            for (SeqLength i = 0; i < my_length; ++i) {
                 char b = template_seq[i];
                 if (b != '-') {
                     add_base_to_hash(my_forward_ref, b);
@@ -77,7 +77,7 @@ public:
             }
         } else {
             // Forward variable regions are always defined.
-            for (size_t i = 0; i < my_length; ++i) {
+            for (SeqLength i = 0; i < my_length; ++i) {
                 char b = template_seq[i];
                 if (b == '-') {
                     add_variable_base(my_forward_variables, i);
@@ -86,7 +86,7 @@ public:
         }
 
         if (my_reverse) {
-            for (size_t i = 0; i < my_length; ++i) {
+            for (SeqLength i = 0; i < my_length; ++i) {
                 char b = template_seq[my_length - i - 1];
                 if (b != '-') {
                     add_base_to_hash(my_reverse_ref, complement_base(b));
@@ -107,22 +107,22 @@ public:
      */
     struct State {
         /**
-         * Position of the match.
-         * This should only be used once `next()` is called.
+         * Position of the match to the template on the read sequence.
+         * This should only be used after a call to `next()`.
          */
-        size_t position = static_cast<size_t>(-1); // overflow should be sane.
+        SeqLength position = static_cast<SeqLength>(-1); // set to -1 so that the first call to next() overflows to 0.
 
         /**
-         * Number of mismatches on the forward strand.
-         * This should only be used once `next()` is called.
+         * Number of mismatches on the forward strand at the current position.
+         * This should only be used after a call to `next()`, and only if the forward strand is searched.
          */
-        int forward_mismatches = -1;
+        int forward_mismatches = 0;
 
         /**
-         * Number of mismatches on the reverse strand.
-         * This should only be used once `next()` is called.
+         * Number of mismatches on the reverse strand at the current position.
+         * This should only be used after a call to `next()`, and only if the reverse strand is searched.
          */
-        int reverse_mismatches = -1;
+        int reverse_mismatches = 0;
 
         /**
          * Whether the match is at the end of the read sequence.
@@ -135,10 +135,10 @@ public:
          */
         std::bitset<N> state;
         const char * seq;
-        size_t len;
+        SeqLength len;
 
         std::bitset<N/4> ambiguous; // we only need a yes/no for the ambiguous state, so we can use a smaller bitset.
-        size_t last_ambiguous; // contains the position of the most recent ambiguous base; should only be read if any_ambiguous = true.
+        SeqLength last_ambiguous; // contains the position of the most recent ambiguous base; should only be read if any_ambiguous = true.
         bool any_ambiguous = false; // indicates whether ambiguous.count() > 0.
         /**
          * @endcond
@@ -155,13 +155,13 @@ public:
      * If its `finished` member is `false`, it should be passed to `next()` before accessing its other members.
      * If `true`, the read sequence was too short for any match to be found.
      */
-    State initialize(const char* read_seq, size_t read_length) const {
+    State initialize(const char* read_seq, SeqLength read_length) const {
         State out;
         out.seq = read_seq;
         out.len = read_length;
 
         if (my_length <= read_length) {
-            for (size_t i = 0; i < my_length - 1; ++i) {
+            for (SeqLength i = 0; i < my_length - 1; ++i) {
                 char base = read_seq[i];
 
                 if (is_standard_base(base)) {
@@ -198,7 +198,7 @@ public:
      * On return, `state` is updated with the details of the current match at a particular position on the read sequence.
      */
     void next(State& state) const {
-        size_t right = state.position + my_length;
+        SeqLength right = state.position + my_length;
         char base = state.seq[right];
 
         if (is_standard_base(base)) {
@@ -238,7 +238,7 @@ public:
 private:
     std::bitset<N> my_forward_ref, my_forward_mask;
     std::bitset<N> my_reverse_ref, my_reverse_mask;
-    size_t my_length;
+    SeqLength my_length;
     bool my_forward, my_reverse;
 
     std::bitset<N/4> my_forward_mask_ambiguous; // we only need a yes/no for whether a position is an ambiguous base, so we can use a smaller bitset.
@@ -259,10 +259,10 @@ private:
         // non-ambiguous bases are encoded by 1 set bit per 4 bases (so 2 are
         // left after a XOR'd mismatch), while ambiguous mismatches are encoded
         // by all set bits per 4 bases (which means that 3 are left after XOR).
-        size_t pcount = ((match.state & mask) ^ ref).count(); 
+        int pcount = ((match.state & mask) ^ ref).count(); 
 
         if (match.any_ambiguous) {
-            size_t acount = (match.ambiguous & mask_ambiguous).count();
+            int acount = (match.ambiguous & mask_ambiguous).count();
             return (pcount - acount) / 2; // i.e., acount + (pcount - acount * 3) / 2;
         } else {
             return pcount / 2;
@@ -279,7 +279,7 @@ private:
     }
 
 private:
-    std::vector<std::pair<int, int> > my_forward_variables, my_reverse_variables;
+    std::vector<std::pair<SeqLength, SeqLength> > my_forward_variables, my_reverse_variables;
 
 public:
     /**
@@ -287,7 +287,7 @@ public:
      * Coordinates are reported relative to the start of the template.
      * Pairs are ordered by the start positions.
      */
-    const std::vector<std::pair<int, int> >& forward_variable_regions() const {
+    const std::vector<std::pair<SeqLength, SeqLength> >& forward_variable_regions() const {
         return my_forward_variables;
     }
 
@@ -296,7 +296,7 @@ public:
      * Coordinates are reported relative to the start of the template.
      * Pairs are ordered by the start positions.
      */
-    const std::vector<std::pair<int, int> >& reverse_variable_regions() const {
+    const std::vector<std::pair<SeqLength, SeqLength> >& reverse_variable_regions() const {
         return my_reverse_variables;
     } 
 
@@ -304,7 +304,7 @@ public:
      * @param reverse Whether to return variable regions on the reverse-complemented template.
      * @return Convenient alias for `forward_variable_regions()` or `reverse_variable_regions()` depending on `reverse`.
      */
-    const std::vector<std::pair<int, int> >& variable_regions(bool reverse) const {
+    const std::vector<std::pair<SeqLength, SeqLength> >& variable_regions(bool reverse) const {
         if (reverse) {
             return reverse_variable_regions();
         } else {
@@ -312,9 +312,8 @@ public:
         }
     } 
 
-
 private:
-    static void add_variable_base(std::vector<std::pair<int, int> >& variables, int i) {
+    static void add_variable_base(std::vector<std::pair<SeqLength, SeqLength> >& variables, SeqLength i) {
         if (!variables.empty()) {
             auto& last = variables.back().second;
             if (last == i) {

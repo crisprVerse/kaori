@@ -248,7 +248,7 @@ TEST_F(DualBarcodesSingleEndTest, AmbiguityFirst) {
 
         auto state = stuff.initialize();
         stuff.process(state, bounds(seq));
-        EXPECT_EQ(state.counts, std::vector<int>(variables1.size())); // nothing detected.
+        EXPECT_EQ(state.counts, std::vector<kaori::Count>(variables1.size())); // nothing detected.
 
         seq = "AAAAAAAAACGGCAAAAATTTTT"; // as a control.
         stuff.process(state, bounds(seq));

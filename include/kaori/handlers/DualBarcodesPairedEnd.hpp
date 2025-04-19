@@ -23,7 +23,7 @@ namespace kaori {
  *
  * @tparam max_size_ Maximum length of the template sequences on both reads.
  */
-template<size_t max_size_>
+template<SeqLength max_size_>
 class DualBarcodesPairedEnd { 
 public:
     /**
@@ -90,8 +90,8 @@ public:
      * Duplication of sequences within each pool is allowed; only pairs of the same barcodes are considered to be duplicates with respect to `Options::duplicates`.
      */
     DualBarcodesPairedEnd(
-        const char* template_seq1, size_t template_length1, const BarcodePool& barcode_pool1, 
-        const char* template_seq2, size_t template_length2, const BarcodePool& barcode_pool2,
+        const char* template_seq1, SeqLength template_length1, const BarcodePool& barcode_pool1, 
+        const char* template_seq2, SeqLength template_length2, const BarcodePool& barcode_pool2,
         const Options& options
     ) :
         my_search_reverse1(search_reverse(options.strand1)),
@@ -109,7 +109,7 @@ public:
         }
         my_counts.resize(num_options);
 
-        size_t len1;
+        SeqLength len1;
         {
             const auto& regions = my_constant1.forward_variable_regions();
             if (regions.size() != 1) { 
@@ -122,7 +122,7 @@ public:
             }
         }
 
-        size_t len2;
+        SeqLength len2;
         {
             const auto& regions = my_constant2.forward_variable_regions();
             if (regions.size() != 1) { 
@@ -139,12 +139,12 @@ public:
         std::vector<std::string> combined;
         combined.reserve(num_options);
 
-        for (size_t i = 0; i < num_options; ++i) {
+        for (BarcodeIndex i = 0; i < num_options; ++i) {
             std::string current;
 
             auto ptr1 = barcode_pool1[i];
             if (my_search_reverse1) {
-                for (size_t j = 0; j < len1; ++j) {
+                for (SeqLength j = 0; j < len1; ++j) {
                     current += complement_base<true, true>(ptr1[len1 - j - 1]);
                 }
             } else {
@@ -153,7 +153,7 @@ public:
 
             auto ptr2 = barcode_pool2[i];
             if (my_search_reverse2) {
-                for (size_t j = 0; j < len2; ++j) {
+                for (SeqLength j = 0; j < len2; ++j) {
                     current += complement_base<true, true>(ptr2[len2 - j - 1]);
                 }
             } else {
@@ -167,7 +167,7 @@ public:
         BarcodePool combined_set(combined);
         my_varlib = SegmentedBarcodeSearch<2>(
             combined_set,
-            std::array<int, 2>{ static_cast<int>(len1), static_cast<int>(len2) }, 
+            std::array<SeqLength, 2>{ len1, len2 }, 
             [&]{
                 typename SegmentedBarcodeSearch<2>::Options bopt;
                 bopt.max_mismatches = { my_max_mm1, my_max_mm2 };
@@ -188,17 +188,19 @@ private:
     bool my_randomized;
     bool my_use_first = true;
 
-    std::vector<int> my_counts;
-    int my_total = 0;
+    std::vector<Count> my_counts;
+    Count my_total = 0;
 
 public:
     /**
      *@cond
      */
     struct State {
-        State(size_t n = 0) : counts(n) {}
-        std::vector<int> counts;
-        int total = 0;
+        State() = default;
+        State(typename std::vector<Count>::size_type n) : counts(n) {}
+
+        std::vector<Count> counts;
+        Count total = 0;
 
         std::pair<std::string, int> first_match;
         std::vector<std::pair<std::string, int> > second_matches;
@@ -214,7 +216,8 @@ public:
 
     void reduce(State& s) {
         my_varlib.reduce(s.details);
-        for (size_t i = 0, end = my_counts.size(); i < end; ++i) {
+        auto csize = my_counts.size();
+        for (decltype(csize) i = 0; i < csize; ++i) {
             my_counts[i] += s.counts[i];
         }
         my_total += s.total;
@@ -273,14 +276,15 @@ private:
         auto deets2 = my_constant2.initialize(against2.first, against2.second - against2.first);
 
         state.second_matches.clear();
+        typedef decltype(state.second_matches.size()) Size;
 
-        auto checker = [&](size_t idx2) -> bool {
+        auto checker = [&](Size idx2) -> bool {
             const auto& current2 = state.second_matches[idx2];
             state.combined = state.first_match.first;
             state.combined += current2.first; // on a separate line to avoid creating a std::string intermediate.
             my_varlib.search(state.combined, state.details, std::array<int, 2>{ my_max_mm1 - state.first_match.second, my_max_mm2 - current2.second });
 
-            if (state.details.index >= 0) {
+            if (is_barcode_index_ok(state.details.index)) {
                 ++state.counts[state.details.index];
                 return true;
             } else {
@@ -309,7 +313,7 @@ private:
             } else {
                 // And then this part does all the pairwise comparisons with
                 // every hit in the first read.
-                for (size_t i = 0; i < state.second_matches.size(); ++i) {
+                for (Size i = 0, end = state.second_matches.size(); i < end; ++i) {
                     if (checker(i)) {
                         return true;
                     }
@@ -320,7 +324,7 @@ private:
         return false;
     }
 
-    std::pair<int, int> process_best(State& state, const std::pair<const char*, const char*>& against1, const std::pair<const char*, const char*>& against2) const {
+    std::pair<BarcodeIndex, int> process_best(State& state, const std::pair<const char*, const char*>& against1, const std::pair<const char*, const char*>& against2) const {
         auto deets1 = my_constant1.initialize(against1.first, against1.second - against1.first);
         auto deets2 = my_constant2.initialize(against2.first, against2.second - against2.first);
 
@@ -330,26 +334,26 @@ private:
         state.second_matches.clear();
         while (inner_process(my_search_reverse2, my_constant2, my_max_mm2, against2.first, deets2, state.second_matches)) {}
 
-        int chosen = -1;
+        BarcodeIndex chosen = STATUS_UNMATCHED;
         int best_mismatches = my_max_mm1 + my_max_mm2 + 1;
-        size_t num_second_matches = state.second_matches.size();
+        auto num_second_matches = state.second_matches.size();
 
         if (!state.second_matches.empty()) {
             while (inner_process(my_search_reverse1, my_constant1, my_max_mm1, against1.first, deets1, state.first_match)) {
-                for (size_t i = 0; i < num_second_matches; ++i) {
+                for (decltype(num_second_matches) i = 0; i < num_second_matches; ++i) {
                     const auto& current2 = state.second_matches[i];
 
                     state.combined = state.first_match.first;
                     state.combined += current2.first; // separate line is deliberate.
                     my_varlib.search(state.combined, state.details, std::array<int, 2>{ my_max_mm1 - state.first_match.second, my_max_mm2 - current2.second });
 
-                    if (state.details.index >= 0) {
+                    if (is_barcode_index_ok(state.details.index)) {
                         int cur_mismatches = state.details.mismatches + state.first_match.second + current2.second;
                         if (cur_mismatches < best_mismatches) {
                             chosen = state.details.index;
                             best_mismatches = cur_mismatches;
                         } else if (cur_mismatches == best_mismatches && chosen != state.details.index) { // ambiguous.
-                            chosen = -1;
+                            chosen = STATUS_AMBIGUOUS;
                         }
                     }
                 }
@@ -376,14 +380,14 @@ public:
             auto best = process_best(state, r1, r2);
             if (my_randomized) {
                 auto best2 = process_best(state, r2, r1);
-                if (best.first < 0 || best.second > best2.second) {
+                if (!is_barcode_index_ok(best.first) || best.second > best2.second) {
                     best = best2;
                 } else if (best.second == best2.second && best.first != best2.first) {
-                    best.first = -1; // ambiguous.
+                    best.first = STATUS_AMBIGUOUS; // ambiguous.
                 }
             }
 
-            found = best.first >= 0;
+            found = is_barcode_index_ok(best.first);
             if (found) {
                 ++state.counts[best.first];
             }
@@ -402,14 +406,14 @@ public:
      * This has length equal to the number of valid dual barcode combinations (i.e., the length of `barcode_pool1` and `barcode_pool2` in the constructor).
      * Each entry contains the count for the corresponding dual barcode combination.
      */
-    const std::vector<int>& get_counts() const {
+    const std::vector<Count>& get_counts() const {
         return my_counts;
     }
 
     /**
      * @return Total number of read pairs processed by the handler.
      */
-    int get_total() const {
+    Count get_total() const {
         return my_total;
     }
 };
@@ -418,7 +422,7 @@ public:
  * @cond
  */
 // Soft-deprecated back-compatible aliases.
-template<size_t max_size_>
+template<SeqLength max_size_>
 using DualBarcodes = DualBarcodesPairedEnd<max_size_>;
 /**
  * @endcond

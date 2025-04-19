@@ -22,26 +22,26 @@ TEST_F(AnyMismatchesTest, Basic) {
 
     {
         auto res = stuff.search("ACGT", 0);
-        EXPECT_EQ(res.first, 0);
-        EXPECT_EQ(res.second, 0);
+        EXPECT_EQ(res.index, 0);
+        EXPECT_EQ(res.mismatches, 0);
     }
 
     {
         auto res = stuff.search("AAAT", 1);
-        EXPECT_EQ(res.first, 1);
-        EXPECT_EQ(res.second, 1);
+        EXPECT_EQ(res.index, 1);
+        EXPECT_EQ(res.mismatches, 1);
     }
 
     {
         auto res = stuff.search("CCAG", 2);
-        EXPECT_EQ(res.first, 2);
-        EXPECT_EQ(res.second, 2);
+        EXPECT_EQ(res.index, 2);
+        EXPECT_EQ(res.mismatches, 2);
     }
 
     {
         auto res = stuff.search("AGTT", 0);
-        EXPECT_EQ(res.first, 3);
-        EXPECT_EQ(res.second, 0);
+        EXPECT_EQ(res.index, 3);
+        EXPECT_EQ(res.mismatches, 0);
     }
 }
 
@@ -52,26 +52,26 @@ TEST_F(AnyMismatchesTest, MoreMismatches) {
 
     {
         auto res = stuff.search("ACGTACGTCCGT", 2);
-        EXPECT_EQ(res.first, 0);
-        EXPECT_EQ(res.second, 1);
+        EXPECT_EQ(res.index, 0);
+        EXPECT_EQ(res.mismatches, 1);
     }
 
     {
         auto res = stuff.search("TCGTACGTCCGT", 2);
-        EXPECT_EQ(res.first, 0);
-        EXPECT_EQ(res.second, 2);
+        EXPECT_EQ(res.index, 0);
+        EXPECT_EQ(res.mismatches, 2);
     }
 
     {
         auto res = stuff.search("TTTGGGGCCAAA", 2);
-        EXPECT_EQ(res.first, 1);
-        EXPECT_EQ(res.second, 1);
+        EXPECT_EQ(res.index, 1);
+        EXPECT_EQ(res.mismatches, 1);
     }
 
     {
         auto res = stuff.search("TTGGGGGCCAAA", 2);
-        EXPECT_EQ(res.first, 1);
-        EXPECT_EQ(res.second, 2);
+        EXPECT_EQ(res.index, 1);
+        EXPECT_EQ(res.mismatches, 2);
     }
 }
 
@@ -82,20 +82,20 @@ TEST_F(AnyMismatchesTest, MismatchesWithNs) {
 
     {
         auto res = stuff.search("ACGTACGTACGN", 0);
-        EXPECT_EQ(res.first, -1);
+        EXPECT_EQ(res.index, kaori::STATUS_UNMATCHED);
 
         auto res2 = stuff.search("ACGTACGTACGN", 1);
-        EXPECT_EQ(res2.first, 0);
-        EXPECT_EQ(res2.second, 1);
+        EXPECT_EQ(res2.index, 0);
+        EXPECT_EQ(res2.mismatches, 1);
     }
 
     {
         auto res = stuff.search("TTNGGGNCCAAA", 1);
-        EXPECT_EQ(res.first, -1);
+        EXPECT_EQ(res.index, kaori::STATUS_UNMATCHED);
 
         auto res2 = stuff.search("TTNGGGNCCAAA", 2);
-        EXPECT_EQ(res2.first, 1);
-        EXPECT_EQ(res2.second, 2);
+        EXPECT_EQ(res2.index, 1);
+        EXPECT_EQ(res2.mismatches, 2);
     }
 }
 
@@ -107,14 +107,14 @@ TEST_F(AnyMismatchesTest, CappedMismatch) {
 
     {
         auto res = stuff.search("AAAT", 0);
-        EXPECT_EQ(res.first, -1);
-        EXPECT_EQ(res.second, 1);
+        EXPECT_EQ(res.index, kaori::STATUS_UNMATCHED);
+        EXPECT_EQ(res.mismatches, 1);
     }
 
     {
         auto res = stuff.search("CCAG", 1);
-        EXPECT_EQ(res.first, -1);
-        EXPECT_EQ(res.second, 2);
+        EXPECT_EQ(res.index, kaori::STATUS_UNMATCHED);
+        EXPECT_EQ(res.mismatches, 2);
     }
 }
 
@@ -126,21 +126,21 @@ TEST_F(AnyMismatchesTest, Ambiguous) {
     {
         // Positive control first.
         auto res = stuff.search("AAAACAAAA", 1);
-        EXPECT_EQ(res.first, 1);
-        EXPECT_EQ(res.second, 0);
+        EXPECT_EQ(res.index, 1);
+        EXPECT_EQ(res.mismatches, 0);
     }
 
     {
         auto res = stuff.search("AAAATAAAA", 1);
-        EXPECT_EQ(res.first, -2);
-        EXPECT_EQ(res.second, 1);
+        EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS);
+        EXPECT_EQ(res.mismatches, 1);
     }
 
     {
         // Handles ambiguity at the end of the sequence.
         auto res = stuff.search("AAAAAAAAT", 1);
-        EXPECT_EQ(res.first, -2);
-        EXPECT_EQ(res.second, 1);
+        EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS);
+        EXPECT_EQ(res.mismatches, 1);
     }
 }
 
@@ -188,10 +188,10 @@ TEST_F(AnyMismatchesTest, Duplicates) {
         CHECK(stuff.add(ptrs[3]), true, false, false);
 
         auto res = stuff.search("ACGT", 0);
-        EXPECT_EQ(res.first, 0);
+        EXPECT_EQ(res.index, 0);
 
         auto res2 = stuff.search("AGTT", 0);
-        EXPECT_EQ(res2.first, 2);
+        EXPECT_EQ(res2.index, 2);
     }
 
     // Gets the last occurrence.
@@ -203,10 +203,10 @@ TEST_F(AnyMismatchesTest, Duplicates) {
         CHECK(stuff.add(ptrs[3]), true, true, false);
 
         auto res = stuff.search("ACGT", 0);
-        EXPECT_EQ(res.first, 1);
+        EXPECT_EQ(res.index, 1);
 
         auto res2 = stuff.search("AGTT", 0);
-        EXPECT_EQ(res2.first, 3);
+        EXPECT_EQ(res2.index, 3);
     }
 
     // Gets nothing.
@@ -219,10 +219,10 @@ TEST_F(AnyMismatchesTest, Duplicates) {
         CHECK(stuff.add(ptrs[3]), true, false, false); // next addition sets duplicate_cleared = false as it's already cleared.
 
         auto res = stuff.search("ACGT", 0);
-        EXPECT_EQ(res.first, -2);
+        EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS);
 
         auto res2 = stuff.search("AGTT", 0);
-        EXPECT_EQ(res2.first, -2);
+        EXPECT_EQ(res2.index, kaori::STATUS_AMBIGUOUS);
     }
 }
 
@@ -232,12 +232,12 @@ TEST_F(AnyMismatchesTest, Iupac) {
         kaori::BarcodePool ptrs(things);
         auto stuff = populate(ptrs);
 
-        EXPECT_EQ(stuff.search("AacGcgT", 0), std::make_pair(0, 0));
-        EXPECT_EQ(stuff.search("GacCcgG", 0), std::make_pair(0, 0));
-        EXPECT_EQ(stuff.search("CacTcgA", 0), std::make_pair(1, 0));
-        EXPECT_EQ(stuff.search("TacAcgC", 0), std::make_pair(1, 0));
+        { auto res = stuff.search("AacGcgT", 0); EXPECT_EQ(res.index, 0); EXPECT_EQ(res.mismatches, 0); }
+        { auto res = stuff.search("GacCcgG", 0); EXPECT_EQ(res.index, 0); EXPECT_EQ(res.mismatches, 0); }
+        { auto res = stuff.search("CacTcgA", 0); EXPECT_EQ(res.index, 1); EXPECT_EQ(res.mismatches, 0); }
+        { auto res = stuff.search("CacTcgA", 0); EXPECT_EQ(res.index, 1); EXPECT_EQ(res.mismatches, 0); }
 
-        EXPECT_EQ(stuff.search("AacAcgA", 0).first, -1);
+        EXPECT_EQ(stuff.search("AacAcgA", 0).index, kaori::STATUS_UNMATCHED);
     }
 
     {
@@ -245,12 +245,12 @@ TEST_F(AnyMismatchesTest, Iupac) {
         kaori::BarcodePool ptrs(things);
         auto stuff = populate(ptrs);
 
-        EXPECT_EQ(stuff.search("ccgt", 0), std::make_pair(0, 0));
-        EXPECT_EQ(stuff.search("aagt", 0), std::make_pair(1, 0));
-        EXPECT_EQ(stuff.search("actt", 0), std::make_pair(2, 0));
-        EXPECT_EQ(stuff.search("acgg", 0), std::make_pair(3, 0));
+        { auto res = stuff.search("ccgt", 0); EXPECT_EQ(res.index, 0); EXPECT_EQ(res.mismatches, 0); } 
+        { auto res = stuff.search("aagt", 0); EXPECT_EQ(res.index, 1); EXPECT_EQ(res.mismatches, 0); } 
+        { auto res = stuff.search("actt", 0); EXPECT_EQ(res.index, 2); EXPECT_EQ(res.mismatches, 0); } 
+        { auto res = stuff.search("acgg", 0); EXPECT_EQ(res.index, 3); EXPECT_EQ(res.mismatches, 0); } 
 
-        EXPECT_EQ(stuff.search("acgt", 0).first, -1);
+        EXPECT_EQ(stuff.search("acgt", 0).index, kaori::STATUS_UNMATCHED);
     }
 
     {
@@ -258,10 +258,10 @@ TEST_F(AnyMismatchesTest, Iupac) {
         kaori::BarcodePool ptrs(things);
         auto stuff = populate(ptrs);
 
-        EXPECT_EQ(stuff.search("acga", 0), std::make_pair(0, 0));
-        EXPECT_EQ(stuff.search("catc", 0), std::make_pair(1, 0));
+        { auto res = stuff.search("acga", 0); EXPECT_EQ(res.index, 0); EXPECT_EQ(res.mismatches, 0); }
+        { auto res = stuff.search("catc", 0); EXPECT_EQ(res.index, 1); EXPECT_EQ(res.mismatches, 0); }
 
-        EXPECT_EQ(stuff.search("catg", 0).first, -1);
+        EXPECT_EQ(stuff.search("catg", 0).index, kaori::STATUS_UNMATCHED);
     }
 
     {
@@ -291,10 +291,11 @@ TEST_F(AnyMismatchesTest, IupacAmbiguity) {
         std::vector<std::string> things { "AAAAAAB", "TTTVTTT" };
         kaori::BarcodePool ptrs(things);
         auto stuff = populate(ptrs);
-        EXPECT_EQ(stuff.search("AAAAAAA", 1), std::make_pair(0, 1));
-        EXPECT_EQ(stuff.search("AAAAAAC", 1), std::make_pair(0, 0)); // control
-        EXPECT_EQ(stuff.search("TTTTTTT", 1), std::make_pair(1, 1));
-        EXPECT_EQ(stuff.search("TTTGTTT", 1), std::make_pair(1, 0)); // control
+
+        { auto res = stuff.search("AAAAAAA", 1); EXPECT_EQ(res.index, 0); EXPECT_EQ(res.mismatches, 1); } 
+        { auto res = stuff.search("AAAAAAC", 1); EXPECT_EQ(res.index, 0); EXPECT_EQ(res.mismatches, 0); } // control
+        { auto res = stuff.search("TTTTTTT", 1); EXPECT_EQ(res.index, 1); EXPECT_EQ(res.mismatches, 1); } 
+        { auto res = stuff.search("TTTGTTT", 1); EXPECT_EQ(res.index, 1); EXPECT_EQ(res.mismatches, 0); } // control
     }
 
     // Respects ambiguity from mismatches.
@@ -306,13 +307,13 @@ TEST_F(AnyMismatchesTest, IupacAmbiguity) {
             stuff.add(p);
         }
 
-        EXPECT_EQ(stuff.search("AAAAAAA", 1), std::make_pair(-2, 1)); // ambiguous
-        EXPECT_EQ(stuff.search("AAAAAAC", 1), std::make_pair(-2, 0)); // still ambiguous, even with no mismatch
-        EXPECT_EQ(stuff.search("AAAAAAG", 1), std::make_pair(0, 0)); // okay
+        { auto res = stuff.search("AAAAAAA", 1); EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS); EXPECT_EQ(res.mismatches, 1); } // ambiguous
+        { auto res = stuff.search("AAAAAAC", 1); EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS); EXPECT_EQ(res.mismatches, 0); } // still ambiguous, even with no mismatch
+        { auto res = stuff.search("AAAAAAG", 1); EXPECT_EQ(res.index, 0); EXPECT_EQ(res.mismatches, 0); } // okay
 
-        EXPECT_EQ(stuff.search("TTTTTTT", 1), std::make_pair(-2, 1)); // ambiguous
-        EXPECT_EQ(stuff.search("TTTATTT", 1), std::make_pair(-2, 0)); // still ambiguous, even with no mismatch
-        EXPECT_EQ(stuff.search("TTTCTTT", 1), std::make_pair(2, 0)); // okay
+        { auto res = stuff.search("TTTTTTT", 1); EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS); EXPECT_EQ(res.mismatches, 1); } // ambiguous
+        { auto res = stuff.search("TTTATTT", 1); EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS); EXPECT_EQ(res.mismatches, 0); } // still ambiguous, even with no mismatch
+        { auto res = stuff.search("TTTCTTT", 1); EXPECT_EQ(res.index, 2); EXPECT_EQ(res.mismatches, 0); } // okay
 
         // Unless we want to report duplicates.
         for (int i = 0; i < 2; ++i) {
@@ -322,22 +323,22 @@ TEST_F(AnyMismatchesTest, IupacAmbiguity) {
             }
 
             if (i == 0) {
-                EXPECT_EQ(stuff2.search("AAAAAAA", 1), std::make_pair(0, 1)); 
-                EXPECT_EQ(stuff2.search("AAAAAAC", 1), std::make_pair(0, 0));
+                { auto res = stuff2.search("AAAAAAA", 1); EXPECT_EQ(res.index, 0); EXPECT_EQ(res.mismatches, 1); }
+                { auto res = stuff2.search("AAAAAAC", 1); EXPECT_EQ(res.index, 0); EXPECT_EQ(res.mismatches, 0); }
             } else {
-                EXPECT_EQ(stuff2.search("AAAAAAA", 1), std::make_pair(1, 1)); 
-                EXPECT_EQ(stuff2.search("AAAAAAC", 1), std::make_pair(1, 0)); 
+                { auto res = stuff2.search("AAAAAAA", 1); EXPECT_EQ(res.index, 1); EXPECT_EQ(res.mismatches, 1); }
+                { auto res = stuff2.search("AAAAAAC", 1); EXPECT_EQ(res.index, 1); EXPECT_EQ(res.mismatches, 0); }
             }
-            EXPECT_EQ(stuff2.search("AAAAAAG", 1), std::make_pair(0, 0));
+            { auto res = stuff2.search("AAAAAAG", 1); EXPECT_EQ(res.index, 0); EXPECT_EQ(res.mismatches, 0); }
 
             if (i == 0) {
-                EXPECT_EQ(stuff2.search("TTTTTTT", 1), std::make_pair(2, 1)); 
-                EXPECT_EQ(stuff2.search("TTTATTT", 1), std::make_pair(2, 0));
+                { auto res = stuff2.search("TTTTTTT", 1); EXPECT_EQ(res.index, 2); EXPECT_EQ(res.mismatches, 1); }
+                { auto res = stuff2.search("TTTATTT", 1); EXPECT_EQ(res.index, 2); EXPECT_EQ(res.mismatches, 0); }
             } else {
-                EXPECT_EQ(stuff2.search("TTTTTTT", 1), std::make_pair(3, 1)); 
-                EXPECT_EQ(stuff2.search("TTTATTT", 1), std::make_pair(3, 0));
+                { auto res = stuff2.search("TTTTTTT", 1); EXPECT_EQ(res.index, 3); EXPECT_EQ(res.mismatches, 1); }
+                { auto res = stuff2.search("TTTATTT", 1); EXPECT_EQ(res.index, 3); EXPECT_EQ(res.mismatches, 0); }
             }
-            EXPECT_EQ(stuff2.search("TTTCTTT", 1), std::make_pair(2, 0));
+            { auto res = stuff2.search("TTTCTTT", 1); EXPECT_EQ(res.index, 2); EXPECT_EQ(res.mismatches, 0); }
         }
     }
 }
@@ -356,49 +357,49 @@ TEST_F(AnyMismatchesTest, Optimized) {
 
         {
             auto res = stuff.search("AAAT", 1);
-            EXPECT_EQ(res.first, 3);
-            EXPECT_EQ(res.second, 1);
+            EXPECT_EQ(res.index, 3);
+            EXPECT_EQ(res.mismatches, 1);
         }
 
         {
             auto res = stuff.search("CCCG", 1);
-            EXPECT_EQ(res.first, 4);
-            EXPECT_EQ(res.second, 1);
+            EXPECT_EQ(res.index, 4);
+            EXPECT_EQ(res.mismatches, 1);
         }
 
         {
             auto res = stuff.search("GGTG", 1);
-            EXPECT_EQ(res.first, 5);
-            EXPECT_EQ(res.second, 0);
+            EXPECT_EQ(res.index, 5);
+            EXPECT_EQ(res.mismatches, 0);
         }
 
         // Not found with the requested number of mismatches.
         {
             auto res = stuff.search("AGGA", 1);
-            EXPECT_EQ(res.first, -1);
-            EXPECT_EQ(res.second, 2);
+            EXPECT_EQ(res.index, kaori::STATUS_UNMATCHED);
+            EXPECT_EQ(res.mismatches, 2);
         }
 
         {
             auto res = stuff.search("AGGA", 2);
-            EXPECT_EQ(res.first, 0);
-            EXPECT_EQ(res.second, 2);
+            EXPECT_EQ(res.index, 0);
+            EXPECT_EQ(res.mismatches, 2);
         }
 
         // Ambiguous.
         {
             auto res = stuff.search("TTTT", 3);
-            EXPECT_EQ(res.first, -2);
-            EXPECT_EQ(res.second, 3);
+            EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS);
+            EXPECT_EQ(res.mismatches, 3);
         }
     }
 }
 
 class SegmentedMismatchesTest : public ::testing::Test {
 protected:
-    template<size_t num_segments>
-    static kaori::SegmentedMismatches<num_segments> populate(const kaori::BarcodePool& ptrs, std::array<int, num_segments> segments) {
-        kaori::SegmentedMismatches output(segments, kaori::DuplicateAction::ERROR);
+    template<int num_segments_>
+    static kaori::SegmentedMismatches<num_segments_> populate(const kaori::BarcodePool& ptrs, std::array<kaori::SeqLength, num_segments_> segments) {
+        kaori::SegmentedMismatches<num_segments_> output(segments, kaori::DuplicateAction::ERROR);
         assert(ptrs.length() == output.length());
         for (auto p : ptrs.pool()) {
             output.add(p);
@@ -415,7 +416,7 @@ TEST_F(SegmentedMismatchesTest, Segmented) {
     {
         auto res = stuff.search("AAAAAAA", { 0, 0 });
         EXPECT_EQ(res.index, 0);
-        EXPECT_EQ(res.total, 0);
+        EXPECT_EQ(res.mismatches, 0);
         EXPECT_EQ(res.per_segment[0], 0);
         EXPECT_EQ(res.per_segment[1], 0);
     }
@@ -423,7 +424,7 @@ TEST_F(SegmentedMismatchesTest, Segmented) {
     {
         auto res = stuff.search("TTTTTT", { 0, 0 });
         EXPECT_EQ(res.index, 3);
-        EXPECT_EQ(res.total, 0);
+        EXPECT_EQ(res.mismatches, 0);
         EXPECT_EQ(res.per_segment[0], 0);
         EXPECT_EQ(res.per_segment[1], 0);
     }
@@ -431,7 +432,7 @@ TEST_F(SegmentedMismatchesTest, Segmented) {
     // Fails on one mismatch.
     {
         auto res = stuff.search("CCCCCTC", { 0, 0 });
-        EXPECT_EQ(res.index, -1);
+        EXPECT_EQ(res.index, kaori::STATUS_UNMATCHED);
     }
 }
 
@@ -444,7 +445,7 @@ TEST_F(SegmentedMismatchesTest, Mismatches) {
     {
         auto res = stuff.search("CCCCTC", { 0, 1 });
         EXPECT_EQ(res.index, 1);
-        EXPECT_EQ(res.total, 1);
+        EXPECT_EQ(res.mismatches, 1);
         EXPECT_EQ(res.per_segment[0], 0);
         EXPECT_EQ(res.per_segment[1], 1);
     }
@@ -452,14 +453,14 @@ TEST_F(SegmentedMismatchesTest, Mismatches) {
     // But not in the wrong place.
     {
         auto res = stuff.search("CCCCTC", { 1, 0 });
-        EXPECT_EQ(res.index, -1);
+        EXPECT_EQ(res.index, kaori::STATUS_UNMATCHED);
     }
 
     // Testing the handling of mismatches at the end of each segment.
     {
         auto res = stuff.search("TTTTTA", { 0, 1 });
         EXPECT_EQ(res.index, 3);
-        EXPECT_EQ(res.total, 1);
+        EXPECT_EQ(res.mismatches, 1);
         EXPECT_EQ(res.per_segment[0], 0);
         EXPECT_EQ(res.per_segment[1], 1);
     }
@@ -467,7 +468,7 @@ TEST_F(SegmentedMismatchesTest, Mismatches) {
     {
         auto res = stuff.search("AAACAA", { 1, 0 });
         EXPECT_EQ(res.index, 0);
-        EXPECT_EQ(res.total, 1);
+        EXPECT_EQ(res.mismatches, 1);
         EXPECT_EQ(res.per_segment[0], 1);
         EXPECT_EQ(res.per_segment[1], 0);
     }
@@ -476,7 +477,7 @@ TEST_F(SegmentedMismatchesTest, Mismatches) {
     {
         auto res = stuff.search("GGTGGC", { 1, 1 });
         EXPECT_EQ(res.index, 2);
-        EXPECT_EQ(res.total, 2);
+        EXPECT_EQ(res.mismatches, 2);
         EXPECT_EQ(res.per_segment[0], 1);
         EXPECT_EQ(res.per_segment[1], 1);
     }
@@ -484,13 +485,13 @@ TEST_F(SegmentedMismatchesTest, Mismatches) {
     // More mismatches.
     {
         auto res = stuff.search("GGTGTC", { 1, 1 });
-        EXPECT_EQ(res.index, -1);
+        EXPECT_EQ(res.index, kaori::STATUS_UNMATCHED);
     }
 
     {
         auto res = stuff.search("GGTGTC", { 2, 2 });
         EXPECT_EQ(res.index, 2);
-        EXPECT_EQ(res.total, 3);
+        EXPECT_EQ(res.mismatches, 3);
         EXPECT_EQ(res.per_segment[0], 1);
         EXPECT_EQ(res.per_segment[1], 2);
     }
@@ -504,7 +505,7 @@ TEST_F(SegmentedMismatchesTest, MismatchesWithNs) {
     {
         auto res = stuff.search("CCCCNC", { 0, 1 });
         EXPECT_EQ(res.index, 1);
-        EXPECT_EQ(res.total, 1);
+        EXPECT_EQ(res.mismatches, 1);
         EXPECT_EQ(res.per_segment[0], 0);
         EXPECT_EQ(res.per_segment[1], 1);
     }
@@ -512,7 +513,7 @@ TEST_F(SegmentedMismatchesTest, MismatchesWithNs) {
     {
         auto res = stuff.search("GNGGGN", { 1, 2 });
         EXPECT_EQ(res.index, 2);
-        EXPECT_EQ(res.total, 2);
+        EXPECT_EQ(res.mismatches, 2);
         EXPECT_EQ(res.per_segment[0], 1);
         EXPECT_EQ(res.per_segment[1], 1);
     }
@@ -520,7 +521,7 @@ TEST_F(SegmentedMismatchesTest, MismatchesWithNs) {
     // Not in the wrong place, though.
     {
         auto res = stuff.search("CCCCNC", { 1, 0 });
-        EXPECT_EQ(res.index, -1);
+        EXPECT_EQ(res.index, kaori::STATUS_UNMATCHED);
     }
 }
 
@@ -533,12 +534,12 @@ TEST_F(SegmentedMismatchesTest, Ambiguity) {
         // Handles ambiguity properly.
         {
             auto res = stuff.search("TTGGTG", { 2, 1 });
-            EXPECT_EQ(res.index, -2);
+            EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS);
         }
 
         {
             auto res = stuff.search("TTTGGG", { 3, 2 });
-            EXPECT_EQ(res.index, -2);
+            EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS);
         }
 
         // Not ambiguous due to mismatch restrictions.
@@ -556,12 +557,12 @@ TEST_F(SegmentedMismatchesTest, Ambiguity) {
 
         {
             auto res = stuff.search("AAAAAC", { 0, 1 });
-            EXPECT_EQ(res.index, -2);
+            EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS);
         }
 
         {
             auto res = stuff.search("CAAAAG", { 1, 1 });
-            EXPECT_EQ(res.index, -2);
+            EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS);
         }
     }
 }
@@ -580,7 +581,7 @@ TEST_F(SegmentedMismatchesTest, Optimized) {
         {
             auto res = stuff.search("GGGGGG", { 1, 1 });
             EXPECT_EQ(res.index, 3);
-            EXPECT_EQ(res.total, 0);
+            EXPECT_EQ(res.mismatches, 0);
             EXPECT_EQ(res.per_segment[0], 0);
             EXPECT_EQ(res.per_segment[1], 0);
         }
@@ -588,7 +589,7 @@ TEST_F(SegmentedMismatchesTest, Optimized) {
         {
             auto res = stuff.search("TTTTTT", { 0, 0 });
             EXPECT_EQ(res.index, 2);
-            EXPECT_EQ(res.total, 0);
+            EXPECT_EQ(res.mismatches, 0);
             EXPECT_EQ(res.per_segment[0], 0);
             EXPECT_EQ(res.per_segment[1], 0);
         }
@@ -597,7 +598,7 @@ TEST_F(SegmentedMismatchesTest, Optimized) {
         {
             auto res = stuff.search("GAAAAA", { 1, 1 });
             EXPECT_EQ(res.index, 1);
-            EXPECT_EQ(res.total, 1);
+            EXPECT_EQ(res.mismatches, 1);
             EXPECT_EQ(res.per_segment[0], 1);
             EXPECT_EQ(res.per_segment[1], 0);
         }
@@ -605,7 +606,7 @@ TEST_F(SegmentedMismatchesTest, Optimized) {
         {
             auto res = stuff.search("CACCTC", { 1, 1 });
             EXPECT_EQ(res.index, 0);
-            EXPECT_EQ(res.total, 2);
+            EXPECT_EQ(res.mismatches, 2);
             EXPECT_EQ(res.per_segment[0], 1);
             EXPECT_EQ(res.per_segment[1], 1);
         }
@@ -613,7 +614,7 @@ TEST_F(SegmentedMismatchesTest, Optimized) {
       {
           auto res = stuff.search("AACAAT", { 1, 1 });
           EXPECT_EQ(res.index, 1);
-          EXPECT_EQ(res.total, 2);
+          EXPECT_EQ(res.mismatches, 2);
           EXPECT_EQ(res.per_segment[0], 1);
           EXPECT_EQ(res.per_segment[1], 1);
       }
@@ -621,7 +622,7 @@ TEST_F(SegmentedMismatchesTest, Optimized) {
         {
             auto res = stuff.search("AAAAGG", { 2, 2 });
             EXPECT_EQ(res.index, 1);
-            EXPECT_EQ(res.total, 2);
+            EXPECT_EQ(res.mismatches, 2);
             EXPECT_EQ(res.per_segment[0], 0);
             EXPECT_EQ(res.per_segment[1], 2);
         }
@@ -629,14 +630,14 @@ TEST_F(SegmentedMismatchesTest, Optimized) {
         // But not in the wrong place.
         {
             auto res = stuff.search("CACCTC", { 1, 0 });
-            EXPECT_EQ(res.index, -1);
+            EXPECT_EQ(res.index, kaori::STATUS_UNMATCHED);
         }
 
         // Ambiguous.
         {
             auto res = stuff.search("CCAAAC", { 2, 2 });
-            EXPECT_EQ(res.index, -2);
-            EXPECT_EQ(res.total, 3);
+            EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS);
+            EXPECT_EQ(res.mismatches, 3);
         }
     }
 }
@@ -650,19 +651,19 @@ TEST_F(SegmentedMismatchesTest, Iupac) {
 
         auto res = stuff.search("AAAAAAA", {0, 1});
         EXPECT_EQ(res.index, 0);
-        EXPECT_EQ(res.total, 1);
+        EXPECT_EQ(res.mismatches, 1);
 
         res = stuff.search("AAAAAAC", {0, 1}); // control
         EXPECT_EQ(res.index, 0);
-        EXPECT_EQ(res.total, 0);
+        EXPECT_EQ(res.mismatches, 0);
 
         res = stuff.search("TTTTTTT", {0, 1});
         EXPECT_EQ(res.index, 1);
-        EXPECT_EQ(res.total, 1);
+        EXPECT_EQ(res.mismatches, 1);
 
         res = stuff.search("TTTGTTT", {0, 1}); // control
         EXPECT_EQ(res.index, 1);
-        EXPECT_EQ(res.total, 0);
+        EXPECT_EQ(res.mismatches, 0);
     }
 
     // Respects ambiguity from mismatches.
@@ -675,28 +676,28 @@ TEST_F(SegmentedMismatchesTest, Iupac) {
         }
 
         auto res = stuff.search("AAAAAAA", {0, 1}); // ambiguous.
-        EXPECT_EQ(res.index, -2);
-        EXPECT_EQ(res.total, 1);
+        EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS);
+        EXPECT_EQ(res.mismatches, 1);
 
         res = stuff.search("AAAAAAC", {0, 1}); // still ambiguous.
-        EXPECT_EQ(res.index, -2);
-        EXPECT_EQ(res.total, 0);
+        EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS);
+        EXPECT_EQ(res.mismatches, 0);
 
         res = stuff.search("AAAAAAG", {0, 1}); // okay
         EXPECT_EQ(res.index, 0);
-        EXPECT_EQ(res.total, 0);
+        EXPECT_EQ(res.mismatches, 0);
 
         res = stuff.search("TTTTTTT", {1, 0}); // ambiguous
-        EXPECT_EQ(res.index, -2);
-        EXPECT_EQ(res.total, 1);
+        EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS);
+        EXPECT_EQ(res.mismatches, 1);
 
         res = stuff.search("TTTATTT", {1, 0}); // still ambiguous
-        EXPECT_EQ(res.index, -2);
-        EXPECT_EQ(res.total, 0);
+        EXPECT_EQ(res.index, kaori::STATUS_AMBIGUOUS);
+        EXPECT_EQ(res.mismatches, 0);
 
         res = stuff.search("TTTCTTT", {1, 0}); // okay
         EXPECT_EQ(res.index, 2);
-        EXPECT_EQ(res.total, 0);
+        EXPECT_EQ(res.mismatches, 0);
 
         // Unless we want to report duplicates.
         for (int i = 0; i < 2; ++i) {
@@ -711,7 +712,7 @@ TEST_F(SegmentedMismatchesTest, Iupac) {
             } else {
                 EXPECT_EQ(res.index, 1);
             }
-            EXPECT_EQ(res.total, 1);
+            EXPECT_EQ(res.mismatches, 1);
 
             res = stuff2.search("AAAAAAC", {0, 1});
             if (i == 0) {
@@ -719,11 +720,11 @@ TEST_F(SegmentedMismatchesTest, Iupac) {
             } else {
                 EXPECT_EQ(res.index, 1);
             }
-            EXPECT_EQ(res.total, 0);
+            EXPECT_EQ(res.mismatches, 0);
 
             res = stuff2.search("AAAAAAG", {0, 1});
             EXPECT_EQ(res.index, 0);
-            EXPECT_EQ(res.total, 0);
+            EXPECT_EQ(res.mismatches, 0);
 
             res = stuff2.search("TTTTTTT", {1, 0});
             if (i == 0) {
@@ -731,7 +732,7 @@ TEST_F(SegmentedMismatchesTest, Iupac) {
             } else {
                 EXPECT_EQ(res.index, 3);
             }
-            EXPECT_EQ(res.total, 1);
+            EXPECT_EQ(res.mismatches, 1);
 
             res = stuff2.search("TTTATTT", {1, 0});
             if (i == 0) {
@@ -739,11 +740,11 @@ TEST_F(SegmentedMismatchesTest, Iupac) {
             } else {
                 EXPECT_EQ(res.index, 3);
             }
-            EXPECT_EQ(res.total, 0);
+            EXPECT_EQ(res.mismatches, 0);
 
             res = stuff2.search("TTTCTTT", {1, 0});
             EXPECT_EQ(res.index, 2);
-            EXPECT_EQ(res.total, 0);
+            EXPECT_EQ(res.mismatches, 0);
         }
     }
 }

@@ -6,6 +6,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <stdexcept>
+#include <cstddef>
 
 #include "FastqReader.hpp"
 
@@ -22,6 +23,8 @@ namespace kaori {
 /**
  * @cond
  */
+typedef std::size_t ReadIndex;
+
 class ChunkOfReads {
 public:
     ChunkOfReads() : my_sequence_offset(1), my_name_offset(1) {} // zero is always the first element.
@@ -43,31 +46,31 @@ public:
         add_read_details(name, my_name_buffer, my_name_offset);
     }
 
-    size_t size() const {
+    ReadIndex size() const {
         return my_sequence_offset.size() - 1;
     }
 
-    std::pair<const char*, const char*> get_sequence(size_t i) const {
+    std::pair<const char*, const char*> get_sequence(ReadIndex i) const {
         return get_details(i, my_sequence_buffer, my_sequence_offset);
     }
 
-    std::pair<const char*, const char*> get_name(size_t i) const {
+    std::pair<const char*, const char*> get_name(ReadIndex i) const {
         return get_details(i, my_name_buffer, my_name_offset);
     }
 
 private:
     std::vector<char> my_sequence_buffer;
-    std::vector<size_t> my_sequence_offset;
+    std::vector<std::size_t> my_sequence_offset;
     std::vector<char> my_name_buffer;
-    std::vector<size_t> my_name_offset;
+    std::vector<std::size_t> my_name_offset;
 
-    static void add_read_details(const std::vector<char>& src, std::vector<char>& dst, std::vector<size_t>& offset) {
+    static void add_read_details(const std::vector<char>& src, std::vector<char>& dst, std::vector<std::size_t>& offset) {
         dst.insert(dst.end(), src.begin(), src.end());
         auto last = offset.back();
         offset.push_back(last + src.size());
     }
 
-    static std::pair<const char*, const char*> get_details(size_t i, const std::vector<char>& dest, const std::vector<size_t>& offset) {
+    static std::pair<const char*, const char*> get_details(ReadIndex i, const std::vector<char>& dest, const std::vector<std::size_t>& offset) {
         const char * base = dest.data();
         return std::make_pair(base + offset[i], base + offset[i + 1]);
     }
@@ -208,9 +211,9 @@ struct ProcessSingleEndDataOptions {
     int num_threads = 1;
 
     /**
-     * Number of reads in each thread.
+     * Number of reads to be processed in each thread.
      */
-    int block_size = 100000;
+    std::size_t block_size = 65535; // use the smallest maximum value for a size_t.
 };
 
 /**
@@ -280,7 +283,7 @@ void process_single_end_data(Pointer_ input, Handler_& handler, const ProcessSin
     tp.run(
         [&](SingleEndWorkspace& work) -> bool {
             auto& curreads = work.reads;
-            for (int b = 0; b < options.block_size; ++b) {
+            for (ReadIndex b = 0; b < options.block_size; ++b) {
                 if (!fastq()) {
                     return true;
                 }
@@ -311,7 +314,7 @@ struct ProcessPairedEndDataOptions {
     /**
      * Number of reads in each thread.
      */
-    int block_size = 100000;
+    std::size_t block_size = 100000;
 };
 
 /**
@@ -366,14 +369,14 @@ void process_paired_end_data(Pointer_ input1, Pointer_ input2, Handler_& handler
             state = conhandler.initialize(); // reinitializing for simplicity and to avoid accumulation of reserved memory.
             const auto& curreads1 = work.reads1;
             const auto& curreads2 = work.reads2;
-            size_t nreads = curreads1.size();
+            ReadIndex nreads = curreads1.size();
 
             if constexpr(!Handler_::use_names) {
-                for (size_t b = 0; b < nreads; ++b) {
+                for (ReadIndex b = 0; b < nreads; ++b) {
                     conhandler.process(state, curreads1.get_sequence(b), curreads2.get_sequence(b));
                 }
             } else {
-                for (size_t b = 0; b < nreads; ++b) {
+                for (ReadIndex b = 0; b < nreads; ++b) {
                     conhandler.process(
                         state,
                         curreads1.get_name(b), 
@@ -392,7 +395,7 @@ void process_paired_end_data(Pointer_ input1, Pointer_ input2, Handler_& handler
             bool finished1 = false;
             {
                 auto& curreads = work.reads1;
-                for (int b = 0; b < options.block_size; ++b) {
+                for (ReadIndex b = 0; b < options.block_size; ++b) {
                     if (!fastq1()) {
                         finished1 = true;
                         break;
@@ -408,7 +411,7 @@ void process_paired_end_data(Pointer_ input1, Pointer_ input2, Handler_& handler
             bool finished2 = false;
             {
                 auto& curreads = work.reads2;
-                for (int b = 0; b < options.block_size; ++b) {
+                for (ReadIndex b = 0; b < options.block_size; ++b) {
                     if (!fastq2()) {
                         finished2 = true;
                         break;

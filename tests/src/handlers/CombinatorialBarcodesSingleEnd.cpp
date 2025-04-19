@@ -360,13 +360,13 @@ TEST_F(CombinatorialBarcodesSingleEndTest, Sorting) {
     kaori::CombinatorialBarcodesSingleEnd<128, 2> x(constant.c_str(), constant.size(), make_pointers(), Options<128, 2>());
 
     auto state = x.initialize(); 
-    state.collected.push_back(std::array<int, 2>{ 3, 1 });
-    state.collected.push_back(std::array<int, 2>{ 1, 3 });
-    state.collected.push_back(std::array<int, 2>{ 2, 3 });
-    state.collected.push_back(std::array<int, 2>{ 3, 2 });
-    state.collected.push_back(std::array<int, 2>{ 3, 1 });
-    state.collected.push_back(std::array<int, 2>{ 0, 2 });
-    state.collected.push_back(std::array<int, 2>{ 1, 3 });
+    state.collected.push_back(std::array<kaori::BarcodeIndex, 2>{ 3, 1 });
+    state.collected.push_back(std::array<kaori::BarcodeIndex, 2>{ 1, 3 });
+    state.collected.push_back(std::array<kaori::BarcodeIndex, 2>{ 2, 3 });
+    state.collected.push_back(std::array<kaori::BarcodeIndex, 2>{ 3, 2 });
+    state.collected.push_back(std::array<kaori::BarcodeIndex, 2>{ 3, 1 });
+    state.collected.push_back(std::array<kaori::BarcodeIndex, 2>{ 0, 2 });
+    state.collected.push_back(std::array<kaori::BarcodeIndex, 2>{ 1, 3 });
 
     auto copy = state.collected;
     std::sort(copy.begin(), copy.end());

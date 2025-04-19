@@ -1,10 +1,13 @@
 #ifndef KAORI_FASTQ_READER_HPP
 #define KAORI_FASTQ_READER_HPP
 
-#include "byteme/PerByte.hpp"
 #include <cctype>
 #include <vector>
 #include <stdexcept>
+
+#include "byteme/PerByte.hpp"
+
+#include "utils.hpp"
 
 /**
  * @file FastqReader.hpp
@@ -96,11 +99,7 @@ public:
         // the end of the file. Note that we can't check for '@' as a
         // delimitor, as this can be a valid score, so instead we check at each
         // newline whether we've reached the specified length, and quit if so.
-        //
-        // Note we use unsigned long longs to guarantee at least 64 bits. We
-        // can't use size_t as this might not fit size_type, and we can't use
-        // size_type as this might not fit the quality string length.
-        unsigned long long seq_length = my_sequence.size(), qual_length = 0;
+        SeqLength seq_length = my_sequence.size(), qual_length = 0;
         my_okay = false;
 
         while (my_pb.advance()) {
@@ -114,6 +113,9 @@ public:
         }
 
         if (qual_length != seq_length) {
+            // Technically qual_length could overflow as the length of the quality string is unbounded.
+            // This would cause this check to not be triggered (unlike the other overflow cases where we should get a bad_alloc). 
+            // In practice, who cares, and besides, the quality strings aren't even used for anything here. 
             throw std::runtime_error("non-equal lengths for quality and sequence strings (starting line " + std::to_string(init_line + 1) + ")");
         }
 
@@ -135,7 +137,7 @@ private:
     std::vector<char> my_sequence;
     std::vector<char> my_name;
     bool my_okay;
-    unsigned long long my_line_count = 0;
+    unsigned long long my_line_count = 0; // guarantee at least 64 bits for the line counter.
 
 public:
     /**

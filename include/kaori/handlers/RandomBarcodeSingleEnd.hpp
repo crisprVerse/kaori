@@ -24,7 +24,7 @@ namespace kaori {
  *
  * @tparam max_size_ Maximum length of the template sequences on both reads.
  */
-template<size_t max_size_>
+template<SeqLength max_size_>
 class RandomBarcodeSingleEnd {
 public:
     /**
@@ -56,7 +56,7 @@ public:
      * This should be less than or equal to `max_size_`.
      * @param options Optional parameters.
      */
-    RandomBarcodeSingleEnd(const char* template_seq, size_t template_length, const Options& options) :
+    RandomBarcodeSingleEnd(const char* template_seq, SeqLength template_length, const Options& options) :
         my_forward(search_forward(options.strand)),
         my_reverse(search_reverse(options.strand)),
         my_constant(template_seq, template_length, options.strand),
@@ -65,17 +65,13 @@ public:
     {}
 
 private:
-    std::unordered_map<std::string, int> my_counts;
-    int my_total = 0;
+    std::unordered_map<std::string, Count> my_counts;
+    Count my_total = 0;
 
     bool my_forward, my_reverse;
     ScanTemplate<max_size_> my_constant;
     int my_max_mm;
     bool my_use_first;
-
-    bool has_match(int obs_mismatches) const {
-        return (obs_mismatches >= 0 && obs_mismatches <= my_max_mm);
-    }
 
 public:
     /**
@@ -83,14 +79,14 @@ public:
      */
     struct State {
         State() {}
-        State(size_t varsize) : buffer(varsize, ' ') {}
+        State(SeqLength varsize) : buffer(varsize, ' ') {}
 
-        std::unordered_map<std::string, int> counts;
+        std::unordered_map<std::string, Count> counts;
         std::string buffer;
-        int total = 0;
+        Count total = 0;
     };
 
-    void forward_match(const char* seq, size_t position, State& state) const {
+    void forward_match(const char* seq, SeqLength position, State& state) const {
         auto start = seq + position;
         const auto& range = my_constant.forward_variable_regions()[0];
         std::copy(start + range.first, start + range.second, state.buffer.data());
@@ -103,11 +99,11 @@ public:
         }
     }
 
-    void reverse_match(const char* seq, size_t position, State& state) const {
+    void reverse_match(const char* seq, SeqLength position, State& state) const {
         const auto& range = my_constant.forward_variable_regions()[0];
         auto start = seq + position + range.first;
-        size_t len = state.buffer.size();
-        for (size_t j = 0; j < len; ++j) {
+        SeqLength len = state.buffer.size();
+        for (SeqLength j = 0; j < len; ++j) {
             state.buffer[j] = complement_base<true>(start[len - j - 1]);
         }
 
@@ -126,11 +122,11 @@ public:
         if (my_use_first) {
             while (!deets.finished) {
                 my_constant.next(deets);
-                if (my_forward && has_match(deets.forward_mismatches)) {
+                if (my_forward && deets.forward_mismatches <= my_max_mm) {
                     forward_match(read_seq, deets.position, state);
                     break;
                 }
-                if (my_reverse && has_match(deets.reverse_mismatches)) {
+                if (my_reverse && deets.reverse_mismatches <= my_max_mm) {
                     reverse_match(read_seq, deets.position, state);
                     break;
                 }
@@ -139,13 +135,13 @@ public:
         } else {
             int best = my_max_mm + 1;
             bool best_forward = true;
-            size_t best_position = 0;
+            SeqLength best_position = 0;
             bool best_tied = false;
 
             while (!deets.finished) {
                 my_constant.next(deets);
 
-                if (my_forward && has_match(deets.forward_mismatches)) {
+                if (my_forward && deets.forward_mismatches <= my_max_mm) {
                     if (deets.forward_mismatches < best) {
                         best = deets.forward_mismatches;
                         best_position = deets.position;
@@ -156,7 +152,7 @@ public:
                     }
                 }
 
-                if (my_reverse && has_match(deets.reverse_mismatches)) {
+                if (my_reverse && deets.reverse_mismatches <= my_max_mm) {
                     if (deets.reverse_mismatches < best) {
                         best = deets.reverse_mismatches;
                         best_position = deets.position;
@@ -213,14 +209,14 @@ public:
     /**
      * @return Unordered map containing the frequency of each random barcode.
      */
-    const std::unordered_map<std::string, int>& get_counts() const {
+    const std::unordered_map<std::string, Count>& get_counts() const {
         return my_counts;        
     }
 
     /**
      * @return Total number of reads processed by the handler.
      */
-    int get_total() const {
+    Count get_total() const {
         return my_total;
     }
 };
