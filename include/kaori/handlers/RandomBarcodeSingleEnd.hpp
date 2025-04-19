@@ -34,7 +34,7 @@ public:
         /** 
          * Maximum number of mismatches allowed across the barcoding element.
          */
-        SeqLength max_mismatches = 0;
+        int max_mismatches = 0;
 
         /** 
          * Whether to search only for the first match.
@@ -70,7 +70,7 @@ private:
 
     bool my_forward, my_reverse;
     ScanTemplate<max_size_> my_constant;
-    SeqLength my_max_mm;
+    int my_max_mm;
     bool my_use_first;
 
 public:
@@ -133,7 +133,7 @@ public:
             }
 
         } else {
-            SeqLength best = my_max_mm + 1;
+            int best = my_max_mm + 1;
             bool best_forward = true;
             SeqLength best_position = 0;
             bool best_tied = false;

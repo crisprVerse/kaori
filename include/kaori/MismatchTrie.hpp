@@ -216,7 +216,7 @@ public:
 public:
     // To be called in the middle steps of the recursive search (i.e., for all but the last position).
     template<class SearchResult_>
-    void replace_best_with_chosen(SearchResult_& best, BarcodeIndex& best_index, SeqLength best_score, const SearchResult_& chosen, BarcodeIndex chosen_index, SeqLength chosen_score) const {
+    void replace_best_with_chosen(SearchResult_& best, BarcodeIndex& best_index, int best_score, const SearchResult_& chosen, BarcodeIndex chosen_index, int chosen_score) const {
         if (is_barcode_index_ok(chosen_index)) {
             if (chosen_score < best_score) {
                 best = chosen;
@@ -249,7 +249,7 @@ public:
     }
 
     // To be called in the last step of the recursive search.
-    void scan_final_position_with_mismatch(BarcodeIndex node, int refshift, BarcodeIndex& current_index, SeqLength current_mismatches, SeqLength& mismatch_cap) const {
+    void scan_final_position_with_mismatch(BarcodeIndex node, int refshift, BarcodeIndex& current_index, int current_mismatches, int& mismatch_cap) const {
         bool found = false;
         for (int s = 0; s < NUM_BASES; ++s) {
             if (s == refshift) { 
@@ -296,7 +296,7 @@ public:
 
 public:
     void optimize() {
-        SeqLength maxed = 0;
+        BarcodeIndex maxed = 0;
         if (!is_optimal(0, 0, maxed)) {
             std::vector<BarcodeIndex> replacement;
             replacement.reserve(my_pointers.size());
@@ -422,7 +422,7 @@ public:
         /**
          * @cond
          */
-        Result(BarcodeIndex index, SeqLength mismatches) : index(index), mismatches(mismatches) {}
+        Result(BarcodeIndex index, int mismatches) : index(index), mismatches(mismatches) {}
         /**
          * @endcond
          */
@@ -437,7 +437,7 @@ public:
          * Number of mismatches with the matching known barcode sequence.
          * This should only be used if `is_barcode_index_ok(index)` is true.
          */
-        SeqLength mismatches = 0;
+        int mismatches = 0;
     };
 
     /**
@@ -452,12 +452,12 @@ public:
      *    If all sequences have more mismatches than `max_mismatches`, `STATUS_UNMATCHED` is returned.
      * 2. The number of mismatches.
      */
-    Result search(const char* search_seq, SeqLength max_mismatches) const {
+    Result search(const char* search_seq, int max_mismatches) const {
         return search(search_seq, 0, 0, 0, max_mismatches);
     }
 
 private:
-    Result search(const char* seq, SeqLength i, BarcodeIndex node, SeqLength mismatches, SeqLength& max_mismatches) const {
+    Result search(const char* seq, SeqLength i, BarcodeIndex node, int mismatches, int& max_mismatches) const {
         const auto& pointers = my_core.pointers();
         BarcodeIndex current;
         int shift;
@@ -618,12 +618,12 @@ public:
         /**
          * Total number of mismatches between the barcode sequence from `index` and the input sequence.
          */
-        SeqLength mismatches = 0;
+        int mismatches = 0;
 
         /**
          * Number of mismatches in each segment of the sequence.
          */
-        std::array<SeqLength, num_segments_> per_segment;
+        std::array<int, num_segments_> per_segment;
     };
 
     /**
@@ -637,13 +637,13 @@ public:
      * - If multiple barcode sequences share the same lowest total, the match is ambiguous and `STATUS_AMBIGUOUS` is reported.
      * - If no barcode sequences satisfy the `max_mismatches` condition, `STATUS_UNMATCHED` is reported.
      */
-    Result search(const char* search_seq, const std::array<SeqLength, num_segments_>& max_mismatches) const {
-        SeqLength total_mismatches = std::accumulate(max_mismatches.begin(), max_mismatches.end(), static_cast<SeqLength>(0));
+    Result search(const char* search_seq, const std::array<int, num_segments_>& max_mismatches) const {
+        int total_mismatches = std::accumulate(max_mismatches.begin(), max_mismatches.end(), 0);
         return search(search_seq, 0, 0, Result(), max_mismatches, total_mismatches);
     }
 
 private:
-    Result search(const char* seq, SeqLength i, BarcodeIndex segment_id, Result state, const std::array<SeqLength, num_segments_>& segment_mismatches, SeqLength& total_mismatches) const {
+    Result search(const char* seq, SeqLength i, BarcodeIndex segment_id, Result state, const std::array<int, num_segments_>& segment_mismatches, int& total_mismatches) const {
         // Note that, during recursion, state.index does double duty 
         // as the index of the node on the trie.
         auto node = state.index;

@@ -116,13 +116,13 @@ public:
          * Number of mismatches on the forward strand at the current position.
          * This should only be used after a call to `next()`, and only if the forward strand is searched.
          */
-        SeqLength forward_mismatches = 0;
+        int forward_mismatches = 0;
 
         /**
          * Number of mismatches on the reverse strand at the current position.
          * This should only be used after a call to `next()`, and only if the reverse strand is searched.
          */
-        SeqLength reverse_mismatches = 0;
+        int reverse_mismatches = 0;
 
         /**
          * Whether the match is at the end of the read sequence.
@@ -253,16 +253,16 @@ private:
         return;
     }
 
-    static SeqLength strand_match(const State& match, const std::bitset<N>& ref, const std::bitset<N>& mask, const std::bitset<N/4>& mask_ambiguous) {
+    static int strand_match(const State& match, const std::bitset<N>& ref, const std::bitset<N>& mask, const std::bitset<N/4>& mask_ambiguous) {
         // pop count here is equal to the number of non-ambiguous mismatches *
         // 2 + number of ambiguous mismatches * 3. This is because
         // non-ambiguous bases are encoded by 1 set bit per 4 bases (so 2 are
         // left after a XOR'd mismatch), while ambiguous mismatches are encoded
         // by all set bits per 4 bases (which means that 3 are left after XOR).
-        SeqLength pcount = ((match.state & mask) ^ ref).count(); 
+        int pcount = ((match.state & mask) ^ ref).count(); 
 
         if (match.any_ambiguous) {
-            SeqLength acount = (match.ambiguous & mask_ambiguous).count();
+            int acount = (match.ambiguous & mask_ambiguous).count();
             return (pcount - acount) / 2; // i.e., acount + (pcount - acount * 3) / 2;
         } else {
             return pcount / 2;

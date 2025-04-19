@@ -76,7 +76,7 @@ public:
         /**
          * Maximum number of mismatches for any search performed by `SimpleBarcodeSearch::search`.
          */
-        SeqLength max_mismatches = 0;
+        int max_mismatches = 0;
 
         /** 
          * Whether to reverse-complement the barcode sequences before indexing them.
@@ -109,14 +109,14 @@ public:
 
 private:
     AnyMismatches my_trie;
-    SeqLength my_max_mm;
-    std::unordered_map<std::string, SeqLength> my_exact;
+    int my_max_mm;
+    std::unordered_map<std::string, BarcodeIndex> my_exact;
 
     struct CacheEntry {
         CacheEntry() = default;
-        CacheEntry(BarcodeIndex index, SeqLength mismatches) : index(index), mismatches(mismatches) {}
+        CacheEntry(BarcodeIndex index, int mismatches) : index(index), mismatches(mismatches) {}
         BarcodeIndex index;
-        SeqLength mismatches;
+        int mismatches;
     };
     std::unordered_map<std::string, CacheEntry> my_cache;
 
@@ -138,7 +138,7 @@ public:
          * Number of mismatches with the matching known sequence.
          * This should only be used if `is_barcode_index_ok(index)` is true.
          */
-        SeqLength mismatches = 0;
+        int mismatches = 0;
 
         /**
          * @cond
@@ -198,7 +198,7 @@ public:
      * @param allowed_mismatches Allowed number of mismatches.
      * This should not be greater than the maximum specified in the constructor.
      */
-    void search(const std::string& search_seq, State& state, SeqLength allowed_mismatches) const {
+    void search(const std::string& search_seq, State& state, int allowed_mismatches) const {
         auto it = my_exact.find(search_seq);
         if (it != my_exact.end()) {
             state.index = it->second;
@@ -272,7 +272,7 @@ public:
          * @param max_mismatch_per_segment Maximum number of mismatches per segment.
          * This is used to fill `max_mismatches`.
          */
-        Options(SeqLength max_mismatch_per_segment = 0) {
+        Options(int max_mismatch_per_segment = 0) {
             max_mismatches.fill(max_mismatch_per_segment);
         }
         
@@ -281,7 +281,7 @@ public:
          * All values should be non-negative.
          * Defaults to an all-zero array in the `Options()` constructor.
          */
-        std::array<SeqLength, num_segments_> max_mismatches;
+        std::array<int, num_segments_> max_mismatches;
 
         /** 
          * Whether to reverse-complement the barcode sequences before indexing them.
@@ -339,16 +339,16 @@ public:
 
 private:
     SegmentedMismatches<num_segments_> my_trie;
-    std::array<SeqLength, num_segments_> my_max_mm;
+    std::array<int, num_segments_> my_max_mm;
     std::unordered_map<std::string, BarcodeIndex> my_exact;
 
     struct CacheEntry {
         CacheEntry() = default;
-        CacheEntry(BarcodeIndex index, SeqLength mismatches, std::array<SeqLength, num_segments_> per_segment) :
+        CacheEntry(BarcodeIndex index, int mismatches, std::array<int, num_segments_> per_segment) :
             index(index), mismatches(mismatches), per_segment(per_segment) {}
         BarcodeIndex index;
-        SeqLength mismatches;
-        std::array<SeqLength, num_segments_> per_segment;
+        int mismatches;
+        std::array<int, num_segments_> per_segment;
     };
     std::unordered_map<std::string, CacheEntry> my_cache;
 
@@ -370,13 +370,13 @@ public:
          * Total number of mismatches with the matching known sequence, summed across all segments.
          * This should only be used if `is_barcode_index_ok(index)` is true.
          */
-        SeqLength mismatches = 0;
+        int mismatches = 0;
 
         /**
          * Number of mismatches in each segment.
          * This should only be used if `is_barcode_index_ok(index)` is true.
          */
-        std::array<SeqLength, num_segments_> per_segment;
+        std::array<int, num_segments_> per_segment;
         
         /**
          * @cond
@@ -438,7 +438,7 @@ public:
      * @param allowed_mismatches Allowed number of mismatches in each segment.
      * Each value should not be greater than the corresponding maximum specified in the constructor.
      */
-    void search(const std::string& search_seq, State& state, std::array<SeqLength, num_segments_> allowed_mismatches) const {
+    void search(const std::string& search_seq, State& state, std::array<int, num_segments_> allowed_mismatches) const {
         auto it = my_exact.find(search_seq);
         if (it != my_exact.end()) {
             state.index = it->second;

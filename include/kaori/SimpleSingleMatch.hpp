@@ -37,7 +37,7 @@ public:
         /**
          * Maximum number of mismatches for any search performed by `SimpleBarcodeSearch::search`.
          */
-        SeqLength max_mismatches = 0;
+        int max_mismatches = 0;
 
         /** 
          * How duplicated barcode sequences should be handled.
@@ -97,7 +97,7 @@ public:
 
 private:
     bool my_forward, my_reverse;
-    SeqLength my_max_mm;
+    int my_max_mm;
     ScanTemplate<max_size_> my_constant;
     SimpleBarcodeSearch my_forward_lib, my_reverse_lib;
 
@@ -124,13 +124,13 @@ public:
          * This include both the constant and variable regions.
          * This should only be used if `search()` returns true.
          */
-        SeqLength mismatches = 0;
+        int mismatches = 0;
 
         /**
          * Total number of mismatches in the variable region, after each call to `search()`.
          * This should only be used if `search()` returns true.
          */
-        SeqLength variable_mismatches = 0;
+        int variable_mismatches = 0;
 
         /**
          * Whether the match was found on the reverse strand of the read sequence.
@@ -210,12 +210,12 @@ public:
         state.mismatches = 0;
         state.variable_mismatches = 0;
 
-        auto update = [&](bool rev, SeqLength const_mismatches, const typename SimpleBarcodeSearch::State& x) -> bool {
+        auto update = [&](bool rev, int const_mismatches, const typename SimpleBarcodeSearch::State& x) -> bool {
             if (!is_barcode_index_ok(x.index)) {
                 return false;
             }
 
-            SeqLength total = const_mismatches + x.mismatches;
+            int total = const_mismatches + x.mismatches;
             if (total > my_max_mm) {
                 return false;
             }
@@ -266,9 +266,9 @@ public:
         auto deets = my_constant.initialize(read_seq, read_length);
         state.index = STATUS_UNMATCHED;
         bool found = false;
-        SeqLength best = my_max_mm + 1;
+        int best = my_max_mm + 1;
 
-        auto update = [&](bool rev, SeqLength const_mismatches, const typename SimpleBarcodeSearch::State& x) -> void {
+        auto update = [&](bool rev, int const_mismatches, const typename SimpleBarcodeSearch::State& x) -> void {
             if (!is_barcode_index_ok(x.index)) {
                 return;
             }

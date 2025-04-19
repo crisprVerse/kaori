@@ -37,7 +37,7 @@ public:
         /** 
          * Maximum number of mismatches allowed across the barcoding element.
          */
-        SeqLength max_mismatches = 0;
+        int max_mismatches = 0;
 
         /**
          * Strand(s) of each read sequence to search.

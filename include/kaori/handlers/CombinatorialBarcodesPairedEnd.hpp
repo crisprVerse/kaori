@@ -38,7 +38,7 @@ public:
         /** 
          * Maximum number of mismatches allowed across the first barcoding element.
          */
-        SeqLength max_mismatches1 = 0;
+        int max_mismatches1 = 0;
 
         /**
          * Strand(s) of the read sequence to search for the first barcoding element.
@@ -48,7 +48,7 @@ public:
         /** 
          * Maximum number of mismatches allowed across the second barcoding element.
          */
-        SeqLength max_mismatches2 = 0;
+        int max_mismatches2 = 0;
 
         /**
          * Strand(s) of the read sequence to search for the second barcoding element.
@@ -217,13 +217,13 @@ public:
                 }
             } else if (m1 && m2) {
                 std::array<BarcodeIndex, 2> candidate{ state.search1.index, state.search2.index };
-                SeqLength mismatches = state.search1.mismatches + state.search2.mismatches;
+                int mismatches = state.search1.mismatches + state.search2.mismatches;
 
                 bool n1 = my_matcher1.search_best(r2.first, r2.second - r2.first, state.search1);
                 bool n2 = my_matcher2.search_best(r1.first, r1.second - r1.first, state.search2);
 
                 if (n1 && n2) {
-                    SeqLength rmismatches = state.search1.mismatches + state.search2.mismatches;
+                    int rmismatches = state.search1.mismatches + state.search2.mismatches;
                     if (mismatches > rmismatches) {
                         state.collected.emplace_back(std::array<BarcodeIndex, 2>{ state.search1.index, state.search2.index });
                     } else if (mismatches < rmismatches) {

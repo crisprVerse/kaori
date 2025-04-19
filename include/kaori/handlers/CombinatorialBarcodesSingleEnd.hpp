@@ -37,7 +37,7 @@ public:
         /**
          * Maximum number of mismatches allowed across the barcoding element.
          */
-        SeqLength max_mismatches = 0;
+        int max_mismatches = 0;
 
         /** @param Whether to search only for the first match.
          * If `false`, the handler will search for the best match (i.e., fewest mismatches) instead.
@@ -130,7 +130,7 @@ public:
 private:
     bool my_forward;
     bool my_reverse;
-    SeqLength my_max_mm;
+    int my_max_mm;
     bool my_use_first;
 
     ScanTemplate<max_size_> my_constant_matcher;
@@ -159,11 +159,11 @@ public:
      */
 
 private:
-    std::pair<bool, SeqLength> find_match(
+    std::pair<bool, int> find_match(
         bool reverse,
         const char* seq, 
         SeqLength position, 
-        SeqLength obs_mismatches, 
+        int obs_mismatches, 
         const std::array<SimpleBarcodeSearch, num_variable_>& libs, 
         std::array<typename SimpleBarcodeSearch::State, num_variable_>& states, 
         std::array<BarcodeIndex, num_variable_>& temp,
@@ -198,11 +198,11 @@ private:
         return std::make_pair(true, obs_mismatches);
     }
 
-    std::pair<bool, SeqLength> forward_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
+    std::pair<bool, int> forward_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
         return find_match(false, seq, deets.position, deets.forward_mismatches, my_forward_lib, state.forward_details, state.temp, state.buffer);
     }
 
-    std::pair<bool, SeqLength> reverse_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
+    std::pair<bool, int> reverse_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
         return find_match(true, seq, deets.position, deets.reverse_mismatches, my_reverse_lib, state.reverse_details, state.temp, state.buffer);
     }
 
@@ -232,10 +232,10 @@ private:
     void process_best(State& state, const std::pair<const char*, const char*>& x) const {
         auto deets = my_constant_matcher.initialize(x.first, x.second - x.first);
         bool found = false;
-        SeqLength best_mismatches = my_max_mm + 1;
+        int best_mismatches = my_max_mm + 1;
         std::array<BarcodeIndex, num_variable_> best_id;
 
-        auto update = [&](std::pair<bool, SeqLength> match) -> void {
+        auto update = [&](std::pair<bool, int> match) -> void {
             if (match.first && match.second <= best_mismatches) {
                 if (match.second == best_mismatches) {
                     if (best_id != state.temp) { // ambiguous.
