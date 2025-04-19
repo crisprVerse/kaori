@@ -297,12 +297,12 @@ public:
         while (!deets.finished) {
             my_constant.next(deets);
 
-            if (my_forward && has_match(deets.position, deets.forward_mismatches)) {
+            if (my_forward && deets.forward_mismatches <= my_max_mm) {
                 forward_match(read_seq, deets, state);
                 update(false, deets.forward_mismatches, state.forward_details);
             }
 
-            if (my_reverse && has_match(deets.position, deets.reverse_mismatches)) {
+            if (my_reverse && deets.reverse_mismatches <= my_max_mm) {
                 reverse_match(read_seq, deets, state);
                 update(true, deets.reverse_mismatches, state.reverse_details);
             }

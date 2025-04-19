@@ -167,7 +167,7 @@ public:
         BarcodePool combined_set(combined);
         my_varlib = SegmentedBarcodeSearch<2>(
             combined_set,
-            std::array<SeqLength, 2>{ static_cast<SeqLength>(len1), static_cast<SEqLength>(len2) }, 
+            std::array<SeqLength, 2>{ len1, len2 }, 
             [&]{
                 typename SegmentedBarcodeSearch<2>::Options bopt;
                 bopt.max_mismatches = { my_max_mm1, my_max_mm2 };
@@ -196,7 +196,9 @@ public:
      *@cond
      */
     struct State {
-        State(decltype(counts.size()) n) : counts(n) {}
+        State() = default;
+        State(typename std::vector<Count>::size_type n) : counts(n) {}
+
         std::vector<Count> counts;
         Count total = 0;
 
@@ -282,7 +284,7 @@ private:
             state.combined += current2.first; // on a separate line to avoid creating a std::string intermediate.
             my_varlib.search(state.combined, state.details, std::array<SeqLength, 2>{ my_max_mm1 - state.first_match.second, my_max_mm2 - current2.second });
 
-            if (state.details.index >= 0) {
+            if (state.details.index != UNMATCHED) {
                 ++state.counts[state.details.index];
                 return true;
             } else {
@@ -345,7 +347,7 @@ private:
                     state.combined += current2.first; // separate line is deliberate.
                     my_varlib.search(state.combined, state.details, std::array<SeqLength, 2>{ my_max_mm1 - state.first_match.second, my_max_mm2 - current2.second });
 
-                    if (state.details.index >= 0) {
+                    if (state.details.index != UNMATCHED) {
                         SeqLength cur_mismatches = state.details.mismatches + state.first_match.second + current2.second;
                         if (cur_mismatches < best_mismatches) {
                             chosen = state.details.index;
@@ -378,14 +380,14 @@ public:
             auto best = process_best(state, r1, r2);
             if (my_randomized) {
                 auto best2 = process_best(state, r2, r1);
-                if (best.first < 0 || best.second > best2.second) {
+                if (best.first == UNMATCHED || best.second > best2.second) {
                     best = best2;
                 } else if (best.second == best2.second && best.first != best2.first) {
                     best.first = UNMATCHED; // ambiguous.
                 }
             }
 
-            found = best.first >= 0;
+            found = best.first != UNMATCHED;
             if (found) {
                 ++state.counts[best.first];
             }

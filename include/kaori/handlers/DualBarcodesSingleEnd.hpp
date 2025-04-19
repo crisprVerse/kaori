@@ -130,7 +130,7 @@ private:
     bool my_use_first;
 
     ScanTemplate<max_size_> my_constant_matcher;
-    int my_num_variable;
+    std::size_t my_num_variable;
 
     SimpleBarcodeSearch my_forward_lib, my_reverse_lib;
     std::vector<Count > my_counts;
@@ -141,7 +141,8 @@ public:
      * @cond
      */
     struct State {
-        State(decltype(counts) n) : counts(n) {}
+        State() = default;
+        State(typename std::vector<Count>::size_type n) : counts(n) {}
 
         std::vector<Count> counts;
         Count total = 0;
@@ -156,7 +157,7 @@ public:
      */
 
 private:
-    std::pair<Barcodeindex, SeqLength> find_match(
+    std::pair<BarcodeIndex, SeqLength> find_match(
         bool reverse,
         const char* seq, 
         SeqLength position, 
@@ -177,11 +178,11 @@ private:
         return std::make_pair(state.index, obs_mismatches + state.mismatches);
     }
 
-    std::pair<Barcodeindex, SeqLength> forward_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
+    std::pair<BarcodeIndex, SeqLength> forward_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
         return find_match(false, seq, deets.position, deets.forward_mismatches, my_forward_lib, state.forward_details, state.buffer);
     }
 
-    std::pair<Barcodeindex, SeqLength> reverse_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
+    std::pair<BarcodeIndex, SeqLength> reverse_match(const char* seq, const typename ScanTemplate<max_size_>::State& deets, State& state) const {
         return find_match(true, seq, deets.position, deets.reverse_mismatches, my_reverse_lib, state.reverse_details, state.buffer);
     }
 
@@ -194,7 +195,7 @@ private:
 
             if (my_forward && deets.forward_mismatches <= my_max_mm) {
                 auto id = forward_match(x.first, deets, state).first;
-                if (id >= 0) {
+                if (id != UNMATCHED) {
                     ++state.counts[id];
                     return true;
                 }
@@ -202,7 +203,7 @@ private:
 
             if (my_reverse && deets.reverse_mismatches <= my_max_mm) {
                 auto id = reverse_match(x.first, deets, state).first;
-                if (id >= 0) {
+                if (id != UNMATCHED) {
                     ++state.counts[id];
                     return true;
                 }
@@ -218,7 +219,7 @@ private:
         BarcodeIndex best_id = UNMATCHED;
 
         auto update = [&](std::pair<BarcodeIndex, SeqLength> match) -> void {
-            if (match.first < 0){ 
+            if (match.first == UNMATCHED){ 
                 return;
             }
             if (match.second == best_mismatches) {

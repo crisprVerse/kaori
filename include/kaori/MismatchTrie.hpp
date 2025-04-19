@@ -42,7 +42,7 @@ inline constexpr TrieIndex TRIE_STATUS_AMBIGUOUS = static_cast<TrieIndex>(-2);
  * If false, `index` represents one of the error codes, i.e., `TRIE_STATUS_MISSING` or `TRIE_STATUS_AMBIGUOUS`.
  */
 inline bool is_trie_index_ok(TrieIndex index) {
-    return status < TRIE_STATUS_AMBIGUOUS;
+    return index < TRIE_STATUS_AMBIGUOUS;
 }
 
 /** 
@@ -75,6 +75,19 @@ struct TrieAddStatus {
 /**
  * @cond
  */
+template<char base_>
+int trie_base_shift() {
+    if constexpr(base_ == 'A') {
+        return 0;
+    } else if constexpr(base_ == 'C') {
+        return 1;
+    } else if constexpr(base_ == 'G') {
+        return 2;
+    } else { // i.e., base_ == 'T'
+        return 3;
+    }
+}
+
 class MismatchTrie {
 public:
     MismatchTrie() = default;
@@ -82,7 +95,7 @@ public:
     MismatchTrie(SeqLength barcode_length, DuplicateAction duplicates) : 
         my_length(barcode_length), 
         my_duplicates(duplicates),
-        my_pointers(NUM_BASES, TRIE_STATUS_MISSING), 
+        my_pointers(NUM_BASES, TRIE_STATUS_MISSING)
     {}
 
 private:
@@ -91,23 +104,11 @@ private:
     std::vector<TrieIndex> my_pointers;
     TrieIndex my_counter = 0;
 
-    template<char base_>
-    int base_shift() {
-        if constexpr(base_ == 'A') {
-            return 0;
-        } else if constexpr(base == 'C') {
-            return 1;
-        } else if constexpr(base == 'G') {
-            return 2;
-        } else { // i.e., base == 'T'
-            return 3;
-        }
-    }
-
     TrieIndex next(TrieIndex node) {
-        auto& current = my_pointers[node];
+        auto current = my_pointers[node]; // don't make this a reference as it gets invalidated by the resize.
         if (current == TRIE_STATUS_MISSING) {
             current = my_pointers.size();
+            my_pointers[node] = current;
             my_pointers.resize(current + NUM_BASES, TRIE_STATUS_MISSING);
         }
         return current;
@@ -133,7 +134,7 @@ private:
                     status.duplicate_cleared = true;
                     current = TRIE_STATUS_AMBIGUOUS;
                     break;
-                case DuplicateAction::NOT_OK:
+                case DuplicateAction::ERROR:
                     throw std::runtime_error("duplicate sequences detected (" + 
                         std::to_string(current + 1) + ", " + 
                         std::to_string(my_counter + 1) + ") when constructing the trie");
@@ -143,7 +144,7 @@ private:
 
     template<char base_>
     void process_ambiguous(SeqLength i, TrieIndex node, const char* barcode_seq, TrieAddStatus& status) {
-        node += base_shift<base_>();
+        node += trie_base_shift<base_>();
         ++i;
         if (i == my_length) {
             end(node, status);
@@ -159,13 +160,13 @@ private:
         while (1) {
             switch (barcode_seq[i]) {
                 case 'A': case 'a':
-                    node += base_shift<'A'>(); break;
+                    node += trie_base_shift<'A'>(); break;
                 case 'C': case 'c':
-                    node += base_shift<'C'>(); break;
+                    node += trie_base_shift<'C'>(); break;
                 case 'G': case 'g':
-                    node += base_shift<'G'>(); break;
+                    node += trie_base_shift<'G'>(); break;
                 case 'T': case 't':
-                    node += base_shift<'T'>(); break;
+                    node += trie_base_shift<'T'>(); break;
                 default:
                     goto ambiguous;
             }
@@ -317,7 +318,7 @@ public:
 
 public:
     void optimize() {
-        int maxed = 0;
+        SeqLength maxed = 0;
         if (!is_optimal(0, 0, maxed)) {
             std::vector<TrieIndex> replacement;
             replacement.reserve(my_pointers.size());
@@ -457,15 +458,15 @@ private:
         const auto& pointers = my_core.pointers();
         TrieIndex current;
         int shift;
-        switch (barcode_seq[i]) {
+        switch (seq[i]) {
             case 'A': case 'a':
-                shift = base_shift<'A'>(); current = pointers[node + shift]; break;
+                shift = trie_base_shift<'A'>(); current = pointers[node + shift]; break;
             case 'C': case 'c':
-                shift = base_shift<'C'>(); current = pointers[node + shift]; break;
+                shift = trie_base_shift<'C'>(); current = pointers[node + shift]; break;
             case 'G': case 'g':
-                shift = base_shift<'G'>(); current = pointers[node + shift]; break;
+                shift = trie_base_shift<'G'>(); current = pointers[node + shift]; break;
             case 'T': case 't':
-                shift = base_shift<'T'>(); current = pointers[node + shift]; break;
+                shift = trie_base_shift<'T'>(); current = pointers[node + shift]; break;
             default:
                 shift = -1; current = TRIE_STATUS_MISSING; break;
         }
@@ -493,7 +494,7 @@ private:
         } else {
             std::pair<TrieIndex, SeqLength> best(TRIE_STATUS_MISSING, max_mismatches + 1);
             if (is_trie_index_ok(current)) {
-                best = search(seq, pos, current, mismatches, max_mismatches);
+                best = search(seq, i, current, mismatches, max_mismatches);
             }
 
             ++mismatches;
@@ -647,15 +648,15 @@ private:
         const auto& pointers = my_core.pointers();
         TrieIndex current;
         int shift;
-        switch (barcode_seq[i]) {
+        switch (seq[i]) {
             case 'A': case 'a':
-                shift = base_shift<'A'>(); current = pointers[node + shift]; break;
+                shift = trie_base_shift<'A'>(); current = pointers[node + shift]; break;
             case 'C': case 'c':
-                shift = base_shift<'C'>(); current = pointers[node + shift]; break;
+                shift = trie_base_shift<'C'>(); current = pointers[node + shift]; break;
             case 'G': case 'g':
-                shift = base_shift<'G'>(); current = pointers[node + shift]; break;
+                shift = trie_base_shift<'G'>(); current = pointers[node + shift]; break;
             case 'T': case 't':
-                shift = base_shift<'T'>(); current = pointers[node + shift]; break;
+                shift = trie_base_shift<'T'>(); current = pointers[node + shift]; break;
             default:
                 shift = -1; current = TRIE_STATUS_MISSING; break;
         }

@@ -81,9 +81,8 @@ public:
      * @cond
      */
     struct State {
-        State() {}
-
-        State(typename SimpleSingleMatch<max_size_>::State s, decltype(counts.size()) nvar) : search(std::move(s)), counts(nvar) {}
+        State() = default;
+        State(typename SimpleSingleMatch<max_size_>::State s, typename std::vector<Count>::size_type nvar) : search(std::move(s)), counts(nvar) {}
 
         typename SimpleSingleMatch<max_size_>::State search;
         std::vector<Count> counts;

@@ -19,7 +19,6 @@ TEST(ScanTemplate, Basic) {
         auto out = stuff.initialize(seq.c_str(), seq.size());
         stuff.next(out);
         EXPECT_EQ(out.forward_mismatches, 0);
-        EXPECT_EQ(out.reverse_mismatches, -1);
         EXPECT_TRUE(out.finished);
     }
 
@@ -27,7 +26,7 @@ TEST(ScanTemplate, Basic) {
         std::string seq = "GACGTAAAATTTTA";
         auto out = stuff.initialize(seq.c_str(), seq.size());
         stuff.next(out);
-        EXPECT_TRUE(out.forward_mismatches > 2);
+        EXPECT_GT(out.forward_mismatches, 2);
         EXPECT_FALSE(out.finished);
 
         stuff.next(out);
@@ -35,7 +34,7 @@ TEST(ScanTemplate, Basic) {
         EXPECT_FALSE(out.finished);
 
         stuff.next(out);
-        EXPECT_TRUE(out.forward_mismatches > 2);
+        EXPECT_GT(out.forward_mismatches, 2);
         EXPECT_TRUE(out.finished);
     }
 }
@@ -46,9 +45,6 @@ TEST(ScanTemplate, TooShort) {
 
     std::string seq = "ACGT";
     auto out = stuff.initialize(seq.c_str(), seq.size());
-
-    EXPECT_EQ(out.forward_mismatches, -1);
-    EXPECT_EQ(out.reverse_mismatches, -1);
     EXPECT_TRUE(out.finished);
 }
 
@@ -61,7 +57,7 @@ TEST(ScanTemplate, ReverseComplement) {
         auto out = stuff.initialize(seq.c_str(), seq.size());
 
         stuff.next(out);
-        EXPECT_TRUE(out.forward_mismatches > 0);
+        EXPECT_GT(out.forward_mismatches, 0);
         EXPECT_EQ(out.reverse_mismatches, 0);
         EXPECT_TRUE(out.finished);
     }
@@ -72,7 +68,6 @@ TEST(ScanTemplate, ReverseComplement) {
         auto out = stuff.initialize(seq.c_str(), seq.size());
 
         stuff.next(out);
-        EXPECT_EQ(out.forward_mismatches, -1);
         EXPECT_EQ(out.reverse_mismatches, 0);
         EXPECT_TRUE(out.finished);
 
@@ -88,8 +83,7 @@ TEST(ScanTemplate, ReverseComplement) {
         auto out = stuff.initialize(seq.c_str(), seq.size());
 
         stuff.next(out);
-        EXPECT_TRUE(out.forward_mismatches > 0);
-        EXPECT_EQ(out.reverse_mismatches, -1);
+        EXPECT_GT(out.forward_mismatches, 0);
         EXPECT_TRUE(out.finished);
     }
  }
@@ -118,7 +112,7 @@ TEST(ScanTemplate, Multiple) {
         
         for (int i = 0; i < 5; ++i) {
             stuff.next(out);
-            EXPECT_TRUE(out.forward_mismatches > 1);
+            EXPECT_GT(out.forward_mismatches, 1);
             EXPECT_FALSE(out.finished);
         }
 

@@ -42,7 +42,7 @@ typedef typename std::vector<const char*>::size_type BarcodeIndex; // we use the
 /**
  * No match to any known barcode.
  */
-inline constexpr BarcodeLength UNMATCHED = static_cast<BarcodeLength>(-1);
+inline constexpr BarcodeIndex UNMATCHED = static_cast<BarcodeIndex>(-1);
 
 /**
  * Integer type to count the frequency of each barcode.
@@ -193,13 +193,13 @@ void add_other_to_hash(std::bitset<N>& x) {
 }
 
 template<size_t V>
-void sort_combinations(std::vector<std::array<int, V> >& combinations, const std::array<size_t, V>& num_options) {
+void sort_combinations(std::vector<std::array<BarcodeIndex, V> >& combinations, const std::array<BarcodeIndex, V>& num_options) {
     // Going back to front as the last iteration gives the slowest changing index.
     // This ensures that we get the same results as std::sort() on the arrays.
     for (size_t i_ = 0; i_ < V; ++i_) {
         auto i = V - i_ - 1;
 
-        std::vector<size_t> counts(num_options[i] + 1);
+        std::vector<Count> counts(num_options[i] + 1);
         for (const auto& x : combinations) {
             ++(counts[x[i] + 1]);
         }
@@ -208,7 +208,7 @@ void sort_combinations(std::vector<std::array<int, V> >& combinations, const std
             counts[j] += counts[j-1];
         }
 
-        std::vector<std::array<int, V> > copy(combinations.size());
+        std::vector<std::array<BarcodeIndex, V> > copy(combinations.size());
         for (const auto& x : combinations) {
             auto& pos = counts[x[i]];
             copy[pos] = x;

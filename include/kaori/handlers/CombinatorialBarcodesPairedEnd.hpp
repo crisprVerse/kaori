@@ -126,9 +126,9 @@ private:
     bool my_use_first = true;
 
     std::vector<std::array<BarcodeIndex, 2> > my_combinations;
-    SeqCount my_total = 0;
-    SeqCount my_barcode1_only = 0;
-    SeqCount my_barcode2_only = 0;
+    Count my_total = 0;
+    Count my_barcode1_only = 0;
+    Count my_barcode2_only = 0;
 
 public:
     /**
@@ -140,9 +140,9 @@ public:
         State(typename SimpleSingleMatch<max_size_>::State s1, typename SimpleSingleMatch<max_size_>::State s2) : search1(std::move(s1)), search2(std::move(s2)) {}
 
         std::vector<std::array<BarcodeIndex, 2> >collected;
-        SeqCount barcode1_only = 0;
-        SeqCount barcode2_only = 0;
-        SeqCount total = 0;
+        Count barcode1_only = 0;
+        Count barcode2_only = 0;
+        Count total = 0;
 
         /**
          * @cond

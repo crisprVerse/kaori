@@ -5,7 +5,7 @@
 #include <string>
 #include <cstddef>
 
-#include "utils.h"
+#include "utils.hpp"
 
 /**
  * @file BarcodePool.hpp

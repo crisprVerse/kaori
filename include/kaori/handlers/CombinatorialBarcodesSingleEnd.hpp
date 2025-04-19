@@ -179,7 +179,7 @@ private:
 
             auto& curstate = states[r];
             libs[r].search(buffer, curstate, my_max_mm - obs_mismatches);
-            if (curstate.index < 0) {
+            if (curstate.index == UNMATCHED) {
                 return std::make_pair(false, 0);
             }
 

@@ -21,7 +21,7 @@ TEST_F(SimpleBarcodeSearchTest, Basic) {
     EXPECT_EQ(init.index, 3);
 
     stuff.search("CCAC", init);
-    EXPECT_EQ(init.index, -1);
+    EXPECT_EQ(init.index, kaori::UNMATCHED);
 }
 
 TEST_F(SimpleBarcodeSearchTest, ReverseComplement) {
@@ -62,7 +62,7 @@ TEST_F(SimpleBarcodeSearchTest, Iupac) {
         EXPECT_EQ(init.index, 5);
 
         stuff.search("AAAA", init);
-        EXPECT_EQ(init.index, -1);
+        EXPECT_EQ(init.index, kaori::UNMATCHED);
     }
 
     {
@@ -87,7 +87,7 @@ TEST_F(SimpleBarcodeSearchTest, Iupac) {
         EXPECT_EQ(init.index, 5);
 
         stuff.search("AATA", init);
-        EXPECT_EQ(init.index, -1);
+        EXPECT_EQ(init.index, kaori::UNMATCHED);
     }
 }
 
@@ -115,7 +115,7 @@ TEST_F(SimpleBarcodeSearchTest, Mismatches) {
         EXPECT_EQ(init.index, 1);
         EXPECT_EQ(init.mismatches, 1);
         stuff.search("CGAC", init);
-        EXPECT_EQ(init.index, -1);
+        EXPECT_EQ(init.index, kaori::UNMATCHED);
     }
 
     {
@@ -135,7 +135,7 @@ TEST_F(SimpleBarcodeSearchTest, Mismatches) {
         EXPECT_EQ(init.mismatches, 2);
 
         stuff.search("CGGC", init); // ambiguous.
-        EXPECT_EQ(init.index, -2);
+        EXPECT_EQ(init.index, kaori::UNMATCHED);
     }
 }
 
@@ -162,7 +162,7 @@ TEST_F(SimpleBarcodeSearchTest, Caching) {
     // No cache when the number of mismatches is lower than that in the constructor.
     {
         stuff.search("AATA", state, 0);
-        EXPECT_EQ(state.index, -1);
+        EXPECT_EQ(state.index, kaori::UNMATCHED);
         auto it = state.cache.find("AATA");
         EXPECT_TRUE(it == state.cache.end());
     }
@@ -175,17 +175,17 @@ TEST_F(SimpleBarcodeSearchTest, Caching) {
 
         auto it = state.cache.find("AATA");
         EXPECT_TRUE(it != state.cache.end());
-        EXPECT_EQ((it->second).first, 0);
-        EXPECT_EQ((it->second).second, 1);
+        EXPECT_EQ((it->second).index, 0);
+        EXPECT_EQ((it->second).mismatches, 1);
     }
 
     {
         stuff.search("ACTA", state);
-        EXPECT_EQ(state.index, -1);
+        EXPECT_EQ(state.index, kaori::UNMATCHED);
 
         auto it = state.cache.find("ACTA");
         EXPECT_TRUE(it != state.cache.end());
-        EXPECT_EQ((it->second).first, -1);
+        EXPECT_EQ((it->second).index, kaori::UNMATCHED);
     }
 
     // Retrieval from cache respects a lower mismatch threshold.  This uses the
@@ -193,11 +193,11 @@ TEST_F(SimpleBarcodeSearchTest, Caching) {
     // revoked at a lower mismatch threshold.
     {
         stuff.search("AATA", state, 0); 
-        EXPECT_EQ(state.index, -1);
+        EXPECT_EQ(state.index, kaori::UNMATCHED);
     }
  
     // Checking that the reduction works correctly.
-    state.cache["AATA"].first = 2;
+    state.cache["AATA"].index = 2;
     stuff.reduce(state);
     EXPECT_TRUE(state.cache.empty());
 
@@ -281,10 +281,10 @@ TEST_F(SimpleBarcodeSearchTest, Duplicates) {
         auto state = stuff.initialize();
 
         stuff.search("ACGT", state);
-        EXPECT_EQ(state.index, -1);
+        EXPECT_EQ(state.index, kaori::UNMATCHED);
 
         stuff.search("AGTT", state);
-        EXPECT_EQ(state.index, -1);
+        EXPECT_EQ(state.index, kaori::UNMATCHED);
     }
 
     // Continues getting no occurrences, even with > 2 occurrences of the duplicates.
@@ -300,10 +300,10 @@ TEST_F(SimpleBarcodeSearchTest, Duplicates) {
         auto state = stuff.initialize();
 
         stuff.search("ACGT", state);
-        EXPECT_EQ(state.index, -1);
+        EXPECT_EQ(state.index, kaori::UNMATCHED);
 
         stuff.search("AGTT", state);
-        EXPECT_EQ(state.index, -1);
+        EXPECT_EQ(state.index, kaori::UNMATCHED);
     }
 }
 
@@ -333,10 +333,10 @@ TEST_F(SegmentedBarcodeSearchTest, Basic) {
     EXPECT_EQ(init.index, 1);
 
     stuff.search("ACCCCC", init); // 1 mismatch in the wrong place.
-    EXPECT_EQ(init.index, -1);
+    EXPECT_EQ(init.index, kaori::UNMATCHED);
 
     stuff.search("AAccgg", init); // ambiguous.
-    EXPECT_EQ(init.index, -2);
+    EXPECT_EQ(init.index, kaori::UNMATCHED);
 }
 
 TEST_F(SegmentedBarcodeSearchTest, ReverseComplement) {
@@ -363,10 +363,10 @@ TEST_F(SegmentedBarcodeSearchTest, ReverseComplement) {
     EXPECT_EQ(init.index, 1);
 
     stuff.search("GGGGGG", init); // two mismatches in the wrong place.
-    EXPECT_EQ(init.index, -1);
+    EXPECT_EQ(init.index, kaori::UNMATCHED);
 
     stuff.search("GGCCTT", init); // ambiguous.
-    EXPECT_EQ(init.index, -2);
+    EXPECT_EQ(init.index, kaori::UNMATCHED);
 }
 
 TEST_F(SegmentedBarcodeSearchTest, Caching) {
@@ -391,7 +391,7 @@ TEST_F(SegmentedBarcodeSearchTest, Caching) {
     // No cache when the number of mismatches is less than that in the constructor.
     {
         stuff.search("AATA", state, { 0, 0 });
-        EXPECT_EQ(state.index, -1);
+        EXPECT_EQ(state.index, kaori::UNMATCHED);
         auto it = state.cache.find("AATA");
         EXPECT_TRUE(it == state.cache.end());
     }
@@ -404,15 +404,15 @@ TEST_F(SegmentedBarcodeSearchTest, Caching) {
         auto it = state.cache.find("AATA");
         EXPECT_TRUE(it != state.cache.end());
         EXPECT_EQ((it->second).index, 0);
-        EXPECT_EQ((it->second).total, 1);
+        EXPECT_EQ((it->second).mismatches, 1);
     }
 
     {
         stuff.search("ACCA", state);
-        EXPECT_EQ(state.index, -2);
+        EXPECT_EQ(state.index, kaori::UNMATCHED);
         auto it = state.cache.find("ACCA");
         EXPECT_TRUE(it != state.cache.end());
-        EXPECT_EQ((it->second).index, -2);
+        EXPECT_EQ((it->second).index, kaori::UNMATCHED);
     }
 
     // Retrieval from cache respects a lower mismatch threshold.  This uses the
@@ -423,7 +423,7 @@ TEST_F(SegmentedBarcodeSearchTest, Caching) {
         EXPECT_EQ(state.index, 0);
 
         stuff.search("AATA", state, { 0, 0 }); //fail
-        EXPECT_EQ(state.index, -1);
+        EXPECT_EQ(state.index, kaori::UNMATCHED);
     }
 
     // Checking that the reduction works correctly.

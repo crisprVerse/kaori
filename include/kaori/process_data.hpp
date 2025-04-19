@@ -283,7 +283,7 @@ void process_single_end_data(Pointer_ input, Handler_& handler, const ProcessSin
     tp.run(
         [&](SingleEndWorkspace& work) -> bool {
             auto& curreads = work.reads;
-            for (int b = 0; b < options.block_size; ++b) {
+            for (ReadIndex b = 0; b < options.block_size; ++b) {
                 if (!fastq()) {
                     return true;
                 }
