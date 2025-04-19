@@ -48,8 +48,6 @@ struct TrieAddStatus {
 /**
  * @cond
  */
-
-
 template<char base_>
 int trie_base_shift() {
     if constexpr(base_ == 'A') {
@@ -351,6 +349,24 @@ private:
         }
     }
 };
+
+inline std::pair<BarcodeIndex, int> trie_next_base(char base, BarcodeIndex node, const std::vector<BarcodeIndex>& pointers) {
+    BarcodeIndex current;
+    int shift;
+    switch (base) {
+        case 'A': case 'a':
+            shift = trie_base_shift<'A'>(); current = pointers[node + shift]; break;
+        case 'C': case 'c':
+            shift = trie_base_shift<'C'>(); current = pointers[node + shift]; break;
+        case 'G': case 'g':
+            shift = trie_base_shift<'G'>(); current = pointers[node + shift]; break;
+        case 'T': case 't':
+            shift = trie_base_shift<'T'>(); current = pointers[node + shift]; break;
+        default:
+            shift = -1; current = STATUS_UNMATCHED; break;
+    }
+    return std::make_pair(current, shift);
+}
 /**
  * @endcond
  */
@@ -459,20 +475,9 @@ public:
 private:
     Result search(const char* seq, SeqLength i, BarcodeIndex node, int mismatches, int& max_mismatches) const {
         const auto& pointers = my_core.pointers();
-        BarcodeIndex current;
-        int shift;
-        switch (seq[i]) {
-            case 'A': case 'a':
-                shift = trie_base_shift<'A'>(); current = pointers[node + shift]; break;
-            case 'C': case 'c':
-                shift = trie_base_shift<'C'>(); current = pointers[node + shift]; break;
-            case 'G': case 'g':
-                shift = trie_base_shift<'G'>(); current = pointers[node + shift]; break;
-            case 'T': case 't':
-                shift = trie_base_shift<'T'>(); current = pointers[node + shift]; break;
-            default:
-                shift = -1; current = STATUS_UNMATCHED; break;
-        }
+        auto next = trie_next_base(seq[i], node, pointers);
+        auto current = next.first;
+        auto shift = next.second;
 
         // At the end: we prepare to return the actual values. We also refine
         // the max number of mismatches so that we don't search for things with
@@ -649,20 +654,9 @@ private:
         auto node = state.index;
 
         const auto& pointers = my_core.pointers();
-        BarcodeIndex current;
-        int shift;
-        switch (seq[i]) {
-            case 'A': case 'a':
-                shift = trie_base_shift<'A'>(); current = pointers[node + shift]; break;
-            case 'C': case 'c':
-                shift = trie_base_shift<'C'>(); current = pointers[node + shift]; break;
-            case 'G': case 'g':
-                shift = trie_base_shift<'G'>(); current = pointers[node + shift]; break;
-            case 'T': case 't':
-                shift = trie_base_shift<'T'>(); current = pointers[node + shift]; break;
-            default:
-                shift = -1; current = STATUS_UNMATCHED; break;
-        }
+        auto next = trie_next_base(seq[i], node, pointers);
+        auto current = next.first;
+        auto shift = next.second;
 
         // At the end: we prepare to return the actual values. We also refine
         // the max number of mismatches so that we don't search for things with
