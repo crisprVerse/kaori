@@ -107,28 +107,28 @@ public:
      */
     struct State {
         /**
-         * Index of the known barcode sequence that matches the variable region in the read sequence, after each call to `search()`.
-         * This will be set to `UNMATCHED` if no match was found.
+         * Index of the known barcode that matches the variable region in the read sequence.
+         * This should only be used if `search()` returns true.
          */
-        BarcodeIndex index = UNMATCHED;
+        BarcodeIndex index = STATUS_UNMATCHED;
 
         /**
          * Position of the match to the template after each call to `search()`.
          * This is reported as the position on the read at the start of the template.
-         * This should only be used if `index != UNMATCHED`.
+         * This should only be used if `search()` returns true.
          */
         SeqLength position = 0;
 
         /**
          * Total number of mismatches after each call to `search()`.
          * This include both the constant and variable regions.
-         * This should only be used if `index != UNMATCHED`.
+         * This should only be used if `search()` returns true.
          */
         SeqLength mismatches = 0;
 
         /**
          * Total number of mismatches in the variable region, after each call to `search()`.
-         * This should only be used if `index != UNMATCHED`.
+         * This should only be used if `search()` returns true.
          */
         SeqLength variable_mismatches = 0;
 
@@ -206,12 +206,12 @@ public:
     bool search_first(const char* read_seq, SeqLength read_length, State& state) const {
         auto deets = my_constant.initialize(read_seq, read_length);
         bool found = false;
-        state.index = UNMATCHED;
+        state.index = STATUS_UNMATCHED;
         state.mismatches = 0;
         state.variable_mismatches = 0;
 
         auto update = [&](bool rev, SeqLength const_mismatches, const typename SimpleBarcodeSearch::State& x) -> bool {
-            if (x.index == UNMATCHED) {
+            if (!is_barcode_index_ok(x.index)) {
                 return false;
             }
 
@@ -264,12 +264,12 @@ public:
      */
     bool search_best(const char* read_seq, SeqLength read_length, State& state) const {
         auto deets = my_constant.initialize(read_seq, read_length);
-        state.index = UNMATCHED;
+        state.index = STATUS_UNMATCHED;
         bool found = false;
         SeqLength best = my_max_mm + 1;
 
         auto update = [&](bool rev, SeqLength const_mismatches, const typename SimpleBarcodeSearch::State& x) -> void {
-            if (x.index == UNMATCHED) {
+            if (!is_barcode_index_ok(x.index)) {
                 return;
             }
 
@@ -277,7 +277,7 @@ public:
             if (total == best) { 
                 if (state.index != x.index) { // ambiguous, setting back to a mismatch.
                     found = false;
-                    state.index = UNMATCHED;
+                    state.index = STATUS_AMBIGUOUS;
                 }
             } else if (total < best) {
                 found = true;

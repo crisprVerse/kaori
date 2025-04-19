@@ -195,7 +195,7 @@ private:
 
             if (my_forward && deets.forward_mismatches <= my_max_mm) {
                 auto id = forward_match(x.first, deets, state).first;
-                if (id != UNMATCHED) {
+                if (is_barcode_index_ok(id)) {
                     ++state.counts[id];
                     return true;
                 }
@@ -203,7 +203,7 @@ private:
 
             if (my_reverse && deets.reverse_mismatches <= my_max_mm) {
                 auto id = reverse_match(x.first, deets, state).first;
-                if (id != UNMATCHED) {
+                if (is_barcode_index_ok(id)) {
                     ++state.counts[id];
                     return true;
                 }
@@ -216,10 +216,10 @@ private:
         auto deets = my_constant_matcher.initialize(x.first, x.second - x.first);
         bool found = false;
         SeqLength best_mismatches = my_max_mm + 1;
-        BarcodeIndex best_id = UNMATCHED;
+        BarcodeIndex best_id = STATUS_UNMATCHED;
 
         auto update = [&](std::pair<BarcodeIndex, SeqLength> match) -> void {
-            if (match.first == UNMATCHED){ 
+            if (!is_barcode_index_ok(match.first)){ 
                 return;
             }
             if (match.second == best_mismatches) {

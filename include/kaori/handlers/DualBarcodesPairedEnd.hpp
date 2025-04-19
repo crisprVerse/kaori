@@ -284,7 +284,7 @@ private:
             state.combined += current2.first; // on a separate line to avoid creating a std::string intermediate.
             my_varlib.search(state.combined, state.details, std::array<SeqLength, 2>{ my_max_mm1 - state.first_match.second, my_max_mm2 - current2.second });
 
-            if (state.details.index != UNMATCHED) {
+            if (is_barcode_index_ok(state.details.index)) {
                 ++state.counts[state.details.index];
                 return true;
             } else {
@@ -334,7 +334,7 @@ private:
         state.second_matches.clear();
         while (inner_process(my_search_reverse2, my_constant2, my_max_mm2, against2.first, deets2, state.second_matches)) {}
 
-        BarcodeIndex chosen = UNMATCHED;
+        BarcodeIndex chosen = STATUS_UNMATCHED;
         SeqLength best_mismatches = my_max_mm1 + my_max_mm2 + 1;
         auto num_second_matches = state.second_matches.size();
 
@@ -347,13 +347,13 @@ private:
                     state.combined += current2.first; // separate line is deliberate.
                     my_varlib.search(state.combined, state.details, std::array<SeqLength, 2>{ my_max_mm1 - state.first_match.second, my_max_mm2 - current2.second });
 
-                    if (state.details.index != UNMATCHED) {
+                    if (is_barcode_index_ok(state.details.index)) {
                         SeqLength cur_mismatches = state.details.mismatches + state.first_match.second + current2.second;
                         if (cur_mismatches < best_mismatches) {
                             chosen = state.details.index;
                             best_mismatches = cur_mismatches;
                         } else if (cur_mismatches == best_mismatches && chosen != state.details.index) { // ambiguous.
-                            chosen = UNMATCHED;
+                            chosen = STATUS_AMBIGUOUS;
                         }
                     }
                 }
@@ -380,14 +380,14 @@ public:
             auto best = process_best(state, r1, r2);
             if (my_randomized) {
                 auto best2 = process_best(state, r2, r1);
-                if (best.first == UNMATCHED || best.second > best2.second) {
+                if (!is_barcode_index_ok(best.first) || best.second > best2.second) {
                     best = best2;
                 } else if (best.second == best2.second && best.first != best2.first) {
-                    best.first = UNMATCHED; // ambiguous.
+                    best.first = STATUS_AMBIGUOUS; // ambiguous.
                 }
             }
 
-            found = best.first != UNMATCHED;
+            found = is_barcode_index_ok(best.first);
             if (found) {
                 ++state.counts[best.first];
             }

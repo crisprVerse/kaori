@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <numeric>
 #include <cstddef>
+#include <type_traits>
+#include <limits>
 
 #include "utils.hpp"
 
@@ -19,31 +21,11 @@ namespace kaori {
 
 /**
  * Integer type for the trie indices.
- * This is semantically different from `BarcodeIndex` as it can have the special values `TRIE_STATUS_MISSING` and `TRIE_STATUS_AMBIGUOUS`.
  */
-typedef std::size_t TrieIndex;
+typedef BarcodeIndex TrieIndex;
 
-// We would prefer to use size_type but then the template would be recursive,
-// i.e., std::vector<typename std::vector<[??recursion here??]>::size_type>.
-
-/**
- * No match to a known barcode in the trie.
- */
-inline constexpr TrieIndex TRIE_STATUS_MISSING = static_cast<TrieIndex>(-1);
-
-/**
- * Ambiguous match to two or more known barcodes in the trie.
- */
-inline constexpr TrieIndex TRIE_STATUS_AMBIGUOUS = static_cast<TrieIndex>(-2);
-
-/**
- * @param index An index in the trie as returned by, e.g., `AnyMismatches::search()`. 
- * @return Whether `index` corresponds to a barcode.
- * If false, `index` represents one of the error codes, i.e., `TRIE_STATUS_MISSING` or `TRIE_STATUS_AMBIGUOUS`.
- */
-inline bool is_trie_index_ok(TrieIndex index) {
-    return index < TRIE_STATUS_AMBIGUOUS;
-}
+// We have it at least as large as size_t, under the assumption that the recursive
+// std::vector<typename std::vector<[??recursion??]>::size_type>::size_type is a size_t.
 
 /** 
  * @brief Status of barcode sequence addition to the trie.
@@ -75,6 +57,8 @@ struct TrieAddStatus {
 /**
  * @cond
  */
+
+
 template<char base_>
 int trie_base_shift() {
     if constexpr(base_ == 'A') {
@@ -95,7 +79,7 @@ public:
     MismatchTrie(SeqLength barcode_length, DuplicateAction duplicates) : 
         my_length(barcode_length), 
         my_duplicates(duplicates),
-        my_pointers(NUM_BASES, TRIE_STATUS_MISSING)
+        my_pointers(NUM_BASES, STATUS_UNMATCHED)
     {}
 
 private:
@@ -106,10 +90,10 @@ private:
 
     TrieIndex next(TrieIndex node) {
         auto current = my_pointers[node]; // don't make this a reference as it gets invalidated by the resize.
-        if (current == TRIE_STATUS_MISSING) {
+        if (current == STATUS_UNMATCHED) {
             current = my_pointers.size();
             my_pointers[node] = current;
-            my_pointers.resize(current + NUM_BASES, TRIE_STATUS_MISSING);
+            my_pointers.resize(current + NUM_BASES, STATUS_UNMATCHED);
         }
         return current;
     }
@@ -117,9 +101,9 @@ private:
     void end(TrieIndex node, TrieAddStatus& status) {
         auto& current = my_pointers[node];
 
-        if (current == TRIE_STATUS_MISSING) {
+        if (current == STATUS_UNMATCHED) {
             current = my_counter;
-        } else if (current == TRIE_STATUS_AMBIGUOUS) {
+        } else if (current == STATUS_AMBIGUOUS) {
             status.is_duplicate = true; 
         } else {
             status.is_duplicate = true;
@@ -132,7 +116,7 @@ private:
                     break;
                 case DuplicateAction::NONE:
                     status.duplicate_cleared = true;
-                    current = TRIE_STATUS_AMBIGUOUS;
+                    current = STATUS_AMBIGUOUS;
                     break;
                 case DuplicateAction::ERROR:
                     throw std::runtime_error("duplicate sequences detected (" + 
@@ -239,7 +223,7 @@ public:
     // To be called in the middle steps of the recursive search (i.e., for all but the last position).
     template<class SearchResult_>
     void replace_best_with_chosen(SearchResult_& best, TrieIndex& best_index, SeqLength best_score, const SearchResult_& chosen, TrieIndex chosen_index, SeqLength chosen_score) const {
-        if (is_trie_index_ok(chosen_index)) {
+        if (is_barcode_index_ok(chosen_index)) {
             if (chosen_score < best_score) {
                 best = chosen;
             } else if (chosen_score == best_score) { 
@@ -253,19 +237,19 @@ public:
                             best_index = chosen_index;
                         }
                     } else {
-                        best_index = TRIE_STATUS_AMBIGUOUS; 
+                        best_index = STATUS_AMBIGUOUS; 
                     }
                 }
             }
 
-        } else if (chosen_index == TRIE_STATUS_AMBIGUOUS) {
+        } else if (chosen_index == STATUS_AMBIGUOUS) {
             if (chosen_score < best_score) {
                 best = chosen;
             } else if (chosen_score == best_score) {
                 // Ambiguity is infectious. Each ambiguous status indicates that there
                 // are already 2+ barcodes on this score, so it doesn't matter how
                 // many other unambiguous barcodes are here; we're already ambiguous.
-                best_index = TRIE_STATUS_AMBIGUOUS;
+                best_index = STATUS_AMBIGUOUS;
             }
         }
     }
@@ -279,7 +263,7 @@ public:
             }
 
             auto candidate = my_pointers[node + s];
-            if (is_trie_index_ok(candidate)) {
+            if (is_barcode_index_ok(candidate)) {
                 if (found) { 
                     if (candidate != current_index) { // protect against multiple occurrences of IUPAC-containg barcodes.
                         if (my_duplicates == DuplicateAction::FIRST) {
@@ -291,7 +275,7 @@ public:
                                 current_index = candidate;
                             }
                         } else {
-                            current_index = TRIE_STATUS_AMBIGUOUS; // ambiguous, so we quit early.
+                            current_index = STATUS_AMBIGUOUS; // ambiguous, so we quit early.
                             break;
                         }
                     }
@@ -301,7 +285,7 @@ public:
                     found = true;
                 }
 
-            } else if (candidate == TRIE_STATUS_AMBIGUOUS) {
+            } else if (candidate == STATUS_AMBIGUOUS) {
                 // If an ambiguity is present on a base at the last position, 
                 // and we're accepting a mismatch on the last position, then 
                 // we already have at least two known barcodes that match the 
@@ -309,7 +293,7 @@ public:
                 // even if they refer to non-ambiguous barcodes, that just adds to the
                 // set of 2+ barcodes that the input sequence already matches.
                 // So, we have no choice but to fail the match due to ambiguity.
-                current_index = TRIE_STATUS_AMBIGUOUS;
+                current_index = STATUS_AMBIGUOUS;
                 mismatch_cap = current_mismatches;
                 break;
             }
@@ -336,7 +320,7 @@ private:
         if (i < my_length) {
             for (int s = 0; s < NUM_BASES; ++s) {
                 auto v = my_pointers[node + s];
-                if (!is_trie_index_ok(v)) {
+                if (!is_barcode_index_ok(v)) {
                     continue;
                 }
 
@@ -362,7 +346,7 @@ private:
         if (i < my_length) {
             for (int s = 0; s < NUM_BASES; ++s) {
                 auto& v = trie[new_node + s];
-                if (!is_trie_index_ok(v)) {
+                if (!is_barcode_index_ok(v)) {
                     continue;
                 }
 
@@ -438,6 +422,31 @@ public:
 
 public:
     /**
+     * @brief Result of the search.
+     */
+    struct Result {
+        /**
+         * @cond
+         */
+        Result(BarcodeIndex index, SeqLength mismatches) : index(index), mismatches(mismatches) {}
+        /**
+         * @endcond
+         */
+
+        /**
+         * Index of the known barcode that matches best to the input sequence in `search()` (i.e., fewest mismatches).
+         * This may also be one of the error codes `STATUS_UNMATCHED` or `STATUS_AMBIGUOUS`.
+         */
+        BarcodeIndex index = 0;
+
+        /**
+         * Number of mismatches with the matching known barcode sequence.
+         * This should only be used if `is_barcode_index_ok(index)` is true.
+         */
+        SeqLength mismatches = 0;
+    };
+
+    /**
      * @param[in] search_seq Pointer to a character array containing a sequence to use for searching the barcode pool.
      * This is assumed to be of length equal to `length()` and is typically derived from a read.
      * @param max_mismatches Maximum number of mismatches in the search.
@@ -445,16 +454,16 @@ public:
      * @return Pair containing:
      * 1. The index of the barcode sequence with the lowest number of mismatches to `search_seq`.
      *    This is only non-negative if a barcode was unambiguously matched with no more mismatches than `max_mismatches`.
-     *    If multiple sequences have the same lowest number of mismatches, the match is ambiguous and `TRIE_STATUS_AMBIGUOUS` is returned.
-     *    If all sequences have more mismatches than `max_mismatches`, `TRIE_STATUS_MISSING` is returned.
+     *    If multiple sequences have the same lowest number of mismatches, the match is ambiguous and `STATUS_AMBIGUOUS` is returned.
+     *    If all sequences have more mismatches than `max_mismatches`, `STATUS_UNMATCHED` is returned.
      * 2. The number of mismatches.
      */
-    std::pair<TrieIndex, SeqLength> search(const char* search_seq, SeqLength max_mismatches) const {
+    Result search(const char* search_seq, SeqLength max_mismatches) const {
         return search(search_seq, 0, 0, 0, max_mismatches);
     }
 
 private:
-    std::pair<TrieIndex, SeqLength> search(const char* seq, SeqLength i, TrieIndex node, SeqLength mismatches, SeqLength& max_mismatches) const {
+    Result search(const char* seq, SeqLength i, TrieIndex node, SeqLength mismatches, SeqLength& max_mismatches) const {
         const auto& pointers = my_core.pointers();
         TrieIndex current;
         int shift;
@@ -468,7 +477,7 @@ private:
             case 'T': case 't':
                 shift = trie_base_shift<'T'>(); current = pointers[node + shift]; break;
             default:
-                shift = -1; current = TRIE_STATUS_MISSING; break;
+                shift = -1; current = STATUS_UNMATCHED; break;
         }
 
         // At the end: we prepare to return the actual values. We also refine
@@ -478,22 +487,22 @@ private:
         ++i;
 
         if (i == length) {
-            if (is_trie_index_ok(current) || current == TRIE_STATUS_AMBIGUOUS) {
+            if (is_barcode_index_ok(current) || current == STATUS_AMBIGUOUS) {
                 max_mismatches = mismatches; // this assignment should always decrease max_mismatches, otherwise the search would have terminated earlier.
-                return std::make_pair(current, mismatches);
+                return Result(current, mismatches);
             }
 
-            TrieIndex alt = TRIE_STATUS_MISSING;
+            TrieIndex alt = STATUS_UNMATCHED;
             ++mismatches;
             if (mismatches <= max_mismatches) {
                 my_core.scan_final_position_with_mismatch(node, shift, alt, mismatches, max_mismatches);
             }
 
-            return std::make_pair(alt, mismatches);
+            return Result(alt, mismatches);
 
         } else {
-            std::pair<TrieIndex, SeqLength> best(TRIE_STATUS_MISSING, max_mismatches + 1);
-            if (is_trie_index_ok(current)) {
+            Result best(STATUS_UNMATCHED, max_mismatches + 1);
+            if (is_barcode_index_ok(current)) {
                 best = search(seq, i, current, mismatches, max_mismatches);
             }
 
@@ -505,13 +514,13 @@ private:
                     } 
 
                     auto alt = pointers[node + s];
-                    if (!is_trie_index_ok(alt)) {
+                    if (!is_barcode_index_ok(alt)) {
                         continue;
                     }
 
                     if (mismatches <= max_mismatches) { // check again, just in case max_mismatches changed.
                         auto chosen = search(seq, i, alt, mismatches, max_mismatches);
-                        my_core.replace_best_with_chosen(best, best.first, best.second, chosen, chosen.first, chosen.second);
+                        my_core.replace_best_with_chosen(best, best.index, best.mismatches, chosen, chosen.index, chosen.mismatches);
                     }
                 }
             }
@@ -615,7 +624,7 @@ public:
         /**
          * Total number of mismatches between the barcode sequence from `index` and the input sequence.
          */
-        SeqLength total = 0;
+        SeqLength mismatches = 0;
 
         /**
          * Number of mismatches in each segment of the sequence.
@@ -631,8 +640,8 @@ public:
      *
      * @return A `Result` containing the index of the barcode sequence where the number of mismatches in each segment is less than or equal to `max_mismatches`.
      * - If multiple barcode sequences satisfy this condition, the barcode sequence with the lowest total number of mismatches is reported in the form of a non-negative `Result::index`.
-     * - If multiple barcode sequences share the same lowest total, the match is ambiguous and `TRIE_STATUS_AMBIGUOUS` is reported.
-     * - If no barcode sequences satisfy the `max_mismatches` condition, `TRIE_STATUS_MISSING` is reported.
+     * - If multiple barcode sequences share the same lowest total, the match is ambiguous and `STATUS_AMBIGUOUS` is reported.
+     * - If no barcode sequences satisfy the `max_mismatches` condition, `STATUS_UNMATCHED` is reported.
      */
     Result search(const char* search_seq, const std::array<SeqLength, num_segments_>& max_mismatches) const {
         SeqLength total_mismatches = std::accumulate(max_mismatches.begin(), max_mismatches.end(), static_cast<SeqLength>(0));
@@ -658,7 +667,7 @@ private:
             case 'T': case 't':
                 shift = trie_base_shift<'T'>(); current = pointers[node + shift]; break;
             default:
-                shift = -1; current = TRIE_STATUS_MISSING; break;
+                shift = -1; current = STATUS_UNMATCHED; break;
         }
 
         // At the end: we prepare to return the actual values. We also refine
@@ -668,19 +677,19 @@ private:
         ++i;
 
         if (i == length) {
-            if (is_trie_index_ok(current) || current == TRIE_STATUS_AMBIGUOUS) {
-                total_mismatches = state.total; // this assignment should always decrease total_mismatches, otherwise the search would have terminated earlier.
+            if (is_barcode_index_ok(current) || current == STATUS_AMBIGUOUS) {
+                total_mismatches = state.mismatches; // this assignment should always decrease total_mismatches, otherwise the search would have terminated earlier.
                 state.index = current;
                 return state;
             }
 
-            state.index = TRIE_STATUS_MISSING;
-            ++state.total;
+            state.index = STATUS_UNMATCHED;
+            ++state.mismatches;
             auto& current_segment_mm = state.per_segment[segment_id];
             ++current_segment_mm;
 
-            if (state.total <= total_mismatches && current_segment_mm <= segment_mismatches[segment_id]) {
-                my_core.scan_final_position_with_mismatch(node, shift, state.index, state.total, total_mismatches);
+            if (state.mismatches <= total_mismatches && current_segment_mm <= segment_mismatches[segment_id]) {
+                my_core.scan_final_position_with_mismatch(node, shift, state.index, state.mismatches, total_mismatches);
             }
 
             return state;
@@ -692,33 +701,33 @@ private:
             }
 
             Result best;
-            best.index = TRIE_STATUS_MISSING;
-            best.total = total_mismatches + 1;
+            best.index = STATUS_UNMATCHED;
+            best.mismatches = total_mismatches + 1;
 
-            if (is_trie_index_ok(current)) {
+            if (is_barcode_index_ok(current)) {
                 state.index = current;
                 best = search(seq, i, next_segment_id, state, segment_mismatches, total_mismatches);
             }
 
-            ++state.total;
+            ++state.mismatches;
             auto& current_segment_mm = state.per_segment[segment_id];
             ++current_segment_mm;
 
-            if (state.total <= total_mismatches && current_segment_mm <= segment_mismatches[segment_id]) {
+            if (state.mismatches <= total_mismatches && current_segment_mm <= segment_mismatches[segment_id]) {
                 for (int s = 0; s < NUM_BASES; ++s) {
                     if (shift == s) { 
                         continue;
                     } 
 
                     auto alt = pointers[node + s];
-                    if (!is_trie_index_ok(alt)) {
+                    if (!is_barcode_index_ok(alt)) {
                         continue;
                     }
 
-                    if (state.total <= total_mismatches) { // check again, just in case total_mismatches changed.
+                    if (state.mismatches <= total_mismatches) { // check again, just in case total_mismatches changed.
                         state.index = alt;
                         auto chosen = search(seq, i, next_segment_id, state, segment_mismatches, total_mismatches);
-                        my_core.replace_best_with_chosen(best, best.index, best.total, chosen, chosen.index, chosen.total);
+                        my_core.replace_best_with_chosen(best, best.index, best.mismatches, chosen, chosen.index, chosen.mismatches);
                     }
                 }
             }

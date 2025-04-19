@@ -48,7 +48,7 @@ inline void fill_library(const std::vector<const char*>& options, std::unordered
             if (!status.is_duplicate || status.duplicate_replaced) {
                 exact[current] = i;
             } else if (status.duplicate_cleared) {
-                exact[current] = UNMATCHED;
+                exact[current] = STATUS_UNMATCHED;
             }
         }
     }
@@ -129,17 +129,17 @@ public:
      */
     struct State {
         /**
-         * Index of the known sequence that matches best to the input sequence in `search()` (i.e., fewest total mismatches).
-         * If no match was found or if the best match is ambiguous, this will be set to `UNMATCHED`.
+         * Index of the known barcode that matches best to the input sequence in `search()` (i.e., fewest total mismatches).
+         * This may also be one of the error codes `STATUS_UNMATCHED` or `STATUS_AMBIGUOUS`.
          */
         BarcodeIndex index = 0;
 
         /**
          * Number of mismatches with the matching known sequence.
-         * This should only be used if `index` has a value.
+         * This should only be used if `is_barcode_index_ok(index)` is true.
          */
         SeqLength mismatches = 0;
-        
+
         /**
          * @cond
          */
@@ -206,22 +206,13 @@ public:
             return;
         }
 
-        auto set_unmatched = [&]() -> void {
-            state.index = UNMATCHED;
-            state.mismatches = 0;
-        };
-
-        auto set_matched = [&](const CacheEntry& cached) -> void {
-            state.index = cached.index;
-            state.mismatches = cached.mismatches;
-        };
-
         auto set_from_cache = [&](const CacheEntry& cached) -> void {
             if (cached.mismatches > allowed_mismatches) {
-                set_unmatched();
+                state.index = STATUS_UNMATCHED;
             } else {
-                set_matched(cached);
+                state.index = cached.index;
             }
+            state.mismatches = cached.mismatches;
         };
 
         auto cIt = my_cache.find(search_seq);
@@ -237,11 +228,11 @@ public:
         }
 
         auto missed = my_trie.search(search_seq.c_str(), allowed_mismatches);
-        if (is_trie_index_ok(missed.first)) {
-            // No need to check the requested number of mismatches, as we explicitly searched for that in the trie.
-            CacheEntry cached(missed.first, missed.second);
-            set_matched(cached);
-            state.cache[search_seq] = std::move(cached);
+        if (is_barcode_index_ok(missed.index)) {
+            // No need to check against allowed_mismatches, as we explicitly searched for that in the trie.
+            state.index = missed.index;
+            state.mismatches = missed.mismatches;
+            state.cache[search_seq] = CacheEntry(missed.index, missed.mismatches);
             return;
         }
 
@@ -253,10 +244,11 @@ public:
         // cache when the requested number of mismatches is equal to the
         // maximum number of mismatches that was specified in the constructor.
         if (allowed_mismatches == my_max_mm) {
-            state.cache[search_seq] = CacheEntry(UNMATCHED, 0);
+            state.cache[search_seq] = CacheEntry(missed.index, missed.mismatches);
         }
 
-        set_unmatched();
+        state.index = missed.index;
+        state.mismatches = missed.mismatches;
     }
 };
 
@@ -370,19 +362,19 @@ public:
     struct State {
         /**
          * Index of the known sequence that matches best to the input sequence in `search()` (i.e., fewest total mismatches).
-         * If no match was found or if the best match is ambiguous, this will be set to `UNMATCHED`.
+         * This may also be one of the error codes `STATUS_UNMATCHED` or `STATUS_AMBIGUOUS`.
          */
         BarcodeIndex index = 0;
 
         /**
          * Total number of mismatches with the matching known sequence, summed across all segments.
-         * This should only be used if `index != UNMATCHED`.
+         * This should only be used if `is_barcode_index_ok(index)` is true.
          */
         SeqLength mismatches = 0;
 
         /**
          * Number of mismatches in each segment.
-         * This should only be used if `index != UNMATCHED`.
+         * This should only be used if `is_barcode_index_ok(index)` is true.
          */
         std::array<SeqLength, num_segments_> per_segment;
         
@@ -455,26 +447,16 @@ public:
             return;
         }
 
-        auto set_unmatched = [&]() -> void {
-            state.index = UNMATCHED;
-            state.mismatches = 0;
-            std::fill_n(state.per_segment.begin(), num_segments_, 0);
-        };
-
-        auto set_matched = [&](const CacheEntry& cached) -> void {
-            state.index = cached.index;
+        auto set_from_cache = [&](const CacheEntry& cached) -> void {
             state.mismatches = cached.mismatches;
             state.per_segment = cached.per_segment;
-        };
-
-        auto set_from_cache = [&](const CacheEntry& cached) -> void {
             for (int s = 0; s < num_segments_; ++s) {
                 if (cached.per_segment[s] > allowed_mismatches[s]) {
-                    set_unmatched();
+                    state.index = STATUS_UNMATCHED;
                     return;
                 }
             }
-            set_matched(cached);
+            state.index = cached.index;
         };
 
         auto cIt = my_cache.find(search_seq);
@@ -490,11 +472,12 @@ public:
         }
 
         auto missed = my_trie.search(search_seq.c_str(), allowed_mismatches);
-        if (is_trie_index_ok(missed.index)) {
-            // No need to check the requested number of mismatches, as we explicitly searched for that in the trie.
-            CacheEntry cached(missed.index, missed.total, missed.per_segment);
-            set_matched(cached);
-            state.cache[search_seq] = std::move(cached);
+        if (is_barcode_index_ok(missed.index)) {
+            // No need to check against allowed_mismatches, as we explicitly searched for that in the trie.
+            state.index = missed.index;
+            state.mismatches = missed.mismatches;
+            state.per_segment = missed.per_segment;
+            state.cache[search_seq] = CacheEntry(missed.index, missed.mismatches, missed.per_segment);
             return;
         }
 
@@ -506,10 +489,12 @@ public:
         // cache when the requested number of mismatches is equal to the
         // maximum number of mismatches that was specified in the constructor.
         if (allowed_mismatches == my_max_mm) {
-            state.cache[search_seq] = CacheEntry(UNMATCHED, 0, {});
+            state.cache[search_seq] = CacheEntry(missed.index, missed.mismatches, missed.per_segment);
         }
 
-        set_unmatched();
+        state.index = missed.index;
+        state.mismatches = missed.mismatches;
+        state.per_segment = missed.per_segment;
     }
 };
 

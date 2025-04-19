@@ -35,14 +35,28 @@ typedef std::size_t SeqLength;
 
 /**
  * Integer type for barcode indices in a pool of known barcodes (specifically, inside a `BarcodePool`).
- * This can have the special value `UNMATCHED` to indicate that a matching sequence could not be found.
+ * This can have the special values `STATUS_UNMATCHED` and `STATUS_AMBIGUOUS`, see `is_barcode_index_ok()` to check for these error codes.
  */
 typedef typename std::vector<const char*>::size_type BarcodeIndex; // we use the size_type from the BarcodePool's internal vector of barcodes.
 
 /**
- * No match to any known barcode.
+ * No match to a known barcode in the trie.
  */
-inline constexpr BarcodeIndex UNMATCHED = static_cast<BarcodeIndex>(-1);
+inline constexpr BarcodeIndex STATUS_UNMATCHED = static_cast<BarcodeIndex>(-1);
+
+/**
+ * Ambiguous match to two or more known barcodes in the trie.
+ */
+inline constexpr BarcodeIndex STATUS_AMBIGUOUS = static_cast<BarcodeIndex>(-2);
+
+/**
+ * @param index A barcode index.
+ * @return Whether `index` corresponds to an actual barcode.
+ * If false, `index` represents one of the error codes, i.e., `STATUS_MISSING` or `STATUS_AMBIGUOUS`.
+ */
+inline bool is_barcode_index_ok(BarcodeIndex index) {
+    return index < STATUS_AMBIGUOUS;
+}
 
 /**
  * Integer type to count the frequency of each barcode.
