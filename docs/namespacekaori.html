@@ -88,8 +88,7 @@ $(function(){ initResizable(false); });
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#func-members">Functions</a> &#124;
-<a href="#var-members">Variables</a>  </div>
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">kaori Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -168,13 +167,6 @@ Functions</h2></td></tr>
 <tr class="memitem:a8ec757759c7fadc20545ba3e1d62e0b2" id="r_a8ec757759c7fadc20545ba3e1d62e0b2"><td class="memTemplParams" colspan="2">template&lt;class Pointer_ , class Handler_ &gt; </td></tr>
 <tr class="memitem:a8ec757759c7fadc20545ba3e1d62e0b2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8ec757759c7fadc20545ba3e1d62e0b2">process_paired_end_data</a> (Pointer_ input1, Pointer_ input2, Handler_ &amp;handler, const <a class="el" href="structkaori_1_1ProcessPairedEndDataOptions.html">ProcessPairedEndDataOptions</a> &amp;options)</td></tr>
 <tr class="separator:a8ec757759c7fadc20545ba3e1d62e0b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:a66ee49152f02f3658856bbd9d191bbe3" id="r_a66ee49152f02f3658856bbd9d191bbe3"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66ee49152f02f3658856bbd9d191bbe3">TRIE_STATUS_MISSING</a> = -1</td></tr>
-<tr class="separator:a66ee49152f02f3658856bbd9d191bbe3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0f167f1e59e8cf7308fc741b4e874a6" id="r_ae0f167f1e59e8cf7308fc741b4e874a6"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae0f167f1e59e8cf7308fc741b4e874a6">TRIE_STATUS_AMBIGUOUS</a> = -2</td></tr>
-<tr class="separator:ae0f167f1e59e8cf7308fc741b4e874a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Namespace for the <b>kaori</b> barcode-matching library. </p>
@@ -296,53 +288,6 @@ Handler requirements</h1>
 <p>Otherwise, if <code>use_names_</code> is <code>true</code>, the class should implement:</p><ul>
 <li><code>process(State&amp; state, const std::pair&lt;const char*, const char*&gt;&amp; name, const std::pair&lt;const char*, const char*&gt;&amp; seq)</code>: this should be a <code>const</code> method that processes the read in <code>seq</code> and stores its results in <code>state</code>. <code>name</code> will contain pointers to the start and one-past-the-end of the read name. <code>seq</code> will contain pointers to the start and one-past-the-end of the read sequence. </li>
 </ul>
-
-</div>
-</div>
-<h2 class="groupheader">Variable Documentation</h2>
-<a id="ae0f167f1e59e8cf7308fc741b4e874a6" name="ae0f167f1e59e8cf7308fc741b4e874a6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae0f167f1e59e8cf7308fc741b4e874a6">&#9670;&#160;</a></span>TRIE_STATUS_AMBIGUOUS</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int kaori::TRIE_STATUS_AMBIGUOUS = -2</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Ambiguous match to two or more known barcodes in the trie. </p>
-
-</div>
-</div>
-<a id="a66ee49152f02f3658856bbd9d191bbe3" name="a66ee49152f02f3658856bbd9d191bbe3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a66ee49152f02f3658856bbd9d191bbe3">&#9670;&#160;</a></span>TRIE_STATUS_MISSING</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int kaori::TRIE_STATUS_MISSING = -1</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>No match to a known barcode in the trie. </p>
 
 </div>
 </div>

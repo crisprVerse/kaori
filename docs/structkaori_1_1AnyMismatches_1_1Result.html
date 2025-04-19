@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>kaori: kaori::SimpleBarcodeSearch::State Struct Reference</title>
+<title>kaori: kaori::AnyMismatches::Result Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -85,66 +85,65 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespacekaori.html">kaori</a></li><li class="navelem"><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html">SimpleBarcodeSearch</a></li><li class="navelem"><a class="el" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html">State</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacekaori.html">kaori</a></li><li class="navelem"><a class="el" href="classkaori_1_1AnyMismatches.html">AnyMismatches</a></li><li class="navelem"><a class="el" href="structkaori_1_1AnyMismatches_1_1Result.html">Result</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structkaori_1_1SimpleBarcodeSearch_1_1State-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">kaori::SimpleBarcodeSearch::State Struct Reference</div></div>
+<a href="structkaori_1_1AnyMismatches_1_1Result-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">kaori::AnyMismatches::Result Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p><a class="el" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html" title="State of the search.">State</a> of the search.  
+<p><a class="el" href="structkaori_1_1AnyMismatches_1_1Result.html" title="Result of the search.">Result</a> of the search.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="BarcodeSearch_8hpp_source.html">BarcodeSearch.hpp</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="MismatchTrie_8hpp_source.html">MismatchTrie.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a73e26807c613d7ed78becf073418a5e1" id="r_a73e26807c613d7ed78becf073418a5e1"><td class="memItemLeft" align="right" valign="top">BarcodeIndex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a73e26807c613d7ed78becf073418a5e1">index</a> = 0</td></tr>
-<tr class="separator:a73e26807c613d7ed78becf073418a5e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedd1d05b0ab22edbb8df1c792d17d5d7" id="r_aedd1d05b0ab22edbb8df1c792d17d5d7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aedd1d05b0ab22edbb8df1c792d17d5d7">mismatches</a> = 0</td></tr>
-<tr class="separator:aedd1d05b0ab22edbb8df1c792d17d5d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaeda32538805c4fa428de198f6ad9d94" id="r_aaeda32538805c4fa428de198f6ad9d94"><td class="memItemLeft" align="right" valign="top">BarcodeIndex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaeda32538805c4fa428de198f6ad9d94">index</a> = 0</td></tr>
+<tr class="separator:aaeda32538805c4fa428de198f6ad9d94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abca36e10daedb61f8337b6fa78129b6b" id="r_abca36e10daedb61f8337b6fa78129b6b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abca36e10daedb61f8337b6fa78129b6b">mismatches</a> = 0</td></tr>
+<tr class="separator:abca36e10daedb61f8337b6fa78129b6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="structkaori_1_1SimpleBarcodeSearch_1_1State.html" title="State of the search.">State</a> of the search. </p>
-<p>This contains both the results of <code><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html#a7e22adc910c1a0993c8932075c8dad12">search()</a></code> for a given input sequence, as well as cached mismatches to optimize searches for future inputs. </p>
+<div class="textblock"><p><a class="el" href="structkaori_1_1AnyMismatches_1_1Result.html" title="Result of the search.">Result</a> of the search. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="a73e26807c613d7ed78becf073418a5e1" name="a73e26807c613d7ed78becf073418a5e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a73e26807c613d7ed78becf073418a5e1">&#9670;&#160;</a></span>index</h2>
+<a id="aaeda32538805c4fa428de198f6ad9d94" name="aaeda32538805c4fa428de198f6ad9d94"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaeda32538805c4fa428de198f6ad9d94">&#9670;&#160;</a></span>index</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">BarcodeIndex kaori::SimpleBarcodeSearch::State::index = 0</td>
+          <td class="memname">BarcodeIndex kaori::AnyMismatches::Result::index = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Index of the known barcode that matches best to the input sequence in <code><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html#a7e22adc910c1a0993c8932075c8dad12">search()</a></code> (i.e., fewest total mismatches). This may also be one of the error codes <code>STATUS_UNMATCHED</code> or <code>STATUS_AMBIGUOUS</code>. </p>
+<p>Index of the known barcode that matches best to the input sequence in <code><a class="el" href="classkaori_1_1AnyMismatches.html#a3743e50603f631c3c266b990f0a18000">search()</a></code> (i.e., fewest mismatches). This may also be one of the error codes <code>STATUS_UNMATCHED</code> or <code>STATUS_AMBIGUOUS</code>. </p>
 
 </div>
 </div>
-<a id="aedd1d05b0ab22edbb8df1c792d17d5d7" name="aedd1d05b0ab22edbb8df1c792d17d5d7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aedd1d05b0ab22edbb8df1c792d17d5d7">&#9670;&#160;</a></span>mismatches</h2>
+<a id="abca36e10daedb61f8337b6fa78129b6b" name="abca36e10daedb61f8337b6fa78129b6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abca36e10daedb61f8337b6fa78129b6b">&#9670;&#160;</a></span>mismatches</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int kaori::SimpleBarcodeSearch::State::mismatches = 0</td>
+          <td class="memname">int kaori::AnyMismatches::Result::mismatches = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of mismatches with the matching known sequence. This should only be used if <code>is_barcode_index_ok(index)</code> is true. </p>
+<p>Number of mismatches with the matching known barcode sequence. This should only be used if <code>is_barcode_index_ok(index)</code> is true. </p>
 
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>kaori/<a class="el" href="BarcodeSearch_8hpp_source.html">BarcodeSearch.hpp</a></li>
+<li>kaori/<a class="el" href="MismatchTrie_8hpp_source.html">MismatchTrie.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

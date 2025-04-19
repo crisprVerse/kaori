@@ -104,10 +104,10 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a50d874edb14d45382209d6b078ade6c6" id="r_a50d874edb14d45382209d6b078ade6c6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50d874edb14d45382209d6b078ade6c6">index</a> = 0</td></tr>
-<tr class="separator:a50d874edb14d45382209d6b078ade6c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a1d390c9776a724892b4ee6de80ae98" id="r_a5a1d390c9776a724892b4ee6de80ae98"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5a1d390c9776a724892b4ee6de80ae98">position</a> = 0</td></tr>
-<tr class="separator:a5a1d390c9776a724892b4ee6de80ae98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7029158b11370687da278c33617e36d" id="r_ae7029158b11370687da278c33617e36d"><td class="memItemLeft" align="right" valign="top">BarcodeIndex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae7029158b11370687da278c33617e36d">index</a> = STATUS_UNMATCHED</td></tr>
+<tr class="separator:ae7029158b11370687da278c33617e36d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ac6a4275e4a4a24774c087077e7bee6" id="r_a2ac6a4275e4a4a24774c087077e7bee6"><td class="memItemLeft" align="right" valign="top">SeqLength&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ac6a4275e4a4a24774c087077e7bee6">position</a> = 0</td></tr>
+<tr class="separator:a2ac6a4275e4a4a24774c087077e7bee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa37870b0030eaba9cc4743fb2ee83f44" id="r_aa37870b0030eaba9cc4743fb2ee83f44"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa37870b0030eaba9cc4743fb2ee83f44">mismatches</a> = 0</td></tr>
 <tr class="separator:aa37870b0030eaba9cc4743fb2ee83f44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adfc2008ff94d6025b0201dbbddfd3388" id="r_adfc2008ff94d6025b0201dbbddfd3388"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adfc2008ff94d6025b0201dbbddfd3388">variable_mismatches</a> = 0</td></tr>
@@ -116,23 +116,23 @@ Public Attributes</h2></td></tr>
 <tr class="separator:aaae06e8904476ac85574963ec533af95"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;size_t max_size_&gt;<br />
+<div class="textblock"><div class="compoundTemplParams">template&lt;SeqLength max_size_&gt;<br />
 struct kaori::SimpleSingleMatch&lt; max_size_ &gt;::State</div><p><a class="el" href="structkaori_1_1SimpleSingleMatch_1_1State.html" title="State of the search on a read sequence.">State</a> of the search on a read sequence. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="a50d874edb14d45382209d6b078ade6c6" name="a50d874edb14d45382209d6b078ade6c6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50d874edb14d45382209d6b078ade6c6">&#9670;&#160;</a></span>index</h2>
+<a id="ae7029158b11370687da278c33617e36d" name="ae7029158b11370687da278c33617e36d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7029158b11370687da278c33617e36d">&#9670;&#160;</a></span>index</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t max_size_&gt; </div>
+template&lt;SeqLength max_size_&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classkaori_1_1SimpleSingleMatch.html">kaori::SimpleSingleMatch</a>&lt; max_size_ &gt;::State::index = 0</td>
+          <td class="memname">BarcodeIndex <a class="el" href="classkaori_1_1SimpleSingleMatch.html">kaori::SimpleSingleMatch</a>&lt; max_size_ &gt;::State::index = STATUS_UNMATCHED</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Index of the known barcode sequence that matches the variable region in the read sequence. This will be -1 if no match was found. </p>
+<p>Index of the known barcode that matches the variable region in the read sequence. This should only be used if <code>search()</code> returns true. </p>
 
 </div>
 </div>
@@ -142,31 +142,31 @@ template&lt;size_t max_size_&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t max_size_&gt; </div>
+template&lt;SeqLength max_size_&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">int <a class="el" href="classkaori_1_1SimpleSingleMatch.html">kaori::SimpleSingleMatch</a>&lt; max_size_ &gt;::State::mismatches = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Total number of mismatches, including both the constant and variable regions. This should only be used if <code>index != -1</code>. </p>
+<p>Total number of mismatches after each call to <code>search()</code>. This include both the constant and variable regions. This should only be used if <code>search()</code> returns true. </p>
 
 </div>
 </div>
-<a id="a5a1d390c9776a724892b4ee6de80ae98" name="a5a1d390c9776a724892b4ee6de80ae98"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a1d390c9776a724892b4ee6de80ae98">&#9670;&#160;</a></span>position</h2>
+<a id="a2ac6a4275e4a4a24774c087077e7bee6" name="a2ac6a4275e4a4a24774c087077e7bee6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ac6a4275e4a4a24774c087077e7bee6">&#9670;&#160;</a></span>position</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t max_size_&gt; </div>
+template&lt;SeqLength max_size_&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classkaori_1_1SimpleSingleMatch.html">kaori::SimpleSingleMatch</a>&lt; max_size_ &gt;::State::position = 0</td>
+          <td class="memname">SeqLength <a class="el" href="classkaori_1_1SimpleSingleMatch.html">kaori::SimpleSingleMatch</a>&lt; max_size_ &gt;::State::position = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Position of the match to the template, reported as the position on the read at the start of the template. This should only be used if <code>index != -1</code>. </p>
+<p>Position of the match to the template after each call to <code>search()</code>. This is reported as the position on the read at the start of the template. This should only be used if <code>search()</code> returns true. </p>
 
 </div>
 </div>
@@ -176,7 +176,7 @@ template&lt;size_t max_size_&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t max_size_&gt; </div>
+template&lt;SeqLength max_size_&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">bool <a class="el" href="classkaori_1_1SimpleSingleMatch.html">kaori::SimpleSingleMatch</a>&lt; max_size_ &gt;::State::reverse = false</td>
@@ -193,14 +193,14 @@ template&lt;size_t max_size_&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t max_size_&gt; </div>
+template&lt;SeqLength max_size_&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">int <a class="el" href="classkaori_1_1SimpleSingleMatch.html">kaori::SimpleSingleMatch</a>&lt; max_size_ &gt;::State::variable_mismatches = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Total number of mismatches in the variable region. This should only be used if <code>index != -1</code>. </p>
+<p>Total number of mismatches in the variable region, after each call to <code>search()</code>. This should only be used if <code>search()</code> returns true. </p>
 
 </div>
 </div>

@@ -9,5 +9,5 @@ var searchData=
   ['rawfilewriter_6',['RawFileWriter',['https://ltla.github.io/byteme/classbyteme_1_1RawFileWriter.html',1,'byteme']]],
   ['rawfilewriteroptions_7',['RawFileWriterOptions',['https://ltla.github.io/byteme/structbyteme_1_1RawFileWriterOptions.html',1,'byteme']]],
   ['reader_8',['Reader',['https://ltla.github.io/byteme/classbyteme_1_1Reader.html',1,'byteme']]],
-  ['result_9',['Result',['../structkaori_1_1SegmentedMismatches_1_1Result.html',1,'kaori::SegmentedMismatches']]]
+  ['result_9',['Result',['../structkaori_1_1AnyMismatches_1_1Result.html',1,'kaori::AnyMismatches::Result'],['../structkaori_1_1SegmentedMismatches_1_1Result.html',1,'kaori::SegmentedMismatches&lt; num_segments_ &gt;::Result']]]
 ];

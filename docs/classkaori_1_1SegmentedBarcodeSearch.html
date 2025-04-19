@@ -116,8 +116,8 @@ Classes</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af74567de0bcb73ec0252c78010cfdee0" id="r_af74567de0bcb73ec0252c78010cfdee0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af74567de0bcb73ec0252c78010cfdee0">SegmentedBarcodeSearch</a> ()=default</td></tr>
 <tr class="separator:af74567de0bcb73ec0252c78010cfdee0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a501ed3154bda127b4e78cf336d642c4e" id="r_a501ed3154bda127b4e78cf336d642c4e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a501ed3154bda127b4e78cf336d642c4e">SegmentedBarcodeSearch</a> (const <a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, std::array&lt; int, num_segments_ &gt; segments, const <a class="el" href="structkaori_1_1SegmentedBarcodeSearch_1_1Options.html">Options</a> &amp;options)</td></tr>
-<tr class="separator:a501ed3154bda127b4e78cf336d642c4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3132acfb6a723f34b50be76d05d2b0b5" id="r_a3132acfb6a723f34b50be76d05d2b0b5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3132acfb6a723f34b50be76d05d2b0b5">SegmentedBarcodeSearch</a> (const <a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, std::array&lt; SeqLength, num_segments_ &gt; segments, const <a class="el" href="structkaori_1_1SegmentedBarcodeSearch_1_1Options.html">Options</a> &amp;options)</td></tr>
+<tr class="separator:a3132acfb6a723f34b50be76d05d2b0b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0712cb5db14f1e1b397b3638684695ad" id="r_a0712cb5db14f1e1b397b3638684695ad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0712cb5db14f1e1b397b3638684695ad">initialize</a> () const</td></tr>
 <tr class="separator:a0712cb5db14f1e1b397b3638684695ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a950454a3359ce37fb3df31d68360b8" id="r_a6a950454a3359ce37fb3df31d68360b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a950454a3359ce37fb3df31d68360b8">reduce</a> (<a class="el" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a> &amp;state)</td></tr>
@@ -128,7 +128,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:afb1dc4472568d44eb8b504fb80b2aa88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;size_t num_segments_&gt;<br />
+<div class="textblock"><div class="compoundTemplParams">template&lt;int num_segments_&gt;<br />
 class kaori::SegmentedBarcodeSearch&lt; num_segments_ &gt;</div><p>Search for known barcode sequences with segmented mismatches. </p>
 <p>This supports exact and mismatch-aware searches for known sequences. Mismatches are restricted by segments along the sequence, see <code><a class="el" href="classkaori_1_1SegmentedMismatches.html" title="Search for barcodes with segmented mismatches.">SegmentedMismatches</a></code> for details. Instances of this class use caching to avoid redundant work when a mismatching sequence has been previously encountered.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
@@ -144,7 +144,7 @@ class kaori::SegmentedBarcodeSearch&lt; num_segments_ &gt;</div><p>Search for kn
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t num_segments_&gt; </div>
+template&lt;int num_segments_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -166,13 +166,13 @@ template&lt;size_t num_segments_&gt; </div>
 
 </div>
 </div>
-<a id="a501ed3154bda127b4e78cf336d642c4e" name="a501ed3154bda127b4e78cf336d642c4e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a501ed3154bda127b4e78cf336d642c4e">&#9670;&#160;</a></span>SegmentedBarcodeSearch() <span class="overload">[2/2]</span></h2>
+<a id="a3132acfb6a723f34b50be76d05d2b0b5" name="a3132acfb6a723f34b50be76d05d2b0b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3132acfb6a723f34b50be76d05d2b0b5">&#9670;&#160;</a></span>SegmentedBarcodeSearch() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t num_segments_&gt; </div>
+template&lt;int num_segments_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -185,7 +185,7 @@ template&lt;size_t num_segments_&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::array&lt; int, num_segments_ &gt;</td>          <td class="paramname"><span class="paramname"><em>segments</em></span>, </td>
+          <td class="paramtype">std::array&lt; SeqLength, num_segments_ &gt;</td>          <td class="paramname"><span class="paramname"><em>segments</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -217,7 +217,7 @@ template&lt;size_t num_segments_&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t num_segments_&gt; </div>
+template&lt;int num_segments_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -246,7 +246,7 @@ template&lt;size_t num_segments_&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t num_segments_&gt; </div>
+template&lt;int num_segments_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -280,7 +280,7 @@ template&lt;size_t num_segments_&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t num_segments_&gt; </div>
+template&lt;int num_segments_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -319,7 +319,7 @@ template&lt;size_t num_segments_&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t num_segments_&gt; </div>
+template&lt;int num_segments_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

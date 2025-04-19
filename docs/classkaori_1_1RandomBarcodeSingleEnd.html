@@ -111,15 +111,15 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae2da929a29b34350fe862848028fd632" id="r_ae2da929a29b34350fe862848028fd632"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae2da929a29b34350fe862848028fd632">RandomBarcodeSingleEnd</a> (const char *template_seq, size_t template_length, const <a class="el" href="structkaori_1_1RandomBarcodeSingleEnd_1_1Options.html">Options</a> &amp;options)</td></tr>
-<tr class="separator:ae2da929a29b34350fe862848028fd632"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c7ebb89240ab11b0aac1e47f35b8675" id="r_a3c7ebb89240ab11b0aac1e47f35b8675"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::string, int &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c7ebb89240ab11b0aac1e47f35b8675">get_counts</a> () const</td></tr>
-<tr class="separator:a3c7ebb89240ab11b0aac1e47f35b8675"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79dbe9bf22487a2a75a2483090d1c524" id="r_a79dbe9bf22487a2a75a2483090d1c524"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79dbe9bf22487a2a75a2483090d1c524">get_total</a> () const</td></tr>
-<tr class="separator:a79dbe9bf22487a2a75a2483090d1c524"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10796dbe9cf3d5b78c65b98f2d4b9fb4" id="r_a10796dbe9cf3d5b78c65b98f2d4b9fb4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10796dbe9cf3d5b78c65b98f2d4b9fb4">RandomBarcodeSingleEnd</a> (const char *template_seq, SeqLength template_length, const <a class="el" href="structkaori_1_1RandomBarcodeSingleEnd_1_1Options.html">Options</a> &amp;options)</td></tr>
+<tr class="separator:a10796dbe9cf3d5b78c65b98f2d4b9fb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52fbd840a2dd130003c1d71fc620dd06" id="r_a52fbd840a2dd130003c1d71fc620dd06"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::string, Count &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a52fbd840a2dd130003c1d71fc620dd06">get_counts</a> () const</td></tr>
+<tr class="separator:a52fbd840a2dd130003c1d71fc620dd06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e55b96a716824812ee1eb3512a8d486" id="r_a4e55b96a716824812ee1eb3512a8d486"><td class="memItemLeft" align="right" valign="top">Count&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e55b96a716824812ee1eb3512a8d486">get_total</a> () const</td></tr>
+<tr class="separator:a4e55b96a716824812ee1eb3512a8d486"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;size_t max_size_&gt;<br />
+<div class="textblock"><div class="compoundTemplParams">template&lt;SeqLength max_size_&gt;<br />
 class kaori::RandomBarcodeSingleEnd&lt; max_size_ &gt;</div><p>Handler for single-end random barcodes. </p>
 <p>In this design, the barcoding element is created from a template with a single variable region containing a random barcode sequence. The construct containing the barcoding element is then subjected to single-end sequencing. This handler will search the read for the barcoding element and count the frequency of each random barcode. Random barcodes containing N's are allowed and will be counted separately.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
@@ -129,13 +129,13 @@ class kaori::RandomBarcodeSingleEnd&lt; max_size_ &gt;</div><p>Handler for singl
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ae2da929a29b34350fe862848028fd632" name="ae2da929a29b34350fe862848028fd632"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2da929a29b34350fe862848028fd632">&#9670;&#160;</a></span>RandomBarcodeSingleEnd()</h2>
+<a id="a10796dbe9cf3d5b78c65b98f2d4b9fb4" name="a10796dbe9cf3d5b78c65b98f2d4b9fb4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10796dbe9cf3d5b78c65b98f2d4b9fb4">&#9670;&#160;</a></span>RandomBarcodeSingleEnd()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t max_size_&gt; </div>
+template&lt;SeqLength max_size_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -148,7 +148,7 @@ template&lt;size_t max_size_&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>template_length</em></span>, </td>
+          <td class="paramtype">SeqLength</td>          <td class="paramname"><span class="paramname"><em>template_length</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -174,19 +174,19 @@ template&lt;size_t max_size_&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3c7ebb89240ab11b0aac1e47f35b8675" name="a3c7ebb89240ab11b0aac1e47f35b8675"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c7ebb89240ab11b0aac1e47f35b8675">&#9670;&#160;</a></span>get_counts()</h2>
+<a id="a52fbd840a2dd130003c1d71fc620dd06" name="a52fbd840a2dd130003c1d71fc620dd06"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52fbd840a2dd130003c1d71fc620dd06">&#9670;&#160;</a></span>get_counts()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t max_size_&gt; </div>
+template&lt;SeqLength max_size_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::unordered_map&lt; std::string, int &gt; &amp; <a class="el" href="classkaori_1_1RandomBarcodeSingleEnd.html">kaori::RandomBarcodeSingleEnd</a>&lt; max_size_ &gt;::get_counts </td>
+          <td class="memname">const std::unordered_map&lt; std::string, Count &gt; &amp; <a class="el" href="classkaori_1_1RandomBarcodeSingleEnd.html">kaori::RandomBarcodeSingleEnd</a>&lt; max_size_ &gt;::get_counts </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -202,19 +202,19 @@ template&lt;size_t max_size_&gt; </div>
 
 </div>
 </div>
-<a id="a79dbe9bf22487a2a75a2483090d1c524" name="a79dbe9bf22487a2a75a2483090d1c524"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79dbe9bf22487a2a75a2483090d1c524">&#9670;&#160;</a></span>get_total()</h2>
+<a id="a4e55b96a716824812ee1eb3512a8d486" name="a4e55b96a716824812ee1eb3512a8d486"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e55b96a716824812ee1eb3512a8d486">&#9670;&#160;</a></span>get_total()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t max_size_&gt; </div>
+template&lt;SeqLength max_size_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classkaori_1_1RandomBarcodeSingleEnd.html">kaori::RandomBarcodeSingleEnd</a>&lt; max_size_ &gt;::get_total </td>
+          <td class="memname">Count <a class="el" href="classkaori_1_1RandomBarcodeSingleEnd.html">kaori::RandomBarcodeSingleEnd</a>&lt; max_size_ &gt;::get_total </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>

@@ -104,31 +104,48 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a6747bb2cef23b5cf58dd1608fbf34df5" id="r_a6747bb2cef23b5cf58dd1608fbf34df5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6747bb2cef23b5cf58dd1608fbf34df5">index</a> = 0</td></tr>
-<tr class="separator:a6747bb2cef23b5cf58dd1608fbf34df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01c65bc173917f471ce9415800793c6f" id="r_a01c65bc173917f471ce9415800793c6f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01c65bc173917f471ce9415800793c6f">total</a> = 0</td></tr>
-<tr class="separator:a01c65bc173917f471ce9415800793c6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a836707eb3867c50f1d950d57ac21ea26" id="r_a836707eb3867c50f1d950d57ac21ea26"><td class="memItemLeft" align="right" valign="top">BarcodeIndex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a836707eb3867c50f1d950d57ac21ea26">index</a> = 0</td></tr>
+<tr class="separator:a836707eb3867c50f1d950d57ac21ea26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6989b3f8c0ea25c1015979afa40ea4c9" id="r_a6989b3f8c0ea25c1015979afa40ea4c9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6989b3f8c0ea25c1015979afa40ea4c9">mismatches</a> = 0</td></tr>
+<tr class="separator:a6989b3f8c0ea25c1015979afa40ea4c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad10cdc7a6aac515e3492c1f8901c82d6" id="r_ad10cdc7a6aac515e3492c1f8901c82d6"><td class="memItemLeft" align="right" valign="top">std::array&lt; int, num_segments_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad10cdc7a6aac515e3492c1f8901c82d6">per_segment</a></td></tr>
 <tr class="separator:ad10cdc7a6aac515e3492c1f8901c82d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;size_t num_segments_&gt;<br />
+<div class="textblock"><div class="compoundTemplParams">template&lt;int num_segments_&gt;<br />
 struct kaori::SegmentedMismatches&lt; num_segments_ &gt;::Result</div><p><a class="el" href="structkaori_1_1SegmentedMismatches_1_1Result.html" title="Result of the segmented search.">Result</a> of the segmented search. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="a6747bb2cef23b5cf58dd1608fbf34df5" name="a6747bb2cef23b5cf58dd1608fbf34df5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6747bb2cef23b5cf58dd1608fbf34df5">&#9670;&#160;</a></span>index</h2>
+<a id="a836707eb3867c50f1d950d57ac21ea26" name="a836707eb3867c50f1d950d57ac21ea26"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a836707eb3867c50f1d950d57ac21ea26">&#9670;&#160;</a></span>index</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t num_segments_&gt; </div>
+template&lt;int num_segments_&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classkaori_1_1SegmentedMismatches.html">kaori::SegmentedMismatches</a>&lt; num_segments_ &gt;::Result::index = 0</td>
+          <td class="memname">BarcodeIndex <a class="el" href="classkaori_1_1SegmentedMismatches.html">kaori::SegmentedMismatches</a>&lt; num_segments_ &gt;::Result::index = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Index of the known barcode sequence matching the input sequence in <code><a class="el" href="classkaori_1_1SegmentedMismatches.html#af0fcf78739ef942b70cfb715144a24e4">search()</a></code>. This is guaranteed to be non-negative only if an unambiguous match is found. </p>
+
+</div>
+</div>
+<a id="a6989b3f8c0ea25c1015979afa40ea4c9" name="a6989b3f8c0ea25c1015979afa40ea4c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6989b3f8c0ea25c1015979afa40ea4c9">&#9670;&#160;</a></span>mismatches</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int num_segments_&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classkaori_1_1SegmentedMismatches.html">kaori::SegmentedMismatches</a>&lt; num_segments_ &gt;::Result::mismatches = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Total number of mismatches between the barcode sequence from <code>index</code> and the input sequence. </p>
 
 </div>
 </div>
@@ -138,7 +155,7 @@ template&lt;size_t num_segments_&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t num_segments_&gt; </div>
+template&lt;int num_segments_&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">std::array&lt;int, num_segments_&gt; <a class="el" href="classkaori_1_1SegmentedMismatches.html">kaori::SegmentedMismatches</a>&lt; num_segments_ &gt;::Result::per_segment</td>
@@ -146,23 +163,6 @@ template&lt;size_t num_segments_&gt; </div>
       </table>
 </div><div class="memdoc">
 <p>Number of mismatches in each segment of the sequence. </p>
-
-</div>
-</div>
-<a id="a01c65bc173917f471ce9415800793c6f" name="a01c65bc173917f471ce9415800793c6f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a01c65bc173917f471ce9415800793c6f">&#9670;&#160;</a></span>total</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;size_t num_segments_&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">int <a class="el" href="classkaori_1_1SegmentedMismatches.html">kaori::SegmentedMismatches</a>&lt; num_segments_ &gt;::Result::total = 0</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Total number of mismatches between the barcode sequence from <code>index</code> and the input sequence. </p>
 
 </div>
 </div>

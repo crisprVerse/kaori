@@ -107,6 +107,7 @@
     <filename>MismatchTrie_8hpp.html</filename>
     <class kind="struct">kaori::TrieAddStatus</class>
     <class kind="class">kaori::AnyMismatches</class>
+    <class kind="struct">kaori::AnyMismatches::Result</class>
     <class kind="class">kaori::SegmentedMismatches</class>
     <class kind="struct">kaori::SegmentedMismatches::Result</class>
     <namespace>kaori</namespace>
@@ -139,6 +140,7 @@
   <compound kind="class">
     <name>kaori::AnyMismatches</name>
     <filename>classkaori_1_1AnyMismatches.html</filename>
+    <class kind="struct">kaori::AnyMismatches::Result</class>
     <member kind="function">
       <type></type>
       <name>AnyMismatches</name>
@@ -150,8 +152,8 @@
       <type></type>
       <name>AnyMismatches</name>
       <anchorfile>classkaori_1_1AnyMismatches.html</anchorfile>
-      <anchor>a2558736089f0e6cee1b58df049f53813</anchor>
-      <arglist>(size_t barcode_length, DuplicateAction duplicates)</arglist>
+      <anchor>a9ed3f2664b9141b3a2616cdda00fe786</anchor>
+      <arglist>(SeqLength barcode_length, DuplicateAction duplicates)</arglist>
     </member>
     <member kind="function">
       <type>TrieAddStatus</type>
@@ -161,17 +163,17 @@
       <arglist>(const char *barcode_seq)</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>SeqLength</type>
       <name>length</name>
       <anchorfile>classkaori_1_1AnyMismatches.html</anchorfile>
-      <anchor>a595d55661d3976c1cac64a91f4d95f32</anchor>
+      <anchor>a91c7115078ceeccaeca40b5ef38c301d</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>BarcodeIndex</type>
       <name>size</name>
       <anchorfile>classkaori_1_1AnyMismatches.html</anchorfile>
-      <anchor>a7a8310c8546e2c69711b33e021a71f68</anchor>
+      <anchor>a0b5048fb2195f0ac6f9afb8e35eb9ede</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -182,10 +184,10 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>std::pair&lt; int, int &gt;</type>
+      <type>Result</type>
       <name>search</name>
       <anchorfile>classkaori_1_1AnyMismatches.html</anchorfile>
-      <anchor>a690a25a6ecd962cc624171b9c68e6ee5</anchor>
+      <anchor>a3743e50603f631c3c266b990f0a18000</anchor>
       <arglist>(const char *search_seq, int max_mismatches) const</arglist>
     </member>
   </compound>
@@ -203,8 +205,8 @@
       <type></type>
       <name>BarcodePool</name>
       <anchorfile>classkaori_1_1BarcodePool.html</anchorfile>
-      <anchor>a92015fb57976df1ca7c681dd4191aca1</anchor>
-      <arglist>(std::vector&lt; const char * &gt; barcode_pool, size_t barcode_length)</arglist>
+      <anchor>a68b5c660e0111fac4705e5494f8697ad</anchor>
+      <arglist>(std::vector&lt; const char * &gt; barcode_pool, std::size_t barcode_length)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -221,37 +223,37 @@
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>SeqLength</type>
       <name>length</name>
       <anchorfile>classkaori_1_1BarcodePool.html</anchorfile>
-      <anchor>a6663dead4a6b366e97953710d04df906</anchor>
+      <anchor>a585c929d99ce1da6e506d09ad99c1a24</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>BarcodeIndex</type>
       <name>size</name>
       <anchorfile>classkaori_1_1BarcodePool.html</anchorfile>
-      <anchor>a9522e14eaa996361b8f84cfb649abf54</anchor>
+      <anchor>aa956b36bdbd47d0fec0d26d7d444671a</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>const char *</type>
       <name>operator[]</name>
       <anchorfile>classkaori_1_1BarcodePool.html</anchorfile>
-      <anchor>ace794846121b9a10c7e7479129106b4f</anchor>
-      <arglist>(size_t i) const</arglist>
+      <anchor>a1792cf18b95ecff48bb3ea5ac4aa6fdb</anchor>
+      <arglist>(BarcodeIndex i) const</arglist>
     </member>
   </compound>
   <compound kind="class">
     <name>kaori::CombinatorialBarcodesPairedEnd</name>
     <filename>classkaori_1_1CombinatorialBarcodesPairedEnd.html</filename>
-    <templarg>size_t max_size_</templarg>
+    <templarg>SeqLength max_size_</templarg>
     <member kind="function">
       <type></type>
       <name>CombinatorialBarcodesPairedEnd</name>
       <anchorfile>classkaori_1_1CombinatorialBarcodesPairedEnd.html</anchorfile>
-      <anchor>a0391ce018635cc81d0887249ce5bdbf4</anchor>
-      <arglist>(const char *template_seq1, size_t template_length1, const BarcodePool &amp;barcode_pool1, const char *template_seq2, size_t template_length2, const BarcodePool &amp;barcode_pool2, const Options &amp;options)</arglist>
+      <anchor>ab092c11043ef78e84b83358944ad4562</anchor>
+      <arglist>(const char *template_seq1, SeqLength template_length1, const BarcodePool &amp;barcode_pool1, const char *template_seq2, SeqLength template_length2, const BarcodePool &amp;barcode_pool2, const Options &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -261,46 +263,46 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; std::array&lt; int, 2 &gt; &gt; &amp;</type>
+      <type>const std::vector&lt; std::array&lt; BarcodeIndex, 2 &gt; &gt; &amp;</type>
       <name>get_combinations</name>
       <anchorfile>classkaori_1_1CombinatorialBarcodesPairedEnd.html</anchorfile>
-      <anchor>ae679d8944bbef0eecb5ee6907e81bb8c</anchor>
+      <anchor>ae2c879d99909fd5b9b96f5be60c26a18</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>BarcodeIndex</type>
       <name>get_total</name>
       <anchorfile>classkaori_1_1CombinatorialBarcodesPairedEnd.html</anchorfile>
-      <anchor>a996aa3c993377ccc38dac7b7fc059bf4</anchor>
+      <anchor>ae3e803d188df68c1c4d5ffecc4ac47db</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>BarcodeIndex</type>
       <name>get_barcode1_only</name>
       <anchorfile>classkaori_1_1CombinatorialBarcodesPairedEnd.html</anchorfile>
-      <anchor>a3302d197bc1fadfea76121d366cfdf46</anchor>
+      <anchor>ae5a9ad062651bc8cbb3435242582bb7c</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>BarcodeIndex</type>
       <name>get_barcode2_only</name>
       <anchorfile>classkaori_1_1CombinatorialBarcodesPairedEnd.html</anchorfile>
-      <anchor>aff687b2eac80a8e2b72680a43a290c09</anchor>
+      <anchor>a891d828f56c73a6d4d601a7040b20522</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
   <compound kind="class">
     <name>kaori::CombinatorialBarcodesSingleEnd</name>
     <filename>classkaori_1_1CombinatorialBarcodesSingleEnd.html</filename>
-    <templarg>size_t max_size_</templarg>
-    <templarg>size_t num_variable_</templarg>
+    <templarg>SeqLength max_size_</templarg>
+    <templarg>int num_variable_</templarg>
     <class kind="struct">kaori::CombinatorialBarcodesSingleEnd::Options</class>
     <member kind="function">
       <type></type>
       <name>CombinatorialBarcodesSingleEnd</name>
       <anchorfile>classkaori_1_1CombinatorialBarcodesSingleEnd.html</anchorfile>
-      <anchor>aec9b66bd2ca351aad8d198c88d4d085b</anchor>
-      <arglist>(const char *template_seq, size_t template_length, const BarcodePoolContainer &amp;barcode_pools, const Options &amp;options)</arglist>
+      <anchor>ae7ebe774d361d6dc4eea41aece8bf35a</anchor>
+      <arglist>(const char *template_seq, SeqLength template_length, const BarcodePoolContainer &amp;barcode_pools, const Options &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>CombinatorialBarcodesSingleEnd &amp;</type>
@@ -317,57 +319,57 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; std::array&lt; int, num_variable_ &gt; &gt; &amp;</type>
+      <type>const std::vector&lt; std::array&lt; BarcodeIndex, num_variable_ &gt; &gt; &amp;</type>
       <name>get_combinations</name>
       <anchorfile>classkaori_1_1CombinatorialBarcodesSingleEnd.html</anchorfile>
-      <anchor>a9f83ae70815ce022f55e5dd83772c51b</anchor>
+      <anchor>a92678e557a1c3d7f491332ebb3d4d684</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>Count</type>
       <name>get_total</name>
       <anchorfile>classkaori_1_1CombinatorialBarcodesSingleEnd.html</anchorfile>
-      <anchor>aecabd09ac4a0ca554155a87170ea7bde</anchor>
+      <anchor>abb6829ba0e5a9d911ea6c6780e0dba69</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
   <compound kind="class">
     <name>kaori::DualBarcodesPairedEnd</name>
     <filename>classkaori_1_1DualBarcodesPairedEnd.html</filename>
-    <templarg>size_t max_size_</templarg>
+    <templarg>SeqLength max_size_</templarg>
     <class kind="struct">kaori::DualBarcodesPairedEnd::Options</class>
     <member kind="function">
       <type></type>
       <name>DualBarcodesPairedEnd</name>
       <anchorfile>classkaori_1_1DualBarcodesPairedEnd.html</anchorfile>
-      <anchor>aa4006890e45b57949ce9b954a2c2b325</anchor>
-      <arglist>(const char *template_seq1, size_t template_length1, const BarcodePool &amp;barcode_pool1, const char *template_seq2, size_t template_length2, const BarcodePool &amp;barcode_pool2, const Options &amp;options)</arglist>
+      <anchor>a9914566593cd01a262cad0bb0e168921</anchor>
+      <arglist>(const char *template_seq1, SeqLength template_length1, const BarcodePool &amp;barcode_pool1, const char *template_seq2, SeqLength template_length2, const BarcodePool &amp;barcode_pool2, const Options &amp;options)</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; int &gt; &amp;</type>
+      <type>const std::vector&lt; Count &gt; &amp;</type>
       <name>get_counts</name>
       <anchorfile>classkaori_1_1DualBarcodesPairedEnd.html</anchorfile>
-      <anchor>aabe9a9a5247e48daee6a1b77d62cb31b</anchor>
+      <anchor>a3f6cfed5f6eb2ad1a60cd1546700943d</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>Count</type>
       <name>get_total</name>
       <anchorfile>classkaori_1_1DualBarcodesPairedEnd.html</anchorfile>
-      <anchor>a387d34ad268f62d2a3c0ab9e98cb9a61</anchor>
+      <anchor>a5cee58b4f46553f135d098d35ced7b3c</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
   <compound kind="class">
     <name>kaori::DualBarcodesPairedEndWithDiagnostics</name>
     <filename>classkaori_1_1DualBarcodesPairedEndWithDiagnostics.html</filename>
-    <templarg>size_t max_size_</templarg>
+    <templarg>SeqLength max_size_</templarg>
     <member kind="function">
       <type></type>
       <name>DualBarcodesPairedEndWithDiagnostics</name>
       <anchorfile>classkaori_1_1DualBarcodesPairedEndWithDiagnostics.html</anchorfile>
-      <anchor>ab8090a15dd626a8909330f52c6627acd</anchor>
-      <arglist>(const char *template_seq1, size_t template_length1, const BarcodePool &amp;barcode_pool1, const char *template_seq2, size_t template_length2, const BarcodePool &amp;barcode_pool2, const typename DualBarcodesPairedEnd&lt; max_size_ &gt;::Options &amp;options)</arglist>
+      <anchor>a21623cba370cebfc5eda7571403c8d0b</anchor>
+      <arglist>(const char *template_seq1, SeqLength template_length1, const BarcodePool &amp;barcode_pool1, const char *template_seq2, SeqLength template_length2, const BarcodePool &amp;barcode_pool2, const typename DualBarcodesPairedEnd&lt; max_size_ &gt;::Options &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -377,79 +379,79 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; int &gt; &amp;</type>
+      <type>const std::vector&lt; Count &gt; &amp;</type>
       <name>get_counts</name>
       <anchorfile>classkaori_1_1DualBarcodesPairedEndWithDiagnostics.html</anchorfile>
-      <anchor>a30db597fc29eb88bb30b5aff1afcc12e</anchor>
+      <anchor>aa742c8ba7aa427386b63faee0c8147bc</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; std::array&lt; int, 2 &gt; &gt; &amp;</type>
+      <type>const std::vector&lt; std::array&lt; BarcodeIndex, 2 &gt; &gt; &amp;</type>
       <name>get_combinations</name>
       <anchorfile>classkaori_1_1DualBarcodesPairedEndWithDiagnostics.html</anchorfile>
-      <anchor>aaaf452b952ef475d80df0870c07297cb</anchor>
+      <anchor>aa01a5e164ffea3d182d30a53515f3548</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>Count</type>
       <name>get_total</name>
       <anchorfile>classkaori_1_1DualBarcodesPairedEndWithDiagnostics.html</anchorfile>
-      <anchor>ace47c60b85c16e13ed0d9d7b08382d37</anchor>
+      <anchor>a53fb5a3978071e0a670db56316232146</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>Count</type>
       <name>get_barcode1_only</name>
       <anchorfile>classkaori_1_1DualBarcodesPairedEndWithDiagnostics.html</anchorfile>
-      <anchor>a22c8a40cf3bc172100ca38ce335a964d</anchor>
+      <anchor>a24fa3ccb54ca6082c8c7ed91b2ad4ed5</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>Count</type>
       <name>get_barcode2_only</name>
       <anchorfile>classkaori_1_1DualBarcodesPairedEndWithDiagnostics.html</anchorfile>
-      <anchor>a75196a5b87636ad8b3935a8f682cc4dd</anchor>
+      <anchor>a602a7741a62530f404a57b2fc302cf25</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
   <compound kind="class">
     <name>kaori::DualBarcodesSingleEnd</name>
     <filename>classkaori_1_1DualBarcodesSingleEnd.html</filename>
-    <templarg>size_t max_size_</templarg>
+    <templarg>SeqLength max_size_</templarg>
     <class kind="struct">kaori::DualBarcodesSingleEnd::Options</class>
     <member kind="function">
       <type></type>
       <name>DualBarcodesSingleEnd</name>
       <anchorfile>classkaori_1_1DualBarcodesSingleEnd.html</anchorfile>
-      <anchor>adfd1e0fcd30c89d77a08302c3036ed21</anchor>
-      <arglist>(const char *template_seq, size_t template_length, const std::vector&lt; BarcodePool &gt; &amp;barcode_pools, const Options &amp;options)</arglist>
+      <anchor>a7a663ac62988bb41dea5d2ca09475b00</anchor>
+      <arglist>(const char *template_seq, SeqLength template_length, const std::vector&lt; BarcodePool &gt; &amp;barcode_pools, const Options &amp;options)</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; int &gt; &amp;</type>
+      <type>const std::vector&lt; Count &gt; &amp;</type>
       <name>get_counts</name>
       <anchorfile>classkaori_1_1DualBarcodesSingleEnd.html</anchorfile>
-      <anchor>a60fd6525f05e49698dbe5ae0b0b44cbe</anchor>
+      <anchor>a74ff2cc2731ad2aed615eae7073df040</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>Count</type>
       <name>get_total</name>
       <anchorfile>classkaori_1_1DualBarcodesSingleEnd.html</anchorfile>
-      <anchor>add36b0747c35b867d5317f5fa35f0563</anchor>
+      <anchor>a309b8676aadfa408d2cbc4ae7f753769</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
   <compound kind="class">
     <name>kaori::DualBarcodesSingleEndWithDiagnostics</name>
     <filename>classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html</filename>
-    <templarg>size_t max_size_</templarg>
-    <templarg>size_t num_variable_</templarg>
+    <templarg>SeqLength max_size_</templarg>
+    <templarg>int num_variable_</templarg>
     <member kind="function">
       <type></type>
       <name>DualBarcodesSingleEndWithDiagnostics</name>
       <anchorfile>classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html</anchorfile>
-      <anchor>a95d730c9c71060de6df753f8c963fc17</anchor>
-      <arglist>(const char *template_seq, size_t template_length, const std::vector&lt; BarcodePool &gt; &amp;barcode_pools, const typename DualBarcodesSingleEnd&lt; max_size_ &gt;::Options &amp;options)</arglist>
+      <anchor>a1e6b69b51221a7d602c3d3fd078be3fd</anchor>
+      <arglist>(const char *template_seq, SeqLength template_length, const std::vector&lt; BarcodePool &gt; &amp;barcode_pools, const typename DualBarcodesSingleEnd&lt; max_size_ &gt;::Options &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -459,24 +461,24 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; int &gt; &amp;</type>
+      <type>const std::vector&lt; Count &gt; &amp;</type>
       <name>get_counts</name>
       <anchorfile>classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html</anchorfile>
-      <anchor>a565e7190b308e9f1d659b897f27c98c4</anchor>
+      <anchor>a8b964065dfec4819c29e315925f56caf</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; std::array&lt; int, num_variable_ &gt; &gt; &amp;</type>
+      <type>const std::vector&lt; std::array&lt; BarcodeIndex, num_variable_ &gt; &gt; &amp;</type>
       <name>get_combinations</name>
       <anchorfile>classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html</anchorfile>
-      <anchor>a8e4bfa55a150cdf60928ddbf6c9bf75c</anchor>
+      <anchor>a30f91c5dbb4063bbc656eb26b13477fa</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>Count</type>
       <name>get_total</name>
       <anchorfile>classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html</anchorfile>
-      <anchor>a47b5351bf50ec47e18eec74f37a3002b</anchor>
+      <anchor>a40900a5258c0052b2d3b3d47c57dadc5</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
@@ -812,10 +814,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>int</type>
+      <type>std::size_t</type>
       <name>block_size</name>
       <anchorfile>structkaori_1_1ProcessPairedEndDataOptions.html</anchorfile>
-      <anchor>a004d9692ba439c1f7b21db11521800fe</anchor>
+      <anchor>ab04645ef444cd2352a75074df4d98799</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -830,55 +832,73 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>int</type>
+      <type>std::size_t</type>
       <name>block_size</name>
       <anchorfile>structkaori_1_1ProcessSingleEndDataOptions.html</anchorfile>
-      <anchor>a4742882ef77d18cb855a7c8e33a788ad</anchor>
+      <anchor>a386f718f9002027e62970fbd3d1b286c</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
     <name>kaori::RandomBarcodeSingleEnd</name>
     <filename>classkaori_1_1RandomBarcodeSingleEnd.html</filename>
-    <templarg>size_t max_size_</templarg>
+    <templarg>SeqLength max_size_</templarg>
     <class kind="struct">kaori::RandomBarcodeSingleEnd::Options</class>
     <member kind="function">
       <type></type>
       <name>RandomBarcodeSingleEnd</name>
       <anchorfile>classkaori_1_1RandomBarcodeSingleEnd.html</anchorfile>
-      <anchor>ae2da929a29b34350fe862848028fd632</anchor>
-      <arglist>(const char *template_seq, size_t template_length, const Options &amp;options)</arglist>
+      <anchor>a10796dbe9cf3d5b78c65b98f2d4b9fb4</anchor>
+      <arglist>(const char *template_seq, SeqLength template_length, const Options &amp;options)</arglist>
     </member>
     <member kind="function">
-      <type>const std::unordered_map&lt; std::string, int &gt; &amp;</type>
+      <type>const std::unordered_map&lt; std::string, Count &gt; &amp;</type>
       <name>get_counts</name>
       <anchorfile>classkaori_1_1RandomBarcodeSingleEnd.html</anchorfile>
-      <anchor>a3c7ebb89240ab11b0aac1e47f35b8675</anchor>
+      <anchor>a52fbd840a2dd130003c1d71fc620dd06</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>Count</type>
       <name>get_total</name>
       <anchorfile>classkaori_1_1RandomBarcodeSingleEnd.html</anchorfile>
-      <anchor>a79dbe9bf22487a2a75a2483090d1c524</anchor>
+      <anchor>a4e55b96a716824812ee1eb3512a8d486</anchor>
       <arglist>() const</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>kaori::AnyMismatches::Result</name>
+    <filename>structkaori_1_1AnyMismatches_1_1Result.html</filename>
+    <member kind="variable">
+      <type>BarcodeIndex</type>
+      <name>index</name>
+      <anchorfile>structkaori_1_1AnyMismatches_1_1Result.html</anchorfile>
+      <anchor>aaeda32538805c4fa428de198f6ad9d94</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>mismatches</name>
+      <anchorfile>structkaori_1_1AnyMismatches_1_1Result.html</anchorfile>
+      <anchor>abca36e10daedb61f8337b6fa78129b6b</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
     <name>kaori::SegmentedMismatches::Result</name>
     <filename>structkaori_1_1SegmentedMismatches_1_1Result.html</filename>
     <member kind="variable">
-      <type>int</type>
+      <type>BarcodeIndex</type>
       <name>index</name>
       <anchorfile>structkaori_1_1SegmentedMismatches_1_1Result.html</anchorfile>
-      <anchor>a6747bb2cef23b5cf58dd1608fbf34df5</anchor>
+      <anchor>a836707eb3867c50f1d950d57ac21ea26</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
-      <name>total</name>
+      <name>mismatches</name>
       <anchorfile>structkaori_1_1SegmentedMismatches_1_1Result.html</anchorfile>
-      <anchor>a01c65bc173917f471ce9415800793c6f</anchor>
+      <anchor>a6989b3f8c0ea25c1015979afa40ea4c9</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -892,7 +912,7 @@
   <compound kind="class">
     <name>kaori::ScanTemplate</name>
     <filename>classkaori_1_1ScanTemplate.html</filename>
-    <templarg>size_t max_size_</templarg>
+    <templarg>SeqLength max_size_</templarg>
     <class kind="struct">kaori::ScanTemplate::State</class>
     <member kind="function">
       <type></type>
@@ -905,15 +925,15 @@
       <type></type>
       <name>ScanTemplate</name>
       <anchorfile>classkaori_1_1ScanTemplate.html</anchorfile>
-      <anchor>a16ee2e8af01383ff946bc7c84e37f93f</anchor>
-      <arglist>(const char *template_seq, size_t template_length, SearchStrand strand)</arglist>
+      <anchor>a11b9d0ffb1ad83f2efcf3c080d41a489</anchor>
+      <arglist>(const char *template_seq, SeqLength template_length, SearchStrand strand)</arglist>
     </member>
     <member kind="function">
       <type>State</type>
       <name>initialize</name>
       <anchorfile>classkaori_1_1ScanTemplate.html</anchorfile>
-      <anchor>a78a7b761d5b5b82be618bd28fb9367b4</anchor>
-      <arglist>(const char *read_seq, size_t read_length) const</arglist>
+      <anchor>a192dae5760511e00073b29dcc4ddb0ce</anchor>
+      <arglist>(const char *read_seq, SeqLength read_length) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -923,31 +943,31 @@
       <arglist>(State &amp;state) const</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; std::pair&lt; int, int &gt; &gt; &amp;</type>
+      <type>const std::vector&lt; std::pair&lt; SeqLength, SeqLength &gt; &gt; &amp;</type>
       <name>forward_variable_regions</name>
       <anchorfile>classkaori_1_1ScanTemplate.html</anchorfile>
-      <anchor>a734eb9dcee567123c1712e903a85beea</anchor>
+      <anchor>a204c78f2500d137bf89224d0e50687fc</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; std::pair&lt; int, int &gt; &gt; &amp;</type>
+      <type>const std::vector&lt; std::pair&lt; SeqLength, SeqLength &gt; &gt; &amp;</type>
       <name>reverse_variable_regions</name>
       <anchorfile>classkaori_1_1ScanTemplate.html</anchorfile>
-      <anchor>a2ac198b00a41a0efc014e4513a57e2c3</anchor>
+      <anchor>aed197079fb2fd66cbed3c200e17ebf93</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; std::pair&lt; int, int &gt; &gt; &amp;</type>
+      <type>const std::vector&lt; std::pair&lt; SeqLength, SeqLength &gt; &gt; &amp;</type>
       <name>variable_regions</name>
       <anchorfile>classkaori_1_1ScanTemplate.html</anchorfile>
-      <anchor>aa3b1de0ce055b125990fe30b798554f3</anchor>
+      <anchor>ab01da3a9e27f5d55915fe11841287bda</anchor>
       <arglist>(bool reverse) const</arglist>
     </member>
   </compound>
   <compound kind="class">
     <name>kaori::SegmentedBarcodeSearch</name>
     <filename>classkaori_1_1SegmentedBarcodeSearch.html</filename>
-    <templarg>size_t num_segments_</templarg>
+    <templarg>int num_segments_</templarg>
     <class kind="struct">kaori::SegmentedBarcodeSearch::Options</class>
     <class kind="struct">kaori::SegmentedBarcodeSearch::State</class>
     <member kind="function">
@@ -961,8 +981,8 @@
       <type></type>
       <name>SegmentedBarcodeSearch</name>
       <anchorfile>classkaori_1_1SegmentedBarcodeSearch.html</anchorfile>
-      <anchor>a501ed3154bda127b4e78cf336d642c4e</anchor>
-      <arglist>(const BarcodePool &amp;barcode_pool, std::array&lt; int, num_segments_ &gt; segments, const Options &amp;options)</arglist>
+      <anchor>a3132acfb6a723f34b50be76d05d2b0b5</anchor>
+      <arglist>(const BarcodePool &amp;barcode_pool, std::array&lt; SeqLength, num_segments_ &gt; segments, const Options &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>State</type>
@@ -996,7 +1016,7 @@
   <compound kind="class">
     <name>kaori::SegmentedMismatches</name>
     <filename>classkaori_1_1SegmentedMismatches.html</filename>
-    <templarg>size_t num_segments_</templarg>
+    <templarg>int num_segments_</templarg>
     <class kind="struct">kaori::SegmentedMismatches::Result</class>
     <member kind="function">
       <type></type>
@@ -1009,8 +1029,8 @@
       <type></type>
       <name>SegmentedMismatches</name>
       <anchorfile>classkaori_1_1SegmentedMismatches.html</anchorfile>
-      <anchor>ad73fddf82c2a81afd841a3e0361e06ca</anchor>
-      <arglist>(std::array&lt; int, num_segments_ &gt; segments, DuplicateAction duplicates)</arglist>
+      <anchor>aebd37af784c3ec96feed22604af2abd1</anchor>
+      <arglist>(std::array&lt; SeqLength, num_segments_ &gt; segments, DuplicateAction duplicates)</arglist>
     </member>
     <member kind="function">
       <type>TrieAddStatus</type>
@@ -1020,17 +1040,17 @@
       <arglist>(const char *barcode_seq)</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>SeqLength</type>
       <name>length</name>
       <anchorfile>classkaori_1_1SegmentedMismatches.html</anchorfile>
-      <anchor>a04891795569210c398beefab74423c97</anchor>
+      <anchor>a1e04e52ee793bce348a96f55596026d6</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>BarcodeIndex</type>
       <name>size</name>
       <anchorfile>classkaori_1_1SegmentedMismatches.html</anchorfile>
-      <anchor>a82be09cdee585107fe4106c288adefcf</anchor>
+      <anchor>a0ed489ff409742d48ba3ba5f432b40d8</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -1099,15 +1119,15 @@
   <compound kind="class">
     <name>kaori::SimpleSingleMatch</name>
     <filename>classkaori_1_1SimpleSingleMatch.html</filename>
-    <templarg>size_t max_size_</templarg>
+    <templarg>SeqLength max_size_</templarg>
     <class kind="struct">kaori::SimpleSingleMatch::Options</class>
     <class kind="struct">kaori::SimpleSingleMatch::State</class>
     <member kind="function">
       <type></type>
       <name>SimpleSingleMatch</name>
       <anchorfile>classkaori_1_1SimpleSingleMatch.html</anchorfile>
-      <anchor>ac0ac84f3ef42ca5950c10d846f73defd</anchor>
-      <arglist>(const char *template_seq, size_t template_length, const BarcodePool &amp;barcode_pool, const Options &amp;options)</arglist>
+      <anchor>ab73d24437002762aead65f96c2bedd49</anchor>
+      <arglist>(const char *template_seq, SeqLength template_length, const BarcodePool &amp;barcode_pool, const Options &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>State</type>
@@ -1127,68 +1147,68 @@
       <type>bool</type>
       <name>search_first</name>
       <anchorfile>classkaori_1_1SimpleSingleMatch.html</anchorfile>
-      <anchor>a612809f1073e51db67688242f21186e1</anchor>
-      <arglist>(const char *read_seq, size_t read_length, State &amp;state) const</arglist>
+      <anchor>a7164ed9c2e8260d2bb651160ea21b01c</anchor>
+      <arglist>(const char *read_seq, SeqLength read_length, State &amp;state) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>search_best</name>
       <anchorfile>classkaori_1_1SimpleSingleMatch.html</anchorfile>
-      <anchor>ab680ddd58cfe87d81d3dbcbdde64fd13</anchor>
-      <arglist>(const char *read_seq, size_t read_length, State &amp;state) const</arglist>
+      <anchor>a5136279ec13ae950fdcbf7a3fb5390be</anchor>
+      <arglist>(const char *read_seq, SeqLength read_length, State &amp;state) const</arglist>
     </member>
   </compound>
   <compound kind="class">
     <name>kaori::SingleBarcodePairedEnd</name>
     <filename>classkaori_1_1SingleBarcodePairedEnd.html</filename>
-    <templarg>size_t max_size_</templarg>
+    <templarg>SeqLength max_size_</templarg>
     <class kind="struct">kaori::SingleBarcodePairedEnd::Options</class>
     <member kind="function">
       <type></type>
       <name>SingleBarcodePairedEnd</name>
       <anchorfile>classkaori_1_1SingleBarcodePairedEnd.html</anchorfile>
-      <anchor>a999e95b5e79a4044a27abed5afa64186</anchor>
-      <arglist>(const char *template_seq, size_t template_length, const BarcodePool &amp;barcode_pool, const Options &amp;options)</arglist>
+      <anchor>a6649de1875041047ba2d5e5e4befc1f2</anchor>
+      <arglist>(const char *template_seq, SeqLength template_length, const BarcodePool &amp;barcode_pool, const Options &amp;options)</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; int &gt; &amp;</type>
+      <type>const std::vector&lt; Count &gt; &amp;</type>
       <name>get_counts</name>
       <anchorfile>classkaori_1_1SingleBarcodePairedEnd.html</anchorfile>
-      <anchor>ac9dee51a85e306ae14714ea63ba5d7bf</anchor>
+      <anchor>a37e189e58c012228ba4ae83c707489e0</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>Count</type>
       <name>get_total</name>
       <anchorfile>classkaori_1_1SingleBarcodePairedEnd.html</anchorfile>
-      <anchor>a8cf0e44660ca8ee126fed5e5a52c85f5</anchor>
+      <anchor>a27d55d06cb88f4e52d8450156b929780</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
   <compound kind="class">
     <name>kaori::SingleBarcodeSingleEnd</name>
     <filename>classkaori_1_1SingleBarcodeSingleEnd.html</filename>
-    <templarg>size_t max_size_</templarg>
+    <templarg>SeqLength max_size_</templarg>
     <class kind="struct">kaori::SingleBarcodeSingleEnd::Options</class>
     <member kind="function">
       <type></type>
       <name>SingleBarcodeSingleEnd</name>
       <anchorfile>classkaori_1_1SingleBarcodeSingleEnd.html</anchorfile>
-      <anchor>a8db310a6ea03dbe67185c604aa256332</anchor>
-      <arglist>(const char *template_seq, size_t template_length, const BarcodePool &amp;barcode_pool, const Options &amp;options)</arglist>
+      <anchor>a9f6fa048912422ada869967e6c4d91db</anchor>
+      <arglist>(const char *template_seq, SeqLength template_length, const BarcodePool &amp;barcode_pool, const Options &amp;options)</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; int &gt; &amp;</type>
+      <type>const std::vector&lt; Count &gt; &amp;</type>
       <name>get_counts</name>
       <anchorfile>classkaori_1_1SingleBarcodeSingleEnd.html</anchorfile>
-      <anchor>acb3071d4993c865d11f2c437b756d331</anchor>
+      <anchor>a5120e12120cf7687b129af82445fe02b</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
+      <type>Count</type>
       <name>get_total</name>
       <anchorfile>classkaori_1_1SingleBarcodeSingleEnd.html</anchorfile>
-      <anchor>a6943dec5fb9079f4452adf723dd4dbee</anchor>
+      <anchor>af7d6f6688157dfefb21ae5e735c17081</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
@@ -1196,10 +1216,10 @@
     <name>kaori::ScanTemplate::State</name>
     <filename>structkaori_1_1ScanTemplate_1_1State.html</filename>
     <member kind="variable">
-      <type>size_t</type>
+      <type>SeqLength</type>
       <name>position</name>
       <anchorfile>structkaori_1_1ScanTemplate_1_1State.html</anchorfile>
-      <anchor>a17bb86db720b182d115c97890e0ff186</anchor>
+      <anchor>af05fb1aec3759d0229b42f0b60dfde15</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -1228,10 +1248,10 @@
     <name>kaori::SegmentedBarcodeSearch::State</name>
     <filename>structkaori_1_1SegmentedBarcodeSearch_1_1State.html</filename>
     <member kind="variable">
-      <type>int</type>
+      <type>BarcodeIndex</type>
       <name>index</name>
       <anchorfile>structkaori_1_1SegmentedBarcodeSearch_1_1State.html</anchorfile>
-      <anchor>ab160a22f4e1fcba9b201619bb51f6bc6</anchor>
+      <anchor>ab50ccdf56854a0b89e5552e073fedfe7</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -1253,10 +1273,10 @@
     <name>kaori::SimpleBarcodeSearch::State</name>
     <filename>structkaori_1_1SimpleBarcodeSearch_1_1State.html</filename>
     <member kind="variable">
-      <type>int</type>
+      <type>BarcodeIndex</type>
       <name>index</name>
       <anchorfile>structkaori_1_1SimpleBarcodeSearch_1_1State.html</anchorfile>
-      <anchor>ac424ab64e2dd798903d4ef8ce5f04e5f</anchor>
+      <anchor>a73e26807c613d7ed78becf073418a5e1</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -1271,17 +1291,17 @@
     <name>kaori::SimpleSingleMatch::State</name>
     <filename>structkaori_1_1SimpleSingleMatch_1_1State.html</filename>
     <member kind="variable">
-      <type>int</type>
+      <type>BarcodeIndex</type>
       <name>index</name>
       <anchorfile>structkaori_1_1SimpleSingleMatch_1_1State.html</anchorfile>
-      <anchor>a50d874edb14d45382209d6b078ade6c6</anchor>
+      <anchor>ae7029158b11370687da278c33617e36d</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>size_t</type>
+      <type>SeqLength</type>
       <name>position</name>
       <anchorfile>structkaori_1_1SimpleSingleMatch_1_1State.html</anchorfile>
-      <anchor>a5a1d390c9776a724892b4ee6de80ae98</anchor>
+      <anchor>a2ac6a4275e4a4a24774c087077e7bee6</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -1376,20 +1396,6 @@
       <anchor>a8ec757759c7fadc20545ba3e1d62e0b2</anchor>
       <arglist>(Pointer_ input1, Pointer_ input2, Handler_ &amp;handler, const ProcessPairedEndDataOptions &amp;options)</arglist>
       <docanchor file="namespacekaori.html" title="Handler requirements">paired-handler-req</docanchor>
-    </member>
-    <member kind="variable">
-      <type>constexpr int</type>
-      <name>TRIE_STATUS_MISSING</name>
-      <anchorfile>namespacekaori.html</anchorfile>
-      <anchor>a66ee49152f02f3658856bbd9d191bbe3</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>constexpr int</type>
-      <name>TRIE_STATUS_AMBIGUOUS</name>
-      <anchorfile>namespacekaori.html</anchorfile>
-      <anchor>ae0f167f1e59e8cf7308fc741b4e874a6</anchor>
-      <arglist></arglist>
     </member>
   </compound>
   <compound kind="page">

@@ -104,32 +104,32 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ab160a22f4e1fcba9b201619bb51f6bc6" id="r_ab160a22f4e1fcba9b201619bb51f6bc6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab160a22f4e1fcba9b201619bb51f6bc6">index</a> = 0</td></tr>
-<tr class="separator:ab160a22f4e1fcba9b201619bb51f6bc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab50ccdf56854a0b89e5552e073fedfe7" id="r_ab50ccdf56854a0b89e5552e073fedfe7"><td class="memItemLeft" align="right" valign="top">BarcodeIndex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab50ccdf56854a0b89e5552e073fedfe7">index</a> = 0</td></tr>
+<tr class="separator:ab50ccdf56854a0b89e5552e073fedfe7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96cb57ed15f78fdd173d68c972c5a93c" id="r_a96cb57ed15f78fdd173d68c972c5a93c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a96cb57ed15f78fdd173d68c972c5a93c">mismatches</a> = 0</td></tr>
 <tr class="separator:a96cb57ed15f78fdd173d68c972c5a93c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63b2a627f78ba88d80c3ce7d5ac4c69c" id="r_a63b2a627f78ba88d80c3ce7d5ac4c69c"><td class="memItemLeft" align="right" valign="top">std::array&lt; int, num_segments_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63b2a627f78ba88d80c3ce7d5ac4c69c">per_segment</a></td></tr>
 <tr class="separator:a63b2a627f78ba88d80c3ce7d5ac4c69c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;size_t num_segments_&gt;<br />
+<div class="textblock"><div class="compoundTemplParams">template&lt;int num_segments_&gt;<br />
 struct kaori::SegmentedBarcodeSearch&lt; num_segments_ &gt;::State</div><p><a class="el" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html" title="State of the search.">State</a> of the search. </p>
 <p>This contains both the results of the search for any given input sequence, as well as cached mismatches to optimize searches for future inputs. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab160a22f4e1fcba9b201619bb51f6bc6" name="ab160a22f4e1fcba9b201619bb51f6bc6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab160a22f4e1fcba9b201619bb51f6bc6">&#9670;&#160;</a></span>index</h2>
+<a id="ab50ccdf56854a0b89e5552e073fedfe7" name="ab50ccdf56854a0b89e5552e073fedfe7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab50ccdf56854a0b89e5552e073fedfe7">&#9670;&#160;</a></span>index</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t num_segments_&gt; </div>
+template&lt;int num_segments_&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html">kaori::SegmentedBarcodeSearch</a>&lt; num_segments_ &gt;::State::index = 0</td>
+          <td class="memname">BarcodeIndex <a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html">kaori::SegmentedBarcodeSearch</a>&lt; num_segments_ &gt;::State::index = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Index of the known sequence that matches best to the input sequence in <code><a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html#ab6c6c0bebf983e77ed79483090b54452">search()</a></code> (i.e., fewest total mismatches). If no match was found or if the best match is ambiguous, this will be set to -1. </p>
+<p>Index of the known sequence that matches best to the input sequence in <code><a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html#ab6c6c0bebf983e77ed79483090b54452">search()</a></code> (i.e., fewest total mismatches). This may also be one of the error codes <code>STATUS_UNMATCHED</code> or <code>STATUS_AMBIGUOUS</code>. </p>
 
 </div>
 </div>
@@ -139,14 +139,14 @@ template&lt;size_t num_segments_&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t num_segments_&gt; </div>
+template&lt;int num_segments_&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">int <a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html">kaori::SegmentedBarcodeSearch</a>&lt; num_segments_ &gt;::State::mismatches = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Total number of mismatches with the matching known sequence, summed across all segments. This should only be used if <code>index != -1</code>. </p>
+<p>Total number of mismatches with the matching known sequence, summed across all segments. This should only be used if <code>is_barcode_index_ok(index)</code> is true. </p>
 
 </div>
 </div>
@@ -156,14 +156,14 @@ template&lt;size_t num_segments_&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;size_t num_segments_&gt; </div>
+template&lt;int num_segments_&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">std::array&lt;int, num_segments_&gt; <a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html">kaori::SegmentedBarcodeSearch</a>&lt; num_segments_ &gt;::State::per_segment</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of mismatches in each segment. This should only be used if <code>index != -1</code>. </p>
+<p>Number of mismatches in each segment. This should only be used if <code>is_barcode_index_ok(index)</code> is true. </p>
 
 </div>
 </div>
