@@ -310,11 +310,7 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pair containing:<ol type="1">
-<li>The index of the barcode sequence with the lowest number of mismatches to <code>search_seq</code>. This is only non-negative if a barcode was unambiguously matched with no more mismatches than <code>max_mismatches</code>. If multiple sequences have the same lowest number of mismatches, the match is ambiguous and <code>STATUS_AMBIGUOUS</code> is returned. If all sequences have more mismatches than <code>max_mismatches</code>, <code>STATUS_UNMATCHED</code> is returned.</li>
-<li>The number of mismatches. </li>
-</ol>
-</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structkaori_1_1AnyMismatches_1_1Result.html" title="Result of the search.">Result</a> of the search, containing the index of the matching barcode and the number of mismatches to that barcode. </dd></dl>
 
 </div>
 </div>

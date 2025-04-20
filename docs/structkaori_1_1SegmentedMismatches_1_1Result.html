@@ -128,7 +128,8 @@ template&lt;int num_segments_&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Index of the known barcode sequence matching the input sequence in <code><a class="el" href="classkaori_1_1SegmentedMismatches.html#af0fcf78739ef942b70cfb715144a24e4">search()</a></code>. This is guaranteed to be non-negative only if an unambiguous match is found. </p>
+<p>Index of the known barcode sequence where the number of mismatches in each segment is less than or equal to <code>max_mismatches</code> and the total number of mismatches across all segments is the lowest among all barcode sequences.</p>
+<p>If multiple barcode sequences share the same lowest total, the match is ambiguous and <code>STATUS_AMBIGUOUS</code> is reported. If no barcode sequences satisfy the <code>max_mismatches</code> condition, <code>STATUS_UNMATCHED</code> is reported. </p>
 
 </div>
 </div>
@@ -145,7 +146,7 @@ template&lt;int num_segments_&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Total number of mismatches between the barcode sequence from <code>index</code> and the input sequence. </p>
+<p>Total number of mismatches between the barcode sequence from <code>index</code> and the input sequence. This should be ignored if <code>index == STATUS_UNMATCHED</code>, as the search will terminate early without computing the exact number of mismatches if <code>max_mismatches</code> is exceeded. </p>
 
 </div>
 </div>
@@ -162,7 +163,7 @@ template&lt;int num_segments_&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of mismatches in each segment of the sequence. </p>
+<p>Number of mismatches in each segment of the sequence. This should be ignored if <code>index == STATUS_UNMATCHED</code>, as the search will terminate early without computing the exact number of mismatches if <code>max_mismatches</code> is exceeded. </p>
 
 </div>
 </div>

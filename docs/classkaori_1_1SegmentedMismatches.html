@@ -329,12 +329,7 @@ template&lt;int num_segments_&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structkaori_1_1SegmentedMismatches_1_1Result.html" title="Result of the segmented search.">Result</a></code> containing the index of the barcode sequence where the number of mismatches in each segment is less than or equal to <code>max_mismatches</code>.<ul>
-<li>If multiple barcode sequences satisfy this condition, the barcode sequence with the lowest total number of mismatches is reported in the form of a non-negative <code><a class="el" href="structkaori_1_1SegmentedMismatches_1_1Result.html#a836707eb3867c50f1d950d57ac21ea26">Result::index</a></code>.</li>
-<li>If multiple barcode sequences share the same lowest total, the match is ambiguous and <code>STATUS_AMBIGUOUS</code> is reported.</li>
-<li>If no barcode sequences satisfy the <code>max_mismatches</code> condition, <code>STATUS_UNMATCHED</code> is reported. </li>
-</ul>
-</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structkaori_1_1SegmentedMismatches_1_1Result.html" title="Result of the segmented search.">Result</a> of the search, containing the index of the matching barcode and the number of mismatches to that barcode. </dd></dl>
 
 </div>
 </div>

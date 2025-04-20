@@ -124,7 +124,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Index of the known barcode that matches best to the input sequence in <code><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html#a7e22adc910c1a0993c8932075c8dad12">search()</a></code> (i.e., fewest total mismatches). This may also be one of the error codes <code>STATUS_UNMATCHED</code> or <code>STATUS_AMBIGUOUS</code>. </p>
+<p>Index of the known barcode that matches best to the input sequence in <code><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html#a7e22adc910c1a0993c8932075c8dad12">search()</a></code> (i.e., fewest total mismatches). If all barcodes have more mismatches than <code>allowed_mismatches</code>, <code>STATUS_UNMATCHED</code> is returned. If multiple barcodes share the same lowest number of mismatches (not greater than <code>allowed_mismatches</code>), <code>STATUS_AMBIGUOUS</code> is returned. </p>
 
 </div>
 </div>
@@ -139,7 +139,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of mismatches with the matching known sequence. This should only be used if <code>is_barcode_index_ok(index)</code> is true. </p>
+<p>Number of mismatches with the matching known sequence. This should be ignored if <code>index == STATUS_UNMATCHED</code>, as the search will terminate early without computing the exact number of mismatches if <code>allowed_mismatches</code> is exceeded. </p>
 
 </div>
 </div>
