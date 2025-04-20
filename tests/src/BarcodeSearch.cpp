@@ -195,7 +195,7 @@ TEST_F(SimpleBarcodeSearchTest, Caching) {
         stuff.search("AATA", state, 0); 
         EXPECT_EQ(state.index, kaori::STATUS_UNMATCHED);
     }
- 
+
     // Checking that the reduction works correctly.
     state.cache["AATA"].index = 2;
     stuff.reduce(state);
@@ -204,6 +204,31 @@ TEST_F(SimpleBarcodeSearchTest, Caching) {
     {
         stuff.search("AATA", state);
         EXPECT_EQ(state.index, 2); // re-uses the cache value!
+    }
+
+    // Checking the caching when the trie match is ambiguous.
+    {
+        kaori::SimpleBarcodeSearch stuff(ptrs, [&]{
+            Options opt;
+            opt.max_mismatches = 4;
+            return opt;
+        }());
+
+        auto state = stuff.initialize();
+        stuff.search("ACCA", state, 2); // allowed_mismatches < max_mismatches, so caching must rely on the AMBIGUOUS flag.
+        EXPECT_EQ(state.index, kaori::STATUS_AMBIGUOUS);
+
+        auto it = state.cache.find("ACCA");
+        EXPECT_TRUE(it != state.cache.end());
+        EXPECT_EQ((it->second).index, kaori::STATUS_AMBIGUOUS);
+
+        // Re-searching gives the same result.
+        stuff.search("ACCA", state);
+        EXPECT_EQ(state.index, kaori::STATUS_AMBIGUOUS);
+
+        // Unless a lower allowed number of mismatches is used.
+        stuff.search("ACCA", state, 0);
+        EXPECT_EQ(state.index, kaori::STATUS_UNMATCHED);
     }
 }
 
@@ -407,13 +432,14 @@ TEST_F(SegmentedBarcodeSearchTest, Caching) {
         EXPECT_EQ((it->second).mismatches, 1);
     }
 
-    // Stored in cache if it's ambiguous.
     {
-        stuff.search("ACCA", state);
-        EXPECT_EQ(state.index, kaori::STATUS_AMBIGUOUS);
-        auto it = state.cache.find("ACCA");
+        stuff.search("ATCA", state);
+        EXPECT_EQ(state.index, 0);
+        EXPECT_EQ(state.mismatches, 2);
+        auto it = state.cache.find("ATCA");
         EXPECT_TRUE(it != state.cache.end());
-        EXPECT_EQ((it->second).index, kaori::STATUS_AMBIGUOUS);
+        EXPECT_EQ((it->second).index, 0);
+        EXPECT_EQ((it->second).mismatches, 2);
     }
 
     // Retrieval from cache respects a lower mismatch threshold.  This uses the
@@ -435,5 +461,30 @@ TEST_F(SegmentedBarcodeSearchTest, Caching) {
     {
         stuff.search("AATA", state);
         EXPECT_EQ(state.index, 2); // re-uses the cache value!
+    }
+
+    // Checking the caching when the trie match is ambiguous.
+    {
+        kaori::SegmentedBarcodeSearch<2> stuff(ptrs, { 2, 2 }, [&]{
+            Options<2> opt;
+            opt.max_mismatches = { 2, 2 };
+            return opt;
+        }());
+
+        auto state = stuff.initialize();
+        stuff.search("ACCA", state, { 1, 1 }); // allowed_mismatches < max_mismatches, so caching must rely on the AMBIGUOUS flag.
+        EXPECT_EQ(state.index, kaori::STATUS_AMBIGUOUS);
+
+        auto it = state.cache.find("ACCA");
+        EXPECT_TRUE(it != state.cache.end());
+        EXPECT_EQ((it->second).index, kaori::STATUS_AMBIGUOUS);
+
+        // Re-searching gives the same result.
+        stuff.search("ACCA", state);
+        EXPECT_EQ(state.index, kaori::STATUS_AMBIGUOUS);
+
+        // Unless a lower allowed number of mismatches is used.
+        stuff.search("ACCA", state, { 0, 0 });
+        EXPECT_EQ(state.index, kaori::STATUS_UNMATCHED);
     }
 }

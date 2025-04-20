@@ -108,7 +108,7 @@ public:
     struct State {
         /**
          * Index of the known barcode that matches the variable region in the read sequence.
-         * This should only be used if `search()` returns true.
+         * This should only be used if `search()` returns true, whereupon it is guaranteed that `is_barcode_index_ok()` will return true.
          */
         BarcodeIndex index = STATUS_UNMATCHED;
 
@@ -121,7 +121,7 @@ public:
 
         /**
          * Total number of mismatches after each call to `search()`.
-         * This include both the constant and variable regions.
+         * This includes both the constant and variable regions.
          * This should only be used if `search()` returns true.
          */
         int mismatches = 0;

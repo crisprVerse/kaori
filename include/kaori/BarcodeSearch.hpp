@@ -130,13 +130,15 @@ public:
     struct State {
         /**
          * Index of the known barcode that matches best to the input sequence in `search()` (i.e., fewest total mismatches).
-         * This may also be one of the error codes `STATUS_UNMATCHED` or `STATUS_AMBIGUOUS`.
+         * If all barcodes have more mismatches than `allowed_mismatches`, `STATUS_UNMATCHED` is returned.
+         * If multiple barcodes share the same lowest number of mismatches (not greater than `allowed_mismatches`), `STATUS_AMBIGUOUS` is returned.
          */
         BarcodeIndex index = 0;
 
         /**
          * Number of mismatches with the matching known sequence.
-         * This should only be used if `is_barcode_index_ok(index)` is true.
+         * This should be ignored if `index == STATUS_UNMATCHED`,
+         * as the search will terminate early without computing the exact number of mismatches if `allowed_mismatches` is exceeded.
          */
         int mismatches = 0;
 
@@ -208,6 +210,8 @@ public:
 
         auto set_from_cache = [&](const CacheEntry& cached) -> void {
             if (cached.mismatches > allowed_mismatches) {
+                // technically cached.mismatches is only a lower bound if index == UNMATCHED,
+                // but if it's already UNMATCHED, then the result will be UNMATCHED either way.
                 state.index = STATUS_UNMATCHED;
             } else {
                 state.index = cached.index;
@@ -243,7 +247,11 @@ public:
         // actually be a hit). As such, we should only store a miss in the
         // cache when the requested number of mismatches is equal to the
         // maximum number of mismatches that was specified in the constructor.
-        if (allowed_mismatches == my_max_mm) {
+        //
+        // Of course, if the search failed because of ambiguity, then it would
+        // have failed even if we were searching with maximum mismatches;
+        // so we happily cache that.
+        if (allowed_mismatches == my_max_mm || missed.index == STATUS_AMBIGUOUS) {
             state.cache[search_seq] = CacheEntry(missed.index, missed.mismatches);
         }
 
@@ -362,19 +370,22 @@ public:
     struct State {
         /**
          * Index of the known sequence that matches best to the input sequence in `search()` (i.e., fewest total mismatches).
-         * This may also be one of the error codes `STATUS_UNMATCHED` or `STATUS_AMBIGUOUS`.
+         * If all barcodes have more mismatches than `allowed_mismatches`, `STATUS_UNMATCHED` is returned.
+         * If multiple barcodes share the same lowest number of mismatches (not greater than `allowed_mismatches`), `STATUS_AMBIGUOUS` is returned.
          */
         BarcodeIndex index = 0;
 
         /**
          * Total number of mismatches with the matching known sequence, summed across all segments.
-         * This should only be used if `is_barcode_index_ok(index)` is true.
+         * This should be ignored if `index == STATUS_UNMATCHED`,
+         * as the search will terminate early without computing the exact number of mismatches if `allowed_mismatches` is exceeded.
          */
         int mismatches = 0;
 
         /**
          * Number of mismatches in each segment.
-         * This should only be used if `is_barcode_index_ok(index)` is true.
+         * This should be ignored if `index == STATUS_UNMATCHED`,
+         * as the search will terminate early without computing the exact number of mismatches if `allowed_mismatches` is exceeded.
          */
         std::array<int, num_segments_> per_segment;
         
@@ -452,6 +463,8 @@ public:
             state.per_segment = cached.per_segment;
             for (int s = 0; s < num_segments_; ++s) {
                 if (cached.per_segment[s] > allowed_mismatches[s]) {
+                    // technically cached.mismatches is only a lower bound if index == UNMATCHED,
+                    // but if it's already UNMATCHED, then the result will be UNMATCHED either way.
                     state.index = STATUS_UNMATCHED;
                     return;
                 }
@@ -488,7 +501,11 @@ public:
         // actually be a hit). As such, we should only store a miss in the
         // cache when the requested number of mismatches is equal to the
         // maximum number of mismatches that was specified in the constructor.
-        if (allowed_mismatches == my_max_mm) {
+        //
+        // Of course, if the search failed because of ambiguity, then it would
+        // have failed even if we were searching with maximum mismatches;
+        // so we happily cache that.
+        if (allowed_mismatches == my_max_mm || missed.index == STATUS_AMBIGUOUS) {
             state.cache[search_seq] = CacheEntry(missed.index, missed.mismatches, missed.per_segment);
         }
 

@@ -445,13 +445,15 @@ public:
 
         /**
          * Index of the known barcode that matches best to the input sequence in `search()` (i.e., fewest mismatches).
-         * This may also be one of the error codes `STATUS_UNMATCHED` or `STATUS_AMBIGUOUS`.
+         * If multiple sequences have the same lowest number of mismatches, the match is ambiguous and `STATUS_AMBIGUOUS` is returned.
+         * If all sequences have more mismatches than `max_mismatches`, `STATUS_UNMATCHED` is returned.
          */
         BarcodeIndex index = 0;
 
         /**
          * Number of mismatches with the matching known barcode sequence.
-         * This should only be used if `is_barcode_index_ok(index)` is true.
+         * This should be ignored if `index == STATUS_UNMATCHED`,
+         * as the search will terminate early without computing the exact number of mismatches if `max_mismatches` is exceeded.
          */
         int mismatches = 0;
     };
@@ -461,12 +463,7 @@ public:
      * This is assumed to be of length equal to `length()` and is typically derived from a read.
      * @param max_mismatches Maximum number of mismatches in the search.
      *
-     * @return Pair containing:
-     * 1. The index of the barcode sequence with the lowest number of mismatches to `search_seq`.
-     *    This is only non-negative if a barcode was unambiguously matched with no more mismatches than `max_mismatches`.
-     *    If multiple sequences have the same lowest number of mismatches, the match is ambiguous and `STATUS_AMBIGUOUS` is returned.
-     *    If all sequences have more mismatches than `max_mismatches`, `STATUS_UNMATCHED` is returned.
-     * 2. The number of mismatches.
+     * @return Result of the search, containing the index of the matching barcode and the number of mismatches to that barcode.
      */
     Result search(const char* search_seq, int max_mismatches) const {
         return search(search_seq, 0, 0, 0, max_mismatches);
@@ -615,18 +612,25 @@ public:
          */
 
         /**
-         * Index of the known barcode sequence matching the input sequence in `search()`.
-         * This is guaranteed to be non-negative only if an unambiguous match is found.
+         * Index of the known barcode sequence where the number of mismatches in each segment is less than or equal to `max_mismatches`
+         * and the total number of mismatches across all segments is the lowest among all barcode sequences.
+         *
+         * If multiple barcode sequences share the same lowest total, the match is ambiguous and `STATUS_AMBIGUOUS` is reported.
+         * If no barcode sequences satisfy the `max_mismatches` condition, `STATUS_UNMATCHED` is reported.
          */
-        BarcodeIndex index = 0;
+        BarcodeIndex index = 0; // We need index and mismatches to start from zero as we'll be incrementing these in search().
 
         /**
          * Total number of mismatches between the barcode sequence from `index` and the input sequence.
+         * This should be ignored if `index == STATUS_UNMATCHED`,
+         * as the search will terminate early without computing the exact number of mismatches if `max_mismatches` is exceeded.
          */
         int mismatches = 0;
 
         /**
          * Number of mismatches in each segment of the sequence.
+         * This should be ignored if `index == STATUS_UNMATCHED`,
+         * as the search will terminate early without computing the exact number of mismatches if `max_mismatches` is exceeded.
          */
         std::array<int, num_segments_> per_segment;
     };
@@ -637,10 +641,7 @@ public:
      * @param max_mismatches Maximum number of mismatches for each segment.
      * Each entry should be non-negative.
      *
-     * @return A `Result` containing the index of the barcode sequence where the number of mismatches in each segment is less than or equal to `max_mismatches`.
-     * - If multiple barcode sequences satisfy this condition, the barcode sequence with the lowest total number of mismatches is reported in the form of a non-negative `Result::index`.
-     * - If multiple barcode sequences share the same lowest total, the match is ambiguous and `STATUS_AMBIGUOUS` is reported.
-     * - If no barcode sequences satisfy the `max_mismatches` condition, `STATUS_UNMATCHED` is reported.
+     * @return Result of the search, containing the index of the matching barcode and the number of mismatches to that barcode.
      */
     Result search(const char* search_seq, const std::array<int, num_segments_>& max_mismatches) const {
         int total_mismatches = std::accumulate(max_mismatches.begin(), max_mismatches.end(), 0);
