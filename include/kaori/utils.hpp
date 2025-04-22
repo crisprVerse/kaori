@@ -40,12 +40,12 @@ typedef std::size_t SeqLength;
 typedef typename std::vector<const char*>::size_type BarcodeIndex; // we use the size_type from the BarcodePool's internal vector of barcodes.
 
 /**
- * No match to a known barcode in the trie.
+ * No match to a known barcode.
  */
 inline constexpr BarcodeIndex STATUS_UNMATCHED = static_cast<BarcodeIndex>(-1);
 
 /**
- * Ambiguous match to two or more known barcodes in the trie.
+ * Ambiguous match to two or more known barcodes. 
  */
 inline constexpr BarcodeIndex STATUS_AMBIGUOUS = static_cast<BarcodeIndex>(-2);
 

@@ -28,18 +28,17 @@ public:
     /**
      * @param[in] template_seq1 Pointer to a character array containing the first template sequence. 
      * This should contain exactly one variable region.
-     * @param template_length1 Length of the first template.
+     * @param template_length1 Length of the array pointed to by `template_seq1`.
      * This should be less than or equal to `max_size_`.
      * @param barcode_pool1 Pool of known barcode sequences for the variable region in the first template.
      * @param[in] template_seq2 Pointer to a character array containing the second template sequence. 
      * This should contain exactly one variable region.
-     * @param template_length2 Length of the second template.
+     * @param template_length2 Length of the array pointed to by `template_seq2`.
      * This should be less than or equal to `max_size_`.
      * @param barcode_pool2 Pool of known barcode sequences for the variable region in the second template.
      * @param options Optional parameters.
      *
-     * `barcode_pool1` and `barcode_pool2` are expected to have the same number of barcodes (possibly duplicated).
-     * Corresponding values across the two pools define a particular combination of dual barcodes. 
+     * See the `DualBarcodesPairedEnd` constructor for details.
      */
     DualBarcodesPairedEndWithDiagnostics(
         const char* template_seq1, SeqLength template_length1, const BarcodePool& barcode_pool1,

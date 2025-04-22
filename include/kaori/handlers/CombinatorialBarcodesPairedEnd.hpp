@@ -18,9 +18,9 @@ namespace kaori {
 /**
  * @brief Handler for paired-end combinatorial barcodes.
  *
- * In this design, each read contains a barcoding element created from a template with a single variable region.
+ * In this design, each read contains a vector sequence created from a template with a single variable region.
  * For one read, the barcode is drawn from one pool of options, while the other read contains a barcode from another pool.
- * Combinations are assembled randomly by library construction, where the large number of combinations provide many unique identifiers for cell-tracing applications.
+ * Combinations are assembled randomly during library construction, where the large number of combinations provide many unique identifiers for cell-tracing applications.
  * This handler will capture the frequencies of each barcode combination. 
  *
  * @tparam max_size_ Maximum length of the template sequences on both reads.
@@ -36,22 +36,22 @@ public:
         bool use_first = true;
 
         /** 
-         * Maximum number of mismatches allowed across the first barcoding element.
+         * Maximum number of mismatches allowed across the first vector sequence.
          */
         int max_mismatches1 = 0;
 
         /**
-         * Strand(s) of the read sequence to search for the first barcoding element.
+         * Strand(s) of the read sequence to search for the first vector sequence.
          */
         SearchStrand strand1 = SearchStrand::FORWARD;
 
         /** 
-         * Maximum number of mismatches allowed across the second barcoding element.
+         * Maximum number of mismatches allowed across the second vector sequence.
          */
         int max_mismatches2 = 0;
 
         /**
-         * Strand(s) of the read sequence to search for the second barcoding element.
+         * Strand(s) of the read sequence to search for the second vector sequence.
          */
         SearchStrand strand2 = SearchStrand::FORWARD;
 
@@ -61,8 +61,8 @@ public:
         DuplicateAction duplicates = DuplicateAction::ERROR;
 
         /**
-         * Whether the reads are randomized with respect to the first/second barcoding elements.
-         * If `false`, the first read is searched for the first barcoding element only, and the second read is searched for the second barcoding element only.
+         * Whether the reads are randomized with respect to the first/second vector sequences.
+         * If `false`, the first read is searched for the first vector sequence only, and the second read is searched for the second vector sequence only.
          * If `true`, an additional search will be performed in the opposite orientation.
          */
         bool random = false;

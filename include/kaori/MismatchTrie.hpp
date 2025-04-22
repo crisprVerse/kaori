@@ -20,6 +20,8 @@ namespace kaori {
 
 /** 
  * @brief Status of barcode sequence addition to the trie.
+ *
+ * This is typically returned by methods like `AnyMismatches::add()` and `SegmentedMismatches::add()`.
  */
 struct TrieAddStatus {
     /**
@@ -34,13 +36,13 @@ struct TrieAddStatus {
 
     /**
      * Whether the newly added sequence replaced a duplicate in the trie.
-     * Only set when `is_duplicate = true` and `duplicates` is set to `DuplicateAction::LAST` in `add()`.
+     * Only set when `is_duplicate = true` and the trie's duplicate policy is set to `DuplicateAction::LAST` in the trie.
      */
     bool duplicate_replaced = false;
 
     /**
      * Whether the newly added sequence caused an existing duplicate to be cleared from the trie.
-     * Only set when `is_duplicate = true` and `duplicates` is set to `DuplicateAction::NONE` in `add()`.
+     * Only set when `is_duplicate = true` and the trie's duplicate policy is set to `DuplicateAction::NONE`. 
      */
     bool duplicate_cleared = false;
 };
@@ -374,7 +376,7 @@ inline std::pair<BarcodeIndex, int> trie_next_base(char base, BarcodeIndex node,
 /**
  * @brief Search for barcodes with mismatches anywhere.
  *
- * Given a (typically read-derived) sequence, this class performs a mismatch-aware search to a trie containing a pool of known barcode sequences.
+ * Given an input sequence, this class performs a mismatch-aware search to a trie containing a pool of known barcode sequences.
  * It will then return the barcode with the fewest mismatches to the input sequence.
  * Any number of mismatches are supported, distributed anywhere throughout the sequence. 
  */
@@ -416,7 +418,7 @@ public:
     }
 
     /**
-     * @return The number of barcode sequences added.
+     * @return The number of barcode sequences added across all calls to `add()`.
      */
     BarcodeIndex size() const {
         return my_core.size();
@@ -432,7 +434,7 @@ public:
 
 public:
     /**
-     * @brief Result of the search.
+     * @brief Results of `search()`.
      */
     struct Result {
         /**
@@ -459,9 +461,9 @@ public:
     };
 
     /**
-     * @param[in] search_seq Pointer to a character array containing a sequence to use for searching the barcode pool.
-     * This is assumed to be of length equal to `length()` and is typically derived from a read.
-     * @param max_mismatches Maximum number of mismatches in the search.
+     * @param[in] search_seq Pointer to a character array of length equal to `length()`, containing an input sequence to search against the barcode pool.
+     * @param max_mismatches Maximum number of mismatches to consider in the search.
+     * This value should be non-negative.
      *
      * @return Result of the search, containing the index of the matching barcode and the number of mismatches to that barcode.
      */
@@ -529,10 +531,12 @@ private:
 /**
  * @brief Search for barcodes with segmented mismatches.
  *
- * Given a (typically read-derived) sequence, this class will perform a mismatch-aware search to a pool of known barcode sequences.
- * However, the distribution of mismatches is restricted in different segments of the sequence, e.g., 1 mismatch in the first 4 bp, 3 mismatches for the next 10 bp, and so on.
- * The aim is to enable searching for concatenations of variable region sequences (and barcodes), where each segment is subject to a different number of mismatches.
- * The barcode with the fewest mismatches to the input sequence is then returned.
+ * Given an input sequence, this class will perform a segmented mismatch-aware search to a pool of known barcode sequences.
+ * Specifically, the sequence interval is split into multiple segments where a barcode is only considered to be matching the input
+ * if the number of mismatches in each segment is no greater than a segment-specific threshold,
+ * e.g., 1 mismatch in the first 4 bp, 3 mismatches for the next 10 bp, and so on.
+ * The aim is to enable searching for concatenations of sequences from multiple variable regions, where each segment is subject to a different number of mismatches.
+ * The barcode with the fewest total mismatches to the input sequence is then returned.
  *
  * @tparam num_segments_ Number of segments to consider.
  */
@@ -636,8 +640,7 @@ public:
     };
 
     /**
-     * @param[in] search_seq Pointer to a character array containing a sequence to use for searching the barcode pool.
-     * This is assumed to be of length equal to `length()` and is typically derived from a read.
+     * @param[in] search_seq Pointer to a character array of length equal to `length()`, containing an input sequence to search against the barcode pool.
      * @param max_mismatches Maximum number of mismatches for each segment.
      * Each entry should be non-negative.
      *

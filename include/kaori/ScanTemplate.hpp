@@ -20,8 +20,9 @@ namespace kaori {
  * @brief Scan a read sequence for the template sequence.
  *
  * When searching for barcodes, **kaori** first searches for a "template sequence" in the read sequence.
- * The template sequence contains constant regions interspersed with one or more variable regions.
- * The template is realized into the full barcoding element by replacing each variable region with one sequence from the corresponding pool of barcodes.
+ * The template sequence contains one or more variable regions flanked by constant regions.
+ * The template is realized into the "vector sequence" (i.e., the final sequence on the vector construct)
+ * by replacing each variable region with one sequence from a pool of barcodes.
  *
  * This class will scan the read sequence to find a location that matches the constant regions of the template, give or take any number of substitutions.
  * Multiple locations on the read may match the template, provided `next()` is called repeatedly.
@@ -29,7 +30,7 @@ namespace kaori {
  * The maximum size of this encoding is determined at compile-time by the `max_length` template parameter.
  *
  * Once a match is found, the sequence of the read at each variable region can be matched against a pool of known barcode sequences.
- * See the `BarcodePool` class for details.
+ * See other classes like `SimpleBarcodeSearch` and `SegmentedBarcodeSearch` for details.
  *
  * @tparam max_size_ Maximum length of the template sequence.
  */
@@ -151,7 +152,7 @@ public:
      * @param[in] read_seq Pointer to an array containing the read sequence.
      * @param read_length Length of the read sequence.
      *
-     * @return An empty `State` object.
+     * @return An empty state object.
      * If its `finished` member is `false`, it should be passed to `next()` before accessing its other members.
      * If `true`, the read sequence was too short for any match to be found.
      */
@@ -194,7 +195,7 @@ public:
      * The first invocation will search for a match at position 0;
      * this can be repeatedly called until `match.finished` is `true`.
      *
-     * @param state A `State` object produced by `initialize()`.
+     * @param state A state object produced by `initialize()`.
      * On return, `state` is updated with the details of the current match at a particular position on the read sequence.
      */
     void next(State& state) const {

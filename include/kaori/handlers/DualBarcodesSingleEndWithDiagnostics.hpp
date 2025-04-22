@@ -26,11 +26,12 @@ template<SeqLength max_size_, int num_variable_>
 class DualBarcodesSingleEndWithDiagnostics { 
 public:
     /**
-     * @param[in] template_seq Pointer to a character array containing the template sequence. 
-     * @param template_length Length of the template.
+     * @param[in] template_seq Pointer to an array containing the template sequence.
+     * The template may contain any number (usually 2 or more) of variable regions.
+     * @param template_length Length of the array pointed to by `template_seq`.
      * This should be less than or equal to `max_size_`.
-     * @param barcode_pools Pools of known barcode sequences for each variable region in the template.
-     * Each pool should have the same length, and corresponding values across pools define a specific combination of barcodes. 
+     * @param barcode_pools Array containing pools of known barcode sequences for each of the variable regions, in the order of their appearance in the template sequence.
+     * Each pool should have the same number of barcodes; corresponding entries across pools define a specific combination of barcodes. 
      * @param options Optional parameters.
      */
     DualBarcodesSingleEndWithDiagnostics(

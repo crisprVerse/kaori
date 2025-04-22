@@ -15,11 +15,11 @@ namespace kaori {
 /**
  * @brief Handler for single-end single barcodes.
  *
- * In this design, the barcoding element is constructed from a template with a single variable region drawn from a pool of barcode sequences.
- * The construct containing the barcoding element is then subjected to single-end sequencing.
- * This handler will search the read for the barcoding element and count the frequency of each barcode.
+ * In this design, the vector sequence is constructed from a template with a single variable region drawn from a pool of barcode sequences.
+ * The construct containing the vector sequence is then subjected to single-end sequencing.
+ * This handler will search the read for the vector sequence and count the frequency of each barcode.
  *
- * @tparam max_size_ Maximum length of the template sequences on both reads.
+ * @tparam max_size_ Maximum length of the template sequence.
  */
 template<SeqLength max_size_>
 class SingleBarcodeSingleEnd {
@@ -29,7 +29,7 @@ public:
      */
     struct Options {
         /** 
-         * Maximum number of mismatches allowed across the barcoding element.
+         * Maximum number of mismatches allowed across the vector sequence.
          */
         int max_mismatches = 0;
 
@@ -52,9 +52,9 @@ public:
 
 public:
     /**
-     * @param[in] template_seq Template sequence of the barcoding element.
+     * @param[in] template_seq Pointer to a character array containing the template sequence.
      * This should contain exactly one variable region.
-     * @param template_length Length of the template.
+     * @param template_length Length of the array pointed to by `template_seq`.
      * This should be less than or equal to `max_size_`.
      * @param barcode_pool Known barcode sequences for the variable region.
      * @param options Optional parameters.

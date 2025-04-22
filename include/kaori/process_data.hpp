@@ -206,7 +206,7 @@ public:
  */
 struct ProcessSingleEndDataOptions {
     /**
-     * Number of threads to use for processing.
+     * Number of threads to use for processing reads after FASTQ parsing.
      */
     int num_threads = 1;
 
@@ -217,34 +217,33 @@ struct ProcessSingleEndDataOptions {
 };
 
 /**
- * Run a handler for each read in single-end data.
- * This is done by calling `handler.process()` on each read.
+ * Run a handler for each read in single-end data, by calling `handler.process()` on each read.
  * It is expected that the results are stored in `handler` for retrieval by the caller.
  *
  * @tparam Pointer_ Pointer to a class that serves as a source of input bytes.
  * The pointed-to class should satisfy the `byteme::Reader` interface; it may also be a concrete `byteme::Reader` subclass to enable devirtualization. 
  * Either a smart or raw pointer may be supplied depending on how the caller wants to manage the lifetime of the pointed-to object. 
- * @tparam Handler Class that implements a handler for single-end data.
+ * @tparam Handler_ Class that implements a handler for single-end data.
  *
- * @param input Pointer to a `byteme::Reader` object containing data from a single-end FASTQ file.
- * @param handler Instance of the `Handler` class.
+ * @param input Pointer to an input byte source containing data from a single-end FASTQ file.
+ * @param handler Handler instance for single-end data. 
  * @param options Further options.
  *
- * @section single-handler-req Handler requirements
- * The `Handler` class is expected to implement the following methods:
- * - `initialize()`: this should be a `const` method that returns a state object (denoted here as having type `State`, though the exact name may vary).
+ * @section single-handler-req Single-end handler requirements
+ * The `Handler_` class is expected to implement the following methods:
+ * - `initialize()`: this should be a thread-safe `const` method that returns a state object (denoted here as having type `State`, though the exact name may vary).
  *   The idea is to store results in the state object for thread-safe execution.
  *   The state object should be default-constructible.
  * - `reduce(State& state)`: this should merge the results from the `state` object into the `Handler` instance.
  *   This will be called in a serial section and does not have to be thread-safe.
  *
- * The `Handler` should have a static `constexpr` variable `use_names_`, indicating whether or not names should be passed to the `process()` method.
+ * The `Handler` should have a static `constexpr` variable `use_names`, indicating whether or not names should be passed to the `process()` method.
  *
- * If `use_names_` is `false`, the `Handler` class should implement:
+ * If `use_names` is `false`, the `Handler` class should implement:
  * - `process(State& state, const std::pair<const char*, const char*>& seq)`: this should be a `const` method that processes the read in `seq` and stores its results in `state`.
  *   `seq` will contain pointers to the start and one-past-the-end of the read sequence.
  *
- * Otherwise, if `use_names_` is `true`, the class should implement:
+ * Otherwise, if `use_names` is `true`, the class should implement:
  * - `process(State& state, const std::pair<const char*, const char*>& name, const std::pair<const char*, const char*>& seq)`: 
  *    this should be a `const` method that processes the read in `seq` and stores its results in `state`.
  *   `name` will contain pointers to the start and one-past-the-end of the read name.
@@ -307,12 +306,12 @@ void process_single_end_data(Pointer_ input, Handler_& handler, const ProcessSin
  */
 struct ProcessPairedEndDataOptions {
     /**
-     * Number of threads to use for processing.
+     * Number of threads to use for processing after FASTQ parsing.
      */
     int num_threads = 1;
 
     /**
-     * Number of reads in each thread.
+     * Number of reads to process in each thread.
      */
     std::size_t block_size = 100000;
 };
@@ -324,29 +323,31 @@ struct ProcessPairedEndDataOptions {
  * @tparam Pointer_ Pointer to a class that serves as a source of input bytes.
  * The pointed-to class should satisfy the `byteme::Reader` interface; it may also be a concrete `byteme::Reader` subclass to enable devirtualization. 
  * Either a smart or raw pointer may be supplied depending on how the caller wants to manage the lifetime of the pointed-to object. 
- * @tparam Handler A class that implements a handler for paired-end data.
+ * @tparam Handler_ A class that implements a handler for paired-end data.
  *
- * @param input1 Pointer to a `byteme::Reader` object containing data from the first FASTQ file in the pair.
- * @param input2 Pointer to a `byteme::Reader` object containing data from the second FASTQ file in the pair.
- * @param handler Instance of the `Handler` class. 
+ * @param input1 Pointer to an input byte source containing data from one of the paired-end FASTQ files.
+ * This may or may not need to be specifically "read 1", depending on the `handler`.
+ * @param input2 Pointer to an input byte source containing data from the other paired-end FASTQ file.
+ * This may or may not need to be specifically "read 2", depending on the `handler`.
+ * @param handler Handler instance for paired-end data. 
  * @param options Further options.
  *
- * @section paired-handler-req Handler requirements
+ * @section paired-handler-req Paired-end handler requirements
  * The `Handler` class is expected to implement the following methods:
- * - `initialize()`: this should be a `const` method that returns a state object (denoted here as having type `State`, though the exact name may vary).
+ * - `initialize()`: this should be a thread-safe `const` method that returns a state object (denoted here as having type `State`, though the exact name may vary).
  *   The idea is to store results in the state object for thread-safe execution.
  *   The state object should be default-constructible.
  * - `reduce(State& state)`: this should merge the results from the `state` object into the `Handler` instance.
  *   This will be called in a serial section and does not have to be thread-safe.
  *
- * The `Handler` should have a static `constexpr` variable `use_names_`, indicating whether or not names should be passed to the `process()` method.
+ * The `Handler` should have a static `constexpr` variable `use_names`, indicating whether or not names should be passed to the `process()` method.
  *
- * If `use_names_` is `false`, the `Handler` class should implement:
+ * If `use_names` is `false`, the `Handler` class should implement:
  * - `process(State& state, const std::pair<const char*, const char*>& seq1, const std::pair<const char*, const char*>& seq2)`: 
  *   this should be a `const` method that processes the paired reads in `seq1` and `seq2`, and stores its results in `state`.
  *   `seq1` and `seq2` will contain pointers to the start and one-past-the-end of the sequences of the paired reads.
  *
- * Otherwise, if `use_names_` is `true`, the class should implement:
+ * Otherwise, if `use_names` is `true`, the class should implement:
  * - `process(State& state, const std::pair<const char*, const char*>& name1, const std::pair<const char*, const char*>& seq1, const std::pair<const char*, const char*>& name2, const std::pair<const char*, const char*>& seq2)`: 
  *   this should be a `const` method that processes the paired reads in `seq1` and `seq2`, and stores its results in `state`.
  *   `name1` and `name2` will contain pointers to the start and one-past-the-end of the read names.

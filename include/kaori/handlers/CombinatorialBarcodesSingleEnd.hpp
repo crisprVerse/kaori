@@ -19,7 +19,7 @@ namespace kaori {
 /**
  * @brief Handler for single-end combinatorial barcodes.
  *
- * In this design, the barcoding element is created from a template with multiple variable regions.
+ * In this design, the vector sequence is created from a template with multiple variable regions.
  * Each region contains a barcode from a different pool of options, where combinations are assembled randomly by library construction.
  * The idea is to use the large number of combinations to provide many unique identifiers, e.g., for cell-tracing applications.
  * This handler will capture the frequencies of each barcode combination. 
@@ -35,7 +35,7 @@ public:
      */
     struct Options {
         /**
-         * Maximum number of mismatches allowed across the barcoding element.
+         * Maximum number of mismatches allowed across the vector sequence.
          */
         int max_mismatches = 0;
 
@@ -45,7 +45,7 @@ public:
         bool use_first = true;
 
         /**
-         * Strand(s) of the read sequence to search for the barcoding element.
+         * Strand(s) of the read sequence to search for the vector sequence.
          */
         SearchStrand strand = SearchStrand::FORWARD;
 
@@ -57,11 +57,11 @@ public:
 
 public:
     /**
-     * @param[in] template_seq Template sequence for the first barcode.
+     * @param[in] template_seq Pointer to a character array containing the template sequence. 
      * This should contain exactly `num_variable_` variable regions.
-     * @param template_length Length of the template.
+     * @param template_length Length of the array pointed to by `template_seq`.
      * This should be less than or equal to `max_size_`.
-     * @param barcode_pools Array containing the known barcode sequences for each of the variable regions, in the order of their appearance in the template sequence.
+     * @param barcode_pools Array containing the barcode pools for each of the variable regions, in the order of their appearance in the template sequence.
      * @param options Optional parameters.
      *
      * @tparam BarcodePoolContainer Some iterable container of `BarcodePool` instances,

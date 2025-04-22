@@ -19,7 +19,7 @@ namespace kaori {
 /**
  * @brief Handler for single-end dual barcodes.
  *
- * In this design, the barcoding element is created from a template with multiple variable regions.
+ * In this design, the vector sequence is created from a template with multiple variable regions.
  * Each region contains a barcode from a different pool of options, where the valid combinations of barcodes across variable regions are known beforehand.
  * This differs from `CombinatorialBarcodesSingleEnd` where the combinations are assembled randomly.
  * Despite its name, this handler can actually handle any number (>= 2) of variable regions in the combination.
@@ -35,7 +35,7 @@ public:
      */
     struct Options {
         /**
-         * Maximum number of mismatches allowed across the barcoding element.
+         * Maximum number of mismatches allowed across the vector sequence.
          */
         int max_mismatches = 0;
 
@@ -45,7 +45,7 @@ public:
         bool use_first = true;
 
         /**
-         * Strand(s) of the read sequence to search for the barcoding element.
+         * Strand(s) of the read sequence to search for the vector sequence.
          */
         SearchStrand strand = SearchStrand::FORWARD;
 
@@ -57,11 +57,12 @@ public:
 
 public:
     /**
-     * @param[in] template_seq Template sequence containing any number (usually 2 or more) of variable regions.
-     * @param template_length Length of the template.
+     * @param[in] template_seq Pointer to an array containing the template sequence.
+     * The template may contain any number (usually 2 or more) of variable regions.
+     * @param template_length Length of the array pointed to by `template_seq`.
      * This should be less than or equal to `max_size_`.
-     * @param barcode_pools Array containing the known barcode sequences for each of the variable regions, in the order of their appearance in the template sequence.
-     * Each pool should have the same length, and corresponding values across pools define a specific combination of barcodes. 
+     * @param barcode_pools Array containing pools of known barcode sequences for each of the variable regions, in the order of their appearance in the template sequence.
+     * Each pool should have the same number of barcodes; corresponding entries across pools define a specific combination of barcodes. 
      * @param options Optional parameters.
      */
     DualBarcodesSingleEnd(const char* template_seq, SeqLength template_length, const std::vector<BarcodePool>& barcode_pools, const Options& options) :
@@ -295,6 +296,8 @@ public:
 public:
     /**
      * @return Counts for each combination.
+     * This has length equal to the number of valid barcode combinations (i.e., the size of any entry of `barcode_pools` in the constructor).
+     * Each entry contains the count for the corresponding combination.
      */
     const std::vector<Count>& get_counts() const {
         return my_counts;

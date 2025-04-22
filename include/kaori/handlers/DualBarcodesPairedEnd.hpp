@@ -16,7 +16,7 @@ namespace kaori {
 /**
  * @brief Handler for dual barcodes.
  *
- * In this design, each read contains a barcoding element created from a template with a single variable region.
+ * In this design, each read contains a vector sequence created from a template with a single variable region.
  * For one read, the barcode is drawn from one pool of options, while the other read contains a barcode from another pool.
  * However, unlike `CombinatorialBarcodesPairedEnd`, the combinations are not random but are specifically assembled, typically corresponding to specific pairs of genes.
  * This handler will capture the frequencies of each barcode combination. 
@@ -37,23 +37,23 @@ public:
         bool use_first = true;
 
         /** 
-         * Maximum number of mismatches allowed across the first barcoding element.
+         * Maximum number of mismatches allowed across the first vector sequence.
          */
         int max_mismatches1 = 0;
 
         /**
-         * Strand of the read sequence to search for the first barcoding element.
+         * Strand of the read sequence to search for the first vector sequence.
          * `BOTH` is not supported right now... sorry.
          */
         SearchStrand strand1 = SearchStrand::FORWARD;
 
         /** 
-         * Maximum number of mismatches allowed across the second barcoding element.
+         * Maximum number of mismatches allowed across the second vector sequence.
          */
         int max_mismatches2 = 0;
 
         /**
-         * Strand of the read sequence to search for the second barcoding element.
+         * Strand of the read sequence to search for the second vector sequence.
          * `BOTH` is not supported right now... sorry.
          */
         SearchStrand strand2 = SearchStrand::FORWARD;
@@ -64,8 +64,8 @@ public:
         DuplicateAction duplicates = DuplicateAction::ERROR;
 
         /**
-         * Whether the reads are randomized with respect to the first/second barcoding elements.
-         * If `false`, the first read is searched for the first barcoding element only, and the second read is searched for the second barcoding element only.
+         * Whether the reads are randomized with respect to the first/second vector sequences.
+         * If `false`, the first read is searched for the first vector sequence only, and the second read is searched for the second vector sequence only.
          * If `true`, an additional search will be performed in the opposite orientation.
          */
         bool random = false;
@@ -75,19 +75,19 @@ public:
     /**
      * @param[in] template_seq1 Pointer to a character array containing the first template sequence. 
      * This should contain exactly one variable region.
-     * @param template_length1 Length of the first template.
+     * @param template_length1 Length of the array pointed to by `template_seq1`.
      * This should be less than or equal to `max_size_`.
      * @param barcode_pool1 Pool of known barcode sequences for the variable region in the first template.
      * @param[in] template_seq2 Pointer to a character array containing the second template sequence. 
      * This should contain exactly one variable region.
-     * @param template_length2 Length of the second template.
+     * @param template_length2 Length of the array pointed to by `template_seq2`.
      * This should be less than or equal to `max_size_`.
      * @param barcode_pool2 Pool of known barcode sequences for the variable region in the second template.
      * @param options Optional parameters.
      *
      * `barcode_pool1` and `barcode_pool2` are expected to have the same number of barcodes.
      * Corresponding values across the two pools define a particular combination of dual barcodes. 
-     * Duplication of sequences within each pool is allowed; only pairs of the same barcodes are considered to be duplicates with respect to `Options::duplicates`.
+     * Duplication of sequences within each pool is allowed; only identical pairs are considered to be duplicates with respect to `Options::duplicates`.
      */
     DualBarcodesPairedEnd(
         const char* template_seq1, SeqLength template_length1, const BarcodePool& barcode_pool1, 
@@ -403,7 +403,7 @@ public:
 public:
     /**
      * @return Vector containing the frequency of each valid combination.
-     * This has length equal to the number of valid dual barcode combinations (i.e., the length of `barcode_pool1` and `barcode_pool2` in the constructor).
+     * This has length equal to the number of valid dual barcode combinations (i.e., the sizes of `barcode_pool1` and `barcode_pool2` in the constructor).
      * Each entry contains the count for the corresponding dual barcode combination.
      */
     const std::vector<Count>& get_counts() const {

@@ -32,7 +32,7 @@ template<typename Pointer_>
 class FastqReader {
 public:
     /**
-     * @param p Pointer to a `byteme::Reader` instance that defines a text stream.
+     * @param p Pointer to a text stream.
      */
     FastqReader(Pointer_ p) : my_pb(p) {
         my_sequence.reserve(200);
@@ -45,7 +45,7 @@ public:
      *
      * @return Whether or not a record was successfully extracted.
      * If `true`, `get_sequence()` and `get_name()` may be used.
-     * If `false`, this indicates that we reached the end of the file.
+     * If `false`, the end of the file was reached.
      */
     bool operator()() {
         // Quitting early if the buffer is already empty. 
@@ -142,6 +142,7 @@ private:
 public:
     /**
      * @return Vector containing the sequence for the current read.
+     * This should only be called if `load()` returns true.
      */
     const std::vector<char>& get_sequence() const {
         return my_sequence;
@@ -150,6 +151,7 @@ public:
     /**
      * @return Vector containing the name for the current read.
      * Note that the name is considered to end at the first whitespace on the line.
+     * This should only be called if `load()` returns true.
      */
     const std::vector<char>& get_name() const {
         return my_name;
