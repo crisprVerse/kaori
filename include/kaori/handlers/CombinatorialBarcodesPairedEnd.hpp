@@ -240,7 +240,7 @@ public:
                         ++state.collected[candidate];
                     }
                 } else {
-                    state.collected.emplace_back(candidate);
+                    ++state.collected[candidate];
                 }
             } else {
                 bool n1 = my_matcher1.search_best(r2.first, r2.second - r2.first, state.search1);

@@ -5,6 +5,8 @@
 #include <string>
 #include <algorithm>
 
+#include "kaori/utils.hpp"
+
 inline std::string convert_to_fastq(const std::vector<std::string>& reads, std::string prefix = "READ") {
     std::string output;
 
@@ -22,9 +24,9 @@ inline std::pair<const char*, const char*> bounds(const std::string& s) {
 }
 
 template<int num_variable_, typename ResultMap_>
-std::vector<std::pair<std::array<kaori::BarcodeIndex, num_variable_>, kaori::Count> flatten_results(const ResultMap_& res) {
-    std::vector<std::pair<std::array<kaori::BarcodeIndex, num_variable_>, kaori::Count> output;
-    output.reserve(res.size();
+std::vector<std::pair<std::array<kaori::BarcodeIndex, num_variable_>, kaori::Count> > flatten_results(const ResultMap_& res) {
+    std::vector<std::pair<std::array<kaori::BarcodeIndex, num_variable_>, kaori::Count> > output;
+    output.reserve(res.size());
     for (const auto& r : res) {
         output.push_back(r);
     }
