@@ -6,6 +6,7 @@
 
 #include <array>
 #include <vector>
+#include <unordered_map>
 
 /**
  * @file CombinatorialBarcodesPairedEnd.hpp
@@ -125,7 +126,7 @@ private:
     bool my_randomized;
     bool my_use_first = true;
 
-    std::vector<std::array<BarcodeIndex, 2> > my_combinations;
+    std::unordered_map<std::array<BarcodeIndex, 2>, Count, CombinationHash<2> > my_combinations;
     Count my_total = 0;
     Count my_barcode1_only = 0;
     Count my_barcode2_only = 0;
@@ -135,11 +136,10 @@ public:
      *@cond
      */
     struct State {
-        State() {}
-
+        State() = default;
         State(typename SimpleSingleMatch<max_size_>::State s1, typename SimpleSingleMatch<max_size_>::State s2) : search1(std::move(s1)), search2(std::move(s2)) {}
 
-        std::vector<std::array<BarcodeIndex, 2> >collected;
+        std::unordered_map<std::array<BarcodeIndex, 2>, Count, CombinationHash<2> >collected;
         Count barcode1_only = 0;
         Count barcode2_only = 0;
         Count total = 0;
@@ -161,7 +161,9 @@ public:
     void reduce(State& s) {
         my_matcher1.reduce(s.search1);
         my_matcher2.reduce(s.search2);
-        my_combinations.insert(my_combinations.end(), s.collected.begin(), s.collected.end());
+        for (const auto& col : s.collected) {
+            my_combinations[col.first] += col.second;
+        }
         my_total += s.total;
         my_barcode1_only += s.barcode1_only;
         my_barcode2_only += s.barcode2_only;
@@ -182,12 +184,14 @@ public:
             bool m2 = my_matcher2.search_first(r2.first, r2.second - r2.first, state.search2);
 
             if (m1 && m2) {
-                state.collected.emplace_back(std::array<BarcodeIndex, 2>{ state.search1.index, state.search2.index });
+                std::array<BarcodeIndex, 2> key{ state.search1.index, state.search2.index };
+                ++state.collected[std::move(key)];
             } else if (my_randomized) {
                 bool n1 = my_matcher1.search_first(r2.first, r2.second - r2.first, state.search1);
                 bool n2 = my_matcher2.search_first(r1.first, r1.second - r1.first, state.search2);
                 if (n1 && n2) {
-                    state.collected.emplace_back(std::array<BarcodeIndex, 2>{ state.search1.index, state.search2.index });
+                    std::array<BarcodeIndex, 2> key{ state.search1.index, state.search2.index };
+                    ++state.collected[std::move(key)];
                 } else {
                     if (m1 || n1) {
                         ++state.barcode1_only;
@@ -209,7 +213,8 @@ public:
 
             if (!my_randomized) {
                 if (m1 && m2) {
-                    state.collected.emplace_back(std::array<BarcodeIndex, 2>{ state.search1.index, state.search2.index });
+                    std::array<BarcodeIndex, 2> key{ state.search1.index, state.search2.index };
+                    ++state.collected[std::move(key)];
                 } else if (m1) {
                     ++state.barcode1_only;
                 } else if (m2) {
@@ -225,13 +230,14 @@ public:
                 if (n1 && n2) {
                     int rmismatches = state.search1.mismatches + state.search2.mismatches;
                     if (mismatches > rmismatches) {
-                        state.collected.emplace_back(std::array<BarcodeIndex, 2>{ state.search1.index, state.search2.index });
+                        std::array<BarcodeIndex, 2> key{ state.search1.index, state.search2.index };
+                        ++state.collected[std::move(key)];
                     } else if (mismatches < rmismatches) {
-                        state.collected.emplace_back(candidate);
+                        ++state.collected[candidate];
                     } else if (candidate[0] == state.search1.index && candidate[1] == state.search2.index) {
                         // If the mismatches are the same, it may not be ambiguous
                         // if the indices would be the same anyway.
-                        state.collected.emplace_back(candidate);
+                        ++state.collected[candidate];
                     }
                 } else {
                     state.collected.emplace_back(candidate);
@@ -241,7 +247,8 @@ public:
                 bool n2 = my_matcher2.search_best(r1.first, r1.second - r1.first, state.search2);
 
                 if (n1 && n2) {
-                    state.collected.emplace_back(std::array<BarcodeIndex, 2>{ state.search1.index, state.search2.index });
+                    std::array<BarcodeIndex, 2> key{ state.search1.index, state.search2.index };
+                    ++state.collected[std::move(key)];
                 } else if (m1 || n1) {
                     ++state.barcode1_only;
                 } else if (m2 || n2) {
@@ -258,18 +265,10 @@ public:
 
 public:
     /**
-     * Sort the combinations for easier frequency counting.
-     * Combinations are sorted by the first index, and then the second index.
-     */
-    void sort() {
-        sort_combinations(my_combinations, my_pool_size);
-    }
-
-    /**
-     * @return All combinations encountered by the handler.
+     * @return Combinations encountered by the handler, along with their frequencies.
      * In each array, the first and second element contains the indices of known barcodes in the first and second pools, respectively.
      */
-    const std::vector<std::array<BarcodeIndex, 2> >& get_combinations() const {
+    const std::unordered_map<std::array<BarcodeIndex, 2>, Count, CombinationHash<2> >& get_combinations() const {
         return my_combinations;
     }
 

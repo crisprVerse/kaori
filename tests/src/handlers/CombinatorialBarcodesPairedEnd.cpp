@@ -3,7 +3,9 @@
 #include "kaori/process_data.hpp"
 #include "byteme/RawBufferReader.hpp"
 #include "../utils.h"
+
 #include <string>
+#include <vector>
 
 class CombinatorialBarcodesPairedEndTest : public testing::Test {
 protected:
@@ -35,8 +37,11 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicFirst) {
         std::string seq1 = "AAAATTTTCGGC", seq2 = "AGCTACACACTTTT";
         stuff.process(state, bounds(seq1), bounds(seq2));
         ASSERT_EQ(state.collected.size(), 1);
-        EXPECT_EQ(state.collected.front()[0], 3);
-        EXPECT_EQ(state.collected.front()[1], 0);
+
+        auto results = flatten_results<2>(res);
+        EXPECT_EQ(results.first[0], 3);
+        EXPECT_EQ(results.first[1], 0);
+        EXPECT_EQ(results.second, 1);
     }
 
     // Making it work for it.
@@ -45,8 +50,11 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicFirst) {
         std::string seq1 = "cacacacAAAAAAAACGGC", seq2 = "ggggAGCTAGAGAGTTTT";
         stuff.process(state, bounds(seq1), bounds(seq2));
         ASSERT_EQ(state.collected.size(), 1);
-        EXPECT_EQ(state.collected.front()[0], 0);
-        EXPECT_EQ(state.collected.front()[1], 2);
+
+        auto results = flatten_results<2>(res);
+        EXPECT_EQ(results.first[0], 0);
+        EXPECT_EQ(results.first[1], 2);
+        EXPECT_EQ(results.second, 1);
     }
 
     // Integrated.
@@ -69,12 +77,14 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicFirst) {
 
         const auto& out = stuff.get_combinations();
         ASSERT_EQ(out.size(), 2);
-        EXPECT_EQ(out[0][0], 1);
-        EXPECT_EQ(out[0][1], 1);
-        EXPECT_EQ(out[1][0], 2);
-        EXPECT_EQ(out[1][1], 2);
+        auto results = flatten_results<2>(res);
 
-        stuff.sort(); // for some coverage.
+        EXPECT_EQ(results[0].first[0], 1);
+        EXPECT_EQ(results[0].first[1], 1);
+        EXPECT_EQ(results[0].second, 1);
+        EXPECT_EQ(results[1].first[0], 2);
+        EXPECT_EQ(results[1].first[1], 2);
+        EXPECT_EQ(results[1].second, 1);
 
         EXPECT_EQ(stuff.get_total(), 2);
         EXPECT_EQ(stuff.get_barcode1_only(), 0);

@@ -7,6 +7,7 @@
 
 #include <array>
 #include <vector>
+#include <unordered_map>
 
 /**
  * @file CombinatorialBarcodesSingleEnd.hpp
@@ -137,7 +138,7 @@ private:
     std::array<SimpleBarcodeSearch, num_variable_> my_forward_lib, my_reverse_lib;
     std::array<BarcodeIndex, num_variable_> my_pool_size;
 
-    std::vector<std::array<BarcodeIndex, num_variable_> > my_combinations;
+    std::unordered_map<std::array<BarcodeIndex, num_variable_>, Count, CombinationHash<num_variable_> > my_combinations;
     Count my_total = 0;
 
 public:
@@ -145,7 +146,7 @@ public:
      * @cond
      */
     struct State {
-        std::vector<std::array<BarcodeIndex, num_variable_> >collected;
+        std::unordered_map<std::array<BarcodeIndex, num_variable_>, Count, CombinationHash<num_variable_> > collected;
         Count total = 0;
 
         std::array<BarcodeIndex, num_variable_> temp;
@@ -215,14 +216,14 @@ private:
 
             if (my_forward && deets.forward_mismatches <= my_max_mm) {
                 if (forward_match(x.first, deets, state).first) {
-                    state.collected.push_back(state.temp);
+                    ++state.collected[state.temp];
                     return;
                 }
             }
 
             if (my_reverse && deets.reverse_mismatches <= my_max_mm) {
                 if (reverse_match(x.first, deets, state).first) {
-                    state.collected.push_back(state.temp);
+                    ++state.collected[state.temp];
                     return;
                 }
             }
@@ -266,7 +267,7 @@ private:
         }
 
         if (found) {
-            state.collected.push_back(best_id);
+            ++state.collected[best_id];
         }
     }
 
@@ -290,7 +291,9 @@ public:
             }
         }
 
-        my_combinations.insert(my_combinations.end(), s.collected.begin(), s.collected.end());
+        for (const auto& col : s.collected) {
+            my_combinations[col.first] += col.second;
+        }
         my_total += s.total;
         return;
     }
@@ -311,16 +314,9 @@ public:
 
 public:
     /**
-     * Sort the combinations for easier frequency counting.
+     * @return All combinations encountered by the handler, along with their frequencies.
      */
-    void sort() {
-        sort_combinations(my_combinations, my_pool_size);
-    }
-
-    /**
-     * @return All combinations encountered by the handler.
-     */
-    const std::vector<std::array<BarcodeIndex, num_variable_> >& get_combinations() const {
+    const std::unordered_map<std::array<BarcodeIndex, num_variable_>, Count, CombinationHash<num_variable_> >& get_combinations() const {
         return my_combinations;
     }
 

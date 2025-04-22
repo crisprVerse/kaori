@@ -3,7 +3,9 @@
 #include "kaori/process_data.hpp"
 #include "byteme/RawBufferReader.hpp"
 #include "../utils.h"
+
 #include <string>
+#include <vector>
 
 class CombinatorialBarcodesSingleEndTest : public testing::Test {
 protected:

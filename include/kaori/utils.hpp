@@ -206,37 +206,36 @@ void add_other_to_hash(std::bitset<N>& x) {
     return;
 }
 
-template<size_t V>
-void sort_combinations(std::vector<std::array<BarcodeIndex, V> >& combinations, const std::array<BarcodeIndex, V>& num_options) {
-    // Going back to front as the last iteration gives the slowest changing index.
-    // This ensures that we get the same results as std::sort() on the arrays.
-    for (size_t i_ = 0; i_ < V; ++i_) {
-        auto i = V - i_ - 1;
-
-        std::vector<Count> counts(num_options[i] + 1);
-        for (const auto& x : combinations) {
-            ++(counts[x[i] + 1]);
-        }
-
-        for (size_t j = 1; j < counts.size(); ++j) {
-            counts[j] += counts[j-1];
-        }
-
-        std::vector<std::array<BarcodeIndex, V> > copy(combinations.size());
-        for (const auto& x : combinations) {
-            auto& pos = counts[x[i]];
-            copy[pos] = x;
-            ++pos;
-        }
-
-        combinations.swap(copy);
-    }
-}
-
 inline constexpr int NUM_BASES = 4;
 /**
  * @endcond
  */
+
+/**
+ * @brief Hash a combination of barcode indices.
+ *
+ * Create a hash from an array representing a combination of barcode indices, usually for use in a `std::unordered_map`.
+ * This involves hashing each individual index and then iteratively applying the Boost `hash_combine` function. 
+ * 
+ * @tparam num_variable_ Number of variable regions, each with their own barcode indices.
+ */
+template<int num_variable_>
+class CombinationHash {
+public:
+    /**
+     * @param key Array of barcode indices.
+     * @return The hash value of `key`.
+     */
+    std::size_t operator()(const std::array<BarcodeIndex, num_variable_>& key) const {
+        std::hash<BarcodeIndex> basehash;
+        std::size_t seed = basehash(key[0]);
+        for (int v = 1; v < num_variable_; ++v) {
+            std::size_t other = basehash(key[v]);
+            seed ^= other + 0x9e3779b9 + (seed<<6) + (seed>>2);
+        }
+        return seed;
+    }
+};
 
 }
 
