@@ -3,7 +3,9 @@
 #include "kaori/process_data.hpp"
 #include "byteme/RawBufferReader.hpp"
 #include "../utils.h"
+
 #include <string>
+#include <vector>
 
 class CombinatorialBarcodesSingleEndTest : public testing::Test {
 protected:
@@ -35,10 +37,11 @@ TEST_F(CombinatorialBarcodesSingleEndTest, BasicFirst) {
         stuff.process(state, bounds(seq));
         stuff.reduce(state);
 
-        const auto& combos = stuff.get_combinations();
+        auto combos = flatten_results<2>(stuff.get_combinations());
         ASSERT_EQ(combos.size(), 1);
-        EXPECT_EQ(combos.front()[0], 0);
-        EXPECT_EQ(combos.front()[1], 1);
+        EXPECT_EQ(combos[0].first[0], 0);
+        EXPECT_EQ(combos[0].first[1], 1);
+        EXPECT_EQ(combos[0].second, 1);
     }
 
     // Works when wrapped inside a process_single_end_data.
@@ -53,16 +56,21 @@ TEST_F(CombinatorialBarcodesSingleEndTest, BasicFirst) {
         byteme::RawBufferReader reader(reinterpret_cast<const unsigned char*>(fq.c_str()), fq.size());
         kaori::process_single_end_data(&reader, stuff, {});
 
-        const auto& combos = stuff.get_combinations();
+        auto combos = flatten_results<2>(stuff.get_combinations());
         ASSERT_EQ(combos.size(), 4); // from the previous invokation of process().
         EXPECT_EQ(stuff.get_total(), 4);
 
-        EXPECT_EQ(combos[1][0], 1);
-        EXPECT_EQ(combos[1][1], 2);
-        EXPECT_EQ(combos[2][0], 2);
-        EXPECT_EQ(combos[2][1], 3);
-        EXPECT_EQ(combos[3][0], 3);
-        EXPECT_EQ(combos[3][1], 0);
+        EXPECT_EQ(combos[1].first[0], 1);
+        EXPECT_EQ(combos[1].first[1], 2);
+        EXPECT_EQ(combos[1].second, 1);
+
+        EXPECT_EQ(combos[2].first[0], 2);
+        EXPECT_EQ(combos[2].first[1], 3);
+        EXPECT_EQ(combos[2].second, 1);
+
+        EXPECT_EQ(combos[3].first[0], 3);
+        EXPECT_EQ(combos[3].first[1], 0);
+        EXPECT_EQ(combos[3].second, 1);
     }
 }
 
@@ -92,10 +100,11 @@ TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementFirst) {
         kaori::process_single_end_data(&reader, forward, {});
         EXPECT_EQ(forward.get_total(), 2);
 
-        const auto& combos = forward.get_combinations();
+        auto combos = flatten_results<2>(forward.get_combinations());
         ASSERT_EQ(combos.size(), 1);
-        EXPECT_EQ(combos.front()[0], 3);
-        EXPECT_EQ(combos.front()[1], 0);
+        EXPECT_EQ(combos[0].first[0], 3);
+        EXPECT_EQ(combos[0].first[1], 0);
+        EXPECT_EQ(combos[0].second, 1);
     }
 
     // Reverse only
@@ -104,10 +113,11 @@ TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementFirst) {
         kaori::process_single_end_data(&reader, reverse, {});
         EXPECT_EQ(reverse.get_total(), 2);
 
-        const auto& combos = reverse.get_combinations();
+        auto combos = flatten_results<2>(reverse.get_combinations());
         ASSERT_EQ(combos.size(), 1);
-        EXPECT_EQ(combos.front()[0], 2);
-        EXPECT_EQ(combos.front()[1], 1);
+        EXPECT_EQ(combos[0].first[0], 2);
+        EXPECT_EQ(combos[0].first[1], 1);
+        EXPECT_EQ(combos[0].second, 1);
     }
 
     // Both.
@@ -144,8 +154,11 @@ TEST_F(CombinatorialBarcodesSingleEndTest, MismatchFirst) {
         auto state1 = mm1.initialize();
         mm1.process(state1, bounds(seq));
         ASSERT_EQ(state1.collected.size(), 1);
-        EXPECT_EQ(state1.collected.front()[0], 0);
-        EXPECT_EQ(state1.collected.front()[1], 1);
+
+        auto combos1 = flatten_results<2>(state1.collected);
+        EXPECT_EQ(combos1[0].first[0], 0);
+        EXPECT_EQ(combos1[0].first[1], 1);
+        EXPECT_EQ(combos1[0].second, 1);
     }
 
     // Mismatches spread across two variable regions.
@@ -159,8 +172,11 @@ TEST_F(CombinatorialBarcodesSingleEndTest, MismatchFirst) {
         auto state2 = mm2.initialize();
         mm2.process(state2, bounds(seq));
         ASSERT_EQ(state2.collected.size(), 1);
-        EXPECT_EQ(state2.collected.front()[0], 0);
-        EXPECT_EQ(state2.collected.front()[1], 1);
+
+        auto combos2 = flatten_results<2>(state2.collected);
+        EXPECT_EQ(combos2[0].first[0], 0);
+        EXPECT_EQ(combos2[0].first[1], 1);
+        EXPECT_EQ(combos2[0].second, 1);
     }
 
     // Two mismatches in one variable region.
@@ -174,8 +190,11 @@ TEST_F(CombinatorialBarcodesSingleEndTest, MismatchFirst) {
         auto state2 = mm2.initialize();
         mm2.process(state2, bounds(seq));
         ASSERT_EQ(state2.collected.size(), 1);
-        EXPECT_EQ(state2.collected.front()[0], 0);
-        EXPECT_EQ(state2.collected.front()[1], 1);
+
+        auto combos2 = flatten_results<2>(state2.collected);
+        EXPECT_EQ(combos2[0].first[0], 0);
+        EXPECT_EQ(combos2[0].first[1], 1);
+        EXPECT_EQ(combos2[0].second, 1);
     }
 
     // More than two msimatches in the variable regions.
@@ -194,8 +213,11 @@ TEST_F(CombinatorialBarcodesSingleEndTest, MismatchFirst) {
         auto state2 = mm2.initialize();
         mm2.process(state2, bounds(seq));
         ASSERT_EQ(state2.collected.size(), 1);
-        EXPECT_EQ(state2.collected.front()[0], 0);
-        EXPECT_EQ(state2.collected.front()[1], 1);
+
+        auto combos2 = flatten_results<2>(state2.collected);
+        EXPECT_EQ(combos2[0].first[0], 0);
+        EXPECT_EQ(combos2[0].first[1], 1);
+        EXPECT_EQ(combos2[0].second, 1);
     }
 
     {
@@ -247,8 +269,11 @@ TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementMismatchFirst) {
         auto state1 = mm1.initialize();
         mm1.process(state1, bounds(seq));
         ASSERT_EQ(state1.collected.size(), 1);
-        EXPECT_EQ(state1.collected.front()[0], 0);
-        EXPECT_EQ(state1.collected.front()[1], 3);
+
+        auto combos1 = flatten_results<2>(state1.collected);
+        EXPECT_EQ(combos1[0].first[0], 0);
+        EXPECT_EQ(combos1[0].first[1], 3);
+        EXPECT_EQ(combos1[0].second, 1);
     }
 
     // Mismatches spread across two variable regions.
@@ -262,8 +287,11 @@ TEST_F(CombinatorialBarcodesSingleEndTest, ReverseComplementMismatchFirst) {
         auto state2 = mm2.initialize();
         mm2.process(state2, bounds(seq));
         ASSERT_EQ(state2.collected.size(), 1);
-        EXPECT_EQ(state2.collected.front()[0], 0);
-        EXPECT_EQ(state2.collected.front()[1], 3);
+
+        auto combos2 = flatten_results<2>(state2.collected);
+        EXPECT_EQ(combos2[0].first[0], 0);
+        EXPECT_EQ(combos2[0].first[1], 3);
+        EXPECT_EQ(combos2[0].second, 1);
     }
 }
 
@@ -288,14 +316,21 @@ TEST_F(CombinatorialBarcodesSingleEndTest, Best) {
         auto state = bst.initialize();
         bst.process(state, bounds(seq));
         ASSERT_EQ(state.collected.size(), 1);
-        EXPECT_EQ(state.collected.front()[0], 3);
-        EXPECT_EQ(state.collected.front()[1], 3);
-        
+
+        auto combos = flatten_results<2>(state.collected);
+        EXPECT_EQ(combos[0].first[0], 3);
+        EXPECT_EQ(combos[0].first[1], 3);
+        EXPECT_EQ(combos[0].second, 1);
+
+        // As a control.
         auto state1 = mm1.initialize();
         mm1.process(state1, bounds(seq));
         ASSERT_EQ(state1.collected.size(), 1);
-        EXPECT_EQ(state1.collected.front()[0], 0);
-        EXPECT_EQ(state1.collected.front()[1], 1);
+
+        auto combos1 = flatten_results<2>(state1.collected);
+        EXPECT_EQ(combos1[0].first[0], 0);
+        EXPECT_EQ(combos1[0].first[1], 1);
+        EXPECT_EQ(combos1[0].second, 1);
     }
 
     // Two perfect matches => ambiguous.
@@ -315,8 +350,11 @@ TEST_F(CombinatorialBarcodesSingleEndTest, Best) {
             auto state = bst.initialize();
             bst.process(state, bounds(seq));
             ASSERT_EQ(state.collected.size(), 1);
-            EXPECT_EQ(state.collected.front()[0], 0);
-            EXPECT_EQ(state.collected.front()[1], 1);
+
+            auto combos = flatten_results<2>(state.collected);
+            EXPECT_EQ(combos[0].first[0], 0);
+            EXPECT_EQ(combos[0].first[1], 1);
+            EXPECT_EQ(combos[0].second, 1);
         }
     }
 
@@ -341,44 +379,25 @@ TEST_F(CombinatorialBarcodesSingleEndTest, Best) {
         auto state = bst.initialize(); // only considers the forward strand.
         bst.process(state, bounds(seq));
         ASSERT_EQ(state.collected.size(), 1);
-        EXPECT_EQ(state.collected.front()[0], 0);
-        EXPECT_EQ(state.collected.front()[1], 1);
+
+        auto combos = flatten_results<2>(state.collected);
+        EXPECT_EQ(combos[0].first[0], 0);
+        EXPECT_EQ(combos[0].first[1], 1);
+        EXPECT_EQ(combos[0].second, 1);
 
         auto rstate = reverse.initialize(); // only considers the reverse strand.
         reverse.process(rstate, bounds(seq));
         ASSERT_EQ(rstate.collected.size(), 1);
-        EXPECT_EQ(rstate.collected.front()[0], 1);
-        EXPECT_EQ(rstate.collected.front()[1], 0);
+
+        auto rcombos = flatten_results<2>(rstate.collected);
+        EXPECT_EQ(rcombos[0].first[0], 1);
+        EXPECT_EQ(rcombos[0].first[1], 0);
+        EXPECT_EQ(rcombos[0].second, 1);
 
         auto bstate = both.initialize(); // ambiguous on both strands.
         both.process(bstate, bounds(seq));
         EXPECT_EQ(bstate.collected.size(), 0);
     }
-}
-
-TEST_F(CombinatorialBarcodesSingleEndTest, Sorting) {
-    kaori::CombinatorialBarcodesSingleEnd<128, 2> x(constant.c_str(), constant.size(), make_pointers(), Options<128, 2>());
-
-    auto state = x.initialize(); 
-    state.collected.push_back(std::array<kaori::BarcodeIndex, 2>{ 3, 1 });
-    state.collected.push_back(std::array<kaori::BarcodeIndex, 2>{ 1, 3 });
-    state.collected.push_back(std::array<kaori::BarcodeIndex, 2>{ 2, 3 });
-    state.collected.push_back(std::array<kaori::BarcodeIndex, 2>{ 3, 2 });
-    state.collected.push_back(std::array<kaori::BarcodeIndex, 2>{ 3, 1 });
-    state.collected.push_back(std::array<kaori::BarcodeIndex, 2>{ 0, 2 });
-    state.collected.push_back(std::array<kaori::BarcodeIndex, 2>{ 1, 3 });
-
-    auto copy = state.collected;
-    std::sort(copy.begin(), copy.end());
-    x.reduce(state);
-    x.sort();
-
-    EXPECT_EQ(x.get_combinations().front()[0], 0);
-    EXPECT_EQ(x.get_combinations().front()[1], 2);
-    EXPECT_EQ(x.get_combinations().back()[0], 3);
-    EXPECT_EQ(x.get_combinations().back()[1], 2);
-
-    EXPECT_EQ(x.get_combinations(), copy);
 }
 
 TEST_F(CombinatorialBarcodesSingleEndTest, Error) {

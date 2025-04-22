@@ -46,14 +46,14 @@ TEST_F(DualBarcodesSingleEndWithDiagnosticsTest, BasicFirst) {
     EXPECT_EQ(stuff.get_counts()[2], 1);
     EXPECT_EQ(stuff.get_counts()[3], 0);
 
-    stuff.sort();
-    const auto& combos = stuff.get_combinations();
+    auto combos = flatten_results<2>(stuff.get_combinations());
     ASSERT_EQ(combos.size(), 2);
-    EXPECT_EQ(combos[0][0], 2);
-    EXPECT_EQ(combos[0][1], 1);
-
-    EXPECT_EQ(combos[1][0], 3);
-    EXPECT_EQ(combos[1][1], 0);
+    EXPECT_EQ(combos[0].first[0], 2);
+    EXPECT_EQ(combos[0].first[1], 1);
+    EXPECT_EQ(combos[0].second, 1);
+    EXPECT_EQ(combos[1].first[0], 3);
+    EXPECT_EQ(combos[1].first[1], 0);
+    EXPECT_EQ(combos[1].second, 1);
 }
 
 TEST_F(DualBarcodesSingleEndWithDiagnosticsTest, WithDuplicates) {
@@ -86,9 +86,9 @@ TEST_F(DualBarcodesSingleEndWithDiagnosticsTest, WithDuplicates) {
     EXPECT_EQ(stuff.get_counts()[3], 0);
     EXPECT_EQ(stuff.get_counts()[4], 1);
 
-    stuff.sort();
-    const auto& combos = stuff.get_combinations();
+    auto combos = flatten_results<2>(stuff.get_combinations());
     ASSERT_EQ(combos.size(), 1);
-    EXPECT_EQ(combos.front()[0], 0);
-    EXPECT_EQ(combos.front()[1], 1);
+    EXPECT_EQ(combos[0].first[0], 0);
+    EXPECT_EQ(combos[0].first[1], 1);
+    EXPECT_EQ(combos[0].second, 1);
 }

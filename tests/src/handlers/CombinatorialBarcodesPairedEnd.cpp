@@ -3,7 +3,9 @@
 #include "kaori/process_data.hpp"
 #include "byteme/RawBufferReader.hpp"
 #include "../utils.h"
+
 #include <string>
+#include <vector>
 
 class CombinatorialBarcodesPairedEndTest : public testing::Test {
 protected:
@@ -35,8 +37,11 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicFirst) {
         std::string seq1 = "AAAATTTTCGGC", seq2 = "AGCTACACACTTTT";
         stuff.process(state, bounds(seq1), bounds(seq2));
         ASSERT_EQ(state.collected.size(), 1);
-        EXPECT_EQ(state.collected.front()[0], 3);
-        EXPECT_EQ(state.collected.front()[1], 0);
+
+        auto results = flatten_results<2>(state.collected);
+        EXPECT_EQ(results[0].first[0], 3);
+        EXPECT_EQ(results[0].first[1], 0);
+        EXPECT_EQ(results[0].second, 1);
     }
 
     // Making it work for it.
@@ -45,8 +50,11 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicFirst) {
         std::string seq1 = "cacacacAAAAAAAACGGC", seq2 = "ggggAGCTAGAGAGTTTT";
         stuff.process(state, bounds(seq1), bounds(seq2));
         ASSERT_EQ(state.collected.size(), 1);
-        EXPECT_EQ(state.collected.front()[0], 0);
-        EXPECT_EQ(state.collected.front()[1], 2);
+
+        auto results = flatten_results<2>(state.collected);
+        EXPECT_EQ(results[0].first[0], 0);
+        EXPECT_EQ(results[0].first[1], 2);
+        EXPECT_EQ(results[0].second, 1);
     }
 
     // Integrated.
@@ -69,12 +77,14 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicFirst) {
 
         const auto& out = stuff.get_combinations();
         ASSERT_EQ(out.size(), 2);
-        EXPECT_EQ(out[0][0], 1);
-        EXPECT_EQ(out[0][1], 1);
-        EXPECT_EQ(out[1][0], 2);
-        EXPECT_EQ(out[1][1], 2);
 
-        stuff.sort(); // for some coverage.
+        auto results = flatten_results<2>(out);
+        EXPECT_EQ(results[0].first[0], 1);
+        EXPECT_EQ(results[0].first[1], 1);
+        EXPECT_EQ(results[0].second, 1);
+        EXPECT_EQ(results[1].first[0], 2);
+        EXPECT_EQ(results[1].first[1], 2);
+        EXPECT_EQ(results[1].second, 1);
 
         EXPECT_EQ(stuff.get_total(), 2);
         EXPECT_EQ(stuff.get_barcode1_only(), 0);
@@ -98,8 +108,11 @@ TEST_F(CombinatorialBarcodesPairedEndTest, ReverseComplementFirst) {
         std::string seq1 = "atacacacaGCCGAAAATTTT", seq2 = "AGCTACACACTTTTtgaaca";
         stuff.process(state, bounds(seq1), bounds(seq2));
         ASSERT_EQ(state.collected.size(), 1);
-        EXPECT_EQ(state.collected.front()[0], 3);
-        EXPECT_EQ(state.collected.front()[1], 0);
+
+        auto combos = flatten_results<2>(state.collected);
+        EXPECT_EQ(combos[0].first[0], 3);
+        EXPECT_EQ(combos[0].first[1], 0);
+        EXPECT_EQ(combos[0].second, 1);
     }
 
     // Just some due diligence here...
@@ -118,8 +131,11 @@ TEST_F(CombinatorialBarcodesPairedEndTest, ReverseComplementFirst) {
         std::string seq1 = "AAAACCCCCGGCacacacac", seq2 = "gacgacgaAAAAAGAGAGAGCT";
         stuff.process(state, bounds(seq1), bounds(seq2));
         ASSERT_EQ(state.collected.size(), 1);
-        EXPECT_EQ(state.collected.front()[0], 1);
-        EXPECT_EQ(state.collected.front()[1], 3);
+
+        auto combos = flatten_results<2>(state.collected);
+        EXPECT_EQ(combos[0].first[0], 1);
+        EXPECT_EQ(combos[0].first[1], 3);
+        EXPECT_EQ(combos[0].second, 1);
     }
 }
 
@@ -161,8 +177,11 @@ TEST_F(CombinatorialBarcodesPairedEndTest, MismatchesFirst) {
         auto state10 = stuff10.initialize();
         stuff10.process(state10, bounds(seq1), bounds(seq2));
         ASSERT_EQ(state10.collected.size(), 1);
-        EXPECT_EQ(state10.collected.front()[0], 3);
-        EXPECT_EQ(state10.collected.front()[1], 0);
+
+        auto combos10 = flatten_results<2>(state10.collected);
+        EXPECT_EQ(combos10[0].first[0], 3);
+        EXPECT_EQ(combos10[0].first[1], 0);
+        EXPECT_EQ(combos10[0].second, 1);
     }
 
     // Handles ambiguity.
@@ -176,8 +195,11 @@ TEST_F(CombinatorialBarcodesPairedEndTest, MismatchesFirst) {
         seq1[5] = 'C';
         stuff20.process(state20, bounds(seq1), bounds(seq2));
         ASSERT_EQ(state20.collected.size(), 1);
-        EXPECT_EQ(state20.collected.front()[0], 3);
-        EXPECT_EQ(state20.collected.front()[1], 0);
+
+        auto combos20 = flatten_results<2>(state20.collected);
+        EXPECT_EQ(combos20[0].first[0], 3);
+        EXPECT_EQ(combos20[0].first[1], 0);
+        EXPECT_EQ(combos20[0].second, 1);
     }
 }
 
@@ -208,8 +230,11 @@ TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedFirst) {
         auto rstate = randomized.initialize();
         randomized.process(rstate, bounds(seq1), bounds(seq2));
         ASSERT_EQ(rstate.collected.size(), 1);
-        EXPECT_EQ(rstate.collected.front()[0], 2);
-        EXPECT_EQ(rstate.collected.front()[1], 1);
+
+        auto rcombos = flatten_results<2>(rstate.collected);
+        EXPECT_EQ(rcombos[0].first[0], 2);
+        EXPECT_EQ(rcombos[0].first[1], 1);
+        EXPECT_EQ(rcombos[0].second, 1);
     }
 
     // Positive control, check that the sequences were right.
@@ -217,14 +242,20 @@ TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedFirst) {
         auto nrstate = nonrandom.initialize();
         nonrandom.process(nrstate, bounds(seq2), bounds(seq1));
         ASSERT_EQ(nrstate.collected.size(), 1);
-        EXPECT_EQ(nrstate.collected.front()[0], 2);
-        EXPECT_EQ(nrstate.collected.front()[1], 1);
+
+        auto nrcombos = flatten_results<2>(nrstate.collected);
+        EXPECT_EQ(nrcombos[0].first[0], 2);
+        EXPECT_EQ(nrcombos[0].first[1], 1);
+        EXPECT_EQ(nrcombos[0].second, 1);
 
         auto rstate = randomized.initialize();
         randomized.process(rstate, bounds(seq2), bounds(seq1));
         ASSERT_EQ(rstate.collected.size(), 1);
-        EXPECT_EQ(rstate.collected.front()[0], 2);
-        EXPECT_EQ(rstate.collected.front()[1], 1);
+
+        auto rcombos = flatten_results<2>(rstate.collected);
+        EXPECT_EQ(rcombos[0].first[0], 2);
+        EXPECT_EQ(rcombos[0].first[1], 1);
+        EXPECT_EQ(rcombos[0].second, 1);
     }
 }
 
@@ -306,15 +337,21 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicBest) {
         auto bstate = best.initialize();
         best.process(bstate, bounds(seq1), bounds(seq2));
         ASSERT_EQ(bstate.collected.size(), 1);
-        EXPECT_EQ(bstate.collected.front()[0], 1);
-        EXPECT_EQ(bstate.collected.front()[1], 2);
+
+        auto bcombos = flatten_results<2>(bstate.collected);
+        EXPECT_EQ(bcombos[0].first[0], 1);
+        EXPECT_EQ(bcombos[0].first[1], 2);
+        EXPECT_EQ(bcombos[0].second, 1);
 
         // Positive control.
         auto fstate = first.initialize();
         first.process(fstate, bounds(seq1), bounds(seq2));
         ASSERT_EQ(fstate.collected.size(), 1);
-        EXPECT_EQ(fstate.collected.front()[0], 3);
-        EXPECT_EQ(fstate.collected.front()[1], 3);
+
+        auto fcombos = flatten_results<2>(fstate.collected);
+        EXPECT_EQ(fcombos[0].first[0], 3);
+        EXPECT_EQ(fcombos[0].first[1], 3);
+        EXPECT_EQ(fcombos[0].second, 1);
     }
 
     // Recognizes ambiguity.
@@ -328,8 +365,11 @@ TEST_F(CombinatorialBarcodesPairedEndTest, BasicBest) {
         auto fstate = first.initialize();
         first.process(fstate, bounds(seq1), bounds(seq2));
         ASSERT_EQ(fstate.collected.size(), 1);
-        EXPECT_EQ(fstate.collected.front()[0], 3);
-        EXPECT_EQ(fstate.collected.front()[1], 3);
+
+        auto fcombos = flatten_results<2>(fstate.collected);
+        EXPECT_EQ(fcombos[0].first[0], 3);
+        EXPECT_EQ(fcombos[0].first[1], 3);
+        EXPECT_EQ(fcombos[0].second, 1);
     }
 }
 
@@ -378,21 +418,30 @@ TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedBest) {
         auto bstate = best.initialize();
         best.process(bstate, bounds(seq1), bounds(seq2));
         ASSERT_EQ(bstate.collected.size(), 1);
-        EXPECT_EQ(bstate.collected.front()[0], 0);
-        EXPECT_EQ(bstate.collected.front()[1], 3);
+
+        auto bcombos = flatten_results<2>(bstate.collected);
+        EXPECT_EQ(bcombos[0].first[0], 0);
+        EXPECT_EQ(bcombos[0].first[1], 3);
+        EXPECT_EQ(bcombos[0].second, 1);
 
         auto nrstate = nonrandom.initialize();
         nonrandom.process(nrstate, bounds(seq1), bounds(seq2));
         ASSERT_EQ(nrstate.collected.size(), 1);
-        EXPECT_EQ(nrstate.collected.front()[0], 3);
-        EXPECT_EQ(nrstate.collected.front()[1], 0);
+
+        auto nrcombos = flatten_results<2>(nrstate.collected);
+        EXPECT_EQ(nrcombos[0].first[0], 3);
+        EXPECT_EQ(nrcombos[0].first[1], 0);
+        EXPECT_EQ(nrcombos[0].second, 1);
 
         // Positive control.
         auto fstate = first.initialize();
         first.process(fstate, bounds(seq1), bounds(seq2));
         ASSERT_EQ(fstate.collected.size(), 1);
-        EXPECT_EQ(fstate.collected.front()[0], 3);
-        EXPECT_EQ(fstate.collected.front()[1], 0);
+
+        auto fcombos = flatten_results<2>(fstate.collected);
+        EXPECT_EQ(fcombos[0].first[0], 3);
+        EXPECT_EQ(fcombos[0].first[1], 0);
+        EXPECT_EQ(fcombos[0].second, 1);
     }
 
     // Testing when the original orientation is preferred.
@@ -401,8 +450,11 @@ TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedBest) {
         auto bstate = best.initialize();
         best.process(bstate, bounds(seq1), bounds(seq2));
         ASSERT_EQ(bstate.collected.size(), 1);
-        EXPECT_EQ(bstate.collected.front()[0], 3);
-        EXPECT_EQ(bstate.collected.front()[1], 0);
+
+        auto bcombos = flatten_results<2>(bstate.collected);
+        EXPECT_EQ(bcombos[0].first[0], 3);
+        EXPECT_EQ(bcombos[0].first[1], 0);
+        EXPECT_EQ(bcombos[0].second, 1);
     }
 
     // Recognizes ambiguity.
@@ -415,15 +467,21 @@ TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedBest) {
         auto nrstate = nonrandom.initialize();
         nonrandom.process(nrstate, bounds(seq1), bounds(seq2));
         ASSERT_EQ(nrstate.collected.size(), 1);
-        EXPECT_EQ(nrstate.collected.front()[0], 3);
-        EXPECT_EQ(nrstate.collected.front()[1], 0);
+
+        auto nrcombos = flatten_results<2>(nrstate.collected);
+        EXPECT_EQ(nrcombos[0].first[0], 3);
+        EXPECT_EQ(nrcombos[0].first[1], 0);
+        EXPECT_EQ(nrcombos[0].second, 1);
 
         // Positive control.
         auto fstate = first.initialize();
         first.process(fstate, bounds(seq1), bounds(seq2));
         ASSERT_EQ(fstate.collected.size(), 1);
-        EXPECT_EQ(fstate.collected.front()[0], 3);
-        EXPECT_EQ(fstate.collected.front()[1], 0);
+
+        auto fcombos = flatten_results<2>(fstate.collected);
+        EXPECT_EQ(fcombos[0].first[0], 3);
+        EXPECT_EQ(fcombos[0].first[1], 0);
+        EXPECT_EQ(fcombos[0].second, 1);
     }
 
     // ...unless it's just a duplicate of the same pair.
@@ -432,8 +490,11 @@ TEST_F(CombinatorialBarcodesPairedEndTest, RandomizedBest) {
         auto bstate = best.initialize();
         best.process(bstate, bounds(seq1), bounds(seq2));
         ASSERT_EQ(bstate.collected.size(), 1);
-        EXPECT_EQ(bstate.collected.front()[0], 3);
-        EXPECT_EQ(bstate.collected.front()[1], 0);
+
+        auto bcombos = flatten_results<2>(bstate.collected);
+        EXPECT_EQ(bcombos[0].first[0], 3);
+        EXPECT_EQ(bcombos[0].first[1], 0);
+        EXPECT_EQ(bcombos[0].second, 1);
     }
 }
 

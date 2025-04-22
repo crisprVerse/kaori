@@ -130,14 +130,6 @@ public:
 
 public:
     /**
-     * Sort the invalid combinations for easier frequency counting.
-     * Combinations are sorted by the first index, and then the second index.
-     */
-    void sort() {
-        my_combo_handler.sort();
-    }
-
-    /**
      * @return Vector containing the frequency of each valid combination.
      * This has length equal to the number of valid dual barcode combinations (i.e., the length of `barcode_pool1` and `barcode_pool2` in the constructor).
      * Each entry contains the count for the corresponding dual barcode combination.
@@ -147,10 +139,10 @@ public:
     }
 
     /**
-     * @return All invalid combinations encountered by the handler.
+     * @return Invalid combinations encountered by the handler, along with their frequencies.
      * In each array, the first and second element contains the indices of known barcodes in the first and second pools, respectively.
      */
-    const std::vector<std::array<BarcodeIndex, 2> >& get_combinations() const {
+    const std::unordered_map<std::array<BarcodeIndex, 2>, Count, CombinationHash<2> >& get_combinations() const {
         return my_combo_handler.get_combinations();
     }
 
