@@ -113,13 +113,13 @@ Classes</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aea8805326b85893900811ea787a736a2" id="r_aea8805326b85893900811ea787a736a2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea8805326b85893900811ea787a736a2">SegmentedMismatches</a> ()=default</td></tr>
 <tr class="separator:aea8805326b85893900811ea787a736a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aebd37af784c3ec96feed22604af2abd1" id="r_aebd37af784c3ec96feed22604af2abd1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebd37af784c3ec96feed22604af2abd1">SegmentedMismatches</a> (std::array&lt; SeqLength, num_segments_ &gt; segments, DuplicateAction duplicates)</td></tr>
+<tr class="memitem:aebd37af784c3ec96feed22604af2abd1" id="r_aebd37af784c3ec96feed22604af2abd1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebd37af784c3ec96feed22604af2abd1">SegmentedMismatches</a> (std::array&lt; <a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a>, num_segments_ &gt; segments, <a class="el" href="namespacekaori.html#a78406bfdb5ba56268c8d8d4296b70665">DuplicateAction</a> duplicates)</td></tr>
 <tr class="separator:aebd37af784c3ec96feed22604af2abd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ff582c52b24b9cb324f15dd3350f4ac" id="r_a8ff582c52b24b9cb324f15dd3350f4ac"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structkaori_1_1TrieAddStatus.html">TrieAddStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ff582c52b24b9cb324f15dd3350f4ac">add</a> (const char *barcode_seq)</td></tr>
 <tr class="separator:a8ff582c52b24b9cb324f15dd3350f4ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e04e52ee793bce348a96f55596026d6" id="r_a1e04e52ee793bce348a96f55596026d6"><td class="memItemLeft" align="right" valign="top">SeqLength&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e04e52ee793bce348a96f55596026d6">length</a> () const</td></tr>
+<tr class="memitem:a1e04e52ee793bce348a96f55596026d6" id="r_a1e04e52ee793bce348a96f55596026d6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e04e52ee793bce348a96f55596026d6">length</a> () const</td></tr>
 <tr class="separator:a1e04e52ee793bce348a96f55596026d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ed489ff409742d48ba3ba5f432b40d8" id="r_a0ed489ff409742d48ba3ba5f432b40d8"><td class="memItemLeft" align="right" valign="top">BarcodeIndex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ed489ff409742d48ba3ba5f432b40d8">size</a> () const</td></tr>
+<tr class="memitem:a0ed489ff409742d48ba3ba5f432b40d8" id="r_a0ed489ff409742d48ba3ba5f432b40d8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ed489ff409742d48ba3ba5f432b40d8">size</a> () const</td></tr>
 <tr class="separator:a0ed489ff409742d48ba3ba5f432b40d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee67bf4e7e23772df930cfe4ccd07904" id="r_aee67bf4e7e23772df930cfe4ccd07904"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee67bf4e7e23772df930cfe4ccd07904">optimize</a> ()</td></tr>
 <tr class="separator:aee67bf4e7e23772df930cfe4ccd07904"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -129,7 +129,7 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int num_segments_&gt;<br />
 class kaori::SegmentedMismatches&lt; num_segments_ &gt;</div><p>Search for barcodes with segmented mismatches. </p>
-<p>Given a (typically read-derived) sequence, this class will perform a mismatch-aware search to a pool of known barcode sequences. However, the distribution of mismatches is restricted in different segments of the sequence, e.g., 1 mismatch in the first 4 bp, 3 mismatches for the next 10 bp, and so on. The aim is to enable searching for concatenations of variable region sequences (and barcodes), where each segment is subject to a different number of mismatches. The barcode with the fewest mismatches to the input sequence is then returned.</p>
+<p>Given an input sequence, this class will perform a segmented mismatch-aware search to a pool of known barcode sequences. Specifically, the sequence interval is split into multiple segments where a barcode is only considered to be matching the input if the number of mismatches in each segment is no greater than a segment-specific threshold, e.g., 1 mismatch in the first 4 bp, 3 mismatches for the next 10 bp, and so on. The aim is to enable searching for concatenations of sequences from multiple variable regions, where each segment is subject to a different number of mismatches. The barcode with the fewest total mismatches to the input sequence is then returned.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">num_segments_</td><td>Number of segments to consider. </td></tr>
@@ -179,12 +179,12 @@ template&lt;int num_segments_&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classkaori_1_1SegmentedMismatches.html">kaori::SegmentedMismatches</a>&lt; num_segments_ &gt;::SegmentedMismatches </td>
           <td>(</td>
-          <td class="paramtype">std::array&lt; SeqLength, num_segments_ &gt;</td>          <td class="paramname"><span class="paramname"><em>segments</em></span>, </td>
+          <td class="paramtype">std::array&lt; <a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a>, num_segments_ &gt;</td>          <td class="paramname"><span class="paramname"><em>segments</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">DuplicateAction</td>          <td class="paramname"><span class="paramname"><em>duplicates</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="namespacekaori.html#a78406bfdb5ba56268c8d8d4296b70665">DuplicateAction</a></td>          <td class="paramname"><span class="paramname"><em>duplicates</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -250,7 +250,7 @@ template&lt;int num_segments_&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">SeqLength <a class="el" href="classkaori_1_1SegmentedMismatches.html">kaori::SegmentedMismatches</a>&lt; num_segments_ &gt;::length </td>
+          <td class="memname"><a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> <a class="el" href="classkaori_1_1SegmentedMismatches.html">kaori::SegmentedMismatches</a>&lt; num_segments_ &gt;::length </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -324,7 +324,7 @@ template&lt;int num_segments_&gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">search_seq</td><td>Pointer to a character array containing a sequence to use for searching the barcode pool. This is assumed to be of length equal to <code><a class="el" href="#a1e04e52ee793bce348a96f55596026d6">length()</a></code> and is typically derived from a read. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">search_seq</td><td>Pointer to a character array of length equal to <code><a class="el" href="#a1e04e52ee793bce348a96f55596026d6">length()</a></code>, containing an input sequence to search against the barcode pool. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">max_mismatches</td><td>Maximum number of mismatches for each segment. Each entry should be non-negative.</td></tr>
   </table>
   </dd>
@@ -345,7 +345,7 @@ template&lt;int num_segments_&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">BarcodeIndex <a class="el" href="classkaori_1_1SegmentedMismatches.html">kaori::SegmentedMismatches</a>&lt; num_segments_ &gt;::size </td>
+          <td class="memname"><a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a> <a class="el" href="classkaori_1_1SegmentedMismatches.html">kaori::SegmentedMismatches</a>&lt; num_segments_ &gt;::size </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>

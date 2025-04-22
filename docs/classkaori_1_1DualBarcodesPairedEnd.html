@@ -111,17 +111,17 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9914566593cd01a262cad0bb0e168921" id="r_a9914566593cd01a262cad0bb0e168921"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9914566593cd01a262cad0bb0e168921">DualBarcodesPairedEnd</a> (const char *template_seq1, SeqLength template_length1, const <a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool1, const char *template_seq2, SeqLength template_length2, const <a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool2, const <a class="el" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html">Options</a> &amp;options)</td></tr>
+<tr class="memitem:a9914566593cd01a262cad0bb0e168921" id="r_a9914566593cd01a262cad0bb0e168921"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9914566593cd01a262cad0bb0e168921">DualBarcodesPairedEnd</a> (const char *template_seq1, <a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> template_length1, const <a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool1, const char *template_seq2, <a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> template_length2, const <a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool2, const <a class="el" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html">Options</a> &amp;options)</td></tr>
 <tr class="separator:a9914566593cd01a262cad0bb0e168921"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f6cfed5f6eb2ad1a60cd1546700943d" id="r_a3f6cfed5f6eb2ad1a60cd1546700943d"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; Count &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f6cfed5f6eb2ad1a60cd1546700943d">get_counts</a> () const</td></tr>
+<tr class="memitem:a3f6cfed5f6eb2ad1a60cd1546700943d" id="r_a3f6cfed5f6eb2ad1a60cd1546700943d"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f6cfed5f6eb2ad1a60cd1546700943d">get_counts</a> () const</td></tr>
 <tr class="separator:a3f6cfed5f6eb2ad1a60cd1546700943d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5cee58b4f46553f135d098d35ced7b3c" id="r_a5cee58b4f46553f135d098d35ced7b3c"><td class="memItemLeft" align="right" valign="top">Count&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5cee58b4f46553f135d098d35ced7b3c">get_total</a> () const</td></tr>
+<tr class="memitem:a5cee58b4f46553f135d098d35ced7b3c" id="r_a5cee58b4f46553f135d098d35ced7b3c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5cee58b4f46553f135d098d35ced7b3c">get_total</a> () const</td></tr>
 <tr class="separator:a5cee58b4f46553f135d098d35ced7b3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;SeqLength max_size_&gt;<br />
+<div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> max_size_&gt;<br />
 class kaori::DualBarcodesPairedEnd&lt; max_size_ &gt;</div><p>Handler for dual barcodes. </p>
-<p>In this design, each read contains a barcoding element created from a template with a single variable region. For one read, the barcode is drawn from one pool of options, while the other read contains a barcode from another pool. However, unlike <code><a class="el" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html" title="Handler for paired-end combinatorial barcodes.">CombinatorialBarcodesPairedEnd</a></code>, the combinations are not random but are specifically assembled, typically corresponding to specific pairs of genes. This handler will capture the frequencies of each barcode combination.</p>
+<p>In this design, each read contains a vector sequence created from a template with a single variable region. For one read, the barcode is drawn from one pool of options, while the other read contains a barcode from another pool. However, unlike <code><a class="el" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html" title="Handler for paired-end combinatorial barcodes.">CombinatorialBarcodesPairedEnd</a></code>, the combinations are not random but are specifically assembled, typically corresponding to specific pairs of genes. This handler will capture the frequencies of each barcode combination.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">max_size_</td><td>Maximum length of the template sequences on both reads. </td></tr>
@@ -135,7 +135,7 @@ class kaori::DualBarcodesPairedEnd&lt; max_size_ &gt;</div><p>Handler for dual b
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;SeqLength max_size_&gt; </div>
+template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> max_size_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -148,7 +148,7 @@ template&lt;SeqLength max_size_&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">SeqLength</td>          <td class="paramname"><span class="paramname"><em>template_length1</em></span>, </td>
+          <td class="paramtype"><a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a></td>          <td class="paramname"><span class="paramname"><em>template_length1</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -163,7 +163,7 @@ template&lt;SeqLength max_size_&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">SeqLength</td>          <td class="paramname"><span class="paramname"><em>template_length2</em></span>, </td>
+          <td class="paramtype"><a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a></td>          <td class="paramname"><span class="paramname"><em>template_length2</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -185,16 +185,16 @@ template&lt;SeqLength max_size_&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">template_seq1</td><td>Pointer to a character array containing the first template sequence. This should contain exactly one variable region. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">template_length1</td><td>Length of the first template. This should be less than or equal to <code>max_size_</code>. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">template_length1</td><td>Length of the array pointed to by <code>template_seq1</code>. This should be less than or equal to <code>max_size_</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">barcode_pool1</td><td>Pool of known barcode sequences for the variable region in the first template. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">template_seq2</td><td>Pointer to a character array containing the second template sequence. This should contain exactly one variable region. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">template_length2</td><td>Length of the second template. This should be less than or equal to <code>max_size_</code>. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">template_length2</td><td>Length of the array pointed to by <code>template_seq2</code>. This should be less than or equal to <code>max_size_</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">barcode_pool2</td><td>Pool of known barcode sequences for the variable region in the second template. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">options</td><td>Optional parameters.</td></tr>
   </table>
   </dd>
 </dl>
-<p><code>barcode_pool1</code> and <code>barcode_pool2</code> are expected to have the same number of barcodes. Corresponding values across the two pools define a particular combination of dual barcodes. Duplication of sequences within each pool is allowed; only pairs of the same barcodes are considered to be duplicates with respect to <code><a class="el" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#ab659ce6715bcbb23b13dbde3b732d458">Options::duplicates</a></code>. </p>
+<p><code>barcode_pool1</code> and <code>barcode_pool2</code> are expected to have the same number of barcodes. Corresponding values across the two pools define a particular combination of dual barcodes. Duplication of sequences within each pool is allowed; only identical pairs are considered to be duplicates with respect to <code><a class="el" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#ab659ce6715bcbb23b13dbde3b732d458">Options::duplicates</a></code>. </p>
 
 </div>
 </div>
@@ -205,13 +205,13 @@ template&lt;SeqLength max_size_&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;SeqLength max_size_&gt; </div>
+template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> max_size_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt; Count &gt; &amp; <a class="el" href="classkaori_1_1DualBarcodesPairedEnd.html">kaori::DualBarcodesPairedEnd</a>&lt; max_size_ &gt;::get_counts </td>
+          <td class="memname">const std::vector&lt; <a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> &gt; &amp; <a class="el" href="classkaori_1_1DualBarcodesPairedEnd.html">kaori::DualBarcodesPairedEnd</a>&lt; max_size_ &gt;::get_counts </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -223,7 +223,7 @@ template&lt;SeqLength max_size_&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Vector containing the frequency of each valid combination. This has length equal to the number of valid dual barcode combinations (i.e., the length of <code>barcode_pool1</code> and <code>barcode_pool2</code> in the constructor). Each entry contains the count for the corresponding dual barcode combination. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Vector containing the frequency of each valid combination. This has length equal to the number of valid dual barcode combinations (i.e., the sizes of <code>barcode_pool1</code> and <code>barcode_pool2</code> in the constructor). Each entry contains the count for the corresponding dual barcode combination. </dd></dl>
 
 </div>
 </div>
@@ -233,13 +233,13 @@ template&lt;SeqLength max_size_&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;SeqLength max_size_&gt; </div>
+template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> max_size_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Count <a class="el" href="classkaori_1_1DualBarcodesPairedEnd.html">kaori::DualBarcodesPairedEnd</a>&lt; max_size_ &gt;::get_total </td>
+          <td class="memname"><a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> <a class="el" href="classkaori_1_1DualBarcodesPairedEnd.html">kaori::DualBarcodesPairedEnd</a>&lt; max_size_ &gt;::get_total </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>

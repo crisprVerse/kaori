@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define KAORI_COMBINATORIAL_BARCODES_PAIRED_END_HPP</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="SimpleSingleMatch_8hpp.html">../SimpleSingleMatch.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;../utils.hpp&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="utils_8hpp.html">../utils.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;array&gt;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
@@ -113,13 +113,13 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        <span class="keywordtype">int</span> max_mismatches1 = 0;</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        SearchStrand strand1 = SearchStrand::FORWARD;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <a class="code hl_enumeration" href="namespacekaori.html#a5f9de60d2ca7863a5cf0cdf860cbd598">SearchStrand</a> strand1 = SearchStrand::FORWARD;</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        <span class="keywordtype">int</span> max_mismatches2 = 0;</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        SearchStrand strand2 = SearchStrand::FORWARD;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        <a class="code hl_enumeration" href="namespacekaori.html#a5f9de60d2ca7863a5cf0cdf860cbd598">SearchStrand</a> strand2 = SearchStrand::FORWARD;</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        DuplicateAction duplicates = DuplicateAction::ERROR;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        <a class="code hl_enumeration" href="namespacekaori.html#a78406bfdb5ba56268c8d8d4296b70665">DuplicateAction</a> duplicates = DuplicateAction::ERROR;</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        <span class="keywordtype">bool</span> random = <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    };</div>
@@ -127,8 +127,8 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="keyword">public</span>:</div>
 <div class="foldopen" id="foldopen00085" data-start="{" data-end="}">
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#ab092c11043ef78e84b83358944ad4562">   85</a></span>    <a class="code hl_function" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#ab092c11043ef78e84b83358944ad4562">CombinatorialBarcodesPairedEnd</a>(</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        <span class="keyword">const</span> <span class="keywordtype">char</span>* template_seq1, SeqLength template_length1, <span class="keyword">const</span> <a class="code hl_class" href="classkaori_1_1BarcodePool.html">BarcodePool</a>&amp; barcode_pool1,</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        <span class="keyword">const</span> <span class="keywordtype">char</span>* template_seq2, SeqLength template_length2, <span class="keyword">const</span> <a class="code hl_class" href="classkaori_1_1BarcodePool.html">BarcodePool</a>&amp; barcode_pool2,</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        <span class="keyword">const</span> <span class="keywordtype">char</span>* template_seq1, <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> template_length1, <span class="keyword">const</span> <a class="code hl_class" href="classkaori_1_1BarcodePool.html">BarcodePool</a>&amp; barcode_pool1,</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        <span class="keyword">const</span> <span class="keywordtype">char</span>* template_seq2, <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> template_length2, <span class="keyword">const</span> <a class="code hl_class" href="classkaori_1_1BarcodePool.html">BarcodePool</a>&amp; barcode_pool2,</div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        <span class="keyword">const</span> Options&amp; options</div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    ) :</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        my_matcher1(</div>
@@ -171,9 +171,9 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    <span class="keywordtype">bool</span> my_use_first = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span> </div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    std::vector&lt;std::array&lt;BarcodeIndex, 2&gt; &gt; my_combinations;</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    Count my_total = 0;</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    Count my_barcode1_only = 0;</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    Count my_barcode2_only = 0;</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    <a class="code hl_typedef" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> my_total = 0;</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    <a class="code hl_typedef" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> my_barcode1_only = 0;</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    <a class="code hl_typedef" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> my_barcode2_only = 0;</div>
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span> </div>
 <div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    <span class="keyword">struct </span>State {</div>
@@ -182,9 +182,9 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>        State(<span class="keyword">typename</span> SimpleSingleMatch&lt;max_size_&gt;::State s1, <span class="keyword">typename</span> SimpleSingleMatch&lt;max_size_&gt;::State s2) : search1(std::move(s1)), search2(std::move(s2)) {}</div>
 <div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span> </div>
 <div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>        std::vector&lt;std::array&lt;BarcodeIndex, 2&gt; &gt;collected;</div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>        Count barcode1_only = 0;</div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>        Count barcode2_only = 0;</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>        Count total = 0;</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>        <a class="code hl_typedef" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> barcode1_only = 0;</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>        <a class="code hl_typedef" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> barcode2_only = 0;</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>        <a class="code hl_typedef" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> total = 0;</div>
 <div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span> </div>
 <div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>        <span class="keyword">typename</span> SimpleSingleMatch&lt;max_size_&gt;::State search1;</div>
 <div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>        <span class="keyword">typename</span> SimpleSingleMatch&lt;max_size_&gt;::State search2;</div>
@@ -295,19 +295,19 @@ $(function(){ initResizable(false); });
 </div>
 <div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span> </div>
 <div class="foldopen" id="foldopen00279" data-start="{" data-end="}">
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno"><a class="line" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#ae3e803d188df68c1c4d5ffecc4ac47db">  279</a></span>    BarcodeIndex <a class="code hl_function" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#ae3e803d188df68c1c4d5ffecc4ac47db">get_total</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno"><a class="line" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#ae3e803d188df68c1c4d5ffecc4ac47db">  279</a></span>    <a class="code hl_typedef" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a> <a class="code hl_function" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#ae3e803d188df68c1c4d5ffecc4ac47db">get_total</a>()<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>        <span class="keywordflow">return</span> my_total;</div>
 <div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    }</div>
 </div>
 <div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span> </div>
 <div class="foldopen" id="foldopen00286" data-start="{" data-end="}">
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno"><a class="line" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#ae5a9ad062651bc8cbb3435242582bb7c">  286</a></span>    BarcodeIndex <a class="code hl_function" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#ae5a9ad062651bc8cbb3435242582bb7c">get_barcode1_only</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno"><a class="line" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#ae5a9ad062651bc8cbb3435242582bb7c">  286</a></span>    <a class="code hl_typedef" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a> <a class="code hl_function" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#ae5a9ad062651bc8cbb3435242582bb7c">get_barcode1_only</a>()<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>        <span class="keywordflow">return</span> my_barcode1_only;</div>
 <div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>    }</div>
 </div>
 <div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span> </div>
 <div class="foldopen" id="foldopen00293" data-start="{" data-end="}">
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno"><a class="line" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#a891d828f56c73a6d4d601a7040b20522">  293</a></span>    BarcodeIndex <a class="code hl_function" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#a891d828f56c73a6d4d601a7040b20522">get_barcode2_only</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno"><a class="line" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#a891d828f56c73a6d4d601a7040b20522">  293</a></span>    <a class="code hl_typedef" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a> <a class="code hl_function" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#a891d828f56c73a6d4d601a7040b20522">get_barcode2_only</a>()<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>        <span class="keywordflow">return</span> my_barcode2_only;</div>
 <div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>    }</div>
 </div>
@@ -318,7 +318,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span> </div>
 <div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aSimpleSingleMatch_8hpp_html"><div class="ttname"><a href="SimpleSingleMatch_8hpp.html">SimpleSingleMatch.hpp</a></div><div class="ttdoc">Defines the SimpleSingleMatch class.</div></div>
-<div class="ttc" id="aclasskaori_1_1BarcodePool_html"><div class="ttname"><a href="classkaori_1_1BarcodePool.html">kaori::BarcodePool</a></div><div class="ttdoc">Pool of barcode sequences for a variable region.</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:24</div></div>
+<div class="ttc" id="aclasskaori_1_1BarcodePool_html"><div class="ttname"><a href="classkaori_1_1BarcodePool.html">kaori::BarcodePool</a></div><div class="ttdoc">Pool of barcode sequences.</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:24</div></div>
 <div class="ttc" id="aclasskaori_1_1CombinatorialBarcodesPairedEnd_html"><div class="ttname"><a href="classkaori_1_1CombinatorialBarcodesPairedEnd.html">kaori::CombinatorialBarcodesPairedEnd</a></div><div class="ttdoc">Handler for paired-end combinatorial barcodes.</div><div class="ttdef"><b>Definition</b> CombinatorialBarcodesPairedEnd.hpp:29</div></div>
 <div class="ttc" id="aclasskaori_1_1CombinatorialBarcodesPairedEnd_html_a623c1f7e2d86201ad6f39ce03be290a5"><div class="ttname"><a href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#a623c1f7e2d86201ad6f39ce03be290a5">kaori::CombinatorialBarcodesPairedEnd::sort</a></div><div class="ttdeci">void sort()</div><div class="ttdef"><b>Definition</b> CombinatorialBarcodesPairedEnd.hpp:264</div></div>
 <div class="ttc" id="aclasskaori_1_1CombinatorialBarcodesPairedEnd_html_a891d828f56c73a6d4d601a7040b20522"><div class="ttname"><a href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#a891d828f56c73a6d4d601a7040b20522">kaori::CombinatorialBarcodesPairedEnd::get_barcode2_only</a></div><div class="ttdeci">BarcodeIndex get_barcode2_only() const</div><div class="ttdef"><b>Definition</b> CombinatorialBarcodesPairedEnd.hpp:293</div></div>
@@ -327,10 +327,16 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclasskaori_1_1CombinatorialBarcodesPairedEnd_html_ae3e803d188df68c1c4d5ffecc4ac47db"><div class="ttname"><a href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#ae3e803d188df68c1c4d5ffecc4ac47db">kaori::CombinatorialBarcodesPairedEnd::get_total</a></div><div class="ttdeci">BarcodeIndex get_total() const</div><div class="ttdef"><b>Definition</b> CombinatorialBarcodesPairedEnd.hpp:279</div></div>
 <div class="ttc" id="aclasskaori_1_1CombinatorialBarcodesPairedEnd_html_ae5a9ad062651bc8cbb3435242582bb7c"><div class="ttname"><a href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#ae5a9ad062651bc8cbb3435242582bb7c">kaori::CombinatorialBarcodesPairedEnd::get_barcode1_only</a></div><div class="ttdeci">BarcodeIndex get_barcode1_only() const</div><div class="ttdef"><b>Definition</b> CombinatorialBarcodesPairedEnd.hpp:286</div></div>
 <div class="ttc" id="anamespacekaori_html"><div class="ttname"><a href="namespacekaori.html">kaori</a></div><div class="ttdoc">Namespace for the kaori barcode-matching library.</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:16</div></div>
+<div class="ttc" id="anamespacekaori_html_a1ba2b438d2db8fd7a30b65fd1f167564"><div class="ttname"><a href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">kaori::SeqLength</a></div><div class="ttdeci">std::size_t SeqLength</div><div class="ttdef"><b>Definition</b> utils.hpp:34</div></div>
+<div class="ttc" id="anamespacekaori_html_a5f9de60d2ca7863a5cf0cdf860cbd598"><div class="ttname"><a href="namespacekaori.html#a5f9de60d2ca7863a5cf0cdf860cbd598">kaori::SearchStrand</a></div><div class="ttdeci">SearchStrand</div><div class="ttdef"><b>Definition</b> utils.hpp:28</div></div>
+<div class="ttc" id="anamespacekaori_html_a78406bfdb5ba56268c8d8d4296b70665"><div class="ttname"><a href="namespacekaori.html#a78406bfdb5ba56268c8d8d4296b70665">kaori::DuplicateAction</a></div><div class="ttdeci">DuplicateAction</div><div class="ttdef"><b>Definition</b> utils.hpp:23</div></div>
+<div class="ttc" id="anamespacekaori_html_aa40d52815d21a0db54d181dc42180413"><div class="ttname"><a href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">kaori::BarcodeIndex</a></div><div class="ttdeci">std::vector&lt; constchar * &gt;::size_type BarcodeIndex</div><div class="ttdef"><b>Definition</b> utils.hpp:40</div></div>
+<div class="ttc" id="anamespacekaori_html_adc2ab0b004edf73c5791e1c6e7c4c831"><div class="ttname"><a href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">kaori::Count</a></div><div class="ttdeci">unsigned long long Count</div><div class="ttdef"><b>Definition</b> utils.hpp:64</div></div>
 <div class="ttc" id="astructkaori_1_1SimpleSingleMatch_1_1Options_html"><div class="ttname"><a href="structkaori_1_1SimpleSingleMatch_1_1Options.html">kaori::SimpleSingleMatch::Options</a></div><div class="ttdoc">Optional parameters for SimpleSingleMatch.</div><div class="ttdef"><b>Definition</b> SimpleSingleMatch.hpp:36</div></div>
 <div class="ttc" id="astructkaori_1_1SimpleSingleMatch_1_1Options_html_a1a788672cba0ced65adc1ee77bb4104f"><div class="ttname"><a href="structkaori_1_1SimpleSingleMatch_1_1Options.html#a1a788672cba0ced65adc1ee77bb4104f">kaori::SimpleSingleMatch::Options::duplicates</a></div><div class="ttdeci">DuplicateAction duplicates</div><div class="ttdef"><b>Definition</b> SimpleSingleMatch.hpp:45</div></div>
 <div class="ttc" id="astructkaori_1_1SimpleSingleMatch_1_1Options_html_a6d149dce7077e9422c3bf22790305561"><div class="ttname"><a href="structkaori_1_1SimpleSingleMatch_1_1Options.html#a6d149dce7077e9422c3bf22790305561">kaori::SimpleSingleMatch::Options::max_mismatches</a></div><div class="ttdeci">int max_mismatches</div><div class="ttdef"><b>Definition</b> SimpleSingleMatch.hpp:40</div></div>
 <div class="ttc" id="astructkaori_1_1SimpleSingleMatch_1_1Options_html_a7fba3dad92abd0181d9c562426bc3af7"><div class="ttname"><a href="structkaori_1_1SimpleSingleMatch_1_1Options.html#a7fba3dad92abd0181d9c562426bc3af7">kaori::SimpleSingleMatch::Options::strand</a></div><div class="ttdeci">SearchStrand strand</div><div class="ttdef"><b>Definition</b> SimpleSingleMatch.hpp:50</div></div>
+<div class="ttc" id="autils_8hpp_html"><div class="ttname"><a href="utils_8hpp.html">utils.hpp</a></div><div class="ttdoc">Utilites for sequence matching.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

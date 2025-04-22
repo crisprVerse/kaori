@@ -98,7 +98,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="ScanTemplate_8hpp.html">../ScanTemplate.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="BarcodeSearch_8hpp.html">../BarcodeSearch.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;../utils.hpp&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="utils_8hpp.html">../utils.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacekaori.html">kaori</a> {</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
@@ -112,13 +112,13 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a0eefa522ba4ec6cce867b36da4beb294">   42</a></span>        <span class="keywordtype">int</span> <a class="code hl_variable" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a0eefa522ba4ec6cce867b36da4beb294">max_mismatches1</a> = 0;</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a822ed4797d0b7d2ba86a95a7a70522dd">   48</a></span>        SearchStrand <a class="code hl_variable" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a822ed4797d0b7d2ba86a95a7a70522dd">strand1</a> = SearchStrand::FORWARD;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a822ed4797d0b7d2ba86a95a7a70522dd">   48</a></span>        <a class="code hl_enumeration" href="namespacekaori.html#a5f9de60d2ca7863a5cf0cdf860cbd598">SearchStrand</a> <a class="code hl_variable" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a822ed4797d0b7d2ba86a95a7a70522dd">strand1</a> = SearchStrand::FORWARD;</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#ad7bc1d06a33d5a61d1485c6e7c73f9af">   53</a></span>        <span class="keywordtype">int</span> <a class="code hl_variable" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#ad7bc1d06a33d5a61d1485c6e7c73f9af">max_mismatches2</a> = 0;</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a09feedb74c761a2d17e3bdc520891257">   59</a></span>        SearchStrand <a class="code hl_variable" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a09feedb74c761a2d17e3bdc520891257">strand2</a> = SearchStrand::FORWARD;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a09feedb74c761a2d17e3bdc520891257">   59</a></span>        <a class="code hl_enumeration" href="namespacekaori.html#a5f9de60d2ca7863a5cf0cdf860cbd598">SearchStrand</a> <a class="code hl_variable" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a09feedb74c761a2d17e3bdc520891257">strand2</a> = SearchStrand::FORWARD;</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#ab659ce6715bcbb23b13dbde3b732d458">   64</a></span>        DuplicateAction <a class="code hl_variable" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#ab659ce6715bcbb23b13dbde3b732d458">duplicates</a> = DuplicateAction::ERROR;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#ab659ce6715bcbb23b13dbde3b732d458">   64</a></span>        <a class="code hl_enumeration" href="namespacekaori.html#a78406bfdb5ba56268c8d8d4296b70665">DuplicateAction</a> <a class="code hl_variable" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#ab659ce6715bcbb23b13dbde3b732d458">duplicates</a> = DuplicateAction::ERROR;</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a97960474619d4d0ac8a171d83ca8796c">   71</a></span>        <span class="keywordtype">bool</span> <a class="code hl_variable" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a97960474619d4d0ac8a171d83ca8796c">random</a> = <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    };</div>
@@ -127,8 +127,8 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="keyword">public</span>:</div>
 <div class="foldopen" id="foldopen00092" data-start="{" data-end="}">
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="classkaori_1_1DualBarcodesPairedEnd.html#a9914566593cd01a262cad0bb0e168921">   92</a></span>    <a class="code hl_function" href="classkaori_1_1DualBarcodesPairedEnd.html#a9914566593cd01a262cad0bb0e168921">DualBarcodesPairedEnd</a>(</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        <span class="keyword">const</span> <span class="keywordtype">char</span>* template_seq1, SeqLength template_length1, <span class="keyword">const</span> <a class="code hl_class" href="classkaori_1_1BarcodePool.html">BarcodePool</a>&amp; barcode_pool1, </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        <span class="keyword">const</span> <span class="keywordtype">char</span>* template_seq2, SeqLength template_length2, <span class="keyword">const</span> <a class="code hl_class" href="classkaori_1_1BarcodePool.html">BarcodePool</a>&amp; barcode_pool2,</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        <span class="keyword">const</span> <span class="keywordtype">char</span>* template_seq1, <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> template_length1, <span class="keyword">const</span> <a class="code hl_class" href="classkaori_1_1BarcodePool.html">BarcodePool</a>&amp; barcode_pool1, </div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        <span class="keyword">const</span> <span class="keywordtype">char</span>* template_seq2, <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> template_length2, <span class="keyword">const</span> <a class="code hl_class" href="classkaori_1_1BarcodePool.html">BarcodePool</a>&amp; barcode_pool2,</div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html">Options</a>&amp; options</div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    ) :</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        my_search_reverse1(search_reverse(options.strand1)),</div>
@@ -146,7 +146,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        }</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        my_counts.resize(num_options);</div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        SeqLength len1;</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> len1;</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        {</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>            const auto&amp; regions = my_constant1.forward_variable_regions();</div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>            if (regions.size() != 1) { </div>
@@ -159,7 +159,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>            }</div>
 <div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        }</div>
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        SeqLength len2;</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> len2;</div>
 <div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        {</div>
 <div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>            <span class="keyword">const</span> <span class="keyword">auto</span>&amp; regions = my_constant2.forward_variable_regions();</div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>            <span class="keywordflow">if</span> (regions.size() != 1) { </div>
@@ -176,12 +176,12 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>        std::vector&lt;std::string&gt; combined;</div>
 <div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>        combined.reserve(num_options);</div>
 <div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span> </div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>        <span class="keywordflow">for</span> (BarcodeIndex i = 0; i &lt; num_options; ++i) {</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>        <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a> i = 0; i &lt; num_options; ++i) {</div>
 <div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>            std::string current;</div>
 <div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span> </div>
 <div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>            <span class="keyword">auto</span> ptr1 = barcode_pool1[i];</div>
 <div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>            <span class="keywordflow">if</span> (my_search_reverse1) {</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>                <span class="keywordflow">for</span> (SeqLength j = 0; j &lt; len1; ++j) {</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>                <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> j = 0; j &lt; len1; ++j) {</div>
 <div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>                    current += complement_base&lt;true, true&gt;(ptr1[len1 - j - 1]);</div>
 <div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>                }</div>
 <div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>            } <span class="keywordflow">else</span> {</div>
@@ -190,7 +190,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span> </div>
 <div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>            <span class="keyword">auto</span> ptr2 = barcode_pool2[i];</div>
 <div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>            <span class="keywordflow">if</span> (my_search_reverse2) {</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>                <span class="keywordflow">for</span> (SeqLength j = 0; j &lt; len2; ++j) {</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>                <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> j = 0; j &lt; len2; ++j) {</div>
 <div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>                    current += complement_base&lt;true, true&gt;(ptr2[len2 - j - 1]);</div>
 <div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>                }</div>
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>            } <span class="keywordflow">else</span> {</div>
@@ -227,7 +227,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>    <span class="keywordtype">bool</span> my_use_first = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span> </div>
 <div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>    std::vector&lt;Count&gt; my_counts;</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>    Count my_total = 0;</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>    <a class="code hl_typedef" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> my_total = 0;</div>
 <div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
 <div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    <span class="keyword">struct </span>State {</div>
@@ -235,7 +235,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        State(<span class="keyword">typename</span> std::vector&lt;Count&gt;::size_type n) : counts(n) {}</div>
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span> </div>
 <div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        std::vector&lt;Count&gt; counts;</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        Count total = 0;</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        <a class="code hl_typedef" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> total = 0;</div>
 <div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        std::pair&lt;std::string, int&gt; first_match;</div>
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        std::vector&lt;std::pair&lt;std::string, int&gt; &gt; second_matches;</div>
@@ -315,7 +315,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>            state.combined += current2.first; <span class="comment">// on a separate line to avoid creating a std::string intermediate.</span></div>
 <div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>            my_varlib.search(state.combined, state.details, std::array&lt;int, 2&gt;{ my_max_mm1 - state.first_match.second, my_max_mm2 - current2.second });</div>
 <div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span> </div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>            if (is_barcode_index_ok(state.details.index)) {</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>            if (<a class="code hl_function" href="namespacekaori.html#a89045f4a64f7f310c6f64d35ab1ff9d2">is_barcode_index_ok</a>(state.details.index)) {</div>
 <div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>                ++state.counts[state.details.index];</div>
 <div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>                return true;</div>
 <div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>            } <span class="keywordflow">else</span> {</div>
@@ -365,7 +365,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>        state.second_matches.clear();</div>
 <div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>        <span class="keywordflow">while</span> (inner_process(my_search_reverse2, my_constant2, my_max_mm2, against2.first, deets2, state.second_matches)) {}</div>
 <div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span> </div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>        BarcodeIndex chosen = STATUS_UNMATCHED;</div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>        <a class="code hl_typedef" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a> chosen = <a class="code hl_variable" href="namespacekaori.html#a6a2576db4a03d287265538d64f4e1af1">STATUS_UNMATCHED</a>;</div>
 <div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>        <span class="keywordtype">int</span> best_mismatches = my_max_mm1 + my_max_mm2 + 1;</div>
 <div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>        <span class="keyword">auto</span> num_second_matches = state.second_matches.size();</div>
 <div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span> </div>
@@ -378,13 +378,13 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>                    state.combined += current2.first; <span class="comment">// separate line is deliberate.</span></div>
 <div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>                    my_varlib.search(state.combined, state.details, std::array&lt;int, 2&gt;{ my_max_mm1 - state.first_match.second, my_max_mm2 - current2.second });</div>
 <div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span> </div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>                    <span class="keywordflow">if</span> (is_barcode_index_ok(state.details.index)) {</div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>                    <span class="keywordflow">if</span> (<a class="code hl_function" href="namespacekaori.html#a89045f4a64f7f310c6f64d35ab1ff9d2">is_barcode_index_ok</a>(state.details.index)) {</div>
 <div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>                        <span class="keywordtype">int</span> cur_mismatches = state.details.mismatches + state.first_match.second + current2.second;</div>
 <div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>                        <span class="keywordflow">if</span> (cur_mismatches &lt; best_mismatches) {</div>
 <div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>                            chosen = state.details.index;</div>
 <div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>                            best_mismatches = cur_mismatches;</div>
 <div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>                        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (cur_mismatches == best_mismatches &amp;&amp; chosen != state.details.index) { <span class="comment">// ambiguous.</span></div>
-<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>                            chosen = STATUS_AMBIGUOUS;</div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>                            chosen = <a class="code hl_variable" href="namespacekaori.html#a495ea93c704c6f4d4bc5dd648d425048">STATUS_AMBIGUOUS</a>;</div>
 <div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>                        }</div>
 <div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>                    }</div>
 <div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>                }</div>
@@ -408,14 +408,14 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>            <span class="keyword">auto</span> best = process_best(state, r1, r2);</div>
 <div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>            <span class="keywordflow">if</span> (my_randomized) {</div>
 <div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>                <span class="keyword">auto</span> best2 = process_best(state, r2, r1);</div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>                <span class="keywordflow">if</span> (!is_barcode_index_ok(best.first) || best.second &gt; best2.second) {</div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>                <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespacekaori.html#a89045f4a64f7f310c6f64d35ab1ff9d2">is_barcode_index_ok</a>(best.first) || best.second &gt; best2.second) {</div>
 <div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>                    best = best2;</div>
 <div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (best.second == best2.second &amp;&amp; best.first != best2.first) {</div>
-<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>                    best.first = STATUS_AMBIGUOUS; <span class="comment">// ambiguous.</span></div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>                    best.first = <a class="code hl_variable" href="namespacekaori.html#a495ea93c704c6f4d4bc5dd648d425048">STATUS_AMBIGUOUS</a>; <span class="comment">// ambiguous.</span></div>
 <div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>                }</div>
 <div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>            }</div>
 <div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span> </div>
-<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>            found = is_barcode_index_ok(best.first);</div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>            found = <a class="code hl_function" href="namespacekaori.html#a89045f4a64f7f310c6f64d35ab1ff9d2">is_barcode_index_ok</a>(best.first);</div>
 <div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>            <span class="keywordflow">if</span> (found) {</div>
 <div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>                ++state.counts[best.first];</div>
 <div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>            }</div>
@@ -432,7 +432,7 @@ $(function(){ initResizable(false); });
 </div>
 <div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span> </div>
 <div class="foldopen" id="foldopen00416" data-start="{" data-end="}">
-<div class="line"><a id="l00416" name="l00416"></a><span class="lineno"><a class="line" href="classkaori_1_1DualBarcodesPairedEnd.html#a5cee58b4f46553f135d098d35ced7b3c">  416</a></span>    Count <a class="code hl_function" href="classkaori_1_1DualBarcodesPairedEnd.html#a5cee58b4f46553f135d098d35ced7b3c">get_total</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00416" name="l00416"></a><span class="lineno"><a class="line" href="classkaori_1_1DualBarcodesPairedEnd.html#a5cee58b4f46553f135d098d35ced7b3c">  416</a></span>    <a class="code hl_typedef" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> <a class="code hl_function" href="classkaori_1_1DualBarcodesPairedEnd.html#a5cee58b4f46553f135d098d35ced7b3c">get_total</a>()<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>        <span class="keywordflow">return</span> my_total;</div>
 <div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>    }</div>
 </div>
@@ -447,7 +447,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aBarcodeSearch_8hpp_html"><div class="ttname"><a href="BarcodeSearch_8hpp.html">BarcodeSearch.hpp</a></div><div class="ttdoc">Search for barcode sequences.</div></div>
 <div class="ttc" id="aScanTemplate_8hpp_html"><div class="ttname"><a href="ScanTemplate_8hpp.html">ScanTemplate.hpp</a></div><div class="ttdoc">Defines the ScanTemplate class.</div></div>
-<div class="ttc" id="aclasskaori_1_1BarcodePool_html"><div class="ttname"><a href="classkaori_1_1BarcodePool.html">kaori::BarcodePool</a></div><div class="ttdoc">Pool of barcode sequences for a variable region.</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:24</div></div>
+<div class="ttc" id="aclasskaori_1_1BarcodePool_html"><div class="ttname"><a href="classkaori_1_1BarcodePool.html">kaori::BarcodePool</a></div><div class="ttdoc">Pool of barcode sequences.</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:24</div></div>
 <div class="ttc" id="aclasskaori_1_1BarcodePool_html_a585c929d99ce1da6e506d09ad99c1a24"><div class="ttname"><a href="classkaori_1_1BarcodePool.html#a585c929d99ce1da6e506d09ad99c1a24">kaori::BarcodePool::length</a></div><div class="ttdeci">SeqLength length() const</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:70</div></div>
 <div class="ttc" id="aclasskaori_1_1BarcodePool_html_aa956b36bdbd47d0fec0d26d7d444671a"><div class="ttname"><a href="classkaori_1_1BarcodePool.html#aa956b36bdbd47d0fec0d26d7d444671a">kaori::BarcodePool::size</a></div><div class="ttdeci">BarcodeIndex size() const</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:77</div></div>
 <div class="ttc" id="aclasskaori_1_1DualBarcodesPairedEnd_html"><div class="ttname"><a href="classkaori_1_1DualBarcodesPairedEnd.html">kaori::DualBarcodesPairedEnd</a></div><div class="ttdoc">Handler for dual barcodes.</div><div class="ttdef"><b>Definition</b> DualBarcodesPairedEnd.hpp:27</div></div>
@@ -455,6 +455,14 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclasskaori_1_1DualBarcodesPairedEnd_html_a5cee58b4f46553f135d098d35ced7b3c"><div class="ttname"><a href="classkaori_1_1DualBarcodesPairedEnd.html#a5cee58b4f46553f135d098d35ced7b3c">kaori::DualBarcodesPairedEnd::get_total</a></div><div class="ttdeci">Count get_total() const</div><div class="ttdef"><b>Definition</b> DualBarcodesPairedEnd.hpp:416</div></div>
 <div class="ttc" id="aclasskaori_1_1DualBarcodesPairedEnd_html_a9914566593cd01a262cad0bb0e168921"><div class="ttname"><a href="classkaori_1_1DualBarcodesPairedEnd.html#a9914566593cd01a262cad0bb0e168921">kaori::DualBarcodesPairedEnd::DualBarcodesPairedEnd</a></div><div class="ttdeci">DualBarcodesPairedEnd(const char *template_seq1, SeqLength template_length1, const BarcodePool &amp;barcode_pool1, const char *template_seq2, SeqLength template_length2, const BarcodePool &amp;barcode_pool2, const Options &amp;options)</div><div class="ttdef"><b>Definition</b> DualBarcodesPairedEnd.hpp:92</div></div>
 <div class="ttc" id="anamespacekaori_html"><div class="ttname"><a href="namespacekaori.html">kaori</a></div><div class="ttdoc">Namespace for the kaori barcode-matching library.</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:16</div></div>
+<div class="ttc" id="anamespacekaori_html_a1ba2b438d2db8fd7a30b65fd1f167564"><div class="ttname"><a href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">kaori::SeqLength</a></div><div class="ttdeci">std::size_t SeqLength</div><div class="ttdef"><b>Definition</b> utils.hpp:34</div></div>
+<div class="ttc" id="anamespacekaori_html_a495ea93c704c6f4d4bc5dd648d425048"><div class="ttname"><a href="namespacekaori.html#a495ea93c704c6f4d4bc5dd648d425048">kaori::STATUS_AMBIGUOUS</a></div><div class="ttdeci">constexpr BarcodeIndex STATUS_AMBIGUOUS</div><div class="ttdef"><b>Definition</b> utils.hpp:50</div></div>
+<div class="ttc" id="anamespacekaori_html_a5f9de60d2ca7863a5cf0cdf860cbd598"><div class="ttname"><a href="namespacekaori.html#a5f9de60d2ca7863a5cf0cdf860cbd598">kaori::SearchStrand</a></div><div class="ttdeci">SearchStrand</div><div class="ttdef"><b>Definition</b> utils.hpp:28</div></div>
+<div class="ttc" id="anamespacekaori_html_a6a2576db4a03d287265538d64f4e1af1"><div class="ttname"><a href="namespacekaori.html#a6a2576db4a03d287265538d64f4e1af1">kaori::STATUS_UNMATCHED</a></div><div class="ttdeci">constexpr BarcodeIndex STATUS_UNMATCHED</div><div class="ttdef"><b>Definition</b> utils.hpp:45</div></div>
+<div class="ttc" id="anamespacekaori_html_a78406bfdb5ba56268c8d8d4296b70665"><div class="ttname"><a href="namespacekaori.html#a78406bfdb5ba56268c8d8d4296b70665">kaori::DuplicateAction</a></div><div class="ttdeci">DuplicateAction</div><div class="ttdef"><b>Definition</b> utils.hpp:23</div></div>
+<div class="ttc" id="anamespacekaori_html_a89045f4a64f7f310c6f64d35ab1ff9d2"><div class="ttname"><a href="namespacekaori.html#a89045f4a64f7f310c6f64d35ab1ff9d2">kaori::is_barcode_index_ok</a></div><div class="ttdeci">bool is_barcode_index_ok(BarcodeIndex index)</div><div class="ttdef"><b>Definition</b> utils.hpp:57</div></div>
+<div class="ttc" id="anamespacekaori_html_aa40d52815d21a0db54d181dc42180413"><div class="ttname"><a href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">kaori::BarcodeIndex</a></div><div class="ttdeci">std::vector&lt; constchar * &gt;::size_type BarcodeIndex</div><div class="ttdef"><b>Definition</b> utils.hpp:40</div></div>
+<div class="ttc" id="anamespacekaori_html_adc2ab0b004edf73c5791e1c6e7c4c831"><div class="ttname"><a href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">kaori::Count</a></div><div class="ttdeci">unsigned long long Count</div><div class="ttdef"><b>Definition</b> utils.hpp:64</div></div>
 <div class="ttc" id="astructkaori_1_1DualBarcodesPairedEnd_1_1Options_html"><div class="ttname"><a href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html">kaori::DualBarcodesPairedEnd::Options</a></div><div class="ttdoc">Optional parameters for DualBarcodesPairedEnd.</div><div class="ttdef"><b>Definition</b> DualBarcodesPairedEnd.hpp:32</div></div>
 <div class="ttc" id="astructkaori_1_1DualBarcodesPairedEnd_1_1Options_html_a09feedb74c761a2d17e3bdc520891257"><div class="ttname"><a href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a09feedb74c761a2d17e3bdc520891257">kaori::DualBarcodesPairedEnd::Options::strand2</a></div><div class="ttdeci">SearchStrand strand2</div><div class="ttdef"><b>Definition</b> DualBarcodesPairedEnd.hpp:59</div></div>
 <div class="ttc" id="astructkaori_1_1DualBarcodesPairedEnd_1_1Options_html_a0eefa522ba4ec6cce867b36da4beb294"><div class="ttname"><a href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a0eefa522ba4ec6cce867b36da4beb294">kaori::DualBarcodesPairedEnd::Options::max_mismatches1</a></div><div class="ttdeci">int max_mismatches1</div><div class="ttdef"><b>Definition</b> DualBarcodesPairedEnd.hpp:42</div></div>
@@ -463,6 +471,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="astructkaori_1_1DualBarcodesPairedEnd_1_1Options_html_a97960474619d4d0ac8a171d83ca8796c"><div class="ttname"><a href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#a97960474619d4d0ac8a171d83ca8796c">kaori::DualBarcodesPairedEnd::Options::random</a></div><div class="ttdeci">bool random</div><div class="ttdef"><b>Definition</b> DualBarcodesPairedEnd.hpp:71</div></div>
 <div class="ttc" id="astructkaori_1_1DualBarcodesPairedEnd_1_1Options_html_ab659ce6715bcbb23b13dbde3b732d458"><div class="ttname"><a href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#ab659ce6715bcbb23b13dbde3b732d458">kaori::DualBarcodesPairedEnd::Options::duplicates</a></div><div class="ttdeci">DuplicateAction duplicates</div><div class="ttdef"><b>Definition</b> DualBarcodesPairedEnd.hpp:64</div></div>
 <div class="ttc" id="astructkaori_1_1DualBarcodesPairedEnd_1_1Options_html_ad7bc1d06a33d5a61d1485c6e7c73f9af"><div class="ttname"><a href="structkaori_1_1DualBarcodesPairedEnd_1_1Options.html#ad7bc1d06a33d5a61d1485c6e7c73f9af">kaori::DualBarcodesPairedEnd::Options::max_mismatches2</a></div><div class="ttdeci">int max_mismatches2</div><div class="ttdef"><b>Definition</b> DualBarcodesPairedEnd.hpp:53</div></div>
+<div class="ttc" id="autils_8hpp_html"><div class="ttname"><a href="utils_8hpp.html">utils.hpp</a></div><div class="ttdoc">Utilites for sequence matching.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

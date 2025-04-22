@@ -111,20 +111,20 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9f6fa048912422ada869967e6c4d91db" id="r_a9f6fa048912422ada869967e6c4d91db"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f6fa048912422ada869967e6c4d91db">SingleBarcodeSingleEnd</a> (const char *template_seq, SeqLength template_length, const <a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, const <a class="el" href="structkaori_1_1SingleBarcodeSingleEnd_1_1Options.html">Options</a> &amp;options)</td></tr>
+<tr class="memitem:a9f6fa048912422ada869967e6c4d91db" id="r_a9f6fa048912422ada869967e6c4d91db"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f6fa048912422ada869967e6c4d91db">SingleBarcodeSingleEnd</a> (const char *template_seq, <a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> template_length, const <a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, const <a class="el" href="structkaori_1_1SingleBarcodeSingleEnd_1_1Options.html">Options</a> &amp;options)</td></tr>
 <tr class="separator:a9f6fa048912422ada869967e6c4d91db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5120e12120cf7687b129af82445fe02b" id="r_a5120e12120cf7687b129af82445fe02b"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; Count &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5120e12120cf7687b129af82445fe02b">get_counts</a> () const</td></tr>
+<tr class="memitem:a5120e12120cf7687b129af82445fe02b" id="r_a5120e12120cf7687b129af82445fe02b"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5120e12120cf7687b129af82445fe02b">get_counts</a> () const</td></tr>
 <tr class="separator:a5120e12120cf7687b129af82445fe02b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af7d6f6688157dfefb21ae5e735c17081" id="r_af7d6f6688157dfefb21ae5e735c17081"><td class="memItemLeft" align="right" valign="top">Count&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7d6f6688157dfefb21ae5e735c17081">get_total</a> () const</td></tr>
+<tr class="memitem:af7d6f6688157dfefb21ae5e735c17081" id="r_af7d6f6688157dfefb21ae5e735c17081"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7d6f6688157dfefb21ae5e735c17081">get_total</a> () const</td></tr>
 <tr class="separator:af7d6f6688157dfefb21ae5e735c17081"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;SeqLength max_size_&gt;<br />
+<div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> max_size_&gt;<br />
 class kaori::SingleBarcodeSingleEnd&lt; max_size_ &gt;</div><p>Handler for single-end single barcodes. </p>
-<p>In this design, the barcoding element is constructed from a template with a single variable region drawn from a pool of barcode sequences. The construct containing the barcoding element is then subjected to single-end sequencing. This handler will search the read for the barcoding element and count the frequency of each barcode.</p>
+<p>In this design, the vector sequence is constructed from a template with a single variable region drawn from a pool of barcode sequences. The construct containing the vector sequence is then subjected to single-end sequencing. This handler will search the read for the vector sequence and count the frequency of each barcode.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">max_size_</td><td>Maximum length of the template sequences on both reads. </td></tr>
+    <tr><td class="paramname">max_size_</td><td>Maximum length of the template sequence. </td></tr>
   </table>
   </dd>
 </dl>
@@ -135,7 +135,7 @@ class kaori::SingleBarcodeSingleEnd&lt; max_size_ &gt;</div><p>Handler for singl
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;SeqLength max_size_&gt; </div>
+template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> max_size_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -148,7 +148,7 @@ template&lt;SeqLength max_size_&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">SeqLength</td>          <td class="paramname"><span class="paramname"><em>template_length</em></span>, </td>
+          <td class="paramtype"><a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a></td>          <td class="paramname"><span class="paramname"><em>template_length</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -169,8 +169,8 @@ template&lt;SeqLength max_size_&gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">template_seq</td><td>Template sequence of the barcoding element. This should contain exactly one variable region. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">template_length</td><td>Length of the template. This should be less than or equal to <code>max_size_</code>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">template_seq</td><td>Pointer to a character array containing the template sequence. This should contain exactly one variable region. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">template_length</td><td>Length of the array pointed to by <code>template_seq</code>. This should be less than or equal to <code>max_size_</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">barcode_pool</td><td>Known barcode sequences for the variable region. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">options</td><td>Optional parameters. </td></tr>
   </table>
@@ -186,13 +186,13 @@ template&lt;SeqLength max_size_&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;SeqLength max_size_&gt; </div>
+template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> max_size_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt; Count &gt; &amp; <a class="el" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd</a>&lt; max_size_ &gt;::get_counts </td>
+          <td class="memname">const std::vector&lt; <a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> &gt; &amp; <a class="el" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd</a>&lt; max_size_ &gt;::get_counts </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -214,13 +214,13 @@ template&lt;SeqLength max_size_&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;SeqLength max_size_&gt; </div>
+template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> max_size_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Count <a class="el" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd</a>&lt; max_size_ &gt;::get_total </td>
+          <td class="memname"><a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> <a class="el" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd</a>&lt; max_size_ &gt;::get_total </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>

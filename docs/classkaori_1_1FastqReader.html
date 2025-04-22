@@ -150,7 +150,7 @@ template&lt;typename Pointer_ &gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a <code><a class="elRef" href="https://ltla.github.io/byteme/classbyteme_1_1Reader.html">byteme::Reader</a></code> instance that defines a text stream. </td></tr>
+    <tr><td class="paramname">p</td><td>Pointer to a text stream. </td></tr>
   </table>
   </dd>
 </dl>
@@ -182,7 +182,7 @@ template&lt;typename Pointer_ &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Vector containing the name for the current read. Note that the name is considered to end at the first whitespace on the line. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Vector containing the name for the current read. Note that the name is considered to end at the first whitespace on the line. This should only be called if <code>load()</code> returns true. </dd></dl>
 
 </div>
 </div>
@@ -210,7 +210,7 @@ template&lt;typename Pointer_ &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Vector containing the sequence for the current read. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Vector containing the sequence for the current read. This should only be called if <code>load()</code> returns true. </dd></dl>
 
 </div>
 </div>
@@ -239,7 +239,7 @@ template&lt;typename Pointer_ &gt; </div>
 </table>
 </div><div class="memdoc">
 <p>Extract details for the next read in the file.</p>
-<dl class="section return"><dt>Returns</dt><dd>Whether or not a record was successfully extracted. If <code>true</code>, <code><a class="el" href="#a68eb90fa07502e3a3e07a7ad57a5fddd">get_sequence()</a></code> and <code><a class="el" href="#adb3848f380f8812867a2da1177c9ba82">get_name()</a></code> may be used. If <code>false</code>, this indicates that we reached the end of the file. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether or not a record was successfully extracted. If <code>true</code>, <code><a class="el" href="#a68eb90fa07502e3a3e07a7ad57a5fddd">get_sequence()</a></code> and <code><a class="el" href="#adb3848f380f8812867a2da1177c9ba82">get_name()</a></code> may be used. If <code>false</code>, the end of the file was reached. </dd></dl>
 
 </div>
 </div>

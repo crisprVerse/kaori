@@ -98,7 +98,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Optional parameters for a <code><a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html" title="Search for known barcode sequences with segmented mismatches.">SegmentedBarcodeSearch</a></code>.  
+<p>Optional parameters for a <code><a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html" title="Search against known barcode sequences with segmented mismatches.">SegmentedBarcodeSearch</a></code>.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="BarcodeSearch_8hpp_source.html">BarcodeSearch.hpp</a>&gt;</code></p>
@@ -114,12 +114,12 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a0d857044d249b9a8a0d23a33234e7a86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5bc3d770256987a43822b831b4b77434" id="r_a5bc3d770256987a43822b831b4b77434"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5bc3d770256987a43822b831b4b77434">reverse</a> = false</td></tr>
 <tr class="separator:a5bc3d770256987a43822b831b4b77434"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79132d0b79654b25315e20d3dba377e2" id="r_a79132d0b79654b25315e20d3dba377e2"><td class="memItemLeft" align="right" valign="top">DuplicateAction&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79132d0b79654b25315e20d3dba377e2">duplicates</a> = DuplicateAction::ERROR</td></tr>
+<tr class="memitem:a79132d0b79654b25315e20d3dba377e2" id="r_a79132d0b79654b25315e20d3dba377e2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacekaori.html#a78406bfdb5ba56268c8d8d4296b70665">DuplicateAction</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79132d0b79654b25315e20d3dba377e2">duplicates</a> = DuplicateAction::ERROR</td></tr>
 <tr class="separator:a79132d0b79654b25315e20d3dba377e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int num_segments_&gt;<br />
-struct kaori::SegmentedBarcodeSearch&lt; num_segments_ &gt;::Options</div><p>Optional parameters for a <code><a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html" title="Search for known barcode sequences with segmented mismatches.">SegmentedBarcodeSearch</a></code>. </p>
+struct kaori::SegmentedBarcodeSearch&lt; num_segments_ &gt;::Options</div><p>Optional parameters for a <code><a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html" title="Search against known barcode sequences with segmented mismatches.">SegmentedBarcodeSearch</a></code>. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af86e10f7df5c5282ff4e7341154a6326" name="af86e10f7df5c5282ff4e7341154a6326"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af86e10f7df5c5282ff4e7341154a6326">&#9670;&#160;</a></span>Options()</h2>
@@ -164,7 +164,7 @@ template&lt;int num_segments_&gt; </div>
 template&lt;int num_segments_&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">DuplicateAction <a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html">kaori::SegmentedBarcodeSearch</a>&lt; num_segments_ &gt;::Options::duplicates = DuplicateAction::ERROR</td>
+          <td class="memname"><a class="el" href="namespacekaori.html#a78406bfdb5ba56268c8d8d4296b70665">DuplicateAction</a> <a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html">kaori::SegmentedBarcodeSearch</a>&lt; num_segments_ &gt;::Options::duplicates = DuplicateAction::ERROR</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -202,7 +202,7 @@ template&lt;int num_segments_&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Whether to reverse-complement the barcode sequences before indexing them. Note that, even if <code>reverse = true</code>, the segment lengths in the <code><a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html#af74567de0bcb73ec0252c78010cfdee0">SegmentedBarcodeSearch()</a></code> constructor and <code>max_mismatches</code> are still reported in their order on the forward strand. </p>
+<p>Whether to reverse-complement the barcode sequences before indexing them. Note that, even if <code>reverse = true</code>, the segment lengths in the <code><a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html#af74567de0bcb73ec0252c78010cfdee0">SegmentedBarcodeSearch()</a></code> constructor and the numbers of mismatches in <code>max_mismatches</code> should still be ordered according to the forward strand. </p>
 
 </div>
 </div>

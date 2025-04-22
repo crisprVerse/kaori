@@ -2,8 +2,9 @@ var searchData=
 [
   ['index_0',['index',['../structkaori_1_1SimpleBarcodeSearch_1_1State.html#a73e26807c613d7ed78becf073418a5e1',1,'kaori::SimpleBarcodeSearch::State::index'],['../structkaori_1_1SegmentedBarcodeSearch_1_1State.html#ab50ccdf56854a0b89e5552e073fedfe7',1,'kaori::SegmentedBarcodeSearch::State::index'],['../structkaori_1_1AnyMismatches_1_1Result.html#aaeda32538805c4fa428de198f6ad9d94',1,'kaori::AnyMismatches::Result::index'],['../structkaori_1_1SegmentedMismatches_1_1Result.html#a836707eb3867c50f1d950d57ac21ea26',1,'kaori::SegmentedMismatches::Result::index'],['../structkaori_1_1SimpleSingleMatch_1_1State.html#ae7029158b11370687da278c33617e36d',1,'kaori::SimpleSingleMatch::State::index']]],
   ['initialize_1',['initialize',['../classkaori_1_1SimpleBarcodeSearch.html#ac71e5409f61bf03009046b208de7677c',1,'kaori::SimpleBarcodeSearch::initialize()'],['../classkaori_1_1SegmentedBarcodeSearch.html#a0712cb5db14f1e1b397b3638684695ad',1,'kaori::SegmentedBarcodeSearch::initialize()'],['../classkaori_1_1ScanTemplate.html#a192dae5760511e00073b29dcc4ddb0ce',1,'kaori::ScanTemplate::initialize()'],['../classkaori_1_1SimpleSingleMatch.html#aeddb6eacd5f598eeab328539ed5f3fcb',1,'kaori::SimpleSingleMatch::initialize()']]],
-  ['is_5fduplicate_2',['is_duplicate',['../structkaori_1_1TrieAddStatus.html#adec2ac12269ec217c0daf545510355f3',1,'kaori::TrieAddStatus']]],
-  ['istreamreader_3',['IstreamReader',['https://ltla.github.io/byteme/classbyteme_1_1IstreamReader.html',1,'byteme::IstreamReader&lt; class Pointer_ &gt;'],['https://ltla.github.io/byteme/classbyteme_1_1IstreamReader.html#a19247e8caa4d21b5195556a0bf776aa6',1,'byteme::IstreamReader::IstreamReader()']]],
-  ['istreamreader_2ehpp_4',['IstreamReader.hpp',['https://ltla.github.io/byteme/IstreamReader_8hpp.html',1,'']]],
-  ['istreamreaderoptions_5',['IstreamReaderOptions',['https://ltla.github.io/byteme/structbyteme_1_1IstreamReaderOptions.html',1,'byteme']]]
+  ['is_5fbarcode_5findex_5fok_2',['is_barcode_index_ok',['../namespacekaori.html#a89045f4a64f7f310c6f64d35ab1ff9d2',1,'kaori']]],
+  ['is_5fduplicate_3',['is_duplicate',['../structkaori_1_1TrieAddStatus.html#adec2ac12269ec217c0daf545510355f3',1,'kaori::TrieAddStatus']]],
+  ['istreamreader_4',['IstreamReader',['https://ltla.github.io/byteme/classbyteme_1_1IstreamReader.html',1,'byteme::IstreamReader&lt; class Pointer_ &gt;'],['https://ltla.github.io/byteme/classbyteme_1_1IstreamReader.html#a19247e8caa4d21b5195556a0bf776aa6',1,'byteme::IstreamReader::IstreamReader()']]],
+  ['istreamreader_2ehpp_5',['IstreamReader.hpp',['https://ltla.github.io/byteme/IstreamReader_8hpp.html',1,'']]],
+  ['istreamreaderoptions_6',['IstreamReaderOptions',['https://ltla.github.io/byteme/structbyteme_1_1IstreamReaderOptions.html',1,'byteme']]]
 ];

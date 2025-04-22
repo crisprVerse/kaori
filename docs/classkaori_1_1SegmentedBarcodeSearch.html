@@ -98,7 +98,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Search for known barcode sequences with segmented mismatches.  
+<p>Search against known barcode sequences with segmented mismatches.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="BarcodeSearch_8hpp_source.html">BarcodeSearch.hpp</a>&gt;</code></p>
@@ -106,7 +106,7 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structkaori_1_1SegmentedBarcodeSearch_1_1Options.html">Options</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional parameters for a <code><a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html" title="Search for known barcode sequences with segmented mismatches.">SegmentedBarcodeSearch</a></code>.  <a href="structkaori_1_1SegmentedBarcodeSearch_1_1Options.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional parameters for a <code><a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html" title="Search against known barcode sequences with segmented mismatches.">SegmentedBarcodeSearch</a></code>.  <a href="structkaori_1_1SegmentedBarcodeSearch_1_1Options.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html" title="State of the search.">State</a> of the search.  <a href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html#details">More...</a><br /></td></tr>
@@ -116,7 +116,7 @@ Classes</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af74567de0bcb73ec0252c78010cfdee0" id="r_af74567de0bcb73ec0252c78010cfdee0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af74567de0bcb73ec0252c78010cfdee0">SegmentedBarcodeSearch</a> ()=default</td></tr>
 <tr class="separator:af74567de0bcb73ec0252c78010cfdee0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3132acfb6a723f34b50be76d05d2b0b5" id="r_a3132acfb6a723f34b50be76d05d2b0b5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3132acfb6a723f34b50be76d05d2b0b5">SegmentedBarcodeSearch</a> (const <a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, std::array&lt; SeqLength, num_segments_ &gt; segments, const <a class="el" href="structkaori_1_1SegmentedBarcodeSearch_1_1Options.html">Options</a> &amp;options)</td></tr>
+<tr class="memitem:a3132acfb6a723f34b50be76d05d2b0b5" id="r_a3132acfb6a723f34b50be76d05d2b0b5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3132acfb6a723f34b50be76d05d2b0b5">SegmentedBarcodeSearch</a> (const <a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool, std::array&lt; <a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a>, num_segments_ &gt; segments, const <a class="el" href="structkaori_1_1SegmentedBarcodeSearch_1_1Options.html">Options</a> &amp;options)</td></tr>
 <tr class="separator:a3132acfb6a723f34b50be76d05d2b0b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0712cb5db14f1e1b397b3638684695ad" id="r_a0712cb5db14f1e1b397b3638684695ad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structkaori_1_1SegmentedBarcodeSearch_1_1State.html">State</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0712cb5db14f1e1b397b3638684695ad">initialize</a> () const</td></tr>
 <tr class="separator:a0712cb5db14f1e1b397b3638684695ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -129,8 +129,8 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int num_segments_&gt;<br />
-class kaori::SegmentedBarcodeSearch&lt; num_segments_ &gt;</div><p>Search for known barcode sequences with segmented mismatches. </p>
-<p>This supports exact and mismatch-aware searches for known sequences. Mismatches are restricted by segments along the sequence, see <code><a class="el" href="classkaori_1_1SegmentedMismatches.html" title="Search for barcodes with segmented mismatches.">SegmentedMismatches</a></code> for details. Instances of this class use caching to avoid redundant work when a mismatching sequence has been previously encountered.</p>
+class kaori::SegmentedBarcodeSearch&lt; num_segments_ &gt;</div><p>Search against known barcode sequences with segmented mismatches. </p>
+<p>Given an input sequence, this class performs exact and mismatch-aware searches for known sequences with "segmented" mismatches. Specifically, we split the sequence into segments whereby the number of mismatches in each segment is limited - see <code><a class="el" href="classkaori_1_1SegmentedMismatches.html" title="Search for barcodes with segmented mismatches.">SegmentedMismatches</a></code> for details. We use caching to avoid redundant work when a mismatching sequence has been previously encountered.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">num_segments_</td><td>Number of segments to consider. </td></tr>
@@ -162,7 +162,7 @@ template&lt;int num_segments_&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Default constructor. </p>
+<p>Default constructor. This is only provided for composition purposes; methods of this class should only be called on properly constructed instance. </p>
 
 </div>
 </div>
@@ -185,7 +185,7 @@ template&lt;int num_segments_&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::array&lt; SeqLength, num_segments_ &gt;</td>          <td class="paramname"><span class="paramname"><em>segments</em></span>, </td>
+          <td class="paramtype">std::array&lt; <a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a>, num_segments_ &gt;</td>          <td class="paramname"><span class="paramname"><em>segments</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -202,7 +202,7 @@ template&lt;int num_segments_&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">barcode_pool</td><td>Pool of barcode sequences. </td></tr>
-    <tr><td class="paramname">segments</td><td>Size of each segment. All values should be positive and their sum should be equal to the barcode length. </td></tr>
+    <tr><td class="paramname">segments</td><td>Size of each segment. All values should be positive and their sum should be equal to the barcode length in <code>barcode_pool</code>. </td></tr>
     <tr><td class="paramname">options</td><td>Optional parameters. </td></tr>
   </table>
   </dd>
@@ -236,7 +236,7 @@ template&lt;int num_segments_&gt; </div>
 </table>
 </div><div class="memdoc">
 <p>Initialize the search state for thread-safe execution.</p>
-<dl class="section return"><dt>Returns</dt><dd>A new <code>SeachState()</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A new state object for use in <code><a class="el" href="#ab6c6c0bebf983e77ed79483090b54452">search()</a></code> and <code><a class="el" href="#a6a950454a3359ce37fb3df31d68360b8">reduce()</a></code>. </dd></dl>
 
 </div>
 </div>
@@ -264,7 +264,7 @@ template&lt;int num_segments_&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Incorporate the mismatch cache from <code>state</code> into the cache for this <code><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html" title="Search for known barcode sequences.">SimpleBarcodeSearch</a></code> instance. This allows regular consolidation of optimizations across threads. On return, the mismatch cache of <code>state</code> is combined with that of this instance.</p>
+<p>Incorporate the mismatch cache from <code>state</code> into the cache for this <code>SegmentedBarcodeSEarch</code> instance. This enables regular synchronization of the cache (and its related search optimizations) across threads.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">state</td><td>A state object generated by <code><a class="el" href="#a0712cb5db14f1e1b397b3638684695ad">initialize()</a></code>. Typically this has already been used in <code><a class="el" href="#ab6c6c0bebf983e77ed79483090b54452">search()</a></code>. </td></tr>
@@ -302,7 +302,7 @@ template&lt;int num_segments_&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Search the known sequences in the barcode pool for an input sequence. The number of allowed mismatches in each segment is equal to the maximum specified in the constructor.</p>
+<p>Search the known sequences in the barcode pool against an input sequence. The number of allowed mismatches in each segment is equal to the <code><a class="el" href="structkaori_1_1SegmentedBarcodeSearch_1_1Options.html#a0d857044d249b9a8a0d23a33234e7a86">Options::max_mismatches</a></code> specified in the constructor.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">search_seq</td><td>The input sequence to use for searching. This is expected to have the same length as the known sequences. </td></tr>
@@ -346,12 +346,12 @@ template&lt;int num_segments_&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Search the known sequences in the barcode pool for an input sequence, with potentially more stringent mismatch requirements for each segment. This can improve efficiency in situations where some mismatches have already been consumed by matching the template sequence.</p>
+<p>Search the known sequences in the barcode pool for an input sequence with a user-supplied number of allowed mismatches in each segment. It is expected that each element of <code>allowed_mismatches</code> is no greater than the corresponding element of <code><a class="el" href="structkaori_1_1SegmentedBarcodeSearch_1_1Options.html#a0d857044d249b9a8a0d23a33234e7a86">Options::max_mismatches</a></code> specified in the constructor. Lower values can improve efficiency in situations where some mismatches have already been "used up", e.g., by matching the template sequence in <code><a class="el" href="classkaori_1_1ScanTemplate.html" title="Scan a read sequence for the template sequence.">ScanTemplate</a></code>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">search_seq</td><td>The input sequence to use for searching. This is expected to have the same length as the known sequences. </td></tr>
     <tr><td class="paramname">state</td><td>A state object generated by <code><a class="el" href="#a0712cb5db14f1e1b397b3638684695ad">initialize()</a></code>. On return, <code>state</code> is filled with the details of the best-matching barcode sequence, if any exists. </td></tr>
-    <tr><td class="paramname">allowed_mismatches</td><td>Allowed number of mismatches in each segment. Each value should not be greater than the corresponding maximum specified in the constructor. </td></tr>
+    <tr><td class="paramname">allowed_mismatches</td><td>Allowed number of mismatches in each segment. Each value should not be greater than the corresponding value of <code><a class="el" href="structkaori_1_1SegmentedBarcodeSearch_1_1Options.html#a0d857044d249b9a8a0d23a33234e7a86">Options::max_mismatches</a></code> specified in the constructor. </td></tr>
   </table>
   </dd>
 </dl>

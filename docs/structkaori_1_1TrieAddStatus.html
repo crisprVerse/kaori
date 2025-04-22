@@ -115,6 +115,7 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Status of barcode sequence addition to the trie. </p>
+<p>This is typically returned by methods like <code><a class="el" href="classkaori_1_1AnyMismatches.html#abcf13ba52a8d43ef7125dcbadbba2cb3">AnyMismatches::add()</a></code> and <code><a class="el" href="classkaori_1_1SegmentedMismatches.html#a8ff582c52b24b9cb324f15dd3350f4ac">SegmentedMismatches::add()</a></code>. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="a8d180ecfd6de32d51a783da4290cd737" name="a8d180ecfd6de32d51a783da4290cd737"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8d180ecfd6de32d51a783da4290cd737">&#9670;&#160;</a></span>duplicate_cleared</h2>
@@ -127,7 +128,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Whether the newly added sequence caused an existing duplicate to be cleared from the trie. Only set when <code>is_duplicate = true</code> and <code>duplicates</code> is set to <code>DuplicateAction::NONE</code> in <code>add()</code>. </p>
+<p>Whether the newly added sequence caused an existing duplicate to be cleared from the trie. Only set when <code>is_duplicate = true</code> and the trie's duplicate policy is set to <code>DuplicateAction::NONE</code>. </p>
 
 </div>
 </div>
@@ -142,7 +143,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Whether the newly added sequence replaced a duplicate in the trie. Only set when <code>is_duplicate = true</code> and <code>duplicates</code> is set to <code>DuplicateAction::LAST</code> in <code>add()</code>. </p>
+<p>Whether the newly added sequence replaced a duplicate in the trie. Only set when <code>is_duplicate = true</code> and the trie's duplicate policy is set to <code>DuplicateAction::LAST</code> in the trie. </p>
 
 </div>
 </div>

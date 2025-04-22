@@ -88,7 +88,10 @@ $(function(){ initResizable(false); });
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">kaori Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -102,7 +105,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search for barcodes with mismatches anywhere.  <a href="classkaori_1_1AnyMismatches.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pool of barcode sequences for a variable region.  <a href="classkaori_1_1BarcodePool.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pool of barcode sequences.  <a href="classkaori_1_1BarcodePool.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html">CombinatorialBarcodesPairedEnd</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for paired-end combinatorial barcodes.  <a href="classkaori_1_1CombinatorialBarcodesPairedEnd.html#details">More...</a><br /></td></tr>
@@ -138,13 +141,13 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scan a read sequence for the template sequence.  <a href="classkaori_1_1ScanTemplate.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SegmentedBarcodeSearch.html">SegmentedBarcodeSearch</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search for known barcode sequences with segmented mismatches.  <a href="classkaori_1_1SegmentedBarcodeSearch.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search against known barcode sequences with segmented mismatches.  <a href="classkaori_1_1SegmentedBarcodeSearch.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SegmentedMismatches.html">SegmentedMismatches</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search for barcodes with segmented mismatches.  <a href="classkaori_1_1SegmentedMismatches.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleBarcodeSearch.html">SimpleBarcodeSearch</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search for known barcode sequences.  <a href="classkaori_1_1SimpleBarcodeSearch.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search against known barcodes.  <a href="classkaori_1_1SimpleBarcodeSearch.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1SimpleSingleMatch.html">SimpleSingleMatch</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search for a template with a single variable region.  <a href="classkaori_1_1SimpleSingleMatch.html#details">More...</a><br /></td></tr>
@@ -159,6 +162,29 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Status of barcode sequence addition to the trie.  <a href="structkaori_1_1TrieAddStatus.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a1ba2b438d2db8fd7a30b65fd1f167564" id="r_a1ba2b438d2db8fd7a30b65fd1f167564"><td class="memItemLeft" align="right" valign="top">typedef std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a></td></tr>
+<tr class="separator:a1ba2b438d2db8fd7a30b65fd1f167564"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa40d52815d21a0db54d181dc42180413" id="r_aa40d52815d21a0db54d181dc42180413"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; constchar * &gt;::size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a></td></tr>
+<tr class="separator:aa40d52815d21a0db54d181dc42180413"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc2ab0b004edf73c5791e1c6e7c4c831" id="r_adc2ab0b004edf73c5791e1c6e7c4c831"><td class="memItemLeft" align="right" valign="top">typedef unsigned long long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a></td></tr>
+<tr class="separator:adc2ab0b004edf73c5791e1c6e7c4c831"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a78406bfdb5ba56268c8d8d4296b70665" id="r_a78406bfdb5ba56268c8d8d4296b70665"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78406bfdb5ba56268c8d8d4296b70665">DuplicateAction</a> : char { <b>FIRST</b>
+, <b>LAST</b>
+, <b>NONE</b>
+, <b>ERROR</b>
+ }</td></tr>
+<tr class="separator:a78406bfdb5ba56268c8d8d4296b70665"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f9de60d2ca7863a5cf0cdf860cbd598" id="r_a5f9de60d2ca7863a5cf0cdf860cbd598"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f9de60d2ca7863a5cf0cdf860cbd598">SearchStrand</a> : char { <b>FORWARD</b>
+, <b>REVERSE</b>
+, <b>BOTH</b>
+ }</td></tr>
+<tr class="separator:a5f9de60d2ca7863a5cf0cdf860cbd598"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a3a63887d9bff22a7d13fbb355aa7e2e3" id="r_a3a63887d9bff22a7d13fbb355aa7e2e3"><td class="memTemplParams" colspan="2">template&lt;typename Pointer_ , class Handler_ &gt; </td></tr>
@@ -167,10 +193,150 @@ Functions</h2></td></tr>
 <tr class="memitem:a8ec757759c7fadc20545ba3e1d62e0b2" id="r_a8ec757759c7fadc20545ba3e1d62e0b2"><td class="memTemplParams" colspan="2">template&lt;class Pointer_ , class Handler_ &gt; </td></tr>
 <tr class="memitem:a8ec757759c7fadc20545ba3e1d62e0b2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8ec757759c7fadc20545ba3e1d62e0b2">process_paired_end_data</a> (Pointer_ input1, Pointer_ input2, Handler_ &amp;handler, const <a class="el" href="structkaori_1_1ProcessPairedEndDataOptions.html">ProcessPairedEndDataOptions</a> &amp;options)</td></tr>
 <tr class="separator:a8ec757759c7fadc20545ba3e1d62e0b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89045f4a64f7f310c6f64d35ab1ff9d2" id="r_a89045f4a64f7f310c6f64d35ab1ff9d2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a89045f4a64f7f310c6f64d35ab1ff9d2">is_barcode_index_ok</a> (<a class="el" href="#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a> index)</td></tr>
+<tr class="separator:a89045f4a64f7f310c6f64d35ab1ff9d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a6a2576db4a03d287265538d64f4e1af1" id="r_a6a2576db4a03d287265538d64f4e1af1"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a2576db4a03d287265538d64f4e1af1">STATUS_UNMATCHED</a> = static_cast&lt;<a class="el" href="#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>&gt;(-1)</td></tr>
+<tr class="separator:a6a2576db4a03d287265538d64f4e1af1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a495ea93c704c6f4d4bc5dd648d425048" id="r_a495ea93c704c6f4d4bc5dd648d425048"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a495ea93c704c6f4d4bc5dd648d425048">STATUS_AMBIGUOUS</a> = static_cast&lt;<a class="el" href="#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>&gt;(-2)</td></tr>
+<tr class="separator:a495ea93c704c6f4d4bc5dd648d425048"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Namespace for the <b>kaori</b> barcode-matching library. </p>
-</div><h2 class="groupheader">Function Documentation</h2>
+</div><h2 class="groupheader">Typedef Documentation</h2>
+<a id="aa40d52815d21a0db54d181dc42180413" name="aa40d52815d21a0db54d181dc42180413"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa40d52815d21a0db54d181dc42180413">&#9670;&#160;</a></span>BarcodeIndex</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef std::vector&lt;constchar*&gt;::size_type <a class="el" href="#aa40d52815d21a0db54d181dc42180413">kaori::BarcodeIndex</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Integer type for barcode indices in a pool of known barcodes (specifically, inside a <code><a class="el" href="classkaori_1_1BarcodePool.html" title="Pool of barcode sequences.">BarcodePool</a></code>). This can have the special values <code>STATUS_UNMATCHED</code> and <code>STATUS_AMBIGUOUS</code>, see <code><a class="el" href="#a89045f4a64f7f310c6f64d35ab1ff9d2">is_barcode_index_ok()</a></code> to check for these error codes. </p>
+
+</div>
+</div>
+<a id="adc2ab0b004edf73c5791e1c6e7c4c831" name="adc2ab0b004edf73c5791e1c6e7c4c831"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc2ab0b004edf73c5791e1c6e7c4c831">&#9670;&#160;</a></span>Count</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef unsigned long long <a class="el" href="#adc2ab0b004edf73c5791e1c6e7c4c831">kaori::Count</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Integer type to count the frequency of each barcode. </p>
+
+</div>
+</div>
+<a id="a1ba2b438d2db8fd7a30b65fd1f167564" name="a1ba2b438d2db8fd7a30b65fd1f167564"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ba2b438d2db8fd7a30b65fd1f167564">&#9670;&#160;</a></span>SeqLength</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef std::size_t <a class="el" href="#a1ba2b438d2db8fd7a30b65fd1f167564">kaori::SeqLength</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Integer type for the sequence lengths. This is used for barcodes, templates and reads. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a78406bfdb5ba56268c8d8d4296b70665" name="a78406bfdb5ba56268c8d8d4296b70665"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a78406bfdb5ba56268c8d8d4296b70665">&#9670;&#160;</a></span>DuplicateAction</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#a78406bfdb5ba56268c8d8d4296b70665">kaori::DuplicateAction</a> : char</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>How to deal with duplicated sequences in the pool of known barcodes.</p>
+<ul>
+<li><code>FIRST</code>: keep the first encountered instance of a set of duplicates.</li>
+<li><code>LAST</code>: keep the last encountered instance of a set of duplicates.</li>
+<li><code>NONE</code>: do not keep any duplicate sequences.</li>
+<li><code>ERROR</code>: throw an error upon observing a duplicate sequence. </li>
+</ul>
+
+</div>
+</div>
+<a id="a5f9de60d2ca7863a5cf0cdf860cbd598" name="a5f9de60d2ca7863a5cf0cdf860cbd598"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f9de60d2ca7863a5cf0cdf860cbd598">&#9670;&#160;</a></span>SearchStrand</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#a5f9de60d2ca7863a5cf0cdf860cbd598">kaori::SearchStrand</a> : char</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Strands of the read sequence to search. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a89045f4a64f7f310c6f64d35ab1ff9d2" name="a89045f4a64f7f310c6f64d35ab1ff9d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89045f4a64f7f310c6f64d35ab1ff9d2">&#9670;&#160;</a></span>is_barcode_index_ok()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool kaori::is_barcode_index_ok </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a></td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>A barcode index. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether <code>index</code> corresponds to an actual barcode. If false, <code>index</code> represents one of the error codes, i.e., <code>STATUS_MISSING</code> or <code>STATUS_AMBIGUOUS</code>. </dd></dl>
+
+</div>
+</div>
 <a id="a8ec757759c7fadc20545ba3e1d62e0b2" name="a8ec757759c7fadc20545ba3e1d62e0b2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8ec757759c7fadc20545ba3e1d62e0b2">&#9670;&#160;</a></span>process_paired_end_data()</h2>
 
@@ -205,30 +371,30 @@ template&lt;class Pointer_ , class Handler_ &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Pointer_</td><td>Pointer to a class that serves as a source of input bytes. The pointed-to class should satisfy the <code><a class="elRef" href="https://ltla.github.io/byteme/classbyteme_1_1Reader.html">byteme::Reader</a></code> interface; it may also be a concrete <code><a class="elRef" href="https://ltla.github.io/byteme/classbyteme_1_1Reader.html">byteme::Reader</a></code> subclass to enable devirtualization. Either a smart or raw pointer may be supplied depending on how the caller wants to manage the lifetime of the pointed-to object. </td></tr>
-    <tr><td class="paramname">Handler</td><td>A class that implements a handler for paired-end data.</td></tr>
+    <tr><td class="paramname">Handler_</td><td>A class that implements a handler for paired-end data.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">input1</td><td>Pointer to a <code><a class="elRef" href="https://ltla.github.io/byteme/classbyteme_1_1Reader.html">byteme::Reader</a></code> object containing data from the first FASTQ file in the pair. </td></tr>
-    <tr><td class="paramname">input2</td><td>Pointer to a <code><a class="elRef" href="https://ltla.github.io/byteme/classbyteme_1_1Reader.html">byteme::Reader</a></code> object containing data from the second FASTQ file in the pair. </td></tr>
-    <tr><td class="paramname">handler</td><td>Instance of the <code>Handler</code> class. </td></tr>
+    <tr><td class="paramname">input1</td><td>Pointer to an input byte source containing data from one of the paired-end FASTQ files. This may or may not need to be specifically "read 1", depending on the <code>handler</code>. </td></tr>
+    <tr><td class="paramname">input2</td><td>Pointer to an input byte source containing data from the other paired-end FASTQ file. This may or may not need to be specifically "read 2", depending on the <code>handler</code>. </td></tr>
+    <tr><td class="paramname">handler</td><td>Handler instance for paired-end data. </td></tr>
     <tr><td class="paramname">options</td><td>Further options.</td></tr>
   </table>
   </dd>
 </dl>
 <h1><a class="anchor" id="paired-handler-req"></a>
-Handler requirements</h1>
+Paired-end handler requirements</h1>
 <p>The <code>Handler</code> class is expected to implement the following methods:</p><ul>
-<li><code>initialize()</code>: this should be a <code>const</code> method that returns a state object (denoted here as having type <code>State</code>, though the exact name may vary). The idea is to store results in the state object for thread-safe execution. The state object should be default-constructible.</li>
+<li><code>initialize()</code>: this should be a thread-safe <code>const</code> method that returns a state object (denoted here as having type <code>State</code>, though the exact name may vary). The idea is to store results in the state object for thread-safe execution. The state object should be default-constructible.</li>
 <li><code>reduce(State&amp; state)</code>: this should merge the results from the <code>state</code> object into the <code>Handler</code> instance. This will be called in a serial section and does not have to be thread-safe.</li>
 </ul>
-<p>The <code>Handler</code> should have a static <code>constexpr</code> variable <code>use_names_</code>, indicating whether or not names should be passed to the <code>process()</code> method.</p>
-<p>If <code>use_names_</code> is <code>false</code>, the <code>Handler</code> class should implement:</p><ul>
+<p>The <code>Handler</code> should have a static <code>constexpr</code> variable <code>use_names</code>, indicating whether or not names should be passed to the <code>process()</code> method.</p>
+<p>If <code>use_names</code> is <code>false</code>, the <code>Handler</code> class should implement:</p><ul>
 <li><code>process(State&amp; state, const std::pair&lt;const char*, const char*&gt;&amp; seq1, const std::pair&lt;const char*, const char*&gt;&amp; seq2)</code>: this should be a <code>const</code> method that processes the paired reads in <code>seq1</code> and <code>seq2</code>, and stores its results in <code>state</code>. <code>seq1</code> and <code>seq2</code> will contain pointers to the start and one-past-the-end of the sequences of the paired reads.</li>
 </ul>
-<p>Otherwise, if <code>use_names_</code> is <code>true</code>, the class should implement:</p><ul>
+<p>Otherwise, if <code>use_names</code> is <code>true</code>, the class should implement:</p><ul>
 <li><code>process(State&amp; state, const std::pair&lt;const char*, const char*&gt;&amp; name1, const std::pair&lt;const char*, const char*&gt;&amp; seq1, const std::pair&lt;const char*, const char*&gt;&amp; name2, const std::pair&lt;const char*, const char*&gt;&amp; seq2)</code>: this should be a <code>const</code> method that processes the paired reads in <code>seq1</code> and <code>seq2</code>, and stores its results in <code>state</code>. <code>name1</code> and <code>name2</code> will contain pointers to the start and one-past-the-end of the read names. <code>seq1</code> and <code>seq2</code> will contain pointers to the start and one-past-the-end of the read sequences. </li>
 </ul>
 
@@ -259,35 +425,82 @@ template&lt;typename Pointer_ , class Handler_ &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Run a handler for each read in single-end data. This is done by calling <code>handler.process()</code> on each read. It is expected that the results are stored in <code>handler</code> for retrieval by the caller.</p>
+<p>Run a handler for each read in single-end data, by calling <code>handler.process()</code> on each read. It is expected that the results are stored in <code>handler</code> for retrieval by the caller.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Pointer_</td><td>Pointer to a class that serves as a source of input bytes. The pointed-to class should satisfy the <code><a class="elRef" href="https://ltla.github.io/byteme/classbyteme_1_1Reader.html">byteme::Reader</a></code> interface; it may also be a concrete <code><a class="elRef" href="https://ltla.github.io/byteme/classbyteme_1_1Reader.html">byteme::Reader</a></code> subclass to enable devirtualization. Either a smart or raw pointer may be supplied depending on how the caller wants to manage the lifetime of the pointed-to object. </td></tr>
-    <tr><td class="paramname">Handler</td><td>Class that implements a handler for single-end data.</td></tr>
+    <tr><td class="paramname">Handler_</td><td>Class that implements a handler for single-end data.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">input</td><td>Pointer to a <code><a class="elRef" href="https://ltla.github.io/byteme/classbyteme_1_1Reader.html">byteme::Reader</a></code> object containing data from a single-end FASTQ file. </td></tr>
-    <tr><td class="paramname">handler</td><td>Instance of the <code>Handler</code> class. </td></tr>
+    <tr><td class="paramname">input</td><td>Pointer to an input byte source containing data from a single-end FASTQ file. </td></tr>
+    <tr><td class="paramname">handler</td><td>Handler instance for single-end data. </td></tr>
     <tr><td class="paramname">options</td><td>Further options.</td></tr>
   </table>
   </dd>
 </dl>
 <h1><a class="anchor" id="single-handler-req"></a>
-Handler requirements</h1>
-<p>The <code>Handler</code> class is expected to implement the following methods:</p><ul>
-<li><code>initialize()</code>: this should be a <code>const</code> method that returns a state object (denoted here as having type <code>State</code>, though the exact name may vary). The idea is to store results in the state object for thread-safe execution. The state object should be default-constructible.</li>
+Single-end handler requirements</h1>
+<p>The <code>Handler_</code> class is expected to implement the following methods:</p><ul>
+<li><code>initialize()</code>: this should be a thread-safe <code>const</code> method that returns a state object (denoted here as having type <code>State</code>, though the exact name may vary). The idea is to store results in the state object for thread-safe execution. The state object should be default-constructible.</li>
 <li><code>reduce(State&amp; state)</code>: this should merge the results from the <code>state</code> object into the <code>Handler</code> instance. This will be called in a serial section and does not have to be thread-safe.</li>
 </ul>
-<p>The <code>Handler</code> should have a static <code>constexpr</code> variable <code>use_names_</code>, indicating whether or not names should be passed to the <code>process()</code> method.</p>
-<p>If <code>use_names_</code> is <code>false</code>, the <code>Handler</code> class should implement:</p><ul>
+<p>The <code>Handler</code> should have a static <code>constexpr</code> variable <code>use_names</code>, indicating whether or not names should be passed to the <code>process()</code> method.</p>
+<p>If <code>use_names</code> is <code>false</code>, the <code>Handler</code> class should implement:</p><ul>
 <li><code>process(State&amp; state, const std::pair&lt;const char*, const char*&gt;&amp; seq)</code>: this should be a <code>const</code> method that processes the read in <code>seq</code> and stores its results in <code>state</code>. <code>seq</code> will contain pointers to the start and one-past-the-end of the read sequence.</li>
 </ul>
-<p>Otherwise, if <code>use_names_</code> is <code>true</code>, the class should implement:</p><ul>
+<p>Otherwise, if <code>use_names</code> is <code>true</code>, the class should implement:</p><ul>
 <li><code>process(State&amp; state, const std::pair&lt;const char*, const char*&gt;&amp; name, const std::pair&lt;const char*, const char*&gt;&amp; seq)</code>: this should be a <code>const</code> method that processes the read in <code>seq</code> and stores its results in <code>state</code>. <code>name</code> will contain pointers to the start and one-past-the-end of the read name. <code>seq</code> will contain pointers to the start and one-past-the-end of the read sequence. </li>
 </ul>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a495ea93c704c6f4d4bc5dd648d425048" name="a495ea93c704c6f4d4bc5dd648d425048"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a495ea93c704c6f4d4bc5dd648d425048">&#9670;&#160;</a></span>STATUS_AMBIGUOUS</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a> kaori::STATUS_AMBIGUOUS = static_cast&lt;<a class="el" href="#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>&gt;(-2)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Ambiguous match to two or more known barcodes. </p>
+
+</div>
+</div>
+<a id="a6a2576db4a03d287265538d64f4e1af1" name="a6a2576db4a03d287265538d64f4e1af1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a2576db4a03d287265538d64f4e1af1">&#9670;&#160;</a></span>STATUS_UNMATCHED</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a> kaori::STATUS_UNMATCHED = static_cast&lt;<a class="el" href="#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>&gt;(-1)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>No match to a known barcode. </p>
 
 </div>
 </div>
