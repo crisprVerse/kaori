@@ -141,6 +141,7 @@
     <name>utils.hpp</name>
     <path>kaori/</path>
     <filename>utils_8hpp.html</filename>
+    <class kind="class">kaori::CombinationHash</class>
     <namespace>kaori</namespace>
   </compound>
   <compound kind="class">
@@ -251,6 +252,18 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>kaori::CombinationHash</name>
+    <filename>classkaori_1_1CombinationHash.html</filename>
+    <templarg>int num_variable_</templarg>
+    <member kind="function">
+      <type>std::size_t</type>
+      <name>operator()</name>
+      <anchorfile>classkaori_1_1CombinationHash.html</anchorfile>
+      <anchor>af54e460126d347b697d282e0f5540634</anchor>
+      <arglist>(const std::array&lt; BarcodeIndex, num_variable_ &gt; &amp;key) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>kaori::CombinatorialBarcodesPairedEnd</name>
     <filename>classkaori_1_1CombinatorialBarcodesPairedEnd.html</filename>
     <templarg>SeqLength max_size_</templarg>
@@ -262,17 +275,10 @@
       <arglist>(const char *template_seq1, SeqLength template_length1, const BarcodePool &amp;barcode_pool1, const char *template_seq2, SeqLength template_length2, const BarcodePool &amp;barcode_pool2, const Options &amp;options)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
-      <name>sort</name>
-      <anchorfile>classkaori_1_1CombinatorialBarcodesPairedEnd.html</anchorfile>
-      <anchor>a623c1f7e2d86201ad6f39ce03be290a5</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>const std::vector&lt; std::array&lt; BarcodeIndex, 2 &gt; &gt; &amp;</type>
+      <type>const std::unordered_map&lt; std::array&lt; BarcodeIndex, 2 &gt;, Count, CombinationHash&lt; 2 &gt; &gt; &amp;</type>
       <name>get_combinations</name>
       <anchorfile>classkaori_1_1CombinatorialBarcodesPairedEnd.html</anchorfile>
-      <anchor>ae2c879d99909fd5b9b96f5be60c26a18</anchor>
+      <anchor>a01febb2aa59d702b72ed94b9ee49251e</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -318,17 +324,10 @@
       <arglist>(bool t=true)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
-      <name>sort</name>
-      <anchorfile>classkaori_1_1CombinatorialBarcodesSingleEnd.html</anchorfile>
-      <anchor>ab6ce1756f5995a04e028d0fc0124324d</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>const std::vector&lt; std::array&lt; BarcodeIndex, num_variable_ &gt; &gt; &amp;</type>
+      <type>const std::unordered_map&lt; std::array&lt; BarcodeIndex, num_variable_ &gt;, Count, CombinationHash&lt; num_variable_ &gt; &gt; &amp;</type>
       <name>get_combinations</name>
       <anchorfile>classkaori_1_1CombinatorialBarcodesSingleEnd.html</anchorfile>
-      <anchor>a92678e557a1c3d7f491332ebb3d4d684</anchor>
+      <anchor>a9e4d3292e93757ab141329e4d054c4e2</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -378,13 +377,6 @@
       <arglist>(const char *template_seq1, SeqLength template_length1, const BarcodePool &amp;barcode_pool1, const char *template_seq2, SeqLength template_length2, const BarcodePool &amp;barcode_pool2, const typename DualBarcodesPairedEnd&lt; max_size_ &gt;::Options &amp;options)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
-      <name>sort</name>
-      <anchorfile>classkaori_1_1DualBarcodesPairedEndWithDiagnostics.html</anchorfile>
-      <anchor>ae10ad5038fe5e2532710c982ae096c21</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
       <type>const std::vector&lt; Count &gt; &amp;</type>
       <name>get_counts</name>
       <anchorfile>classkaori_1_1DualBarcodesPairedEndWithDiagnostics.html</anchorfile>
@@ -392,10 +384,10 @@
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; std::array&lt; BarcodeIndex, 2 &gt; &gt; &amp;</type>
+      <type>const std::unordered_map&lt; std::array&lt; BarcodeIndex, 2 &gt;, Count, CombinationHash&lt; 2 &gt; &gt; &amp;</type>
       <name>get_combinations</name>
       <anchorfile>classkaori_1_1DualBarcodesPairedEndWithDiagnostics.html</anchorfile>
-      <anchor>aa01a5e164ffea3d182d30a53515f3548</anchor>
+      <anchor>a98ee7e9d27a545f289173be33dd205a9</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -460,13 +452,6 @@
       <arglist>(const char *template_seq, SeqLength template_length, const std::vector&lt; BarcodePool &gt; &amp;barcode_pools, const typename DualBarcodesSingleEnd&lt; max_size_ &gt;::Options &amp;options)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
-      <name>sort</name>
-      <anchorfile>classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html</anchorfile>
-      <anchor>a1b73f2fbc46a5a6d07a7aa964c43d8fb</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
       <type>const std::vector&lt; Count &gt; &amp;</type>
       <name>get_counts</name>
       <anchorfile>classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html</anchorfile>
@@ -474,10 +459,10 @@
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>const std::vector&lt; std::array&lt; BarcodeIndex, num_variable_ &gt; &gt; &amp;</type>
+      <type>const std::unordered_map&lt; std::array&lt; BarcodeIndex, num_variable_ &gt;, Count, CombinationHash&lt; num_variable_ &gt; &gt; &amp;</type>
       <name>get_combinations</name>
       <anchorfile>classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html</anchorfile>
-      <anchor>a30f91c5dbb4063bbc656eb26b13477fa</anchor>
+      <anchor>a63e41b4b3fd27da5925766d7cfe0bbcd</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -1369,6 +1354,7 @@
     <filename>namespacekaori.html</filename>
     <class kind="class">kaori::AnyMismatches</class>
     <class kind="class">kaori::BarcodePool</class>
+    <class kind="class">kaori::CombinationHash</class>
     <class kind="class">kaori::CombinatorialBarcodesPairedEnd</class>
     <class kind="class">kaori::CombinatorialBarcodesSingleEnd</class>
     <class kind="class">kaori::DualBarcodesPairedEnd</class>

@@ -106,10 +106,8 @@ $(function(){ initResizable(false); });
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ab092c11043ef78e84b83358944ad4562" id="r_ab092c11043ef78e84b83358944ad4562"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab092c11043ef78e84b83358944ad4562">CombinatorialBarcodesPairedEnd</a> (const char *template_seq1, <a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> template_length1, const <a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool1, const char *template_seq2, <a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> template_length2, const <a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a> &amp;barcode_pool2, const Options &amp;options)</td></tr>
 <tr class="separator:ab092c11043ef78e84b83358944ad4562"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a623c1f7e2d86201ad6f39ce03be290a5" id="r_a623c1f7e2d86201ad6f39ce03be290a5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a623c1f7e2d86201ad6f39ce03be290a5">sort</a> ()</td></tr>
-<tr class="separator:a623c1f7e2d86201ad6f39ce03be290a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2c879d99909fd5b9b96f5be60c26a18" id="r_ae2c879d99909fd5b9b96f5be60c26a18"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::array&lt; <a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>, 2 &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae2c879d99909fd5b9b96f5be60c26a18">get_combinations</a> () const</td></tr>
-<tr class="separator:ae2c879d99909fd5b9b96f5be60c26a18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01febb2aa59d702b72ed94b9ee49251e" id="r_a01febb2aa59d702b72ed94b9ee49251e"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::array&lt; <a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>, 2 &gt;, <a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a>, <a class="el" href="classkaori_1_1CombinationHash.html">CombinationHash</a>&lt; 2 &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01febb2aa59d702b72ed94b9ee49251e">get_combinations</a> () const</td></tr>
+<tr class="separator:a01febb2aa59d702b72ed94b9ee49251e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3e803d188df68c1c4d5ffecc4ac47db" id="r_ae3e803d188df68c1c4d5ffecc4ac47db"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3e803d188df68c1c4d5ffecc4ac47db">get_total</a> () const</td></tr>
 <tr class="separator:ae3e803d188df68c1c4d5ffecc4ac47db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5a9ad062651bc8cbb3435242582bb7c" id="r_ae5a9ad062651bc8cbb3435242582bb7c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae5a9ad062651bc8cbb3435242582bb7c">get_barcode1_only</a> () const</td></tr>
@@ -253,8 +251,8 @@ template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f1
 
 </div>
 </div>
-<a id="ae2c879d99909fd5b9b96f5be60c26a18" name="ae2c879d99909fd5b9b96f5be60c26a18"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2c879d99909fd5b9b96f5be60c26a18">&#9670;&#160;</a></span>get_combinations()</h2>
+<a id="a01febb2aa59d702b72ed94b9ee49251e" name="a01febb2aa59d702b72ed94b9ee49251e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01febb2aa59d702b72ed94b9ee49251e">&#9670;&#160;</a></span>get_combinations()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -265,7 +263,7 @@ template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f1
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt; std::array&lt; <a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>, 2 &gt; &gt; &amp; <a class="el" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html">kaori::CombinatorialBarcodesPairedEnd</a>&lt; max_size_ &gt;::get_combinations </td>
+          <td class="memname">const std::unordered_map&lt; std::array&lt; <a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>, 2 &gt;, <a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a>, <a class="el" href="classkaori_1_1CombinationHash.html">CombinationHash</a>&lt; 2 &gt; &gt; &amp; <a class="el" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html">kaori::CombinatorialBarcodesPairedEnd</a>&lt; max_size_ &gt;::get_combinations </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -277,7 +275,7 @@ template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f1
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>All combinations encountered by the handler. In each array, the first and second element contains the indices of known barcodes in the first and second pools, respectively. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Combinations encountered by the handler, along with their frequencies. In each array, the first and second element contains the indices of known barcodes in the first and second pools, respectively. </dd></dl>
 
 </div>
 </div>
@@ -306,34 +304,6 @@ template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f1
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Total number of read pairs processed by the handler. </dd></dl>
-
-</div>
-</div>
-<a id="a623c1f7e2d86201ad6f39ce03be290a5" name="a623c1f7e2d86201ad6f39ce03be290a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a623c1f7e2d86201ad6f39ce03be290a5">&#9670;&#160;</a></span>sort()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> max_size_&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classkaori_1_1CombinatorialBarcodesPairedEnd.html">kaori::CombinatorialBarcodesPairedEnd</a>&lt; max_size_ &gt;::sort </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Sort the combinations for easier frequency counting. Combinations are sorted by the first index, and then the second index. </p>
 
 </div>
 </div>
