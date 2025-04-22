@@ -81,11 +81,22 @@ class ThreadPool {
 public:
     template<typename RunJob_>
     ThreadPool(RunJob_ run_job, int num_threads) : my_helpers(num_threads) {
+        std::mutex init_mut;
+        std::condition_variable init_cv;
+        int num_initialized = 0;
+
         my_threads.reserve(num_threads);
         for (int t = 0; t < num_threads; ++t) {
             // Copy lambda as it will be gone once this constructor finishes.
-            my_threads.emplace_back([run_job,this](int thread) -> void { 
-                auto& env = my_helpers[thread];
+            my_threads.emplace_back([run_job,this,&init_mut,&init_cv,&num_initialized](int thread) -> void { 
+                Helper env; // allocating this locally within each thread to reduce the risk of false sharing.
+                my_helpers[thread] = &env;
+                {
+                    std::lock_guard lck(init_mut);
+                    ++num_initialized;
+                    init_cv.notify_one();
+                }
+
                 while (1) {
                     std::unique_lock lck(env.mut);
                     env.cv.wait(lck, [&]() -> bool { return env.input_ready; });
@@ -109,10 +120,17 @@ public:
                 }
             }, t);
         }
+
+        // Only returning once all threads (and their specific mutexes) are initialized.
+        {
+            std::unique_lock ilck(init_mut);
+            init_cv.wait(ilck, [&]() -> bool { return num_initialized == num_threads; });
+        }
     }
 
     ~ThreadPool() {
-        for (auto& env : my_helpers) {
+        for (auto envptr : my_helpers) {
+            auto& env = *envptr;
             {
                 std::lock_guard lck(env.mut);
                 env.terminated = true;
@@ -137,7 +155,7 @@ private:
         bool terminated = false;
         Workspace_ work;
     };
-    std::vector<Helper> my_helpers;
+    std::vector<Helper*> my_helpers;
 
     std::mutex my_error_mut;
     std::exception_ptr my_error;
@@ -152,7 +170,7 @@ public:
         // We submit jobs by cycling through all threads, then we merge their results in order of submission.
         // This is a less efficient worksharing scheme but it guarantees the same order of merges.
         while (1) {
-            auto& env = my_helpers[thread];
+            auto& env = (*my_helpers[thread]);
             std::unique_lock lck(env.mut);
             env.cv.wait(lck, [&]() -> bool { return env.available; });
 
