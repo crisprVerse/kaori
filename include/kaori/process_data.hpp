@@ -10,7 +10,7 @@
 
 #include "FastqReader.hpp"
 
-#include "byteme/Reader.hpp"
+#include "byteme/byteme.hpp"
 
 /**
  * @file process_data.hpp
@@ -229,7 +229,14 @@ struct ProcessSingleEndDataOptions {
     int num_threads = 1;
 
     /**
+     * Size of the buffer for storing bytes from a FASTQ file prior to parsing.
+     * Larger values improve speed at the cost of increased memory usage.
+     */
+    std::size_t buffer_size = 65535;
+
+    /**
      * Number of reads to be processed in each thread.
+     * Smaller values improve work-sharing granularity but increase multi-threading overhead. 
      */
     std::size_t block_size = 65535; // use the smallest maximum value for a size_t.
 };
@@ -274,7 +281,7 @@ void process_single_end_data(Pointer_ input, Handler_& handler, const ProcessSin
         decltype(handler.initialize()) state;
     };
 
-    FastqReader<Pointer_> fastq(input);
+    FastqReader<Pointer_> fastq(input, options.buffer_size);
     const Handler_& conhandler = handler; // Safety measure to enforce const-ness within each thread.
 
     ThreadPool<SingleEndWorkspace> tp(
@@ -329,7 +336,14 @@ struct ProcessPairedEndDataOptions {
     int num_threads = 1;
 
     /**
+     * Size of the buffer for storing bytes from a FASTQ file prior to parsing.
+     * Larger values improve speed at the cost of increased memory usage.
+     */
+    std::size_t buffer_size = 65535;
+
+    /**
      * Number of reads to process in each thread.
+     * Smaller values improve work-sharing granularity but increase multi-threading overhead. 
      */
     std::size_t block_size = 100000;
 };
@@ -378,8 +392,8 @@ void process_paired_end_data(Pointer_ input1, Pointer_ input2, Handler_& handler
         decltype(handler.initialize()) state;
     };
 
-    FastqReader<Pointer_> fastq1(input1);
-    FastqReader<Pointer_> fastq2(input2);
+    FastqReader<Pointer_> fastq1(input1, options.buffer_size);
+    FastqReader<Pointer_> fastq2(input2, options.buffer_size);
     const Handler_& conhandler = handler; // Safety measure to enforce const-ness within each thread.
 
     ThreadPool<PairedEndWorkspace> tp(

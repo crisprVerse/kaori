@@ -21,7 +21,7 @@ option(KAORI_FETCH_EXTERN "Automatically fetch kaori's external dependencies." O
 if(KAORI_FETCH_EXTERN)
     add_subdirectory(extern)
 else()
-    find_package(ltla_byteme 1.0.0 CONFIG REQUIRED)
+    find_package(ltla_byteme 2.1.1 CONFIG REQUIRED)
 endif()
 
 target_link_libraries(kaori INTERFACE ltla::byteme)

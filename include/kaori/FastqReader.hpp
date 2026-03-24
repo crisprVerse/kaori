@@ -5,7 +5,7 @@
 #include <vector>
 #include <stdexcept>
 
-#include "byteme/PerByte.hpp"
+#include "byteme/byteme.hpp"
 
 #include "utils.hpp"
 
@@ -32,9 +32,16 @@ template<typename Pointer_>
 class FastqReader {
 public:
     /**
-     * @param p Pointer to a text stream.
+     * @param p Pointer to a text stream containing a FASTQ file.
+     * @param buffer_size Size of the buffer size for parsing the FASTQ file.
+     * Larger values improve speed at the cost of increased memory usage.
      */
-    FastqReader(Pointer_ p) : my_pb(p) {
+    FastqReader(
+        Pointer_ p,
+        std::size_t buffer_size = 65536 /* default for back-compatibility */
+    ) :
+        my_pb(p, buffer_size)
+    {
         my_sequence.reserve(200);
         my_name.reserve(200);
         my_okay = my_pb.valid();
@@ -124,7 +131,7 @@ public:
     }
 
 private:
-    byteme::PerByteSerial<char, Pointer_> my_pb;
+    byteme::SerialBufferedReader<char, Pointer_> my_pb;
 
     char advance_and_check() {
         if (!my_pb.advance()) {
