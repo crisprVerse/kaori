@@ -481,8 +481,8 @@
       <type></type>
       <name>FastqReader</name>
       <anchorfile>classkaori_1_1FastqReader.html</anchorfile>
-      <anchor>af1664436ac9ac92628b34d67a294bc64</anchor>
-      <arglist>(Pointer_ p)</arglist>
+      <anchor>a7680c633049b02f901ee4a4966c5ec21</anchor>
+      <arglist>(Pointer_ p, std::size_t buffer_size=65536)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -806,6 +806,13 @@
     </member>
     <member kind="variable">
       <type>std::size_t</type>
+      <name>buffer_size</name>
+      <anchorfile>structkaori_1_1ProcessPairedEndDataOptions.html</anchorfile>
+      <anchor>a654101521a2b5e3f4bc9d042931ccb39</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>std::size_t</type>
       <name>block_size</name>
       <anchorfile>structkaori_1_1ProcessPairedEndDataOptions.html</anchorfile>
       <anchor>ab04645ef444cd2352a75074df4d98799</anchor>
@@ -820,6 +827,13 @@
       <name>num_threads</name>
       <anchorfile>structkaori_1_1ProcessSingleEndDataOptions.html</anchorfile>
       <anchor>abd4b6292cf92711a882189ce85515af0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>std::size_t</type>
+      <name>buffer_size</name>
+      <anchorfile>structkaori_1_1ProcessSingleEndDataOptions.html</anchorfile>
+      <anchor>a2201aaa446f596e3fdaa5f9d499efc09</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">

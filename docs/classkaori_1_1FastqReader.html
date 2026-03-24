@@ -104,8 +104,8 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af1664436ac9ac92628b34d67a294bc64" id="r_af1664436ac9ac92628b34d67a294bc64"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af1664436ac9ac92628b34d67a294bc64">FastqReader</a> (Pointer_ p)</td></tr>
-<tr class="separator:af1664436ac9ac92628b34d67a294bc64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7680c633049b02f901ee4a4966c5ec21" id="r_a7680c633049b02f901ee4a4966c5ec21"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7680c633049b02f901ee4a4966c5ec21">FastqReader</a> (Pointer_ p, std::size_t buffer_size=65536)</td></tr>
+<tr class="separator:a7680c633049b02f901ee4a4966c5ec21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa74ca5bef71514f9216bbdd7e770536a" id="r_aa74ca5bef71514f9216bbdd7e770536a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa74ca5bef71514f9216bbdd7e770536a">operator()</a> ()</td></tr>
 <tr class="separator:aa74ca5bef71514f9216bbdd7e770536a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68eb90fa07502e3a3e07a7ad57a5fddd" id="r_a68eb90fa07502e3a3e07a7ad57a5fddd"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; char &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a68eb90fa07502e3a3e07a7ad57a5fddd">get_sequence</a> () const</td></tr>
@@ -124,8 +124,8 @@ class kaori::FastqReader&lt; Pointer_ &gt;</div><p>Stream reads from a FASTQ fil
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="af1664436ac9ac92628b34d67a294bc64" name="af1664436ac9ac92628b34d67a294bc64"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af1664436ac9ac92628b34d67a294bc64">&#9670;&#160;</a></span>FastqReader()</h2>
+<a id="a7680c633049b02f901ee4a4966c5ec21" name="a7680c633049b02f901ee4a4966c5ec21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7680c633049b02f901ee4a4966c5ec21">&#9670;&#160;</a></span>FastqReader()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -138,8 +138,12 @@ template&lt;typename Pointer_ &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classkaori_1_1FastqReader.html">kaori::FastqReader</a>&lt; Pointer_ &gt;::FastqReader </td>
           <td>(</td>
-          <td class="paramtype">Pointer_</td>          <td class="paramname"><span class="paramname"><em>p</em></span></td><td>)</td>
+          <td class="paramtype">Pointer_</td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>buffer_size</em></span><span class="paramdefsep"> = </span><span class="paramdefval">65536</span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -150,7 +154,8 @@ template&lt;typename Pointer_ &gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a text stream. </td></tr>
+    <tr><td class="paramname">p</td><td>Pointer to a text stream containing a FASTQ file. </td></tr>
+    <tr><td class="paramname">buffer_size</td><td>Size of the buffer size for parsing the FASTQ file. Larger values improve speed at the cost of increased memory usage. </td></tr>
   </table>
   </dd>
 </dl>

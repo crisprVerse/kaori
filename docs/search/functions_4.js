@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['extract_0',['extract',['https://ltla.github.io/byteme/classbyteme_1_1PerByteInterface.html#a8c61a374f234ea6051f015133d91a44c',1,'byteme::PerByteInterface']]]
+  ['extract_0',['extract',['https://ltla.github.io/byteme/classbyteme_1_1BufferedReader.html#a1c15c13a980c5f5a99d6a780317c413e',1,'byteme::BufferedReader']]]
 ];

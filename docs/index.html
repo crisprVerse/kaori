@@ -113,13 +113,12 @@ $(function(){ initResizable(false); });
 <div class="line"><a class="code hl_class" href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd&lt;32&gt;</a> handler(tmpl.c_str(), tmpl.size(), pool, opt);</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Process a FASTQ file with 4 threads.</span></div>
-<div class="line"><a class="code hl_classRef" href="https://ltla.github.io/byteme/classbyteme_1_1SomeFileReader.html">byteme::SomeFileReader</a> input(path_to_fastq);</div>
+<div class="line">byteme::SomeFileReader input(path_to_fastq);</div>
 <div class="line">kaori::process_single_end(&amp;input, handler, 4);</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Get the counts after processing.</span></div>
 <div class="line">handler.get_counts();</div>
 <div class="ttc" id="abyteme_8hpp_html"><div class="ttname"><a href="https://ltla.github.io/byteme/byteme_8hpp.html">byteme.hpp</a></div></div>
-<div class="ttc" id="aclassbyteme_1_1SomeFileReader_html"><div class="ttname"><a href="https://ltla.github.io/byteme/classbyteme_1_1SomeFileReader.html">byteme::SomeFileReader</a></div></div>
 <div class="ttc" id="aclasskaori_1_1BarcodePool_html"><div class="ttname"><a href="classkaori_1_1BarcodePool.html">kaori::BarcodePool</a></div><div class="ttdoc">Pool of barcode sequences.</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:24</div></div>
 <div class="ttc" id="aclasskaori_1_1SingleBarcodeSingleEnd_html"><div class="ttname"><a href="classkaori_1_1SingleBarcodeSingleEnd.html">kaori::SingleBarcodeSingleEnd</a></div><div class="ttdoc">Handler for single-end single barcodes.</div><div class="ttdef"><b>Definition</b> SingleBarcodeSingleEnd.hpp:25</div></div>
 <div class="ttc" id="akaori_8hpp_html"><div class="ttname"><a href="kaori_8hpp.html">kaori.hpp</a></div><div class="ttdoc">Umbrella includes for the kaori barcode-matching library.</div></div>

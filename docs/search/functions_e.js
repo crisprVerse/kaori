@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['temp_5ffile_5fpath_0',['temp_file_path',['https://ltla.github.io/byteme/namespacebyteme.html#a06ff6bac0c55a089e31301408937b058',1,'byteme::temp_file_path(const std::string &amp;prefix, const std::string &amp;ext)'],['https://ltla.github.io/byteme/namespacebyteme.html#a94163b5d4600eeacc222e31540453b01',1,'byteme::temp_file_path(const std::string &amp;prefix)']]]
+  ['valid_0',['valid',['https://ltla.github.io/byteme/classbyteme_1_1BufferedReader.html#a14efd33907a2c64607bc1733aa17aecc',1,'byteme::BufferedReader']]],
+  ['variable_5fregions_1',['variable_regions',['../classkaori_1_1ScanTemplate.html#ab01da3a9e27f5d55915fe11841287bda',1,'kaori::ScanTemplate']]]
 ];

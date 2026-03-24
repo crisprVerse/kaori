@@ -106,6 +106,8 @@ $(function(){ initResizable(false); });
 Public Attributes</h2></td></tr>
 <tr class="memitem:accb81042ec5871bfd74d5a4f499772fc" id="r_accb81042ec5871bfd74d5a4f499772fc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#accb81042ec5871bfd74d5a4f499772fc">num_threads</a> = 1</td></tr>
 <tr class="separator:accb81042ec5871bfd74d5a4f499772fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a654101521a2b5e3f4bc9d042931ccb39" id="r_a654101521a2b5e3f4bc9d042931ccb39"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a654101521a2b5e3f4bc9d042931ccb39">buffer_size</a> = 65535</td></tr>
+<tr class="separator:a654101521a2b5e3f4bc9d042931ccb39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab04645ef444cd2352a75074df4d98799" id="r_ab04645ef444cd2352a75074df4d98799"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab04645ef444cd2352a75074df4d98799">block_size</a> = 100000</td></tr>
 <tr class="separator:ab04645ef444cd2352a75074df4d98799"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -123,7 +125,22 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of reads to process in each thread. </p>
+<p>Number of reads to process in each thread. Smaller values improve work-sharing granularity but increase multi-threading overhead. </p>
+
+</div>
+</div>
+<a id="a654101521a2b5e3f4bc9d042931ccb39" name="a654101521a2b5e3f4bc9d042931ccb39"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a654101521a2b5e3f4bc9d042931ccb39">&#9670;&#160;</a></span>buffer_size</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::size_t kaori::ProcessPairedEndDataOptions::buffer_size = 65535</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Size of the buffer for storing bytes from a FASTQ file prior to parsing. Larger values improve speed at the cost of increased memory usage. </p>
 
 </div>
 </div>
