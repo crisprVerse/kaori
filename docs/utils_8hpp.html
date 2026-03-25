@@ -90,13 +90,6 @@ $(function(){ initResizable(false); });
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#typedef-members">Typedefs</a> &#124;
-<a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a> &#124;
-<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">utils.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -105,54 +98,6 @@ $(function(){ initResizable(false); });
 <a href="#details">More...</a></p>
 
 <p><a href="utils_8hpp_source.html">Go to the source code of this file.</a></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkaori_1_1CombinationHash.html">kaori::CombinationHash&lt; num_variable_ &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hash a combination of barcode indices.  <a href="classkaori_1_1CombinationHash.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
-Namespaces</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacekaori.html">kaori</a></td></tr>
-<tr class="memdesc:namespacekaori"><td class="mdescLeft">&#160;</td><td class="mdescRight">Namespace for the <b>kaori</b> barcode-matching library. <br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr class="memitem:a1ba2b438d2db8fd7a30b65fd1f167564" id="r_a1ba2b438d2db8fd7a30b65fd1f167564"><td class="memItemLeft" align="right" valign="top">typedef std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">kaori::SeqLength</a></td></tr>
-<tr class="separator:a1ba2b438d2db8fd7a30b65fd1f167564"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa40d52815d21a0db54d181dc42180413" id="r_aa40d52815d21a0db54d181dc42180413"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; constchar * &gt;::size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">kaori::BarcodeIndex</a></td></tr>
-<tr class="separator:aa40d52815d21a0db54d181dc42180413"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc2ab0b004edf73c5791e1c6e7c4c831" id="r_adc2ab0b004edf73c5791e1c6e7c4c831"><td class="memItemLeft" align="right" valign="top">typedef unsigned long long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">kaori::Count</a></td></tr>
-<tr class="separator:adc2ab0b004edf73c5791e1c6e7c4c831"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
-Enumerations</h2></td></tr>
-<tr class="memitem:a78406bfdb5ba56268c8d8d4296b70665" id="r_a78406bfdb5ba56268c8d8d4296b70665"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacekaori.html#a78406bfdb5ba56268c8d8d4296b70665">kaori::DuplicateAction</a> : char { <b>FIRST</b>
-, <b>LAST</b>
-, <b>NONE</b>
-, <b>ERROR</b>
- }</td></tr>
-<tr class="separator:a78406bfdb5ba56268c8d8d4296b70665"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f9de60d2ca7863a5cf0cdf860cbd598" id="r_a5f9de60d2ca7863a5cf0cdf860cbd598"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacekaori.html#a5f9de60d2ca7863a5cf0cdf860cbd598">kaori::SearchStrand</a> : char { <b>FORWARD</b>
-, <b>REVERSE</b>
-, <b>BOTH</b>
- }</td></tr>
-<tr class="separator:a5f9de60d2ca7863a5cf0cdf860cbd598"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a89045f4a64f7f310c6f64d35ab1ff9d2" id="r_a89045f4a64f7f310c6f64d35ab1ff9d2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacekaori.html#a89045f4a64f7f310c6f64d35ab1ff9d2">kaori::is_barcode_index_ok</a> (<a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a> index)</td></tr>
-<tr class="separator:a89045f4a64f7f310c6f64d35ab1ff9d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:a6a2576db4a03d287265538d64f4e1af1" id="r_a6a2576db4a03d287265538d64f4e1af1"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacekaori.html#a6a2576db4a03d287265538d64f4e1af1">kaori::STATUS_UNMATCHED</a> = static_cast&lt;<a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>&gt;(-1)</td></tr>
-<tr class="separator:a6a2576db4a03d287265538d64f4e1af1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a495ea93c704c6f4d4bc5dd648d425048" id="r_a495ea93c704c6f4d4bc5dd648d425048"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacekaori.html#a495ea93c704c6f4d4bc5dd648d425048">kaori::STATUS_AMBIGUOUS</a> = static_cast&lt;<a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>&gt;(-2)</td></tr>
-<tr class="separator:a495ea93c704c6f4d4bc5dd648d425048"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Utilites for sequence matching. </p>
 </div></div><!-- contents -->

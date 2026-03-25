@@ -109,13 +109,13 @@ $(function(){ initResizable(false); });
 <div class="foldopen" id="foldopen00038" data-start="{" data-end="};">
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="classkaori_1_1ScanTemplate.html">   38</a></span><span class="keyword">class </span><a class="code hl_class" href="classkaori_1_1ScanTemplate.html">ScanTemplate</a> { </div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> N = max_size_ * 4;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> SeqLength N = max_size_ * 4;</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="classkaori_1_1ScanTemplate.html#ab5ecf53aa6a10cd565593e613939d15b">   47</a></span>    <a class="code hl_function" href="classkaori_1_1ScanTemplate.html#ab5ecf53aa6a10cd565593e613939d15b">ScanTemplate</a>() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
 <div class="foldopen" id="foldopen00057" data-start="{" data-end="}">
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="classkaori_1_1ScanTemplate.html#a11b9d0ffb1ad83f2efcf3c080d41a489">   57</a></span>    <a class="code hl_function" href="classkaori_1_1ScanTemplate.html#a11b9d0ffb1ad83f2efcf3c080d41a489">ScanTemplate</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* template_seq, <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> template_length, <a class="code hl_enumeration" href="namespacekaori.html#a5f9de60d2ca7863a5cf0cdf860cbd598">SearchStrand</a> strand) :</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="classkaori_1_1ScanTemplate.html#a11b9d0ffb1ad83f2efcf3c080d41a489">   57</a></span>    <a class="code hl_function" href="classkaori_1_1ScanTemplate.html#a11b9d0ffb1ad83f2efcf3c080d41a489">ScanTemplate</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* template_seq, SeqLength template_length, SearchStrand strand) :</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        my_length(template_length),</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        my_forward(search_forward(strand)),</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        my_reverse(search_reverse(strand))</div>
@@ -125,7 +125,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        }</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        <span class="keywordflow">if</span> (my_forward) {</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> i = 0; i &lt; my_length; ++i) {</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            <span class="keywordflow">for</span> (SeqLength i = 0; i &lt; my_length; ++i) {</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                <span class="keywordtype">char</span> b = template_seq[i];</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                <span class="keywordflow">if</span> (b != <span class="charliteral">&#39;-&#39;</span>) {</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                    add_base_to_hash(my_forward_ref, b);</div>
@@ -139,7 +139,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>            }</div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        } <span class="keywordflow">else</span> {</div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            <span class="comment">// Forward variable regions are always defined.</span></div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>            <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> i = 0; i &lt; my_length; ++i) {</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>            <span class="keywordflow">for</span> (SeqLength i = 0; i &lt; my_length; ++i) {</div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>                <span class="keywordtype">char</span> b = template_seq[i];</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>                <span class="keywordflow">if</span> (b == <span class="charliteral">&#39;-&#39;</span>) {</div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>                    add_variable_base(my_forward_variables, i);</div>
@@ -148,7 +148,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        }</div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        <span class="keywordflow">if</span> (my_reverse) {</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>            <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> i = 0; i &lt; my_length; ++i) {</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>            <span class="keywordflow">for</span> (SeqLength i = 0; i &lt; my_length; ++i) {</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>                <span class="keywordtype">char</span> b = template_seq[my_length - i - 1];</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>                <span class="keywordflow">if</span> (b != <span class="charliteral">&#39;-&#39;</span>) {</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>                    add_base_to_hash(my_reverse_ref, complement_base(b));</div>
@@ -167,7 +167,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="keyword">public</span>:</div>
 <div class="foldopen" id="foldopen00109" data-start="{" data-end="};">
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno"><a class="line" href="structkaori_1_1ScanTemplate_1_1State.html">  109</a></span>    <span class="keyword">struct </span><a class="code hl_struct" href="structkaori_1_1ScanTemplate_1_1State.html">State</a> {</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno"><a class="line" href="structkaori_1_1ScanTemplate_1_1State.html#af05fb1aec3759d0229b42f0b60dfde15">  114</a></span>        <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> <a class="code hl_variable" href="structkaori_1_1ScanTemplate_1_1State.html#af05fb1aec3759d0229b42f0b60dfde15">position</a> = <span class="keyword">static_cast&lt;</span><a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a><span class="keyword">&gt;</span>(-1); <span class="comment">// set to -1 so that the first call to next() overflows to 0.</span></div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno"><a class="line" href="structkaori_1_1ScanTemplate_1_1State.html#af05fb1aec3759d0229b42f0b60dfde15">  114</a></span>        SeqLength <a class="code hl_variable" href="structkaori_1_1ScanTemplate_1_1State.html#af05fb1aec3759d0229b42f0b60dfde15">position</a> = <span class="keyword">static_cast&lt;</span>SeqLength<span class="keyword">&gt;</span>(-1); <span class="comment">// set to -1 so that the first call to next() overflows to 0.</span></div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
 <div class="line"><a id="l00120" name="l00120"></a><span class="lineno"><a class="line" href="structkaori_1_1ScanTemplate_1_1State.html#a0242590a7e0e3b483af08cfd116d362f">  120</a></span>        <span class="keywordtype">int</span> <a class="code hl_variable" href="structkaori_1_1ScanTemplate_1_1State.html#a0242590a7e0e3b483af08cfd116d362f">forward_mismatches</a> = 0;</div>
 <div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
@@ -177,22 +177,22 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span> </div>
 <div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>        std::bitset&lt;N&gt; state;</div>
 <div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>        <span class="keyword">const</span> <span class="keywordtype">char</span> * seq;</div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>        <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> len;</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>        SeqLength len;</div>
 <div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span> </div>
 <div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>        std::bitset&lt;N/4&gt; ambiguous; <span class="comment">// we only need a yes/no for the ambiguous state, so we can use a smaller bitset.</span></div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>        <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> last_ambiguous; <span class="comment">// contains the position of the most recent ambiguous base; should only be read if any_ambiguous = true.</span></div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>        SeqLength last_ambiguous; <span class="comment">// contains the position of the most recent ambiguous base; should only be read if any_ambiguous = true.</span></div>
 <div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>        <span class="keywordtype">bool</span> any_ambiguous = <span class="keyword">false</span>; <span class="comment">// indicates whether ambiguous.count() &gt; 0.</span></div>
 <div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    };</div>
 </div>
 <div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span> </div>
 <div class="foldopen" id="foldopen00159" data-start="{" data-end="}">
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno"><a class="line" href="classkaori_1_1ScanTemplate.html#a192dae5760511e00073b29dcc4ddb0ce">  159</a></span>    <a class="code hl_struct" href="structkaori_1_1ScanTemplate_1_1State.html">State</a> <a class="code hl_function" href="classkaori_1_1ScanTemplate.html#a192dae5760511e00073b29dcc4ddb0ce">initialize</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* read_seq, <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> read_length)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno"><a class="line" href="classkaori_1_1ScanTemplate.html#a192dae5760511e00073b29dcc4ddb0ce">  159</a></span>    <a class="code hl_struct" href="structkaori_1_1ScanTemplate_1_1State.html">State</a> <a class="code hl_function" href="classkaori_1_1ScanTemplate.html#a192dae5760511e00073b29dcc4ddb0ce">initialize</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* read_seq, SeqLength read_length)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>        <a class="code hl_struct" href="structkaori_1_1ScanTemplate_1_1State.html">State</a> out;</div>
 <div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        out.seq = read_seq;</div>
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>        out.len = read_length;</div>
 <div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span> </div>
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        <span class="keywordflow">if</span> (my_length &lt;= read_length) {</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>            <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> i = 0; i &lt; my_length - 1; ++i) {</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>            <span class="keywordflow">for</span> (SeqLength i = 0; i &lt; my_length - 1; ++i) {</div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>                <span class="keywordtype">char</span> base = read_seq[i];</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>                <span class="keywordflow">if</span> (is_standard_base(base)) {</div>
@@ -223,7 +223,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
 <div class="foldopen" id="foldopen00201" data-start="{" data-end="}">
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno"><a class="line" href="classkaori_1_1ScanTemplate.html#a776e42838e204cfe7842ab17b49bcfdc">  201</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classkaori_1_1ScanTemplate.html#a776e42838e204cfe7842ab17b49bcfdc">next</a>(<a class="code hl_struct" href="structkaori_1_1ScanTemplate_1_1State.html">State</a>&amp; state)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> right = state.<a class="code hl_variable" href="structkaori_1_1ScanTemplate_1_1State.html#af05fb1aec3759d0229b42f0b60dfde15">position</a> + my_length;</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        SeqLength right = state.<a class="code hl_variable" href="structkaori_1_1ScanTemplate_1_1State.html#af05fb1aec3759d0229b42f0b60dfde15">position</a> + my_length;</div>
 <div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        <span class="keywordtype">char</span> base = state.seq[right];</div>
 <div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        <span class="keywordflow">if</span> (is_standard_base(base)) {</div>
@@ -264,7 +264,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    std::bitset&lt;N&gt; my_forward_ref, my_forward_mask;</div>
 <div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>    std::bitset&lt;N&gt; my_reverse_ref, my_reverse_mask;</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> my_length;</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    SeqLength my_length;</div>
 <div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>    <span class="keywordtype">bool</span> my_forward, my_reverse;</div>
 <div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span> </div>
 <div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    std::bitset&lt;N/4&gt; my_forward_mask_ambiguous; <span class="comment">// we only need a yes/no for whether a position is an ambiguous base, so we can use a smaller bitset.</span></div>
@@ -331,7 +331,7 @@ $(function(){ initResizable(false); });
 </div>
 <div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span> </div>
 <div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>    <span class="keyword">static</span> <span class="keywordtype">void</span> add_variable_base(std::vector&lt;std::pair&lt;SeqLength, SeqLength&gt; &gt;&amp; variables, <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> i) {</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>    <span class="keyword">static</span> <span class="keywordtype">void</span> add_variable_base(std::vector&lt;std::pair&lt;SeqLength, SeqLength&gt; &gt;&amp; variables, SeqLength i) {</div>
 <div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>        <span class="keywordflow">if</span> (!variables.empty()) {</div>
 <div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>            <span class="keyword">auto</span>&amp; last = variables.back().second;</div>
 <div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>            <span class="keywordflow">if</span> (last == i) {</div>
@@ -357,8 +357,6 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclasskaori_1_1ScanTemplate_html_ab5ecf53aa6a10cd565593e613939d15b"><div class="ttname"><a href="classkaori_1_1ScanTemplate.html#ab5ecf53aa6a10cd565593e613939d15b">kaori::ScanTemplate::ScanTemplate</a></div><div class="ttdeci">ScanTemplate()=default</div></div>
 <div class="ttc" id="aclasskaori_1_1ScanTemplate_html_aed197079fb2fd66cbed3c200e17ebf93"><div class="ttname"><a href="classkaori_1_1ScanTemplate.html#aed197079fb2fd66cbed3c200e17ebf93">kaori::ScanTemplate::reverse_variable_regions</a></div><div class="ttdeci">const std::vector&lt; std::pair&lt; SeqLength, SeqLength &gt; &gt; &amp; reverse_variable_regions() const</div><div class="ttdef"><b>Definition</b> ScanTemplate.hpp:300</div></div>
 <div class="ttc" id="anamespacekaori_html"><div class="ttname"><a href="namespacekaori.html">kaori</a></div><div class="ttdoc">Namespace for the kaori barcode-matching library.</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:16</div></div>
-<div class="ttc" id="anamespacekaori_html_a1ba2b438d2db8fd7a30b65fd1f167564"><div class="ttname"><a href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">kaori::SeqLength</a></div><div class="ttdeci">std::size_t SeqLength</div><div class="ttdef"><b>Definition</b> utils.hpp:37</div></div>
-<div class="ttc" id="anamespacekaori_html_a5f9de60d2ca7863a5cf0cdf860cbd598"><div class="ttname"><a href="namespacekaori.html#a5f9de60d2ca7863a5cf0cdf860cbd598">kaori::SearchStrand</a></div><div class="ttdeci">SearchStrand</div><div class="ttdef"><b>Definition</b> utils.hpp:31</div></div>
 <div class="ttc" id="astructkaori_1_1ScanTemplate_1_1State_html"><div class="ttname"><a href="structkaori_1_1ScanTemplate_1_1State.html">kaori::ScanTemplate::State</a></div><div class="ttdoc">Details on the current match to the read sequence.</div><div class="ttdef"><b>Definition</b> ScanTemplate.hpp:109</div></div>
 <div class="ttc" id="astructkaori_1_1ScanTemplate_1_1State_html_a0242590a7e0e3b483af08cfd116d362f"><div class="ttname"><a href="structkaori_1_1ScanTemplate_1_1State.html#a0242590a7e0e3b483af08cfd116d362f">kaori::ScanTemplate::State::forward_mismatches</a></div><div class="ttdeci">int forward_mismatches</div><div class="ttdef"><b>Definition</b> ScanTemplate.hpp:120</div></div>
 <div class="ttc" id="astructkaori_1_1ScanTemplate_1_1State_html_a8311607f3c8d2cebcd4b2803a6204da4"><div class="ttname"><a href="structkaori_1_1ScanTemplate_1_1State.html#a8311607f3c8d2cebcd4b2803a6204da4">kaori::ScanTemplate::State::reverse_mismatches</a></div><div class="ttdeci">int reverse_mismatches</div><div class="ttdef"><b>Definition</b> ScanTemplate.hpp:126</div></div>

@@ -141,8 +141,6 @@
     <name>utils.hpp</name>
     <path>kaori/</path>
     <filename>utils_8hpp.html</filename>
-    <class kind="class">kaori::CombinationHash</class>
-    <namespace>kaori</namespace>
   </compound>
   <compound kind="class">
     <name>kaori::AnyMismatches</name>
@@ -249,18 +247,6 @@
       <anchorfile>classkaori_1_1BarcodePool.html</anchorfile>
       <anchor>a1792cf18b95ecff48bb3ea5ac4aa6fdb</anchor>
       <arglist>(BarcodeIndex i) const</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>kaori::CombinationHash</name>
-    <filename>classkaori_1_1CombinationHash.html</filename>
-    <templarg>int num_variable_</templarg>
-    <member kind="function">
-      <type>std::size_t</type>
-      <name>operator()</name>
-      <anchorfile>classkaori_1_1CombinationHash.html</anchorfile>
-      <anchor>af54e460126d347b697d282e0f5540634</anchor>
-      <arglist>(const std::array&lt; BarcodeIndex, num_variable_ &gt; &amp;key) const</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -1368,7 +1354,6 @@
     <filename>namespacekaori.html</filename>
     <class kind="class">kaori::AnyMismatches</class>
     <class kind="class">kaori::BarcodePool</class>
-    <class kind="class">kaori::CombinationHash</class>
     <class kind="class">kaori::CombinatorialBarcodesPairedEnd</class>
     <class kind="class">kaori::CombinatorialBarcodesSingleEnd</class>
     <class kind="class">kaori::DualBarcodesPairedEnd</class>
@@ -1387,48 +1372,6 @@
     <class kind="class">kaori::SingleBarcodePairedEnd</class>
     <class kind="class">kaori::SingleBarcodeSingleEnd</class>
     <class kind="struct">kaori::TrieAddStatus</class>
-    <member kind="typedef">
-      <type>std::size_t</type>
-      <name>SeqLength</name>
-      <anchorfile>namespacekaori.html</anchorfile>
-      <anchor>a1ba2b438d2db8fd7a30b65fd1f167564</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>std::vector&lt; constchar * &gt;::size_type</type>
-      <name>BarcodeIndex</name>
-      <anchorfile>namespacekaori.html</anchorfile>
-      <anchor>aa40d52815d21a0db54d181dc42180413</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>unsigned long long</type>
-      <name>Count</name>
-      <anchorfile>namespacekaori.html</anchorfile>
-      <anchor>adc2ab0b004edf73c5791e1c6e7c4c831</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <type></type>
-      <name>DuplicateAction</name>
-      <anchorfile>namespacekaori.html</anchorfile>
-      <anchor>a78406bfdb5ba56268c8d8d4296b70665</anchor>
-      <arglist></arglist>
-      <enumvalue file="namespacekaori.html" anchor="a78406bfdb5ba56268c8d8d4296b70665a2c2624a5059934a947d6e25fe8332ade">FIRST</enumvalue>
-      <enumvalue file="namespacekaori.html" anchor="a78406bfdb5ba56268c8d8d4296b70665af447f5c03508de4d88e340390ba7c78f">LAST</enumvalue>
-      <enumvalue file="namespacekaori.html" anchor="a78406bfdb5ba56268c8d8d4296b70665ab50339a10e1de285ac99d4c3990b8693">NONE</enumvalue>
-      <enumvalue file="namespacekaori.html" anchor="a78406bfdb5ba56268c8d8d4296b70665abb1ca97ec761fc37101737ba0aa2e7c5">ERROR</enumvalue>
-    </member>
-    <member kind="enumeration">
-      <type></type>
-      <name>SearchStrand</name>
-      <anchorfile>namespacekaori.html</anchorfile>
-      <anchor>a5f9de60d2ca7863a5cf0cdf860cbd598</anchor>
-      <arglist></arglist>
-      <enumvalue file="namespacekaori.html" anchor="a5f9de60d2ca7863a5cf0cdf860cbd598abfec72bb37910c61f36b6c29a1f7ec31">FORWARD</enumvalue>
-      <enumvalue file="namespacekaori.html" anchor="a5f9de60d2ca7863a5cf0cdf860cbd598a642e0b6684e6165e142c074f1cd8d55c">REVERSE</enumvalue>
-      <enumvalue file="namespacekaori.html" anchor="a5f9de60d2ca7863a5cf0cdf860cbd598a6328e5e3186c227a021ef2ff77e40197">BOTH</enumvalue>
-    </member>
     <member kind="function">
       <type>void</type>
       <name>process_single_end_data</name>
@@ -1444,27 +1387,6 @@
       <anchor>a8ec757759c7fadc20545ba3e1d62e0b2</anchor>
       <arglist>(Pointer_ input1, Pointer_ input2, Handler_ &amp;handler, const ProcessPairedEndDataOptions &amp;options)</arglist>
       <docanchor file="namespacekaori.html" title="Paired-end handler requirements">paired-handler-req</docanchor>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>is_barcode_index_ok</name>
-      <anchorfile>namespacekaori.html</anchorfile>
-      <anchor>a89045f4a64f7f310c6f64d35ab1ff9d2</anchor>
-      <arglist>(BarcodeIndex index)</arglist>
-    </member>
-    <member kind="variable">
-      <type>constexpr BarcodeIndex</type>
-      <name>STATUS_UNMATCHED</name>
-      <anchorfile>namespacekaori.html</anchorfile>
-      <anchor>a6a2576db4a03d287265538d64f4e1af1</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>constexpr BarcodeIndex</type>
-      <name>STATUS_AMBIGUOUS</name>
-      <anchorfile>namespacekaori.html</anchorfile>
-      <anchor>a495ea93c704c6f4d4bc5dd648d425048</anchor>
-      <arglist></arglist>
     </member>
   </compound>
   <compound kind="page">

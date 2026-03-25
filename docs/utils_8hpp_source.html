@@ -105,31 +105,29 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacekaori.html">kaori</a> {</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="namespacekaori.html#a78406bfdb5ba56268c8d8d4296b70665">   26</a></span><span class="keyword">enum class</span> <a class="code hl_enumeration" href="namespacekaori.html#a78406bfdb5ba56268c8d8d4296b70665">DuplicateAction</a> : <span class="keywordtype">char</span> { FIRST, LAST, NONE, ERROR };</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">enum class</span> DuplicateAction : <span class="keywordtype">char</span> { FIRST, LAST, NONE, ERROR };</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="namespacekaori.html#a5f9de60d2ca7863a5cf0cdf860cbd598">   31</a></span><span class="keyword">enum class</span> <a class="code hl_enumeration" href="namespacekaori.html#a5f9de60d2ca7863a5cf0cdf860cbd598">SearchStrand</a> : <span class="keywordtype">char</span> { FORWARD, REVERSE, BOTH };</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">enum class</span> SearchStrand : <span class="keywordtype">char</span> { FORWARD, REVERSE, BOTH };</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">   37</a></span><span class="keyword">typedef</span> std::size_t <a class="code hl_typedef" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a>;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">typedef</span> std::size_t SeqLength;</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">   43</a></span><span class="keyword">typedef</span> <span class="keyword">typename</span> std::vector&lt;const char*&gt;::size_type <a class="code hl_typedef" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>; <span class="comment">// we use the size_type from the BarcodePool&#39;s internal vector of barcodes.</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="keyword">typedef</span> <span class="keyword">typename</span> std::vector&lt;const char*&gt;::size_type BarcodeIndex; <span class="comment">// we use the size_type from the BarcodePool&#39;s internal vector of barcodes.</span></div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="namespacekaori.html#a6a2576db4a03d287265538d64f4e1af1">   48</a></span><span class="keyword">inline</span> <span class="keyword">constexpr</span> <a class="code hl_typedef" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a> <a class="code hl_variable" href="namespacekaori.html#a6a2576db4a03d287265538d64f4e1af1">STATUS_UNMATCHED</a> = <span class="keyword">static_cast&lt;</span><a class="code hl_typedef" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a><span class="keyword">&gt;</span>(-1);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> BarcodeIndex STATUS_UNMATCHED = <span class="keyword">static_cast&lt;</span>BarcodeIndex<span class="keyword">&gt;</span>(-1);</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="namespacekaori.html#a495ea93c704c6f4d4bc5dd648d425048">   53</a></span><span class="keyword">inline</span> <span class="keyword">constexpr</span> <a class="code hl_typedef" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a> <a class="code hl_variable" href="namespacekaori.html#a495ea93c704c6f4d4bc5dd648d425048">STATUS_AMBIGUOUS</a> = <span class="keyword">static_cast&lt;</span><a class="code hl_typedef" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a><span class="keyword">&gt;</span>(-2);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> BarcodeIndex STATUS_AMBIGUOUS = <span class="keyword">static_cast&lt;</span>BarcodeIndex<span class="keyword">&gt;</span>(-2);</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="foldopen" id="foldopen00060" data-start="{" data-end="}">
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="namespacekaori.html#a89045f4a64f7f310c6f64d35ab1ff9d2">   60</a></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="namespacekaori.html#a89045f4a64f7f310c6f64d35ab1ff9d2">is_barcode_index_ok</a>(<a class="code hl_typedef" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a> index) {</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordflow">return</span> index &lt; <a class="code hl_variable" href="namespacekaori.html#a495ea93c704c6f4d4bc5dd648d425048">STATUS_AMBIGUOUS</a>;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> is_barcode_index_ok(BarcodeIndex index) {</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordflow">return</span> index &lt; STATUS_AMBIGUOUS;</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>}</div>
-</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">   67</a></span><span class="keyword">typedef</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> <a class="code hl_typedef" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a>;</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="keyword">typedef</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> Count;</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> search_forward(<a class="code hl_enumeration" href="namespacekaori.html#a5f9de60d2ca7863a5cf0cdf860cbd598">SearchStrand</a> x) {</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> search_forward(SearchStrand x) {</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="keywordflow">return</span> x == SearchStrand::FORWARD || x == SearchStrand::BOTH;</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>}</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> search_reverse(<a class="code hl_enumeration" href="namespacekaori.html#a5f9de60d2ca7863a5cf0cdf860cbd598">SearchStrand</a> x) {</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> search_reverse(SearchStrand x) {</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keywordflow">return</span> x == SearchStrand::REVERSE || x == SearchStrand::BOTH;</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>}</div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
@@ -267,70 +265,36 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span> </div>
 <div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">int</span> NUM_BASES = 4;</div>
 <div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span> </div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span><span class="comment">// Adapted from https://stackoverflow.com/questions/2590677/how-do-i-combine-hash-values-in-c0x/78509978#78509978, which was in turn derived from Boost.ContainerHash:</span></div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span><span class="comment">// https://github.com/boostorg/container_hash/blob/ee5285bfa64843a11e29700298c83a37e3132fcd/include/boost/container_hash/hash.hpp#L471</span></div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span><span class="keyword">inline</span> std::size_t hash_combine(std::size_t seed, std::size_t other) {</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">auto</span> digits = std::numeric_limits&lt;std::size_t&gt;::digits;</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span> </div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(digits == 64) {</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>        <span class="comment">// https://github.com/boostorg/container_hash/blob/ee5285bfa64843a11e29700298c83a37e3132fcd/include/boost/container_hash/detail/hash_mix.hpp#L67</span></div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>        <span class="keywordtype">size_t</span> x = seed + 0x9e3779b9 + other;</div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>        <span class="keyword">const</span> std::size_t m = 0xe9846af9b1a615d;</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>        x ^= x &gt;&gt; 32;</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>        x *= m;</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>        x ^= x &gt;&gt; 32;</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>        x *= m;</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>        x ^= x &gt;&gt; 28;</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>        <span class="keywordflow">return</span> x;</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span> </div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(digits == 32) {</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>        <span class="comment">// https://github.com/boostorg/container_hash/blob/ee5285bfa64843a11e29700298c83a37e3132fcd/include/boost/container_hash/detail/hash_mix.hpp#L88</span></div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>        std::size_t x = seed + 0x9e3779b9 + other;</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>        <span class="keyword">const</span> std::size_t m1 = 0x21f0aaad;</div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>        <span class="keyword">const</span> std::size_t m2 = 0x735a2d97;</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>        x ^= x &gt;&gt; 16;</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        x *= m1;</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>        x ^= x &gt;&gt; 15;</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>        x *= m2;</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>        x ^= x &gt;&gt; 15;</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>        <span class="keywordflow">return</span> x;</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span> </div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>        <span class="comment">// Uses Boost&#39;s old hash_combine function (pre-1.81).</span></div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>        <span class="comment">// Whatever, just get it to compile on weird machines until a better solution comes up.</span></div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>        <span class="keywordflow">return</span> seed ^ (0x9e3779b9 + other + (seed &lt;&lt; 6) + (seed &gt;&gt; 2));</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>    }</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>}</div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span><span class="keyword">template</span>&lt;<span class="keywordtype">int</span> num_variable_&gt;</div>
-<div class="foldopen" id="foldopen00286" data-start="{" data-end="};">
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno"><a class="line" href="classkaori_1_1CombinationHash.html">  286</a></span><span class="keyword">class </span><a class="code hl_class" href="classkaori_1_1CombinationHash.html">CombinationHash</a> {</div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span><span class="keyword">public</span>:</div>
-<div class="foldopen" id="foldopen00292" data-start="{" data-end="}">
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno"><a class="line" href="classkaori_1_1CombinationHash.html#af54e460126d347b697d282e0f5540634">  292</a></span>    std::size_t <a class="code hl_function" href="classkaori_1_1CombinationHash.html#af54e460126d347b697d282e0f5540634">operator()</a>(<span class="keyword">const</span> std::array&lt;BarcodeIndex, num_variable_&gt;&amp; key)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>        std::size_t seed = 0;</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> v = 0; v &lt; num_variable_; ++v) {</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>            seed = hash_combine(seed, key[v]); <span class="comment">// don&#39;t bother pretending that std::hash&lt;int&gt; might be something other than the identity function.</span></div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>        }</div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        <span class="keywordflow">return</span> seed;</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>    }</div>
-</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>};</div>
-</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span> </div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>}</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span> </div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclasskaori_1_1CombinationHash_html"><div class="ttname"><a href="classkaori_1_1CombinationHash.html">kaori::CombinationHash</a></div><div class="ttdoc">Hash a combination of barcode indices.</div><div class="ttdef"><b>Definition</b> utils.hpp:286</div></div>
-<div class="ttc" id="aclasskaori_1_1CombinationHash_html_af54e460126d347b697d282e0f5540634"><div class="ttname"><a href="classkaori_1_1CombinationHash.html#af54e460126d347b697d282e0f5540634">kaori::CombinationHash::operator()</a></div><div class="ttdeci">std::size_t operator()(const std::array&lt; BarcodeIndex, num_variable_ &gt; &amp;key) const</div><div class="ttdef"><b>Definition</b> utils.hpp:292</div></div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span><span class="keyword">template</span>&lt;<span class="keywordtype">int</span> num_variable_&gt;</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span><span class="keyword">class </span>CombinationHash {</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>    std::size_t operator()(<span class="keyword">const</span> std::array&lt;BarcodeIndex, num_variable_&gt;&amp; key)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> seed = 0; </div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span> </div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> v = 0; v &lt; num_variable_; ++v) {</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>            seed = [&amp;](){</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>                <span class="comment">// Adapted from https://stackoverflow.com/questions/2590677/how-do-i-combine-hash-values-in-c0x/78509978#78509978, which was in turn derived from Boost.ContainerHash:</span></div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>                <span class="comment">// https://github.com/boostorg/container_hash/blob/ee5285bfa64843a11e29700298c83a37e3132fcd/include/boost/container_hash/detail/hash_mix.hpp#L67</span></div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>                <span class="comment">// We hard-code it to use the 64-bit implementation for simplicity, given that a ULL is guaranteed to have at least 64 bits.</span></div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>                <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> x = seed + 0x9e3779b9 + other;</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>                <span class="keyword">constexpr</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> m = 0xe9846af9b1a615d;</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>                x ^= x &gt;&gt; 32;</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>                x *= m;</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>                x ^= x &gt;&gt; 32;</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>                x *= m;</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>                x ^= x &gt;&gt; 28;</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>                <span class="keywordflow">return</span> x;</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>            }();</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>        }</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span> </div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>        <span class="keywordflow">return</span> seed;</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    }</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>};</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span> </div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>}</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span> </div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacekaori_html"><div class="ttname"><a href="namespacekaori.html">kaori</a></div><div class="ttdoc">Namespace for the kaori barcode-matching library.</div><div class="ttdef"><b>Definition</b> BarcodePool.hpp:16</div></div>
-<div class="ttc" id="anamespacekaori_html_a1ba2b438d2db8fd7a30b65fd1f167564"><div class="ttname"><a href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">kaori::SeqLength</a></div><div class="ttdeci">std::size_t SeqLength</div><div class="ttdef"><b>Definition</b> utils.hpp:37</div></div>
-<div class="ttc" id="anamespacekaori_html_a495ea93c704c6f4d4bc5dd648d425048"><div class="ttname"><a href="namespacekaori.html#a495ea93c704c6f4d4bc5dd648d425048">kaori::STATUS_AMBIGUOUS</a></div><div class="ttdeci">constexpr BarcodeIndex STATUS_AMBIGUOUS</div><div class="ttdef"><b>Definition</b> utils.hpp:53</div></div>
-<div class="ttc" id="anamespacekaori_html_a5f9de60d2ca7863a5cf0cdf860cbd598"><div class="ttname"><a href="namespacekaori.html#a5f9de60d2ca7863a5cf0cdf860cbd598">kaori::SearchStrand</a></div><div class="ttdeci">SearchStrand</div><div class="ttdef"><b>Definition</b> utils.hpp:31</div></div>
-<div class="ttc" id="anamespacekaori_html_a6a2576db4a03d287265538d64f4e1af1"><div class="ttname"><a href="namespacekaori.html#a6a2576db4a03d287265538d64f4e1af1">kaori::STATUS_UNMATCHED</a></div><div class="ttdeci">constexpr BarcodeIndex STATUS_UNMATCHED</div><div class="ttdef"><b>Definition</b> utils.hpp:48</div></div>
-<div class="ttc" id="anamespacekaori_html_a78406bfdb5ba56268c8d8d4296b70665"><div class="ttname"><a href="namespacekaori.html#a78406bfdb5ba56268c8d8d4296b70665">kaori::DuplicateAction</a></div><div class="ttdeci">DuplicateAction</div><div class="ttdef"><b>Definition</b> utils.hpp:26</div></div>
-<div class="ttc" id="anamespacekaori_html_a89045f4a64f7f310c6f64d35ab1ff9d2"><div class="ttname"><a href="namespacekaori.html#a89045f4a64f7f310c6f64d35ab1ff9d2">kaori::is_barcode_index_ok</a></div><div class="ttdeci">bool is_barcode_index_ok(BarcodeIndex index)</div><div class="ttdef"><b>Definition</b> utils.hpp:60</div></div>
-<div class="ttc" id="anamespacekaori_html_aa40d52815d21a0db54d181dc42180413"><div class="ttname"><a href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">kaori::BarcodeIndex</a></div><div class="ttdeci">std::vector&lt; constchar * &gt;::size_type BarcodeIndex</div><div class="ttdef"><b>Definition</b> utils.hpp:43</div></div>
-<div class="ttc" id="anamespacekaori_html_adc2ab0b004edf73c5791e1c6e7c4c831"><div class="ttname"><a href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">kaori::Count</a></div><div class="ttdeci">unsigned long long Count</div><div class="ttdef"><b>Definition</b> utils.hpp:67</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

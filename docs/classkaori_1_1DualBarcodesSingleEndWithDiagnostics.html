@@ -104,17 +104,17 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1e6b69b51221a7d602c3d3fd078be3fd" id="r_a1e6b69b51221a7d602c3d3fd078be3fd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e6b69b51221a7d602c3d3fd078be3fd">DualBarcodesSingleEndWithDiagnostics</a> (const char *template_seq, <a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> template_length, const std::vector&lt; <a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a> &gt; &amp;barcode_pools, const typename <a class="el" href="classkaori_1_1DualBarcodesSingleEnd.html">DualBarcodesSingleEnd</a>&lt; max_size_ &gt;::Options &amp;options)</td></tr>
+<tr class="memitem:a1e6b69b51221a7d602c3d3fd078be3fd" id="r_a1e6b69b51221a7d602c3d3fd078be3fd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e6b69b51221a7d602c3d3fd078be3fd">DualBarcodesSingleEndWithDiagnostics</a> (const char *template_seq, SeqLength template_length, const std::vector&lt; <a class="el" href="classkaori_1_1BarcodePool.html">BarcodePool</a> &gt; &amp;barcode_pools, const typename <a class="el" href="classkaori_1_1DualBarcodesSingleEnd.html">DualBarcodesSingleEnd</a>&lt; max_size_ &gt;::Options &amp;options)</td></tr>
 <tr class="separator:a1e6b69b51221a7d602c3d3fd078be3fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b964065dfec4819c29e315925f56caf" id="r_a8b964065dfec4819c29e315925f56caf"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8b964065dfec4819c29e315925f56caf">get_counts</a> () const</td></tr>
+<tr class="memitem:a8b964065dfec4819c29e315925f56caf" id="r_a8b964065dfec4819c29e315925f56caf"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; Count &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8b964065dfec4819c29e315925f56caf">get_counts</a> () const</td></tr>
 <tr class="separator:a8b964065dfec4819c29e315925f56caf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63e41b4b3fd27da5925766d7cfe0bbcd" id="r_a63e41b4b3fd27da5925766d7cfe0bbcd"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::array&lt; <a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>, num_variable_ &gt;, <a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a>, <a class="el" href="classkaori_1_1CombinationHash.html">CombinationHash</a>&lt; num_variable_ &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63e41b4b3fd27da5925766d7cfe0bbcd">get_combinations</a> () const</td></tr>
+<tr class="memitem:a63e41b4b3fd27da5925766d7cfe0bbcd" id="r_a63e41b4b3fd27da5925766d7cfe0bbcd"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::array&lt; BarcodeIndex, num_variable_ &gt;, Count, CombinationHash&lt; num_variable_ &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63e41b4b3fd27da5925766d7cfe0bbcd">get_combinations</a> () const</td></tr>
 <tr class="separator:a63e41b4b3fd27da5925766d7cfe0bbcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40900a5258c0052b2d3b3d47c57dadc5" id="r_a40900a5258c0052b2d3b3d47c57dadc5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a40900a5258c0052b2d3b3d47c57dadc5">get_total</a> () const</td></tr>
+<tr class="memitem:a40900a5258c0052b2d3b3d47c57dadc5" id="r_a40900a5258c0052b2d3b3d47c57dadc5"><td class="memItemLeft" align="right" valign="top">Count&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a40900a5258c0052b2d3b3d47c57dadc5">get_total</a> () const</td></tr>
 <tr class="separator:a40900a5258c0052b2d3b3d47c57dadc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> max_size_, int num_variable_&gt;<br />
+<div class="textblock"><div class="compoundTemplParams">template&lt;SeqLength max_size_, int num_variable_&gt;<br />
 class kaori::DualBarcodesSingleEndWithDiagnostics&lt; max_size_, num_variable_ &gt;</div><p>Handler for dual barcodes with extra diagnostics. </p>
 <p>This provides the same information as <code><a class="el" href="classkaori_1_1DualBarcodesSingleEnd.html" title="Handler for single-end dual barcodes.">DualBarcodesSingleEnd</a></code> but also captures the frequency of the invalid combinations. These frequences can be helpful for diagnosing problems with library construction.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
@@ -131,7 +131,7 @@ class kaori::DualBarcodesSingleEndWithDiagnostics&lt; max_size_, num_variable_ &
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> max_size_, int num_variable_&gt; </div>
+template&lt;SeqLength max_size_, int num_variable_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -144,7 +144,7 @@ template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f1
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a></td>          <td class="paramname"><span class="paramname"><em>template_length</em></span>, </td>
+          <td class="paramtype">SeqLength</td>          <td class="paramname"><span class="paramname"><em>template_length</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -182,13 +182,13 @@ template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f1
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> max_size_, int num_variable_&gt; </div>
+template&lt;SeqLength max_size_, int num_variable_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::unordered_map&lt; std::array&lt; <a class="el" href="namespacekaori.html#aa40d52815d21a0db54d181dc42180413">BarcodeIndex</a>, num_variable_ &gt;, <a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a>, <a class="el" href="classkaori_1_1CombinationHash.html">CombinationHash</a>&lt; num_variable_ &gt; &gt; &amp; <a class="el" href="classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html">kaori::DualBarcodesSingleEndWithDiagnostics</a>&lt; max_size_, num_variable_ &gt;::get_combinations </td>
+          <td class="memname">const std::unordered_map&lt; std::array&lt; BarcodeIndex, num_variable_ &gt;, Count, CombinationHash&lt; num_variable_ &gt; &gt; &amp; <a class="el" href="classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html">kaori::DualBarcodesSingleEndWithDiagnostics</a>&lt; max_size_, num_variable_ &gt;::get_combinations </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -210,13 +210,13 @@ template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f1
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> max_size_, int num_variable_&gt; </div>
+template&lt;SeqLength max_size_, int num_variable_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt; <a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> &gt; &amp; <a class="el" href="classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html">kaori::DualBarcodesSingleEndWithDiagnostics</a>&lt; max_size_, num_variable_ &gt;::get_counts </td>
+          <td class="memname">const std::vector&lt; Count &gt; &amp; <a class="el" href="classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html">kaori::DualBarcodesSingleEndWithDiagnostics</a>&lt; max_size_, num_variable_ &gt;::get_counts </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -238,13 +238,13 @@ template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f1
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;<a class="el" href="namespacekaori.html#a1ba2b438d2db8fd7a30b65fd1f167564">SeqLength</a> max_size_, int num_variable_&gt; </div>
+template&lt;SeqLength max_size_, int num_variable_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacekaori.html#adc2ab0b004edf73c5791e1c6e7c4c831">Count</a> <a class="el" href="classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html">kaori::DualBarcodesSingleEndWithDiagnostics</a>&lt; max_size_, num_variable_ &gt;::get_total </td>
+          <td class="memname">Count <a class="el" href="classkaori_1_1DualBarcodesSingleEndWithDiagnostics.html">kaori::DualBarcodesSingleEndWithDiagnostics</a>&lt; max_size_, num_variable_ &gt;::get_total </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
