@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(kaori
-    VERSION 1.2.1
+project(
+    kaori
+    VERSION 1.2.2
     DESCRIPTION "Header-only C++ library for screen counting"
     LANGUAGES CXX
 )

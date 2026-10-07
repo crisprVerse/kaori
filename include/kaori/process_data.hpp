@@ -6,6 +6,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <stdexcept>
+#include <exception>
 #include <cstddef>
 
 #include "FastqReader.hpp"
